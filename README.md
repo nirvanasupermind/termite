@@ -1,2 +1,2 @@
 # termite
-An experimental ternary stack-based CPU architecture and a lightweight operating system that interfaces with it.
+Termite is a ternary stack-based CPU architecture wrapped by a lightweight operating system with no GUI.
