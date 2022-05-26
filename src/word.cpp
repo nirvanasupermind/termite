@@ -12,7 +12,7 @@ namespace termite
     }
 
     Word::Word(const std::string &str)
-        : hi(Tryte(str.substr(0, 6)), Tryte(str.substr(6))
+        : hi(Tryte(str.substr(0, 6))), lo(Tryte(str.substr(6)))
     {   
     }
 

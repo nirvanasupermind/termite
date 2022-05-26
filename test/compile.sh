@@ -1,1 +1,1 @@
-g++ -std=c++11 *.cpp -o test/termite
+g++ -std=c++11 src/*.cpp -o test/termite
