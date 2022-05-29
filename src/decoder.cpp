@@ -7,11 +7,6 @@
 
 namespace termite
 {
-    const char *DecodeError::what() const noexcept
-    {
-        return msg.c_str();
-    }
-
     InstrOp decodeOp(const Tryte &op)
     {
         std::string str = op.str();
@@ -76,7 +71,7 @@ namespace termite
             return InstrOp::NOT;
         }
 
-        throw DecodeError("illegal instruction " + op.str());
+        throw std::string("illegal instruction " + op.str());
 
         return InstrOp::NOP;
     }
