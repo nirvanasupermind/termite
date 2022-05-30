@@ -10,6 +10,7 @@
 #include "cpu.h"
 #include "filesystem.h"
 #include "util.h"
+#include "text.h"
 
 namespace termite
 {
@@ -23,6 +24,16 @@ namespace termite
     {
         std::string tag = command.at(0);
 
+        if(tag == "clear")
+        {
+            #ifdef _WIN32
+                std::system("cls");
+            #else
+                std::system("clear");
+            #endif
+
+            return;        
+        }
 
         if(tag == "exit")
         {
@@ -72,6 +83,32 @@ namespace termite
             return;
         }
 
+
+        if(tag == "touch")
+        {
+            std::string relativePath = command.at(1);
+
+            std::string path = absolutePath(relativePath);
+        
+            if (checkDiskable(path))
+            {
+                throw std::string("file exists: " + relativePath);
+            }
+
+            std::vector<std::string> splitPath = splitString(path, '/');
+            
+            std::vector<std::string> splitParentPath(splitPath.begin(), splitPath.end() - 1);
+            std::string parentPath = joinVec(splitParentPath, '/');
+
+            std::string dirName = splitPath.back();
+
+            std::shared_ptr<File> file(new File(dirName, getDir(parentPath)));
+
+            file->addToPool();
+
+            return;
+        }
+
         if(tag == "ls")
         {
             for(const auto pair : Diskable::pool)
@@ -114,6 +151,29 @@ namespace termite
         {
             throw std::string("no such file or directory: " +path);
             return std::shared_ptr<Directory>();
+        }
+    }
+
+    std::shared_ptr<File> Shell::getFile(const std::string &path) const
+    {
+        try
+        {
+            std::shared_ptr<Diskable> diskable = Diskable::pool.at(path);
+
+            std::shared_ptr<File> file = std::static_pointer_cast<File>(diskable);
+            
+            if(!file)
+            {
+                throw std::string("not a file: " +path);
+                return std::shared_ptr<File>();     
+            }
+
+            return file;
+        } 
+        catch(const std::exception &e)
+        {
+            throw std::string("no such file or directory: " +path);
+            return std::shared_ptr<File>();
         }
     }
 

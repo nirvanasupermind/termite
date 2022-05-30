@@ -28,6 +28,8 @@ namespace termite
 
         std::shared_ptr<Directory> getDir(const std::string &path) const;
 
+        std::shared_ptr<File> getFile(const std::string &path) const;
+
         bool checkDiskable(const std::string &path) const;
 
         bool checkDir(const std::string &path) const;
