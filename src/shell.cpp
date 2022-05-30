@@ -183,6 +183,11 @@ namespace termite
             return path;
         }
 
+        if(currentDir->path() == "/")
+        {
+            return "/" + path;
+        }
+
         return currentDir->path() + "/" + path;
     }
 }
