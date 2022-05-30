@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <utility>
 
 #include "shell.h"
 #include "tryte.h"
@@ -22,11 +23,19 @@ namespace termite
     {
         std::string tag = command.at(0);
 
+
+        if(tag == "exit")
+        {
+            std::exit(0);
+            return;
+        }
+
         if(tag == "cd")
         {
-            std::string path = command.at(1);
+            std::string relativePath = command.at(1);
 
-            
+            std::string path = absolutePath(relativePath);
+
             currentDir = getDir(path);
             return;
         }
@@ -54,8 +63,6 @@ namespace termite
             std::vector<std::string> splitParentPath(splitPath.begin(), splitPath.end() - 1);
             std::string parentPath = joinVec(splitParentPath, '/');
 
-            // std::cout << parentPath << '\n';
-
             std::string dirName = splitPath.back();
 
             std::shared_ptr<Directory> dir(new Directory(dirName, getDir(parentPath)));
@@ -64,13 +71,24 @@ namespace termite
 
             return;
         }
-    
-        if(tag == "exit")
+
+        if(tag == "ls")
         {
-            std::exit(0);
+            for(const auto pair : Diskable::pool)
+            {   
+                std::shared_ptr<Diskable> diskable = pair.second;
+
+                if(diskable->parent == currentDir)
+                {
+                    std::string diskableName = splitString(diskable->path(), '/').back();
+                    std::cout << diskableName << '\t';
+                }                
+            }
+
+            std::cout << '\n';
+
             return;
         }
-
 
         throw std::string("command not found: " + tag);
         return;

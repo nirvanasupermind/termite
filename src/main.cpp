@@ -8,17 +8,8 @@
 
 int main()
 {
-    // cpu example:
-    // termite::CPU cpu;
-    
-    // std::vector<termite::Word> program = {
-    //     termite::Word("00000100001T"), // push 2 (1*3^1 - 1 * 3^0) to the stack
-    //     termite::Word("00000100001T"), // push 2 (1*3^1 - 1 * 3^0) to the stack
-    //     termite::Word("0001TT000000"), // pop top two trytes from the stack, then push their sum
-    //     termite::Word("000011000001") // print top tryte from stack as a ternary number
-    // };
-
-    // cpu.executeProgram(program);
+    std::cout << "Termite version 0.0" << '\n';
+    std::cout << "Cpyright (c) 2022 nirvanasupermind" << "\n\n";
 
     termite::Shell shell;
 
