@@ -13,7 +13,7 @@
 
 namespace termite
 {
-    class Shell
+    class OS
     {
     public:
         CPU cpu;
@@ -22,9 +22,13 @@ namespace termite
 
         std::shared_ptr<Directory> currentDir;
 
-        Shell();
+        OS();
+
+        void addSystemFiles();
 
         void executeCommand(const std::vector<std::string> &command);
+
+        void runExecutable(const std::vector<Tryte> &exe);
 
         std::shared_ptr<Directory> getDir(const std::string &path) const;
 

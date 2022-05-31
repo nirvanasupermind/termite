@@ -1,7 +1,7 @@
 #include <iostream>
 #include <vector>
 
-#include "shell.h"
+#include "os.h"
 #include "util.h"
 // #include "word.h"
 // #include "cpu.h"
@@ -9,9 +9,12 @@
 int main()
 {
     std::cout << "Termite version 0.0" << '\n';
-    std::cout << "Cpyright (c) 2022 nirvanasupermind" << "\n\n";
+    std::cout << "Copyright (c) 2022 nirvanasupermind" << '\n';
+    std::cout << "Licensed under the MIT License" << "\n\n";
 
-    termite::Shell shell;
+    termite::OS os;
+
+    os.addSystemFiles();
 
     while (true)
     {
@@ -40,12 +43,16 @@ int main()
 
         try
         {
-            shell.executeCommand(command);
+            os.executeCommand(command);
         }
         catch(const std::string &e)
         {
             std::cerr << e << '\n';
             // return 0;
+        }
+        catch(const std::out_of_range &e)
+        {
+            std::cerr << "encountered std::out_of_range: " << e.what() << ", you may be missing an argument to a command" << '\n';
         }
     }
 

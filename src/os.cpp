@@ -4,23 +4,36 @@
 #include <memory>
 #include <utility>
 
-#include "shell.h"
+#include "os.h"
 #include "tryte.h"
 #include "word.h"
 #include "cpu.h"
 #include "filesystem.h"
 #include "util.h"
 #include "text.h"
+#include "decoder.h"
 
 namespace termite
 {
-    Shell::Shell()
+    OS::OS()
         : rootDir(std::shared_ptr<Directory>(new Directory(""))), currentDir(rootDir)
     {
         rootDir->addToPool();
     }
 
-    void Shell::executeCommand(const std::vector<std::string> &command)
+    void OS::addSystemFiles()
+    {
+        executeCommand({"mkdir", "/ter"});
+        executeCommand({"touch", "/ter/test_file"});
+        
+        std::shared_ptr<File> testFile = getFile("/ter/test_file");
+        testFile->data.push_back(termite::Tryte("000001"));
+        testFile->data.push_back(termite::Tryte("000010"));
+        testFile->data.push_back(termite::Tryte("000011"));
+        testFile->data.push_back(termite::Tryte("000001"));
+    }
+
+    void OS::executeCommand(const std::vector<std::string> &command)
     {
         std::string tag = command.at(0);
 
@@ -83,6 +96,25 @@ namespace termite
             return;
         }
 
+        if(tag == "ls")
+        {
+            for(const auto pair : Diskable::pool)
+            {   
+                std::shared_ptr<Diskable> diskable = pair.second;
+
+                if(diskable->parent == currentDir)
+                {
+                    std::string diskableName = splitString(diskable->path(), '/').back();
+                    std::cout << diskableName << '\t';
+                }                
+            }
+
+            std::cout << '\n';
+
+            return;
+        }
+
+
 
         if(tag == "touch")
         {
@@ -109,29 +141,68 @@ namespace termite
             return;
         }
 
-        if(tag == "ls")
-        {
-            for(const auto pair : Diskable::pool)
-            {   
-                std::shared_ptr<Diskable> diskable = pair.second;
+        std::shared_ptr<File> exe = getFile("/ter/" + tag);
 
-                if(diskable->parent == currentDir)
-                {
-                    std::string diskableName = splitString(diskable->path(), '/').back();
-                    std::cout << diskableName << '\t';
-                }                
-            }
+        runExecutable(exe->data);
 
-            std::cout << '\n';
-
-            return;
-        }
-
-        throw std::string("command not found: " + tag);
         return;
     }
 
-    std::shared_ptr<Directory> Shell::getDir(const std::string &path) const
+    void OS::runExecutable(const std::vector<Tryte> &exe) 
+    {
+        for(int i = 0; i < exe.size(); i += 2)
+        {
+            Word word(exe.at(i), exe.at(i + 1));
+
+            Instr instr = decodeInstr(word);
+
+            switch(instr.op)
+            {
+                case InstrOp::NOP:
+                    // Do nothing
+                    break;
+                case InstrOp::PUSH:
+                    cpu.push(instr.val);
+                    break;
+                case InstrOp::POP:
+                    cpu.pop();
+                    break;
+                case InstrOp::SWAP:
+                    cpu.swap();
+                    break;
+                case InstrOp::SYSCALL:
+                    cpu.syscall(instr.val);
+                    break;
+                case InstrOp::ADD:
+                    cpu.add();
+                    break;
+                case InstrOp::SUB:
+                    cpu.sub();
+                    break;
+                case InstrOp::MUL:
+                    cpu.mul();  
+                    break;
+                case InstrOp::NEG:
+                    cpu.neg(); 
+                    break; 
+                case InstrOp::AND:
+                    cpu.and_();  
+                    break;
+                case InstrOp::OR:
+                    cpu.or_();
+                    break;
+                case InstrOp::XOR:
+                    cpu.xor_();
+                    break;
+                case InstrOp::NOT:
+                    cpu.not_();   
+                    break;           
+                default:
+                    break;       
+            } 
+        }
+    }
+    std::shared_ptr<Directory> OS::getDir(const std::string &path) const
     {
         try
         {
@@ -144,7 +215,7 @@ namespace termite
                 throw std::string("not a directory: " +path);
                 return std::shared_ptr<Directory>();     
             }
-
+ 
             return dir;
         } 
         catch(const std::exception &e)
@@ -154,7 +225,7 @@ namespace termite
         }
     }
 
-    std::shared_ptr<File> Shell::getFile(const std::string &path) const
+    std::shared_ptr<File> OS::getFile(const std::string &path) const
     {
         try
         {
@@ -178,7 +249,7 @@ namespace termite
     }
 
 
-    bool Shell::checkDiskable(const std::string &path) const
+    bool OS::checkDiskable(const std::string &path) const
     {
         try
         {
@@ -194,7 +265,7 @@ namespace termite
         }
     }
 
-    bool Shell::checkDir(const std::string &path) const
+    bool OS::checkDir(const std::string &path) const
     {
         try
         {
@@ -215,7 +286,7 @@ namespace termite
         }
     }
 
-    bool Shell::checkFile(const std::string &path) const
+    bool OS::checkFile(const std::string &path) const
     {
         try
         {
@@ -236,7 +307,7 @@ namespace termite
         }
     }
 
-    std::string Shell::absolutePath(const std::string &path) const
+    std::string OS::absolutePath(const std::string &path) const
     {
         if(path.at(0) == '/')
         {

@@ -7,162 +7,122 @@
 #include "tryte.h"
 #include "word.h"
 #include "instr.h"
-#include "decoder.h"
+#include "text.h"
 
 namespace termite
 {
-    void CPU::executeProgram(const std::vector<Word> &program)
+    void CPU::push(const Tryte &val)
     {
-        for (int i = 0; i < program.size(); i++)
+        stack.push(val);
+    }
+
+    void CPU::pop()
+    {
+        stack.pop();
+    }
+
+    void CPU::swap()
+    {
+        Tryte a = stack.top();
+        stack.pop();
+        Tryte b = stack.top();
+        stack.pop();
+
+        stack.push(a);
+        stack.push(b);
+    }
+
+    void CPU::syscall(const Tryte &val)
+    {
+        std::string syscall = val.str();
+
+        if (syscall == "000000")
         {
-            executeInstr(decodeInstr(program.at(i)));
+            std::wcout << decodeChar(stack.top().str()) << '\n';
+        }
+        else if (syscall == "000001")
+        {
+            std::cout << stack.top().str() << '\n';
+        }
+        else if (syscall == "00001T")
+        {
+            std::cout << stack.top().intVal() << '\n';
         }
     }
 
-    void CPU::executeInstr(const Instr &instr)
+    void CPU::add()
     {
-        if (instr.op == InstrOp::NOP)
-        {
-            // Do nothing
-        }
+        Tryte a = stack.top();
+        stack.pop();
+        Tryte b = stack.top();
+        stack.pop();
 
-        if (instr.op == InstrOp::PUSH)
-        {
-            stack.push(instr.val);
+        stack.push(a + b);
+    }
 
-            return;
-        }
+    void CPU::sub()
+    {
+        Tryte a = stack.top();
+        stack.pop();
+        Tryte b = stack.top();
+        stack.pop();
 
-        if (instr.op == InstrOp::POP)
-        {
-            stack.pop();
+        stack.push(a - b);
+    }
 
-            return;
-        }
+    void CPU::mul()
+    {
+        Tryte a = stack.top();
+        stack.pop();
+        Tryte b = stack.top();
+        stack.pop();
 
-        if (instr.op == InstrOp::SWAP)
-        {
-            Tryte a = stack.top();
-            stack.pop();
-            Tryte b = stack.top();
-            stack.pop();
+        stack.push(a * b);
+    }
 
-            stack.push(a);
-            stack.push(b);
+    void CPU::neg()
+    {
+        Tryte a = stack.top();
+        stack.pop();
 
-            return;
-        }
+        stack.push(-a);
+    }
 
-        if (instr.op == InstrOp::SYSCALL)
-        {
-            std::string syscall = instr.val.str();
+    void CPU::and_()
+    {
+        Tryte a = stack.top();
+        stack.pop();
+        Tryte b = stack.top();
+        stack.pop();
 
-            if (syscall == "000000")
-            {
-                std::wcout << decodeChar(stack.top().str()) << '\n';
-            }
-            else if(syscall == "000001")
-            {
-                std::cout << stack.top().str() << '\n';
-            }
-            else if(syscall == "00001T")
-            {
-                std::cout << stack.top().intVal() << '\n';
-            }
+        stack.push(a & b);
+    }
 
-            return;
-        }
+    void CPU::or_()
+    {
+        Tryte a = stack.top();
+        stack.pop();
+        Tryte b = stack.top();
+        stack.pop();
 
-        if (instr.op == InstrOp::ADD)
-        {
-            Tryte a = stack.top();
-            stack.pop();
-            Tryte b = stack.top();
-            stack.pop();
+        stack.push(a | b);
+    }
 
-            stack.push(a + b);
+    void CPU::xor_()
+    {
+        Tryte a = stack.top();
+        stack.pop();
+        Tryte b = stack.top();
+        stack.pop();
 
-            return;
-        }
+        stack.push(a ^ b);
+    }
 
-        if (instr.op == InstrOp::SUB)
-        {
-            Tryte a = stack.top();
-            stack.pop();
-            Tryte b = stack.top();
-            stack.pop();
+    void CPU::not_()
+    {
+        Tryte a = stack.top();
+        stack.pop();
 
-            stack.push(a - b);
-
-            return;
-        }
-
-        if (instr.op == InstrOp::MUL)
-        {
-            Tryte a = stack.top();
-            stack.pop();
-            Tryte b = stack.top();
-            stack.pop();
-
-            stack.push(a * b);
-
-            return;
-        }
-
-        if (instr.op == InstrOp::NEG)
-        {
-            Tryte a = stack.top();
-            stack.pop();
-
-            stack.push(-a);
-
-            return;
-        }
-
-        if (instr.op == InstrOp::AND)
-        {
-            Tryte a = stack.top();
-            stack.pop();
-            Tryte b = stack.top();
-            stack.pop();
-
-            stack.push(a & b);
-
-            return;
-        }
-
-        if (instr.op == InstrOp::OR)
-        {
-            Tryte a = stack.top();
-            stack.pop();
-            Tryte b = stack.top();
-            stack.pop();
-
-            stack.push(a | b);
-
-            return;
-        }
-
-        if (instr.op == InstrOp::XOR)
-        {
-            Tryte a = stack.top();
-            stack.pop();
-            Tryte b = stack.top();
-            stack.pop();
-
-            stack.push(a ^ b);
-
-            return;
-        }
-
-        if (instr.op == InstrOp::NOT)
-        {
-            Tryte a = stack.top();
-            stack.pop();
-
-            stack.push(~a);
-
-            return;
-        }
+        stack.push(~a);
     }
 }
