@@ -1,76 +1,34 @@
 #ifndef TRYTE_H
 #define TRYTE_H
 
-#include <string>
-#include <vector>
+#include <array>
 
 #include "trit.h"
 
 namespace termite
 {
-    // A tryte is an integer containing 6 trits, using 3's complement-notation for negative integers.
-
+    // Ternary analogue to a byte. 6 trits, a total of 729 states (-364 through 364).
     class Tryte
     {
     public:
+        // The tryte's constituent 6 trits
+        std::array<Trit, 6> trits;
+
+        // Creates a tryte equal to 0
         Tryte() = default;
 
-        Tryte(int n);
+        // Creates a tryte from it's constituent 6 trits
+        Tryte(const std::array<Trit, 6> &trits);
 
-        Tryte(const std::string &str);
-
-        Tryte(Trit val[6]);
-
-        // Negation
+        // Returns the negation of a tryte
         Tryte operator-() const;
 
-        // Addition
-        Tryte operator+(const Tryte &b) const;
+        // Returns the sum of two trytes
+        Tryte operator+(const Tryte &other) const;
 
-        // Subtraction
-        Tryte operator-(const Tryte &b) const;
-        
-        // Multiplication
-        Tryte operator*(const Tryte &b) const;
-        
-        // "Trit-wise" logical NOT
-        Tryte operator~() const;
-
-        // "Trit-wise" logical AND
-        Tryte operator&(const Tryte &b) const;
-
-        // "Trit-wise" logical OR
-        Tryte operator|(const Tryte &b) const;
-
-        // "Trit-wise" logical XOR
-        Tryte operator^(const Tryte &b) const;
-
-        // Equality
-        bool operator==(const Tryte &b) const;
-
-        // Inequality
-        bool operator!=(const Tryte &b) const;
-
-        // Integer representation
-        int intVal() const;
-
-        // String representation for debugging purposes
-        std::string str() const;
-
-        // Constant for the tryte with the value of 0
-        static const Tryte ZERO;
-
-        // Constant for the tryte with the value of 1
-        static const Tryte ONE;
-
-        static const int pow3[6];
-    protected:
-        // The 6 trits
-        Trit val[6];
-
-        // Ternary analogue to full adder
-        Trit fulladder(Trit t1, Trit t2, Trit &carry) const;
+        // Returns a string representation of the tryte for printing/debugging
+        std::string to_str() const;
     };
-}
+} // namespace termite
 
 #endif

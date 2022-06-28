@@ -1,3 +1,5 @@
+#include <algorithm>
+
 #include "trit.h"
 
 namespace termite
@@ -12,63 +14,42 @@ namespace termite
     {
     }
 
+    Trit::Trit(char chr)
+        : val(chr == 'Z' ? -1 : (chr == '0' ? 0 : 1))
+    {
+    }
+
+    Trit Trit::clone() const
+    {
+        return Trit(val);
+    }
+
+    Trit Trit::operator&&(const Trit &other) const
+    {
+        return Trit(std::min(val, other.val));
+    }
+
+    Trit Trit::operator||(const Trit &other) const
+    {
+        return Trit(std::max(val, other.val));
+    }
+
+    Trit Trit::operator^(const Trit &other) const
+    {
+        return Trit((-val) * other.val);
+    }
+
     Trit Trit::operator!() const
     {
-        return -val;
+        return Trit(-val);
     }
 
-    Trit Trit::operator&&(const Trit &b) const
+    char Trit::to_chr() const
     {
-        return (val < b.val) ? val : b.val;
+        return (val == -1 ? 'Z' : (val == 0 ? '0' : '1'));
     }
 
-    Trit Trit::operator||(const Trit &b) const
-    {
-        return (val > b.val) ? val : b.val;
-    }
-
-    Trit Trit::operator^(const Trit &b) const
-    {
-        return operator&&(!b) || (b && (operator!()));
-    }
-    
-    bool Trit::operator==(const Trit &b) const
-    {
-        return val == b.val;
-    }
-
-    bool Trit::operator!=(const Trit &b) const
-    {
-        return val != b.val;
-    }
-
-    char Trit::charVal() const
-    {
-        switch(val)
-        {
-            case -1:
-                return 'T';
-            case 0:
-                return '0';
-            default:
-                return '1';
-        }
-    }
-
-    Trit Trit::fromChar(char chr)
-    {
-        switch(chr)
-        {
-            case 'T':
-                return Trit::NEG;
-            case '0':
-                return Trit::ZERO;
-            default:
-                return Trit::ONE;
-        }
-    }
-
+    const Trit Trit::MINUS_ONE(-1);
     const Trit Trit::ZERO(0);
     const Trit Trit::ONE(1);
-    const Trit Trit::NEG(-1);
-}
+} // namespace termite
