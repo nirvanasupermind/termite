@@ -53,6 +53,12 @@ namespace termite
 
         return result;
     }
+
+    Tryte Tryte::operator-(const Tryte &other) const
+    {
+        return operator+(-other);
+    }
+    
     std::string Tryte::to_str() const 
     {
         std::string result;

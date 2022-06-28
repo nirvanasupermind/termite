@@ -26,6 +26,9 @@ namespace termite
         // Returns the sum of two trytes
         Tryte operator+(const Tryte &other) const;
 
+        // Returns the difference of two trytes
+        Tryte operator-(const Tryte &other) const;
+ 
         // Returns a string representation of the tryte for printing/debugging
         std::string to_str() const;
     };
