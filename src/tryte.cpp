@@ -12,6 +12,12 @@ namespace termite
     {
     }
 
+    Tryte Tryte::clone() const
+    {
+        std::array<Trit, 6> clonedTrits = trits;
+        return Tryte(clonedTrits);
+    }
+
     Tryte Tryte::operator-() const
     {
         Tryte result;
@@ -32,7 +38,7 @@ namespace termite
 
         for(int i = 5; i >= 0; i--) 
         {
-            int sum = trits[i].val + other.trits[i].val + carry.val;
+            int sum = trits.at(i).val + other.trits.at(i).val + carry.val;
 
             if(sum == 2)
             {
@@ -53,12 +59,43 @@ namespace termite
 
         return result;
     }
-
+    
     Tryte Tryte::operator-(const Tryte &other) const
     {
         return operator+(-other);
     }
-    
+
+    Tryte Tryte::operator*(const Tryte &other) const
+    {
+        Tryte result;
+
+        for(int i = 5; i >= 0; i--)
+        {
+            if (other.trits.at(i).val == -1)
+            {
+                result = result - operator<<(5 - i);
+            } 
+            else if (other.trits.at(i).val == 1)
+            {
+                result = result + operator<<(5 - i);
+            }
+        }
+
+        return result;
+    }
+
+    Tryte Tryte::operator<<(int amount) const
+    {
+        Tryte result;
+
+        for(int i = 5 - amount; i >= 0; i--) 
+        {
+            result.trits[i] = trits.at(i + amount);
+        }
+        
+        return result;
+    }
+
     std::string Tryte::to_str() const 
     {
         std::string result;

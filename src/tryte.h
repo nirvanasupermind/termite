@@ -20,7 +20,10 @@ namespace termite
         // Creates a tryte from it's constituent 6 trits
         Tryte(const std::array<Trit, 6> &trits);
 
-        // Returns the negation of a tryte
+        // Returns a clone of the tryte
+        Tryte clone() const;
+
+        // Returns the negation of the tryte
         Tryte operator-() const;
 
         // Returns the sum of two trytes
@@ -28,6 +31,12 @@ namespace termite
 
         // Returns the difference of two trytes
         Tryte operator-(const Tryte &other) const;
+ 
+         // Returns the product of two trytes
+        Tryte operator*(const Tryte &other) const;
+ 
+        // Returns the tryte shifted to the left
+        Tryte operator<<(int amount) const;
  
         // Returns a string representation of the tryte for printing/debugging
         std::string to_str() const;
