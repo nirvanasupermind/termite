@@ -34,6 +34,9 @@ namespace termite
         // Returns the logical NOT of the trit in Kleene logic
         Trit operator!() const;
 
+        // Checks for the equality of two trits
+        bool operator==(const Trit &other) const;    
+
         // Returns a character representation of the trit for printing/debugging
         char to_chr() const;
 

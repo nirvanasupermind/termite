@@ -1,0 +1,34 @@
+SIZES:
+    Tryte size - 6 trits
+    Word size - 2 trytes
+    Instruction size - 1 word
+
+OPCODES:
+    00 - NOP
+    01 - copy tryte to specified address in RAM (MOV)
+    02 - pop top tryte from stack (POP)
+    03 - input a tryte in specified mode and push it to stack (IN) 
+        0300 - input a decimal number
+        0301 - input a balanced ternary number
+        0302 - input a balanced heptavigesimal number
+        0303 - input a character
+    04 - pop top tryte from stack and output it in specified mode (OUT)
+        0400 - output as decimal
+        0401 - output as balanced ternary
+        0402 - output as balanced heptavigesimal
+        0403 - output as character
+    05 - load tryte from specified address in RAM and push it to stack (LOAD)
+    06 - store tryte into specified address in RAM (STOR)
+    07 - pop top 2 trytes from stack and push their sum (ADD)
+    08 - pop top tryte from stack and push it's negation (NEG)
+    09 - pop top 2 trytes from stack and push their difference (SUB)
+    0A - pop top 2 trytes from stack and push their product (MUL)
+    0B - pop top tryte from stack and push it's trit-wise NOT (NOT)
+    0C - pop top 2 trytes from stack and push their trit-wise AND (AND)
+    0D - pop top 2 trytes from stack and push their trit-wise OR (OR)
+    1N - pop top 2 trytes from stack and push their trit-wise XOR (XOR)
+    1O - pop top 2 trytes from stack and push their left-shift (LS)
+    1P - pop top 2 trytes from stack and push their right-shift (RS)
+    1Q - pop top 2 trytes from stack and push a comparator of 1, 0, or -1 (CMP)
+    1R - jump to specified instruction number (JMP)
+    1S - pop top tryte from stack and jump if it is greater than 0 (CJMP)

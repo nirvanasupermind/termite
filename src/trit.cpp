@@ -39,6 +39,11 @@ namespace termite
         return Trit((-val) * other.val);
     }
 
+    bool Trit::operator==(const Trit &other) const
+    {
+        return val == other.val;
+    }
+
     Trit Trit::operator!() const
     {
         return Trit(-val);
