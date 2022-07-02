@@ -1,28 +1,35 @@
 #ifndef TRYTE_H
 #define TRYTE_H
 
+#include <string>
 #include <array>
 
 #include "trit.h"
-#include "trybble.h"
 
 namespace termite
 {
     // Ternary analogue to a byte. 6 trits, a total of 729 states (-364 through 364).
     class Tryte
     {
-    public:
+    protected:
         // The tryte's constituent 6 trits
         std::array<Trit, 6> trits;
 
+        int mod3(int val);
+
+        std::array<Trit, 6> to_bt(int val);
+    public:
         // Creates a tryte equal to 0
         Tryte() = default;
+
+        // Creates a tryte from it's constituent 6 trits
+        Tryte(const std::array<Trit, 6> &trits);
 
         // Creates a tryte from a native integer
         Tryte(int val);
 
-        // Creates a tryte from it's constituent 6 trits
-        Tryte(const std::array<Trit, 6> &trits);
+        // Creates a tryte from a balanced ternary string
+        Tryte(const std::string &str);
 
         // Returns a clone of the tryte
         Tryte clone() const;
@@ -51,23 +58,20 @@ namespace termite
         // Checks if the two trytes are not equal
         bool operator!=(const Tryte &other) const;
 
-        // Returns the hi trybble of the tryte
-        Trybble hi_trybble() const;
-
-        // Returns the lo trybble of the tryte
-        Trybble lo_trybble() const;
-
         // Returns a native integer representation of the tryte
         int to_int() const;
         
-        // Returns a longer, balanced ternary string of the tryte for printing/debugging
-        std::string to_tern() const;
-
-        // Returns a shorter, balanced heptavigesimal string of the tryte for printing/debugging
-        std::string to_hept() const;
+        // Returns a string representation of the tryte for printing/debugging
+        std::string to_str() const;
 
         // A tryte with a value of 0
         static const Tryte ZERO;
+
+        class HashFunction
+        {
+        public:
+            size_t operator()(const Tryte &tryte) const;
+        };
     };
 } // namespace termite
 

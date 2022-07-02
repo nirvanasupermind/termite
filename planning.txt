@@ -18,7 +18,7 @@ OPCODES:
         0402 - output as balanced heptavigesimal
         0403 - output as character
     05 - load tryte from specified address in RAM and push it to stack (LOAD)
-    06 - store tryte into specified address in RAM (STOR)
+    06 - pop top tryte from stack, and store it into specified address in RAM (STOR)
     07 - pop top 2 trytes from stack and push their sum (ADD)
     08 - pop top tryte from stack and push it's negation (NEG)
     09 - pop top 2 trytes from stack and push their difference (SUB)

@@ -1,17 +1,36 @@
-#include <iostream>
 #include <string>
 #include <array>
 #include <cmath>
+#include <functional>
 
 #include "trit.h"
-#include "trybble.h"
 #include "tryte.h"
 
 namespace termite
 {
+    int Tryte::mod3(int val)
+	{
+		if(val > 0)
+        {
+			return val % 3;
+        }
+		
+        val = val % 3;
+
+		return (val + 3) % 3;
+	}
+
     Tryte::Tryte(const std::array<Trit, 6> &trits)
         : trits(trits)
     {
+    }
+    
+    Tryte::Tryte(const std::string &str)
+    {
+        for (int i = 5; i >= 0; i--)
+        {
+            trits[i] = str.at(i);
+        }
     }
 
     Tryte Tryte::clone() const
@@ -123,17 +142,7 @@ namespace termite
         return trits.at(0).val * 243 + trits.at(1).val * 81 + trits.at(2).val * 27 + trits.at(3).val * 9 + trits.at(4).val * 3 + trits.at(5).val;
     }
 
-    Trybble Tryte::hi_trybble() const
-    {
-        return Trybble(std::array<Trit, 3>{trits.at(0), trits.at(1), trits.at(2)});
-    }
-
-    Trybble Tryte::lo_trybble() const
-    {
-        return Trybble(std::array<Trit, 3>{trits.at(3), trits.at(4), trits.at(5)});
-    }
-
-    std::string Tryte::to_tern() const
+    std::string Tryte::to_str() const
     {
         std::string result;
 
@@ -145,10 +154,10 @@ namespace termite
         return result;
     }
 
-    std::string Tryte::to_hept() const
-    {
-        return {hi_trybble().to_chr(), lo_trybble().to_chr()};
-    }
-
     const Tryte Tryte::ZERO;
+
+    size_t Tryte::HashFunction::operator()(const Tryte &tryte) const
+    {
+        return std::hash<int>()(tryte.to_int());
+    }
 } // namespace termite

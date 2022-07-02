@@ -1,13 +1,14 @@
 #ifndef INSTR_H
 #define INSTR_H
 
+#include "tryte.h"
+
 namespace termite
 {
-    // Represents a CPU instruction.
-    enum class Instr
+    enum class InstrType
     {
         NOP,    
-        MOV,
+        // MOV,
         POP,
         IN,
         OUT,
@@ -26,6 +27,16 @@ namespace termite
         CMP,
         JMP,
         CJMP
+    };
+
+    // Represents a VM instruction.
+    class Instr
+    {
+    public:
+        InstrType type;
+        Tryte val;
+
+        Instr(InstrType type, const Tryte &val);
     };
 } // namespace termite
 
