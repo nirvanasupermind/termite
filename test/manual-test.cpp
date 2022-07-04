@@ -1,14 +1,32 @@
 #include <iostream>
 #include <array>
 
-#include "../src/trit.h"
 #include "../src/tryte.h"
+#include "../src/tryte.h"
+#include "../src/word.h"
+#include "../src/vm.h"
 
 int main() 
 {   
-    // termite::Tryte x({std::array<termite::Trit, 6> {0, 0, 0, 1, 0, -1}});
-    termite::Tryte x({std::array<termite::Trit, 6> {0, 0, 0, 0, 1, 0}});
-    termite::Tryte y({std::array<termite::Trit, 6> {0, 1, 1, 0, -1, 0}});
+    termite::VM vm;
 
-    std::cout << y.to_str() << '\n'; // 0010Z0
+    // program - many instructions
+    // instruction size = 1 word
+    // word size = 2 trytes
+    // tryte size = 6 trits (convention I adopted from "Setun" ternary computer)
+    
+    std::vector<termite::Word> program {
+        // push 13;
+        termite::Word(termite::Tryte("000001"), termite::Tryte("000111")), // stack: 13
+        // push 14;
+        termite::Word(termite::Tryte("000001"), termite::Tryte("001TTT")), // stack: 14 13
+        // add;
+        termite::Word(termite::Tryte("0001T0"), termite::Tryte("000000")), // stack: 27
+        // out;
+        termite::Word(termite::Tryte("0001TT"), termite::Tryte("000001")), // stack: (empty)
+        // jmp 0;
+        termite::Word(termite::Tryte("000111"), termite::Tryte("000000")), // stack: (empty)
+    };
+
+    vm.exec_program(program);
 }

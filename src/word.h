@@ -8,7 +8,6 @@
 namespace termite
 {
     // Represents a pair of trytes. 12 trits, with a total of 531441 states (-265720 through 265720).
-
     class Word
     {
     public:

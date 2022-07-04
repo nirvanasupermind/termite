@@ -13,41 +13,43 @@ namespace termite
         case 0:
             return InstrType::NOP;
         case 1:
-            return InstrType::POP;
+            return InstrType::PUSH;
         case 2:
-            return InstrType::IN;
+            return InstrType::POP;
         case 3:
-            return InstrType::OUT;
+            return InstrType::SWAP;
         case 4:
-            return InstrType::LOAD;
+            return InstrType::IN;
         case 5:
-            return InstrType::STOR;
+            return InstrType::OUT;
         case 6:
             return InstrType::ADD;
         case 7:
             return InstrType::NEG;
         case 8:
-            return InstrType::SUB;
+            return InstrType::SUB;   
         case 9:
             return InstrType::MUL;
         case 10:
-            return InstrType::NOT; 
+            return InstrType::AND;    
         case 11:
-            return InstrType::AND;  
+            return InstrType::OR;  
         case 12:
-            return InstrType::OR;
-        case 13:
             return InstrType::XOR;
+        case 13:
+            return InstrType::JMP;      
         case 14:
-            return InstrType::LS;
+            return InstrType::JE;
         case 15:
-            return InstrType::RS;
+            return InstrType::JNE;
         case 16:
-            return InstrType::CMP;
+            return InstrType::JL;
         case 17:
-            return InstrType::JMP;
+            return InstrType::JG;
         case 18:
-            return InstrType::CJMP;           
+            return InstrType::JLE;
+        case 19:
+            return InstrType::JGE;            
         default:
             throw TermiteException("illegal instruction: " + tryte.to_str());
         }

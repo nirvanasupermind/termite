@@ -7,26 +7,33 @@ namespace termite
 {
     enum class InstrType
     {
-        NOP,    
-        // MOV,
+        NOP,
+        // Stack operations
+        PUSH,
         POP,
+        SWAP,
+        // I/O
         IN,
         OUT,
-        LOAD,
-        STOR,
+        // Arithmetical operations
         ADD,
         NEG,
         SUB,
         MUL,
-        NOT,
         AND,
         OR,
         XOR,
-        LS,
-        RS,
+        SHL,
+        SHR,
         CMP,
+        // Control flow
         JMP,
-        CJMP
+        JE,
+        JNE,
+        JL,
+        JG,
+        JLE,
+        JGE
     };
 
     // Represents a VM instruction.

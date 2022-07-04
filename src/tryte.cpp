@@ -8,17 +8,17 @@
 
 namespace termite
 {
-    int Tryte::mod3(int val)
-	{
-		if(val > 0)
-        {
-			return val % 3;
-        }
+    // int Tryte::mod3(int val)
+	// {
+	// 	if(val > 0)
+    //     {
+	// 		return val % 3;
+    //     }
 		
-        val = val % 3;
+    //     val = val % 3;
 
-		return (val + 3) % 3;
-	}
+	// 	return (val + 3) % 3;
+	// }
 
     Tryte::Tryte(const std::array<Trit, 6> &trits)
         : trits(trits)
@@ -135,6 +135,42 @@ namespace termite
         }
 
         return Trit::ZERO;
+    }
+
+    Tryte Tryte::operator&(const Tryte &other) const
+    {
+        Tryte result;
+
+        for (int i = 5; i >= 0; i--)
+        {
+            result.trits[i] = trits.at(i) && other.trits.at(i);
+        }
+
+        return result;
+    }
+
+    Tryte Tryte::operator|(const Tryte &other) const
+    {
+        Tryte result;
+
+        for (int i = 5; i >= 0; i--)
+        {
+            result.trits[i] = trits.at(i) || other.trits.at(i);
+        }
+
+        return result;
+    }
+
+    Tryte Tryte::operator^(const Tryte &other) const
+    {
+        Tryte result;
+
+        for (int i = 5; i >= 0; i--)
+        {
+            result.trits[i] = trits.at(i) ^ other.trits.at(i);
+        }
+
+        return result;
     }
 
     int Tryte::to_int() const

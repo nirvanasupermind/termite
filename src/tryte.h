@@ -15,9 +15,9 @@ namespace termite
         // The tryte's constituent 6 trits
         std::array<Trit, 6> trits;
 
-        int mod3(int val);
+        // int mod3(int val);
 
-        std::array<Trit, 6> to_bt(int val);
+        // std::array<Trit, 6> to_bt(int val);
     public:
         // Creates a tryte equal to 0
         Tryte() = default;
@@ -43,8 +43,17 @@ namespace termite
         // Returns the difference of two trytes
         Tryte operator-(const Tryte &other) const;
  
-         // Returns the product of two trytes
+        // Returns the product of two trytes
         Tryte operator*(const Tryte &other) const;
+ 
+        // Returns the trit-wise AND of two trytes
+        Tryte operator&(const Tryte &other) const;
+ 
+        // Returns the trit-wise OR of two trytes
+        Tryte operator|(const Tryte &other) const;
+ 
+        // Returns the trit-wise XOR of two trytes
+        Tryte operator^(const Tryte &other) const;
  
         // Returns the tryte shifted to the left
         Tryte operator<<(int amount) const;
