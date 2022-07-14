@@ -1,14 +1,34 @@
 SIZES:
 Tryte - 6 trits
-Word - 18 trits / 3 trytes (opcode, operand 1, operand 2)
-Instruction - 1 word
+Word - 18 trits / 3 trytes
+Instruction - 1 word (1-tryte opcode, 2-tryte argument)
 
 REGISTERS:
-729 1-tryte memory registers
-1-tryte accumulator (used for storing results of )
+531,441 2-tryte main memory registers
+2-tryte accumulator
+2-tryte X register
+2-tryte Y register
 
 INSTRUCTIONS:
 nop - no operation
-mov a,b - moves the tryte located at address x into the address y
-lda x - loads the tryte located at address x into the accumulator
-sta x - stores the tryte located at the accumulator into address x
+lda, ldav - load a value into the accumulator
+sta - stores the accumulator into main memory
+ldx, ldxv - loads a value into the X register
+stx - stores the X register into main memory
+ldy, ldyv - loads a value into the Y register
+sty - stores the Y register into main memory
+neg - negates the accumulator
+add, addv - adds a value to the accumulator
+sub, subv - subtracts a value from the accumulator
+mul, mulv - multiplies the accumulator by a value
+and, andv - takes trit-wise AND of a value and the accumulator
+or, orv - takes trit-wise OR of a value and the accumulator
+xor, xorv - takes trit-wise XOR of a value and the accumulator
+cmp, cmpv - compares a value against the accumulator
+jmp, jmpv - jumps to a certain instruction
+je, jev - jumps to a certain instruction, provided the accumulator is an equals indicator
+jne, jnev - jumps to a certain instruction, provided the accumulator is a not equals indicator
+jl, jlev - jumps to a certain instruction, provided the accumulator is a less than indicator
+jg, jgv - jumps to a certain instruction, provided the accumulator is a greater than indicator
+jle, jlev - jumps to a certain instruction, provided the accumulator is a less than or equal indicator
+jge, jgev - jumps to a certain instruction, provided the accumulator is a greater than or equal indicator

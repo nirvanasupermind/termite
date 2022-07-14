@@ -9,9 +9,8 @@
 
 namespace termite
 {
-    InstrType decode_instr_type(const Tryte &tryte);
+    Instr decode_instr(const Tryte &opcode);
 
-    Instr decode_instr(const Word &word);
 } // namespace termite
 
 #endif

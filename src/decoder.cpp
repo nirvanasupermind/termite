@@ -6,57 +6,52 @@
 
 namespace termite
 {
-    InstrType decode_instr_type(const Tryte &tryte)
+    Instr decode_instr(const Tryte &opcode)
     {
-        switch (tryte.to_int())
+        switch (opcode.to_int())
         {
         case 0:
-            return InstrType::NOP;
+            return Instr::NOP;
         case 1:
-            return InstrType::MOV;
+            return Instr::MOV;
         case 2:
-            return InstrType::LDA;  
+            return Instr::LDA;  
         case 3:
-            return InstrType::STA;
+            return Instr::STA;
         case 4:
-            return InstrType::IN;
+            return Instr::IN;
         case 5:
-            return InstrType::OUT;
+            return Instr::OUT;
         case 6:
-            return InstrType::ADD;
+            return Instr::ADD;
         case 7:
-            return InstrType::NEG;
+            return Instr::NEG;
         case 8:
-            return InstrType::SUB;
+            return Instr::SUB;
         case 9:
-            return InstrType::MUL;
+            return Instr::MUL;
         case 10:
-            return InstrType::SHL;
+            return Instr::SHL;
         case 11:
-            return InstrType::SHR;
+            return Instr::SHR;
         case 12:
-            return InstrType::CMP;
+            return Instr::CMP;
         case 13:
-            return InstrType::JMP;
+            return Instr::JMP;
         case 14:
-            return InstrType::JE;
+            return Instr::JE;
         case 15:
-            return InstrType::JNE;
+            return Instr::JNE;
         case 16:
-            return InstrType::JL;
+            return Instr::JL;
         case 17:
-            return InstrType::JG;
+            return Instr::JG;
         case 18:
-            return InstrType::JLE;
+            return Instr::JLE;
         case 19:
-            return InstrType::JGE;
+            return Instr::JGE;
         default:
-            throw TermiteException("illegal instruction: " + tryte.to_str());
+            throw TermiteException("illegal instruction: " + opcode.to_str());
         }
-    }
-
-    Instr decode_instr(const Word &word)
-    {
-        return Instr(decode_instr_type(word.hi), word.mid, word.lo);
     }
 } // namespace termite

@@ -5,7 +5,7 @@
 
 namespace termite
 {
-    enum class InstrType
+    enum class Instr
     {
         NOP,
         // Memory management
@@ -33,17 +33,6 @@ namespace termite
         JGE,
         JLE,
         JGE
-    };
-
-    // Represents a VM instruction.
-    class Instr
-    {
-    public:
-        InstrType type;
-        Tryte op1;
-        Tryte op2;
-
-        Instr(InstrType type, const Tryte &op1, const Tryte &op2);
     };
 } // namespace termite
 
