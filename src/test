@@ -1,0 +1,11 @@
+mov $40, %000000;
+mov $50, %000001;
+add %000000, %000001;
+out $0;
+
+
+INSTRUCTION SET ARCHITECTURE
+word
+OOOOOO-AAAAAA-BBBBBB
+
+20 trits 

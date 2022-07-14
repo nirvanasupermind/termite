@@ -5,13 +5,13 @@
 
 namespace termite
 {
-    Word::Word(const Tryte &hi, const Tryte &lo)
-        : hi(hi), lo(lo)
+    Word::Word(const Tryte &hi, const Tryte &mid, const Tryte &lo)
+        : hi(hi), mid(mid), lo(lo)
     {
     }
 
     std::string Word::to_str() const
     {
-        return hi.to_str() + lo.to_str();
+        return hi.to_str() + mid.to_str() + lo.to_str();
     }
 } // namespace termite

@@ -19,13 +19,13 @@ int main()
         // push 13;
         termite::Word(termite::Tryte("000001"), termite::Tryte("000111")), // stack: 13
         // push 14;
-        termite::Word(termite::Tryte("000001"), termite::Tryte("001TTT")), // stack: 14 13
+        termite::Word(termite::Tryte("000001"), termite::Tryte("000111")), // stack: 13
         // add;
-        termite::Word(termite::Tryte("0001T0"), termite::Tryte("000000")), // stack: 27
+        termite::Word(termite::Tryte("0001T0"), termite::Tryte("000000")), // stack: 26
         // out;
         termite::Word(termite::Tryte("0001TT"), termite::Tryte("000001")), // stack: (empty)
         // jmp 0;
-        termite::Word(termite::Tryte("000111"), termite::Tryte("000000")), // stack: (empty)
+        termite::Word(termite::Tryte("001TT1"), termite::Tryte("000000")), // stack: (empty)
     };
 
     vm.exec_program(program);

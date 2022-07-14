@@ -8,21 +8,18 @@ namespace termite
     enum class InstrType
     {
         NOP,
-        // Stack operations
-        PUSH,
-        POP,
-        SWAP,
+        // Memory management
+        MOV,
+        LDA,
+        STA,
         // I/O
         IN,
         OUT,
-        // Arithmetical operations
+        // Numerical operations
         ADD,
         NEG,
         SUB,
         MUL,
-        AND,
-        OR,
-        XOR,
         SHL,
         SHR,
         CMP,
@@ -33,6 +30,8 @@ namespace termite
         JL,
         JG,
         JLE,
+        JGE,
+        JLE,
         JGE
     };
 
@@ -41,9 +40,10 @@ namespace termite
     {
     public:
         InstrType type;
-        Tryte val;
+        Tryte op1;
+        Tryte op2;
 
-        Instr(InstrType type, const Tryte &val);
+        Instr(InstrType type, const Tryte &op1, const Tryte &op2);
     };
 } // namespace termite
 

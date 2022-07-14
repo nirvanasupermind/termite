@@ -58,7 +58,7 @@ namespace termite
         // Returns the tryte shifted to the left
         Tryte operator<<(int amount) const;
 
-        // Returns the tryte shifted to the left
+        // Returns the tryte shifted to the right
         Tryte operator>>(int amount) const;
 
         // Returns 1 if the first tryte is greater, -1 if the second tryte is greater, and 0 otherwise
@@ -73,10 +73,16 @@ namespace termite
         // Returns a string representation of the tryte for printing/debugging
         std::string to_str() const;
 
+        // A tryte with a value of -1
+        static const Tryte MINUS_ONE;
+
         // A tryte with a value of 0
         static const Tryte ZERO;
 
-        class HashFunction
+        // A tryte with a value of 1
+        static const Tryte ONE;
+        
+         class HashFunction
         {
         public:
             size_t operator()(const Tryte &tryte) const;

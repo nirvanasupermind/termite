@@ -24,7 +24,7 @@ namespace termite
         : trits(trits)
     {
     }
-    
+
     Tryte::Tryte(const std::string &str)
     {
         for (int i = 5; i >= 0; i--)
@@ -117,6 +117,22 @@ namespace termite
         return result;
     }
 
+    Tryte Tryte::operator>>(int amount) const
+    {
+        // 64 >> 3 (binary) = 00100000 = 0001000 = 8
+        // 64 >> 3 (ternary) = 001T11 = 000001T = 2
+
+        Tryte result = clone();
+
+        for (int i = 0; i < amount; i++)
+        {
+            std::copy_backward(std::begin(result.trits), std::end(result.trits) - 1, std::begin(result.trits) + 1);
+            result.trits[0] = Trit::ZERO;
+        }
+        
+        return result;
+    }
+
     Trit Tryte::cmp(const Tryte &other) const
     {
         for (int i = 5; i >= 0; i--)
@@ -190,7 +206,9 @@ namespace termite
         return result;
     }
 
+    const Tryte Tryte::MINUS_ONE("00000T");
     const Tryte Tryte::ZERO;
+    const Tryte Tryte::ONE("000001");
 
     size_t Tryte::HashFunction::operator()(const Tryte &tryte) const
     {

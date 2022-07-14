@@ -1,4 +1,14 @@
 SIZES:
-    Tryte size - 6 trits
-    Word size - 2 trytes
-    Instruction size - 1 word
+Tryte - 6 trits
+Word - 18 trits / 3 trytes (opcode, operand 1, operand 2)
+Instruction - 1 word
+
+REGISTERS:
+729 1-tryte memory registers
+1-tryte accumulator (used for storing results of )
+
+INSTRUCTIONS:
+nop - no operation
+mov a,b - moves the tryte located at address x into the address y
+lda x - loads the tryte located at address x into the accumulator
+sta x - stores the tryte located at the accumulator into address x

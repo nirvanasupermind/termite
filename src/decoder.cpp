@@ -13,11 +13,11 @@ namespace termite
         case 0:
             return InstrType::NOP;
         case 1:
-            return InstrType::PUSH;
+            return InstrType::MOV;
         case 2:
-            return InstrType::POP;
+            return InstrType::LDA;  
         case 3:
-            return InstrType::SWAP;
+            return InstrType::STA;
         case 4:
             return InstrType::IN;
         case 5:
@@ -27,17 +27,17 @@ namespace termite
         case 7:
             return InstrType::NEG;
         case 8:
-            return InstrType::SUB;   
+            return InstrType::SUB;
         case 9:
             return InstrType::MUL;
         case 10:
-            return InstrType::AND;    
+            return InstrType::SHL;
         case 11:
-            return InstrType::OR;  
+            return InstrType::SHR;
         case 12:
-            return InstrType::XOR;
+            return InstrType::CMP;
         case 13:
-            return InstrType::JMP;      
+            return InstrType::JMP;
         case 14:
             return InstrType::JE;
         case 15:
@@ -49,7 +49,7 @@ namespace termite
         case 18:
             return InstrType::JLE;
         case 19:
-            return InstrType::JGE;            
+            return InstrType::JGE;
         default:
             throw TermiteException("illegal instruction: " + tryte.to_str());
         }
@@ -57,6 +57,6 @@ namespace termite
 
     Instr decode_instr(const Word &word)
     {
-        return Instr(decode_instr_type(word.hi), word.lo);
+        return Instr(decode_instr_type(word.hi), word.mid, word.lo);
     }
 } // namespace termite

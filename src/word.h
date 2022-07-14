@@ -13,10 +13,12 @@ namespace termite
     public:
         Tryte hi;
 
+        Tryte mid;
+
         Tryte lo;
 
         // Creates a word from it's constituent 2 trytes
-        Word(const Tryte &hi, const Tryte &lo);
+        Word(const Tryte &hi, const Tryte &mid, const Tryte &lo);
 
         // Returns a string representation of the word for printing/debugging
         std::string to_str() const;
