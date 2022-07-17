@@ -15,7 +15,7 @@ namespace termite
     }
 
     Trit::Trit(char chr)
-        : val(chr == 'T' ? -1 : (chr == '0' ? 0 : 1))
+        : val(chr == 'Z' ? -1 : (chr == '0' ? 0 : 1))
     {
     }
 
@@ -51,7 +51,7 @@ namespace termite
 
     char Trit::to_chr() const
     {
-        return (val == -1 ? 'T' : (val == 0 ? '0' : '1'));
+        return (val == -1 ? 'Z' : (val == 0 ? '0' : '1'));
     }
 
     const Trit Trit::MINUS_ONE(-1);

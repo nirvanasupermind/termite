@@ -1,24 +1,26 @@
+#include <iostream>
 #include <string>
 #include <array>
 #include <cmath>
 #include <functional>
 
 #include "trit.h"
+#include "duet.h"
 #include "tryte.h"
 
 namespace termite
 {
     // int Tryte::mod3(int val)
-	// {
-	// 	if(val > 0)
+    // {
+    // 	if(val > 0)
     //     {
-	// 		return val % 3;
+    // 		return val % 3;
     //     }
-		
+
     //     val = val % 3;
 
-	// 	return (val + 3) % 3;
-	// }
+    // 	return (val + 3) % 3;
+    // }
 
     Tryte::Tryte(const std::array<Trit, 6> &trits)
         : trits(trits)
@@ -27,9 +29,11 @@ namespace termite
 
     Tryte::Tryte(const std::string &str)
     {
-        for (int i = 5; i >= 0; i--)
+        for (int i = 2; i >= 0; i--)
         {
-            trits[i] = str.at(i);
+            Duet duet(str.at(i));
+            trits[2 * i] = duet.hi;
+            trits[2 * i + 1] = duet.lo;
         }
     }
 
@@ -129,7 +133,7 @@ namespace termite
             std::copy_backward(std::begin(result.trits), std::end(result.trits) - 1, std::begin(result.trits) + 1);
             result.trits[0] = Trit::ZERO;
         }
-        
+
         return result;
     }
 
@@ -189,6 +193,21 @@ namespace termite
         return result;
     }
 
+    Duet Tryte::hi_duet() const
+    {
+        return Duet(trits.at(0), trits.at(1));
+    }
+
+    Duet Tryte::mid_duet() const
+    {
+        return Duet(trits.at(2), trits.at(3));
+    }
+
+    Duet Tryte::lo_duet() const
+    {
+        return Duet(trits.at(4), trits.at(5));
+    }
+
     int Tryte::to_int() const
     {
         return trits.at(0).val * 243 + trits.at(1).val * 81 + trits.at(2).val * 27 + trits.at(3).val * 9 + trits.at(4).val * 3 + trits.at(5).val;
@@ -196,19 +215,12 @@ namespace termite
 
     std::string Tryte::to_str() const
     {
-        std::string result;
-
-        for (int i = 0; i < 6; i++)
-        {
-            result.push_back(trits.at(i).to_chr());
-        }
-
-        return result;
+        return std::string() + hi_duet().to_chr() + mid_duet().to_chr() + lo_duet().to_chr();
     }
 
-    const Tryte Tryte::MINUS_ONE("00000T");
+    const Tryte Tryte::MINUS_ONE("00Z");
     const Tryte Tryte::ZERO;
-    const Tryte Tryte::ONE("000001");
+    const Tryte Tryte::ONE("001");
 
     size_t Tryte::HashFunction::operator()(const Tryte &tryte) const
     {

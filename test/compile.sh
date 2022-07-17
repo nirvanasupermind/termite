@@ -1,1 +1,1 @@
-g++ -std=c++11 src/*.cpp test/manual-test.cpp -o test/manual-test
+g++ -std=c++11 src/trit.cpp src/duet.cpp src/tryte.cpp test/manual-test.cpp -o test/manual-test

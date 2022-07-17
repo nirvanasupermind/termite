@@ -5,6 +5,7 @@
 #include <array>
 
 #include "trit.h"
+#include "duet.h"
 
 namespace termite
 {
@@ -28,7 +29,7 @@ namespace termite
         // Creates a tryte from a native integer
         Tryte(int val);
 
-        // Creates a tryte from a balanced ternary string
+        // Creates a tryte from a balanced nonary string
         Tryte(const std::string &str);
 
         // Returns a clone of the tryte
@@ -67,10 +68,19 @@ namespace termite
         // Checks if the two trytes are not equal
         bool operator!=(const Tryte &other) const;
 
+        // Returns the first duet of the tryte
+        Duet hi_duet() const;
+
+        // Returns the second duet of the tryte
+        Duet mid_duet() const;
+
+        // Returns the third duet of the tryte
+        Duet lo_duet() const;
+        
         // Returns a native integer representation of the tryte
         int to_int() const;
         
-        // Returns a string representation of the tryte for printing/debugging
+        // Returns a balanced nonary string representation of the tryte for printing/debugging
         std::string to_str() const;
 
         // A tryte with a value of -1
@@ -82,7 +92,7 @@ namespace termite
         // A tryte with a value of 1
         static const Tryte ONE;
         
-         class HashFunction
+        class HashFunction
         {
         public:
             size_t operator()(const Tryte &tryte) const;
