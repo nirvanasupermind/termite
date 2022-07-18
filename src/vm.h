@@ -5,47 +5,32 @@
 #include <vector>
 #include <unordered_map>
 
+#include "duet.h"
 #include "tryte.h"
 #include "word.h"
+#include "instr.h"
 
 namespace termite
 {
     class VM
     {
     protected:
-        std::unordered_map<Tryte, Tryte, Tryte::HashFunction> mem;
-        Tryte accum;
-
+        Tryte accum_reg;
+        Tryte x_reg;
+        Tryte y_reg;
     public:        
         VM() = default;
 
-        void exec_program(const std::vector<Word> &program);
+        void exec_program(const std::vector<Instr> &program);
 
-        void mov(const Tryte &op1, const Tryte &op2);
+        void nop();
 
-        void sto(const Tryte &op1, const Tryte &op2);
-
-        void lda(const Tryte &op1);
-
-        void sta(const Tryte &op1);
-
-        void in(const Tryte &op1);
-
-        void out(const Tryte &op1);
-
-        void add(const Tryte &op1, const Tryte &op2);
-
-        void neg(const Tryte &op1);
-
-        void sub(const Tryte &op1, const Tryte &op2);
-
-        void mul(const Tryte &op1, const Tryte &op2);
-
-        void shl(const Tryte &op1, const Tryte &op2);
-
-        void shr(const Tryte &op1, const Tryte &op2);
-
-        void cmp(const Tryte &op1, const Tryte &op2);   
+        void lda(const Word &operand, const Duet &addr_mode);
+        void sta(const Word &operand, const Duet &addr_mode);
+        void ldx(const Word &operand, const Duet &addr_mode);
+        void stx(const Word &operand, const Duet &addr_mode);
+        void ldy(const Word &operand, const Duet &addr_mode);
+        void sty(const Word &operand, const Duet &addr_mode);
     };
     
 } // namespace termite

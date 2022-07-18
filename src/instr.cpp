@@ -1,10 +1,12 @@
-#include "tryte.h"
+#include "duet.h"
+#include "word.h"
+#include "op.h"
 #include "instr.h"
 
 namespace termite
 {
-    Instr::Instr(InstrType type, const Tryte &op1, const Tryte &op2)
-        : type(type), op1(op1), op2(op2)
+    Instr::Instr(Op op, const Word &operand, const Duet &addr_mode)
+        : op(op), operand(operand), addr_mode(addr_mode)
     {
     }
 } // namespace termite

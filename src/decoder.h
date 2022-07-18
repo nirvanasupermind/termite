@@ -5,12 +5,11 @@
 
 #include "tryte.h"
 #include "word.h"
-#include "instr.h"
+#include "op.h"
 
 namespace termite
 {
-    Instr decode_instr(const Tryte &opcode);
-
+    Op decode_op(const Tryte &opcode);
 } // namespace termite
 
 #endif

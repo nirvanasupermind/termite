@@ -17,13 +17,18 @@ ldx - loads a value into the X register
 stx - stores the X register into main memory
 ldy - loads a value into the Y register
 sty - stores the Y register into main memory
+in - inputs a value in a certain mode and loads it in the accumulator
+out - outputs the accumulator in a certain mode
 neg - negates the accumulator
 add - adds a value to the accumulator
+neg - negates the accumulator
 sub - subtracts a value from the accumulator
 mul - multiplies the accumulator by a value
 and - takes trit-wise AND of a value and the accumulator
 or - takes trit-wise OR of a value and the accumulator
 xor - takes trit-wise XOR of a value and the accumulator
+shl - left-shifts the accumulator
+shr - right-shifts the accumulator
 cmp - compares a value against the accumulator
 jmp - jumps to a certain instruction
 je - jumps to a certain instruction, provided the accumulator is an equals indicator

@@ -1,38 +1,22 @@
 #ifndef INSTR_H
 #define INSTR_H
 
+#include "duet.h"
 #include "tryte.h"
+#include "word.h"
+#include "op.h"
 
 namespace termite
 {
-    enum class Instr
+
+    class Instr 
     {
-        NOP,
-        // Memory management
-        MOV,
-        LDA,
-        STA,
-        // I/O
-        IN,
-        OUT,
-        // Numerical operations
-        ADD,
-        NEG,
-        SUB,
-        MUL,
-        SHL,
-        SHR,
-        CMP,
-        // Control flow
-        JMP,
-        JE,
-        JNE,
-        JL,
-        JG,
-        JLE,
-        JGE,
-        JLE,
-        JGE
+    public:
+        Op op;
+        Word operand;
+        Duet addr_mode;
+
+        Instr(Op op, const Word &operand, const Duet &addr_mode);
     };
 } // namespace termite
 
