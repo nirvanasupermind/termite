@@ -1,1 +1,1 @@
-g++ -std=c++11 src/*.cpp test/manual-test.cpp -o test/manual-test
+g++ -std=c++11 src/core/*.cpp src/vm/*.cpp test/manual-test.cpp -o test/manual-test

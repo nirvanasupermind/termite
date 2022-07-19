@@ -1,7 +1,6 @@
 #include <string>
-#include <array>
 
-#include "tryte.h"
+#include "../core/tryte.h"
 #include "word.h"
 
 namespace termite
@@ -16,8 +15,18 @@ namespace termite
     // {
     // }
 
+    bool Word::operator==(const Word &other) const
+    {
+        return hi.to_int() == other.hi.to_int() && lo.to_int() == other.lo.to_int();
+    }
+
     std::string Word::to_str() const
     {
         return hi.to_str() + lo.to_str();
     }
+
+    size_t Word::HashFunction::operator()(const Word &word) const
+    {   
+        return Tryte::HashFunction()(word.hi) ^ Tryte::HashFunction()(word.lo);
+    }    
 } // namespace termite

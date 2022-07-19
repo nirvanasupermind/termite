@@ -1,4 +1,4 @@
-#include "duet.h"
+#include "../core/duet.h"
 #include "word.h"
 #include "op.h"
 #include "instr.h"

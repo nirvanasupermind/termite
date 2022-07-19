@@ -9,6 +9,10 @@ REGISTERS:
 1-tryte X register
 1-tryte Y register
 
+ADDRESSING MODES:
+0 - immediate
+1 - direct
+
 INSTRUCTIONS:
 nop - no operation
 lda - load a value into the accumulator

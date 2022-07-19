@@ -65,9 +65,6 @@ namespace termite
         // Returns 1 if the first tryte is greater, -1 if the second tryte is greater, and 0 otherwise
         Trit cmp(const Tryte &other) const;
 
-        // Checks if the two trytes are not equal
-        bool operator!=(const Tryte &other) const;
-
         // Returns the first duet of the tryte
         Duet hi_duet() const;
 

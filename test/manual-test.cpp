@@ -1,7 +1,7 @@
 #include <iostream>
 #include <array>
 
-#include "../src/tryte.h"
+#include "../src/core/tryte.h"
 
 int main() 
 {   
