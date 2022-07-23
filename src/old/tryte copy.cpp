@@ -5,7 +5,7 @@
 #include <functional>
 
 #include "trit.h"
-#include "duet.h"
+#include "trybble.h"
 #include "tryte.h"
 
 namespace termite
@@ -27,14 +27,27 @@ namespace termite
     {
     }
 
+    Tryte::Tryte(const Trybble &hi, const Trybble &lo)
+    {
+        trits[0] = hi.trit0;
+        trits[1] = hi.trit1;
+        trits[2] = hi.trit2;
+        trits[3] = lo.trit0;
+        trits[4] = lo.trit1;
+        trits[5] = lo.trit2;
+    }
+
     Tryte::Tryte(const std::string &str)
     {
-        for (int i = 2; i >= 0; i--)
-        {
-            Duet duet(str.at(i));
-            trits[2 * i] = duet.hi;
-            trits[2 * i + 1] = duet.lo;
-        }
+        Trybble hi = Trybble(str.at(0));
+        Trybble lo = Trybble(str.at(1));
+
+        trits[0] = hi.trit0;
+        trits[1] = hi.trit1;
+        trits[2] = hi.trit2;
+        trits[3] = lo.trit0;
+        trits[4] = lo.trit1;
+        trits[5] = lo.trit2;
     }
 
     Tryte Tryte::clone() const
@@ -109,54 +122,6 @@ namespace termite
         return result;
     }
 
-    Tryte Tryte::operator<<(int amount) const
-    {
-        Tryte result;
-
-        for (int i = 5 - amount; i >= 0; i--)
-        {
-            result.trits[i] = trits.at(i + amount);
-        }
-
-        return result;
-    }
-
-    Tryte Tryte::operator>>(int amount) const
-    {
-        // 64 >> 3 (binary) = 00100000 = 0001000 = 8
-        // 64 >> 3 (ternary) = 001T11 = 000001T = 2
-
-        Tryte result = clone();
-
-        for (int i = 0; i < amount; i++)
-        {
-            std::copy_backward(std::begin(result.trits), std::end(result.trits) - 1, std::begin(result.trits) + 1);
-            result.trits[0] = Trit::ZERO;
-        }
-
-        return result;
-    }
-
-    Trit Tryte::cmp(const Tryte &other) const
-    {
-        for (int i = 5; i >= 0; i--)
-        {
-            int a = trits.at(i).val;
-            int b = other.trits.at(i).val;
-
-            if (a < b)
-            {
-                return Trit::MINUS_ONE;
-            }
-            else if (a > b)
-            {
-                return Trit::ONE;
-            }
-        }
-
-        return Trit::ZERO;
-    }
-
     Tryte Tryte::operator&(const Tryte &other) const
     {
         Tryte result;
@@ -193,19 +158,67 @@ namespace termite
         return result;
     }
 
-    Duet Tryte::hi_duet() const
+    Tryte Tryte::operator<<(int amount) const
     {
-        return Duet(trits.at(0), trits.at(1));
+        Tryte result;
+
+        for (int i = 5 - amount; i >= 0; i--)
+        {
+            result.trits[i] = trits.at(i + amount);
+        }
+
+        return result;
     }
 
-    Duet Tryte::mid_duet() const
+    Tryte Tryte::operator>>(int amount) const
     {
-        return Duet(trits.at(2), trits.at(3));
+        // 64 >> 3 (binary) = 00100000 = 0001000 = 8
+        // 64 >> 3 (ternary) = 001T11 = 000001T = 2
+
+        Tryte result = clone();
+
+        for (int i = 0; i < amount; i++)
+        {
+            std::copy_backward(std::begin(result.trits), std::end(result.trits) - 1, std::begin(result.trits) + 1);
+            result.trits[0] = Trit::ZERO;
+        }
+
+        return result;
     }
 
-    Duet Tryte::lo_duet() const
+    Trybble Tryte::hi_trybble() const
     {
-        return Duet(trits.at(4), trits.at(5));
+        return Trybble(trits.at(0), trits.at(1), trits.at(2));
+    }
+
+    Trybble Tryte::lo_trybble() const
+    {
+        return Trybble(trits.at(3), trits.at(4), trits.at(5));
+    }
+
+    Trit Tryte::cmp(const Tryte &other) const
+    {
+        for (int i = 5; i >= 0; i--)
+        {
+            int a = trits.at(i).val;
+            int b = other.trits.at(i).val;
+
+            if (a < b)
+            {
+                return Trit::MINUS_ONE;
+            }
+            else if (a > b)
+            {
+                return Trit::ONE;
+            }
+        }
+
+        return Trit::ZERO;
+    }
+
+    bool Tryte::operator==(const Tryte &other) const
+    {
+        return to_int() == other.to_int();
     }
 
     int Tryte::to_int() const
@@ -215,15 +228,10 @@ namespace termite
 
     std::string Tryte::to_str() const
     {
-        return std::string() + hi_duet().to_chr() + mid_duet().to_chr() + lo_duet().to_chr();
+        return std::string() + hi_trybble().to_chr() + lo_trybble().to_chr();
     }
 
-    const Tryte Tryte::MINUS_ONE("00Z");
+    const Tryte Tryte::MINUS_ONE("0Z");
     const Tryte Tryte::ZERO;
-    const Tryte Tryte::ONE("001");
-
-    size_t Tryte::HashFunction::operator()(const Tryte &tryte) const
-    {
-        return std::hash<int>()(tryte.to_int());
-    }
+    const Tryte Tryte::ONE("01");
 } // namespace termite

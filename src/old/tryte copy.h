@@ -5,31 +5,30 @@
 #include <array>
 
 #include "trit.h"
-#include "duet.h"
+#include "trybble.h"
 
 namespace termite
 {
     // Ternary analogue to a byte. 6 trits, a total of 729 states (-364 through 364).
     class Tryte
     {
-    protected:
+    public:
         // The tryte's constituent 6 trits
         std::array<Trit, 6> trits;
 
-        // int mod3(int val);
-
-        // std::array<Trit, 6> to_bt(int val);
-    public:
         // Creates a tryte equal to 0
         Tryte() = default;
 
         // Creates a tryte from it's constituent 6 trits
         Tryte(const std::array<Trit, 6> &trits);
 
+        // Creates a tryte from hi and lo trybbles
+        Tryte(const Trybble &hi, const Trybble &lo);
+
         // Creates a tryte from a native integer
         Tryte(int val);
 
-        // Creates a tryte from a balanced nonary string
+        // Creates a tryte from a balanced heptavigesimal string
         Tryte(const std::string &str);
 
         // Returns a clone of the tryte
@@ -61,23 +60,23 @@ namespace termite
 
         // Returns the tryte shifted to the right
         Tryte operator>>(int amount) const;
-
+        
         // Returns 1 if the first tryte is greater, -1 if the second tryte is greater, and 0 otherwise
         Trit cmp(const Tryte &other) const;
 
-        // Returns the first duet of the tryte
-        Duet hi_duet() const;
+        // Checks if two trytes are equal
+        bool operator==(const Tryte &other) const;
 
-        // Returns the second duet of the tryte
-        Duet mid_duet() const;
+        // Returns the hi trybble of the tryte
+        Trybble hi_trybble() const;
 
-        // Returns the third duet of the tryte
-        Duet lo_duet() const;
-        
+        // Returns the lo trybble of the tryte
+        Trybble lo_trybble() const;
+
         // Returns a native integer representation of the tryte
         int to_int() const;
         
-        // Returns a balanced nonary string representation of the tryte for printing/debugging
+        // Returns a balanced heptavigesimal string representation of the tryte for printing/debugging
         std::string to_str() const;
 
         // A tryte with a value of -1
@@ -88,12 +87,6 @@ namespace termite
 
         // A tryte with a value of 1
         static const Tryte ONE;
-        
-        class HashFunction
-        {
-        public:
-            size_t operator()(const Tryte &tryte) const;
-        };
     };
 } // namespace termite
 

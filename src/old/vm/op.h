@@ -6,6 +6,7 @@ namespace termite
     enum class Op
     {
         NOP,
+        RET,
         // Memory management
         LDA,
         STA,

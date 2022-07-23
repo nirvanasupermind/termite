@@ -1,34 +1,27 @@
 #include <iostream>
-#include <array>
 
 #include "../src/core/tryte.h"
+#include "../src/vm/vm.h"
 
 int main() 
 {   
-    termite::Tryte tryte1("040");
-    termite::Tryte tryte2("02Y");
-
-    std::cout << (tryte1 + tryte2).to_str() << '\n'; // 1XY
-
     // termite::VM vm;
 
-    // // program - many instructions
-    // // instruction size = 1 word
-    // // word size = 2 trytes
-    // // tryte size = 6 trits (convention I adopted from "Setun" ternary computer)
-    
-    // std::vector<termite::Word> program {
-    //     // push 13;
-    //     termite::Word(termite::Tryte("000001"), termite::Tryte("000111")), // stack: 13
-    //     // push 14;
-    //     termite::Word(termite::Tryte("000001"), termite::Tryte("000111")), // stack: 13
-    //     // add;
-    //     termite::Word(termite::Tryte("0001T0"), termite::Tryte("000000")), // stack: 26
-    //     // out;
-    //     termite::Word(termite::Tryte("0001TT"), termite::Tryte("000001")), // stack: (empty)
-    //     // jmp 0;
-    //     termite::Word(termite::Tryte("001TT1"), termite::Tryte("000000")), // stack: (empty)
-    // };
+    // // Assembly: lda #$020;
+    // // 02102000 011000000 000000000 000000000 000000000 000000000 000000000 ...
+    // // Instruction - 18 trits / 3 trytes (4-trit opcode, 2-trit addressing mode, 12-trit addressable)
 
-    // vm.exec_program(program);
+    // // 021020000
+    // // 02 1 020000
+ 
+    // vm.mem.store(termite::Word("000000"), termite::Tryte("021")); 
+    // vm.mem.store(termite::Word("000001"), termite::Tryte("020")); 
+    // vm.mem.store(termite::Word("000002"), termite::Tryte("000"));
+
+    // // Assembly: ret #$000;
+    // vm.mem.store(termite::Word("000003"), termite::Tryte("011")); 
+    // vm.mem.store(termite::Word("000004"), termite::Tryte("000")); 
+    // vm.mem.store(termite::Word("00001W"), termite::Tryte("000"));
+
+    // vm.exec_program();
 }

@@ -1,13 +1,12 @@
 SIZES:
 Tryte - 6 trits
-Word - 18 trits / 3 trytes
-Instruction - 1 word (1-tryte opcode, 2-tryte argument)
+Instruction - 18 trits / 3 trytes (4-trit opcode, 1-trit addressing mode #1, 1-trit addressing mode #2, 6-trit operand #1, 6-trit operand #2)
 
 REGISTERS:
-531,441 1-tryte main memory registers
+3^6 = 729 1-tryte main memory registers
 1-tryte accumulator
-1-tryte X register
-1-tryte Y register
+1-tryte program counter
+1-tryte registers 0-5
 
 ADDRESSING MODES:
 0 - immediate
@@ -15,29 +14,3 @@ ADDRESSING MODES:
 
 INSTRUCTIONS:
 nop - no operation
-lda - load a value into the accumulator
-sta - stores the accumulator into main memory
-ldx - loads a value into the X register
-stx - stores the X register into main memory
-ldy - loads a value into the Y register
-sty - stores the Y register into main memory
-in - inputs a value in a certain mode and loads it in the accumulator
-out - outputs the accumulator in a certain mode
-neg - negates the accumulator
-add - adds a value to the accumulator
-neg - negates the accumulator
-sub - subtracts a value from the accumulator
-mul - multiplies the accumulator by a value
-and - takes trit-wise AND of a value and the accumulator
-or - takes trit-wise OR of a value and the accumulator
-xor - takes trit-wise XOR of a value and the accumulator
-shl - left-shifts the accumulator
-shr - right-shifts the accumulator
-cmp - compares a value against the accumulator
-jmp - jumps to a certain instruction
-je - jumps to a certain instruction, provided the accumulator is an equals indicator
-jne - jumps to a certain instruction, provided the accumulator is a not equals indicator
-jl - jumps to a certain instruction, provided the accumulator is a less than indicator
-jg - jumps to a certain instruction, provided the accumulator is a greater than indicator
-jle - jumps to a certain instruction, provided the accumulator is a less than or equal indicator
-jge - jumps to a certain instruction, provided the accumulator is a greater than or equal indicator
