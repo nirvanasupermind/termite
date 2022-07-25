@@ -5,6 +5,7 @@
 
 int main() 
 {   
+    termite::Tr
     // termite::VM vm;
 
     // // Assembly: lda #$020;

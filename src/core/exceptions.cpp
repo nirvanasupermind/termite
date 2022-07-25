@@ -1,4 +1,4 @@
-//-*- core/exceptions.cpp -*-/
+// -*- core/exceptions.cpp -*-
 // Part of the Termite project
 // Usage permitted under terms of MIT license
 

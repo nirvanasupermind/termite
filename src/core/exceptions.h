@@ -1,4 +1,4 @@
-//-*- core/exceptions.h -*-/
+// -*- core/exceptions.h -*-
 // Part of the Termite project
 // Usage permitted under terms of MIT license
 
@@ -23,4 +23,4 @@ namespace termite
     };
 } // namespace termite
 
-#endif
+#endif // EXCEPTIONS_H
