@@ -16,9 +16,9 @@ namespace termite
 
     class Trybble
     {
-    protected:
-        uint8_t bits;
     public:
+        uint8_t bits;
+
         Trybble();
 
         Trybble(uint8_t bits);
@@ -31,15 +31,18 @@ namespace termite
 
         // Converts the BCT trybble to a ternary string.
         std::string to_ternary_str() const;
-        
-        // Returns the first BCT trit of the BCT trybble.
-        uint8_t first_trit() const;
+    
+        // Converts the BCT trybble to a heptavigesimal character.
+        char to_hept_chr() const;
+    
+        // // Returns the first BCT trit of the BCT trybble.
+        // uint8_t first_trit() const;
 
-        // Returns the second BCT trit of the BCT trybble.
-        uint8_t second_trit() const;
+        // // Returns the second BCT trit of the BCT trybble.
+        // uint8_t second_trit() const;
 
-        // Returns the third BCT trit of the BCT trybble.
-        uint8_t third_trit() const;
+        // // Returns the third BCT trit of the BCT trybble.
+        // uint8_t third_trit() const;
     };
     
 } // namespace termite

@@ -13,48 +13,43 @@
 namespace termite
 {
     // A tryte is a ternary analog to a byte, representing 6 trits or 2 trybbles of data.
-    // Trytes are frequently used as numerical data types.
+    // BCT trytes are frequently used as numerical data types.
 
     class Tryte
     {
-    protected:
+    public:
         Trybble hi;
 
         Trybble lo;
 
-        static uint8_t add_bct_trits(uint8_t a, uint8_t b);
-    public:
         // Convert two BCT trybbles to a tryte.
         Tryte(const Trybble &hi, const Trybble &lo);
 
-        // Returns the BCT representation of the tryte's high trybble.
-        Trybble hi_bct() const;
-
-        // Returns the BCT representation of the tryte's low trybble.
-        Trybble lo_bct() const;
-
-        // Returns a value of the tryte's high trybble.
+        // Returns a value of the BCT tryte's high trybble.
         int8_t hi_val() const;
 
-        // Returns a value of the tryte's low trybble.
+        // Returns a value of the BCT tryte's low trybble.
         int8_t lo_val() const;
 
-        // Returns the sum of two trytes.
+        // Returns the sum of two BCT trytes.
         Tryte operator+(const Tryte &other) const;
 
-        // Returns the negation of the trytes.
+        // Returns the negation of the BCT BCT trytes.
         Tryte operator-() const;
 
-        // Returns the difference of two trytes.
+        // Returns the difference of two BCT trytes.
         Tryte operator-(const Tryte &other) const;
 
-        // Returns the product of two trytes.
+        // Returns the product of two BCT trytes.
         Tryte operator*(const Tryte &other) const;
 
-        // Converts the tryte to a native integer.
-        int to_int() const;
+        // Returns the internal bits of the BCT tryte, stored inside a native uint16.
+        uint16_t bits() const;
 
-        // Converts the tryte to a ternary string.
+        // Converts the BCT tryte to a native int16.
+        int16_t to_int16() const; 
+
+        // Converts the BCT tryte to a ternary string.
         std::string to_ternary_str() const;
     };
 } // namespace termite
