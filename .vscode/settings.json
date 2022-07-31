@@ -1,9 +1,0 @@
-{
-    "files.associations": {
-        "*.punylisp": "lisp",
-        "*.eris": "swift",
-        "*.bnf": "bnf",
-        "iostream": "cpp",
-        "cassert": "cpp"
-    }
-}

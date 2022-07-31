@@ -8,6 +8,7 @@
 #include <string>
 #include <cstdint>
 
+#include "util.h"
 #include "trybble.h"
 
 namespace termite
@@ -22,8 +23,13 @@ namespace termite
 
         Trybble lo;
 
-        // Convert two BCT trybbles to a tryte.
+        // Convert two BCT trybbles to a BCT tryte.
         Tryte(const Trybble &hi, const Trybble &lo);
+
+        // Converts raw bits to a BCT tryte.
+        Tryte(FromBits, uint16_t bits);
+
+        bool valid() const;
 
         // Returns a value of the BCT tryte's high trybble.
         int8_t hi_val() const;
@@ -34,7 +40,7 @@ namespace termite
         // Returns the sum of two BCT trytes.
         Tryte operator+(const Tryte &other) const;
 
-        // Returns the negation of the BCT BCT trytes.
+        // Returns the negation of the BCT tryte.
         Tryte operator-() const;
 
         // Returns the difference of two BCT trytes.

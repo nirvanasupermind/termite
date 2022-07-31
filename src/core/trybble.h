@@ -5,15 +5,17 @@
 #ifndef TRYBBLE_H
 #define TRYBBLE_H
 
+#include "util.h"
+
 #include <cstdint>
 #include <array>
 
 namespace termite
 {
+
     // A trybble is a ternary analog to a nybble, representing 3 trits or half a tryte of data.
     // We store trybbles in binary-coded ternary format where each trit is stored as 2 bits, 00 for 0, 01 for 1, and 10 for T.
     // For example, the bits 0b00_01_10 correspond to the trits 01T in balanced ternary.
-
     class Trybble
     {
     public:
@@ -21,10 +23,12 @@ namespace termite
 
         Trybble();
 
-        Trybble(uint8_t bits);
-
         // Converts a native int8 to a BCT trybble.
         Trybble(int8_t val);
+
+
+        // Converts raw bits to a BCT trybble.
+        Trybble(FromBits, uint8_t bits);
 
         // Converts the BCT trybble to a native int8.
         int8_t to_int8() const;

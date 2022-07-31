@@ -3,7 +3,7 @@ This document is used for planning and outlining Termite and it's features. Many
 As a convention, "0b" prefix is used for binary numbers and "0t" prefix is used for ternary numbers.
 
 # Sizes
-- Commonly-used sizes for data types and instructions are 3, 6, 12, 24, etc. trits (powers of 2 times 3).
+- Commonly-used sizes for data types and instructions are 3, 6, 12, 24, 48, etc. trits (3 times the powers of 2).
 
 - A trybble (ternary analogue to nybble) is 3 trits.
 - A tryte (ternary analogue to byte) is 2 trybbles, or 6 trits.
@@ -20,6 +20,8 @@ As a convention, "0b" prefix is used for binary numbers and "0t" prefix is used 
 - 24-trit (single-precision) floating-point numbers will use a 6-trit exponent and 18-trit significand, 
   which translates to approximately 8 decimal digits of precision.
 - 48-trit (double-precision) floating-point numbers will use an 12-trit exponent and 36-trit significand, 
+  which translates to approximately 18 decimal digits of precision.
+- 60-trit (extended-precision) floating-point numbers will use a 24-trit exponent and 36-trit significand, 
   which translates to approximately 18 decimal digits of precision.
 
 # Displaying numbers
@@ -97,3 +99,29 @@ Integers and floating-point numbers may be input and displayed in three number s
     - Subsegment `8`: IPA Extensions
     - Subsegment `9`: Greek Uppercase
     - Subsegment `a`: Greek Lowercase
+
+# C-like language example
+```
+int12 gcd(int12 a, int12 b) {
+  if(b == 0) {
+    return a;
+  } else {
+    return gcd(b, a % b);
+  }
+}
+
+int12 fac(int12 a) {
+  if(a == 0) {
+    return 1;
+  } else {
+    return a * fac(a - 1);
+  }
+}
+
+void main() {
+  print(fac(gcd(10, 15))); // 120
+  print("\n");
+}
+
+
+```

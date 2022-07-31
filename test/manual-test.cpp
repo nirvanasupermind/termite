@@ -5,16 +5,17 @@
 
 int main() 
 {   
-    termite::Tryte tryte1((int8_t)0, (int8_t)10);
-    termite::Tryte tryte2((int8_t)0, (int8_t)1);
+    termite::Tryte tryte1((int8_t)1, (int8_t)16);
+    termite::Tryte tryte2((int8_t)1, (int8_t)4);
 
-    std::assert((tryte1 + tryte2).to_int16() == 11);
-    
+    std::cout << (tryte1 + tryte2).to_ternary_str() << '\n';
 
-    termite::Tryte tryte3((int8_t)0, (int8_t)3);
-    termite::Tryte tryte4((int8_t)0, (int8_t)1);
+    return 0;
 
-    std::assert((tryte3 + tryte4).to_int16() == 4);
+    // termite::Tryte tryte3((int8_t)0, (int8_t)3);
+    // termite::Tryte tryte4((int8_t)0, (int8_t)1);
+
+    // assert((tryte3 + tryte4).to_int16() == 4);
     
 
     // termite::Tryte tryte1((int8_t)0, (int8_t)10);

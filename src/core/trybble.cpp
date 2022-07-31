@@ -9,8 +9,8 @@
 
 namespace termite
 {
-    Trybble::Trybble(uint8_t bits)
-        : bits(bits)
+    Trybble::Trybble()
+        : bits(0)
     {
     }
 
@@ -26,58 +26,88 @@ namespace termite
             break;
         case 2:
             bits = 0b000010; // 002
+            break;
         case 3:
             bits = 0b000100; // 010
+            break;
         case 4:
             bits = 0b000101; // 011
+            break;
         case 5:
             bits = 0b000110; // 012
+            break;
         case 6:
             bits = 0b001000; // 020
+            break;
         case 7:
             bits = 0b001001; // 021
+            break;
         case 8:
             bits = 0b001010; // 022
+            break;
         case 9:
             bits = 0b010000; // 100
+            break;
         case 10:
             bits = 0b010001; // 101
+            break;
         case 11:
             bits = 0b010010; // 102
+            break;
         case 12:
             bits = 0b010100; // 110
+            break;
         case 13:
             bits = 0b010101; // 111
+            break;
         case 14:
             bits = 0b010110; // 112
+            break;
         case 15:
             bits = 0b011000; // 120
+            break;
         case 16:
             bits = 0b011001; // 121
+            break;
         case 17:
             bits = 0b011010; // 122
+            break;
         case 18:
             bits = 0b100000; // 200
+            break;
         case 19:
             bits = 0b100001; // 201
+            break;
         case 20:
             bits = 0b100010; // 202
+            break;
         case 21:
             bits = 0b100100; // 210
+            break;
         case 22:
             bits = 0b100101; // 211
+            break;
         case 23:
             bits = 0b100110; // 212
+            break;
         case 24:
             bits = 0b101000; // 220
+            break;
         case 25:
             bits = 0b101001; // 221
+            break;
         case 26:
             bits = 0b101010; // 222
+            break;
         default:
             bits = 0;
             break;
         }
+    }
+
+    Trybble::Trybble(FromBits, uint8_t bits)
+        : bits(bits)
+    {
     }
 
     int8_t Trybble::to_int8() const
@@ -202,7 +232,8 @@ namespace termite
         case 0b101010:
             return "222";
         default:
-            return 0;
+            // std::cout << bits << '\n';
+            return "";
         }
     }
 
