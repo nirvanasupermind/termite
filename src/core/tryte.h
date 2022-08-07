@@ -29,7 +29,7 @@ namespace termite
         // Converts raw bits to a BCT tryte.
         Tryte(FromBits, uint16_t bits);
 
-        bool valid() const;
+        // bool valid() const;
 
         // Returns a value of the BCT tryte's high trybble.
         int8_t hi_val() const;
@@ -37,10 +37,13 @@ namespace termite
         // Returns a value of the BCT tryte's low trybble.
         int8_t lo_val() const;
 
+        // Returns the internal bits of the BCT tryte, stored inside a native uint16.
+        uint16_t bits() const;
+        
         // Returns the sum of two BCT trytes.
         Tryte operator+(const Tryte &other) const;
 
-        // Returns the negation of the BCT tryte.
+        // Returns the negation (3's complement) of the BCT tryte.
         Tryte operator-() const;
 
         // Returns the difference of two BCT trytes.
@@ -49,14 +52,19 @@ namespace termite
         // Returns the product of two BCT trytes.
         Tryte operator*(const Tryte &other) const;
 
-        // Returns the internal bits of the BCT tryte, stored inside a native uint16.
-        uint16_t bits() const;
+        // Returns the signed product of two BCT trytes.
+        Tryte imul(const Tryte &other) const;
+
+        // Returns the tritwise NOT of the BCT tryte.
+        Tryte operator~() const;
 
         // Converts the BCT tryte to a native int16.
         int16_t to_int16() const; 
 
         // Converts the BCT tryte to a ternary string.
         std::string to_ternary_str() const;
+
+        static const Tryte ONE;
     };
 } // namespace termite
 

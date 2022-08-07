@@ -5,10 +5,10 @@
 
 int main() 
 {   
-    termite::Tryte tryte1((int8_t)1, (int8_t)16);
-    termite::Tryte tryte2((int8_t)1, (int8_t)4);
+    termite::Tryte tryte1((int8_t)0, (int8_t)13);
+    termite::Tryte tryte2((int8_t)0, (int8_t)5); 
 
-    std::cout << (tryte1 + tryte2).to_ternary_str() << '\n';
+    std::cout << (-tryte2).to_ternary_str() << '\n';
 
     return 0;
 

@@ -26,7 +26,6 @@ namespace termite
         // Converts a native int8 to a BCT trybble.
         Trybble(int8_t val);
 
-
         // Converts raw bits to a BCT trybble.
         Trybble(FromBits, uint8_t bits);
 

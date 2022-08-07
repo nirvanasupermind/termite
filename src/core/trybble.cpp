@@ -2,6 +2,7 @@
 // Part of the Termite project
 // Usage permitted under terms of MIT license
 
+#include <iostream>
 #include <string>
 #include <cstdint>
 
@@ -100,6 +101,7 @@ namespace termite
             bits = 0b101010; // 222
             break;
         default:
+            std::cout << "*** " << (int)val << '\n';
             bits = 0;
             break;
         }
@@ -232,7 +234,7 @@ namespace termite
         case 0b101010:
             return "222";
         default:
-            // std::cout << bits << '\n';
+            std::cout << (int)bits << '\n';
             return "";
         }
     }
