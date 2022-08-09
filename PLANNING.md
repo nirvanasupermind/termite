@@ -35,81 +35,39 @@ Integers and floating-point numbers may be input and displayed in three number s
 - The random-access memory consists of 3^12 = 531441 memory registers, each of which holds 1 tryte and is uniquely addressed by 2 trytes.
 
 # CPU registers
-- 1-tryte general purpose registers `reg0` - `reg9`
-- 1-tryte accumulator (`reg10`)
-- 1-tryte program counter (`reg11`)
+- 1-tryte general purpose registers `r0` - `r11`
+- 2-tryte program counter `pc`
 
 # Instruction set architecture
-- A CPU instruction contains an opcode, addressing modes for the two operands, and the two operands themselves.
-- All CPU instructions have a fixed width of 30 trits.
+- All CPU instructions have a fixed width of 24 trits or 4 trytes.
 - Each instruction is represented in ternary as:
-  `<4-trit opcode><1-trit addressing mode for operand #1><1-trit addressing mode for operand #2><12-trit operand #1><12-trit operand #2>`
-- Each instruction is represented in assembly as:
-  `<operation name> <addressing mode symbol for operand #1><literal for operand #1>,<addressing mode symbol for operand #2><literal for operand #2>;`
+  `<6-trit opcode><6-trit register #1><6-trit register #2><6-trit unused space>`
+  or `<6-trit opcode><6-trit register #1><6-trit value><6-trit unused space>`
+  or `<6-trit opcode><6-trit register #1><12-trit address>`
 
-  For example:
-  `mov #5,$6q;`
-- Addressing modes:
-  - Register-indirect addressing mode, with prefix `reg`, where interpreted value is the value located at the register following the addressing mode
-  - Direct addressing mode (default), where interpreted value is the value located at the address following the addressing mode in RAM
-  - Immediate addressing mode, with prefix `#`, where interpreted value is the address following the addressing mode
 - Instruction set:
-  - `nop`: No operation
-  - `ret`: Return/exit
-  - `mov`: Moves a value into an address
-  - `syscall`: Does I/O operations with a specific mode passed as an operand
-    - `syscall 0`: Inputs a decimal value and stores it in the accumulator
-    - `syscall 1`: Inputs a ternary value and stores it in the accumulator
-    - `syscall 2`: Inputs a hept value and stores it in the accumulator
-    - `syscall 3`: Inputs a character and stores it's TCE code in the accumulator
-    - `syscall 4`: Outputs the accumulator as a decimal value
-    - `syscall 5`: Outputs the accumulator as a ternary value
-    - `syscall 6`: Outputs the accumulator as a hept value
-    - `syscall 7`: Outputs the accumulator as the character with the corresponding TCE code
-  - `neg`: Adds two values and stores the result in the accumulator
-  - `add`: Adds two values and stores the result in the accumulator
-  - `sub`: Subtradcts two values and stores the result in the accumulator
-  - `mul`: Multiplies two values and stores the result in the accumulator
-  - `not`: Takes trit-wise NOT of a value and stores the result in the accumulator
-  - `and`: Takes trit-wise AND of two values and stores the result in the accumulator
-  - `or`: Takes trit-wise OR of two values and stores the result in the accumulator
-  - `xor`: Takes trit-wise XOR of two values and stores the result in the accumulator
-  - `cmp`: Compares two values and stores an indicator of -1, 0, or 1 in the accumulator
-  - `jmp`: Jumps to a specific line or label
-  - `je`: Jumps to a specific line or label if the accumulator is 0 (equality indicator)
-  - `jne`: Jumps to a specific line or label if the accumulator is not 0 (equality indicator)
-  - `jl`: Jumps to a specific line or label if the accumulator is -1 (less than indicator)x
-  - `jg`: Jumps to a specific line or label if the accumulator is 1 (greater than indicator)  
-  - `jle`: Jumps to a specific line or label if the accumulator is -1 (less than indicator) or 0 (equality indicator)
-  - `jge`: Jumps to a specific line or label if the accumulator is 1 (greater than indicator) or 0 (equality indicator)
+  - `nop;` (`$00`): No operation
+  - `exit <code>;` (`$01`): Exits with status code `<code>`
+  - `load <addr>,<reg>;` (`$02`): Loads the value located at the memory address `<addr>` into register `<reg>`
+  - `loadi <val>,<reg>;` (`$03`): Loads `<val>` into register `<reg>`
+  - `store <reg>,<addr>;` (`$04`): Stores the value located at register `<reg>` into the memory address `<addr>`
+  - `storei <val>,<addr>;` (`$05`): Stores `<val>` into the memory address `<addr>`
+  - `neg <reg>;` (`$06`): Negates the value located at register `<reg>`, storing the result in `<reg>`
+  - `add <reg1>,<reg2>;` (`$07`): Adds the values located at registers `<reg1>` and `<reg2>`, storing the result in `<reg2>`
+  - `addi <val>,<reg2>;` (`$08`): Adds `<val>` to the value located at register `<reg2>`, storing the result in `<reg2>`
+  - `sub <reg1>,<reg2>;` (`$09`): Subtracts the values located at registers `<reg1>` and `<reg2>`, storing the result in `<reg2>`
+  - `subi <val>,<reg2>;` (`$0A`): Subtracts `<val>` from the value located at register `<reg2>`, storing the result in `<reg2>`
+  - `mul <reg1>,<reg2>;` (`$0B`): Multiplies the values located at registers `<reg1>` and `<reg2>`, storing the result in `<reg2>`
+  - `muli <val>,<reg2>;` (`$0C`): Multiplies `<val>` by the value located at register `<reg2>`, storing the result in `<reg2>`
+
 
 # Termite Character Encoding (TCE)
   - 1 tryte per character, and 3^6 = 729 characters
   - Divided into 3 segments, and 27 subsegments, with each subsegment corresponding to a hept digit
-  - 3 segments will be Latin, Greek & Coptic, and Cyrillic(??)
-  - 27 subsegments will be:
-    - Subsegment `0`: Punctuation and Numbers
-    - Subsegment `1`: Latin Uppercase
-    - Subsegment `2`: Latin Lowercase
-    - Subsegment `3`: Common Symbols 
-    - Subsegment `4`: Latin Extension Uppercase 1
-    - Subsegment `5`: Latin Extension Uppercase 2
-    - Subsegment `6`: Latin Extension Lowercase 1
-    - Subsegment `7`: Latin Extension Lowercase 2
-    - Subsegment `8`: IPA Extensions
-    - Subsegment `9`: Greek Uppercase
-    - Subsegment `a`: Greek Lowercase
+
 
 # C-like language example
 ```
-int12 gcd(int12 a, int12 b) {
-  if(b == 0) {
-    return a;
-  } else {
-    return gcd(b, a % b);
-  }
-}
-
 int12 fac(int12 a) {
   if(a == 0) {
     return 1;
@@ -119,9 +77,7 @@ int12 fac(int12 a) {
 }
 
 void main() {
-  print(fac(gcd(10, 15))); // 120
-  print("\n");
+  print("{1}\n", fac(5)); // 120
 }
-
 
 ```

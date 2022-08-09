@@ -49,9 +49,6 @@ namespace termite
         // Returns the difference of two BCT trytes.
         Tryte operator-(const Tryte &other) const;
 
-        // Returns the product of two BCT trytes.
-        Tryte operator*(const Tryte &other) const;
-
         // Returns the signed product of two BCT trytes.
         Tryte imul(const Tryte &other) const;
 
@@ -60,6 +57,9 @@ namespace termite
 
         // Converts the BCT tryte to a native int16.
         int16_t to_int16() const; 
+
+        // Converts the BCT tryte to a ternary string.
+        std::string to_ternary_str() const;
 
         // Converts the BCT tryte to a ternary string.
         std::string to_ternary_str() const;

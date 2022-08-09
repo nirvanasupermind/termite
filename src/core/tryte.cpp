@@ -47,7 +47,7 @@ namespace termite
     
     uint16_t Tryte::bits() const 
     {
-        return (hi.bits >> 6) + lo.bits;
+        return (hi.bits << 6) + lo.bits;
     }
  
     Tryte Tryte::operator+(const Tryte &other) const

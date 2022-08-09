@@ -19,8 +19,8 @@ namespace termite
 
     std::map<int16_t, char16_t> tce_to_char {
         /////////////////////////////////////////
-        // Block 0: Latin-A
-        // Sub-Block 0: Punctuation & Symbols A
+        // Block 0: Basic Latin
+        // Sub-Block 0: Punctuation & Symbols
         {0, '\0'}, // Null character
         {1, '\a'}, // Bell character
         {2, '\b'}, // Backspace
@@ -105,8 +105,8 @@ namespace termite
         {79, 'y'}, // Latin lowercase letter Y
         {80, 'z'}, // Latin lowercase letter Z
         /////////////////////////////////////////
-        // Block 1: Latin-B
-        // Sub-Block 3: Punctuation & Symbols B        
+        // Block 1: Latin Supplement
+        // Sub-Block 3: Punctuation & Symbols Supplement     
         {81, '*'}, // Asterisk
         {82, '/'}, // Slash
         {83, '|'}, // Vertical bar
@@ -134,7 +134,7 @@ namespace termite
         {105, 0xb1}, // Plus-minus sign   
         {106, 0xb2}, // Superscript two
         {107, 0xb3}, // Superscript three
-        // Sub-Block 4: Uppercase Latin-B
+        // Sub-Block 4: Uppercase Latin Supplement
         {108, 0xc0}, // Latin uppercase letter A with grave
         {109, 0xc1}, // Latin uppercase letter A with acute
         {110, 0xc2}, // Latin uppercase letter A with circumflex
@@ -155,14 +155,14 @@ namespace termite
         {125, 0xd2}, // Latin uppercase letter O with grave
         {126, 0xd3}, // Latin uppercase letter O with acute
         {127, 0xd4}, // Latin uppercase letter O with circumflex
-        {128, 0xd5}, // Latin uppercase letter O with diaeresis
-        {129, 0xd6}, // Latin uppercase letter O with stroke
+        {128, 0xd6}, // Latin uppercase letter O with diaresis
         {129, 0xd9}, // Latin uppercase letter U with grave        
         {130, 0xda}, // Latin uppercase letter U with acute
         {131, 0xdb}, // Latin uppercase letter U with circumflex
         {132, 0xdc}, // Latin uppercase letter U with diaeresis
         {133, 0xdd}, // Latin uppercase letter Y with acute
         {134, 0xde}, // Latin uppercase letter Thorn
+
     };
 
 } // namespace termite
