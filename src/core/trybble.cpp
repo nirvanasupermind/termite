@@ -8,17 +8,13 @@
 
 #include "trybble.h"
 
-namespace termite
-{
+namespace termite {
     Trybble::Trybble()
-        : bits(0)
-    {
+        : bits(0) {
     }
 
-    Trybble::Trybble(int8_t val)
-    {
-        switch (val)
-        {
+    Trybble::Trybble(int8_t val) {
+        switch (val) {
         case 0:
             bits = 0b000000; // 000
             break;
@@ -101,21 +97,26 @@ namespace termite
             bits = 0b101010; // 222
             break;
         default:
-            std::cout << "*** " << (int)val << '\n';
+            // std::cou/t << "*** " << (int)val << '\n';
             bits = 0;
             break;
         }
     }
 
     Trybble::Trybble(FromBits, uint8_t bits)
-        : bits(bits)
-    {
+        : bits(bits) {
     }
 
-    int8_t Trybble::to_int8() const
-    {
-        switch (bits)
-        {
+    int8_t Trybble::to_int8() const {
+        if(bits < 21) {
+            return to_uint8();
+        } else {
+            return to_uint8() - 27;
+        }
+    }
+
+    uint8_t Trybble::to_uint8() const {
+        switch (bits) {
         case 0b000000:
             return 0; // 000
         case 0b000001:
@@ -132,7 +133,7 @@ namespace termite
             return 6; // 020
         case 0b001001:
             return 7; // 021
-        case 0b001010: 
+        case 0b001010:
             return 8; // 022
         case 0b010000:
             return 9; // 100
@@ -156,7 +157,7 @@ namespace termite
             return 18; // 200
         case 0b100001:
             return 19; // 201
-        case 0b100010: 
+        case 0b100010:
             return 20; // 202
         case 0b100100:
             return 21; // 210
@@ -175,10 +176,8 @@ namespace termite
         }
     }
 
-    std::string Trybble::to_ternary_str() const
-    {
-        switch (bits)
-        {
+    std::string Trybble::to_ternary_str() const {
+        switch (bits) {
         case 0b000000:
             return "000";
         case 0b000001:
@@ -195,7 +194,7 @@ namespace termite
             return "020";
         case 0b001001:
             return "021";
-        case 0b001010: 
+        case 0b001010:
             return "022";
         case 0b010000:
             return "100";
@@ -219,7 +218,7 @@ namespace termite
             return "200";
         case 0b100001:
             return "201";
-        case 0b100010: 
+        case 0b100010:
             return "202";
         case 0b100100:
             return "210";
@@ -239,10 +238,8 @@ namespace termite
         }
     }
 
-    char Trybble::to_hept_chr() const
-    {
-        switch (bits)
-        {
+    char Trybble::to_hept_chr() const {
+        switch (bits) {
         case 0b000000:
             return '0'; // 000
         case 0b000001:
@@ -259,44 +256,44 @@ namespace termite
             return '6'; // 020
         case 0b001001:
             return '7'; // 021
-        case 0b001010: 
+        case 0b001010:
             return '8'; // 022
         case 0b010000:
             return '9'; // 100
         case 0b010001:
-            return 'a'; // 101
+            return 'A'; // 101
         case 0b010010:
-            return 'b'; // 102
+            return 'B'; // 102
         case 0b010100:
-            return 'c'; // 110
+            return 'C'; // 110
         case 0b010101:
-            return 'd'; // 111
+            return 'D'; // 111
         case 0b010110:
-            return 'e'; // 112
+            return 'E'; // 112
         case 0b011000:
-            return 'f'; // 120
+            return 'F'; // 120
         case 0b011001:
-            return 'g'; // 121
+            return 'G'; // 121
         case 0b011010:
-            return 'h'; // 122
+            return 'H'; // 122
         case 0b100000:
-            return 'i'; // 200
+            return 'I'; // 200
         case 0b100001:
-            return 'j'; // 201
-        case 0b100010: 
-            return 'k'; // 202
+            return 'J'; // 201
+        case 0b100010:
+            return 'K'; // 202
         case 0b100100:
-            return 'l'; // 210
+            return 'L'; // 210
         case 0b100101:
-            return 'm'; // 211
+            return 'M'; // 211
         case 0b100110:
-            return 'n'; // 212
+            return 'N'; // 212
         case 0b101000:
-            return 'o'; // 220
+            return 'O'; // 220
         case 0b101001:
-            return 'p'; // 221
+            return 'P'; // 221
         case 0b101010:
-            return 'q'; // 222
+            return 'Q'; // 222
         default:
             return '\0';
         }

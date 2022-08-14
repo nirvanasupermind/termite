@@ -2,14 +2,14 @@
 #include <cassert>
 #include "../src/core/trybble.h"
 #include "../src/core/tryte.h"
+#include "../src/cpu/addr.h"
 
 int main() 
 {   
-    termite::Tryte tryte1((int8_t)0, (int8_t)13);
-    termite::Tryte tryte2((int8_t)0, (int8_t)5); 
+    termite::Addr t1({0, 13}, {0, 5});
 
-    std::cout << (-tryte2).to_ternary_str() << '\n';
-
+    assert((t1).to_uint32() == 9482);
+    
     return 0;
 
     // termite::Tryte tryte3((int8_t)0, (int8_t)3);

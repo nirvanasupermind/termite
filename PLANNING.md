@@ -37,6 +37,7 @@ Integers and floating-point numbers may be input and displayed in three number s
 # CPU registers
 - 1-tryte general purpose registers `r0` - `r11`
 - 2-tryte program counter `pc`
+- 4-tryte instruction register `ir`
 
 # Instruction set architecture
 - All CPU instructions have a fixed width of 24 trits or 4 trytes.
@@ -44,27 +45,50 @@ Integers and floating-point numbers may be input and displayed in three number s
   `<6-trit opcode><6-trit register #1><6-trit register #2><6-trit unused space>`
   or `<6-trit opcode><6-trit register #1><6-trit value><6-trit unused space>`
   or `<6-trit opcode><6-trit register #1><12-trit address>`
-
 - Instruction set:
-  - `nop;` (`$00`): No operation
-  - `exit <code>;` (`$01`): Exits with status code `<code>`
-  - `load <addr>,<reg>;` (`$02`): Loads the value located at the memory address `<addr>` into register `<reg>`
-  - `loadi <val>,<reg>;` (`$03`): Loads `<val>` into register `<reg>`
-  - `store <reg>,<addr>;` (`$04`): Stores the value located at register `<reg>` into the memory address `<addr>`
-  - `storei <val>,<addr>;` (`$05`): Stores `<val>` into the memory address `<addr>`
-  - `neg <reg>;` (`$06`): Negates the value located at register `<reg>`, storing the result in `<reg>`
-  - `add <reg1>,<reg2>;` (`$07`): Adds the values located at registers `<reg1>` and `<reg2>`, storing the result in `<reg2>`
-  - `addi <val>,<reg2>;` (`$08`): Adds `<val>` to the value located at register `<reg2>`, storing the result in `<reg2>`
-  - `sub <reg1>,<reg2>;` (`$09`): Subtracts the values located at registers `<reg1>` and `<reg2>`, storing the result in `<reg2>`
-  - `subi <val>,<reg2>;` (`$0A`): Subtracts `<val>` from the value located at register `<reg2>`, storing the result in `<reg2>`
-  - `mul <reg1>,<reg2>;` (`$0B`): Multiplies the values located at registers `<reg1>` and `<reg2>`, storing the result in `<reg2>`
-  - `muli <val>,<reg2>;` (`$0C`): Multiplies `<val>` by the value located at register `<reg2>`, storing the result in `<reg2>`
-
-
-# Termite Character Encoding (TCE)
-  - 1 tryte per character, and 3^6 = 729 characters
-  - Divided into 3 segments, and 27 subsegments, with each subsegment corresponding to a hept digit
-
+  - `nop` (`$00`): No operation
+  - `int <status>,<reg>;` (`$01`): Software interrupt
+    - `int $00`;: Exits with successful signal
+    - `int $01;`: Exits with unsuccessful signal 
+    - `int $02,<reg>;`: Outputs register as decimal value
+    - `int $03,<reg>`:  Outputs register as ternary value
+    - `int $04,<reg>`:  Outputs register as heptavigesimal value
+    - `int $05,<reg>`:  Outputs register as TCE character
+    - `int $06,<reg>`:  Input decimal value into register
+    - `int $07,<reg>`:  Input ternary value into register
+    - `int $08,<reg>`:  Input heptavigesimal value into register
+    - `int $09,<reg>`:  Input TCE character into register
+  - `ld <addr>;` (`$02`): Copy from memory to register
+  - `ldv <val>;` (`$03`): Copy value to register
+  - `st <reg>;` (`$04`): Copy from register to memory
+  - `stv <val>;` (`$05`): Copy value to memory  
+  - `add <regA>,<regB>;` (`$06`): Adds two registers
+  - `sub <regA> <regB>;` (`$07`): Subtracts two registers
+  - `mul <regA>,<regB>;` (`$08`): Multiplies two registers
+  - `mulu <regA>,<regB>;` (`$09`): Multiplies two registers (unsigned)
+  - `div <regA>,<regB>;` (`$0A`): Divides two registers
+  - `divu <regA>,<regB>;` (`$0B`): Divides two registers (unsigned)
+  - `not <reg>;` (`$0C`): Takes tritwise NOT of a register
+  - `and <regA>,<regB>;` (`$0D`): Takes tritwise AND of two registers
+  - `or <regA>,<regB>;` (`$0E`): Takes tritwise OR of two registers
+  - `xor <regA>,<regB>;` (`$0F`): Takes tritwise XOR of two registers
+  - `shl <regA>,<regB>;` (`$0G`): Takes left-shift of a register
+  - `shr <regA>,<regB>;` (`$0H`): Takes right-shift of a register
+  - `jmp <label>;` (`$0I`): Jumps to a label
+  - `jeqz <label>,<reg>;` (`$0J`): Jumps if the register's value is equal to 0
+  - `jnez <label>,<reg>;` (`$0K`): Jumps if the register's value is not equal to 0
+  - `jltz <label>,<reg>;` (`$0L`): Jumps if the register's value is less than 0
+  - `jgtz <label>,<reg>;` (`$0M`): Jumps if the register's value is greater than 0
+  - `jlez <label>,<reg>;` (`$0N`): Jumps if the register's value is less than or equal to 0
+  - `jgez <label>,<reg>;` (`$0O`): Jumps if the register's value is greater than or equal to 0
+- Example assembly program:
+```
+main:
+  ldv 1,r0; loads 1 into r0
+  add r0,r1; adds r0 and r1
+  int $02,r1; prints r1
+  jmp main; jumps back to start
+```
 
 # C-like language example
 ```
@@ -77,7 +101,6 @@ int12 fac(int12 a) {
 }
 
 void main() {
-  print("{1}\n", fac(5)); // 120
+  print("{0}\n", fac(5)); // 120
 }
-
 ```

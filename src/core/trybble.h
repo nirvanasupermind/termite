@@ -10,14 +10,12 @@
 #include <cstdint>
 #include <array>
 
-namespace termite
-{
+namespace termite {
 
     // A trybble is a ternary analog to a nybble, representing 3 trits or half a tryte of data.
     // We store trybbles in binary-coded ternary format where each trit is stored as 2 bits, 00 for 0, 01 for 1, and 10 for T.
     // For example, the bits 0b00_01_10 correspond to the trits 01T in balanced ternary.
-    class Trybble
-    {
+    class Trybble {
     public:
         uint8_t bits;
 
@@ -32,12 +30,15 @@ namespace termite
         // Converts the BCT trybble to a native int8.
         int8_t to_int8() const;
 
+        // Converts the BCT trybble to a native uint8.
+        uint8_t to_uint8() const;
+
         // Converts the BCT trybble to a ternary string.
         std::string to_ternary_str() const;
-    
+
         // Converts the BCT trybble to a heptavigesimal character.
         char to_hept_chr() const;
-    
+
         // // Returns the first BCT trit of the BCT trybble.
         // uint8_t first_trit() const;
 
@@ -47,7 +48,7 @@ namespace termite
         // // Returns the third BCT trit of the BCT trybble.
         // uint8_t third_trit() const;
     };
-    
+
 } // namespace termite
 
 #endif // TRYBBLE_H
