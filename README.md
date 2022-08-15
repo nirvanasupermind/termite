@@ -1,7 +1,8 @@
 # Termite: The ternary computer emulator
 Termite is a RISC CPU architecture, emulated in C++11, that extensively uses a *ternary* (base 3) numeral system, an alternative basis for data representation in contrast to the prevailing binary system. 
 
-See [DOCUMENTATION.md](DOCUMENTATION.md) (incomplete) for more information and documentation.
+## Documentation
+See [DOCUMENTATION.md](DOCUMENTATION.md) (incomplete) for the documentation, and see [PLANNING.md](PLANNING.md) for the plan/outline.
 
 ## Status
 Currently, the architecture is mostly finalized, and the RAM and decoder have been implemented, but the processor itself has yet to be implemented.
