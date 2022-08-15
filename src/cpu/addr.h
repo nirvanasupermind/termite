@@ -1,4 +1,4 @@
-// -*- processor/addr.h -*-
+// -*- cpu/addr.h -*-
 // Part of the Termite project
 // Usage permitted under terms of MIT license
 

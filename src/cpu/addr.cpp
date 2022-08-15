@@ -1,4 +1,4 @@
-// -*- core/tryte.cpp -*-
+// -*- cpu/addr.cpp -*-
 // Part of the Termite project
 // Usage permitted under terms of MIT license
 

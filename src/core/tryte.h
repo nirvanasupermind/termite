@@ -22,6 +22,9 @@ namespace termite {
 
         Trybble lo;
 
+        // Creates a BCT tryte equal to 0.
+        Tryte() = default;
+
         // Convert two BCT trybbles to a BCT tryte.
         Tryte(const Trybble& hi, const Trybble& lo);
 
