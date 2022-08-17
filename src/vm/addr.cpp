@@ -1,4 +1,4 @@
-// -*- cpu/addr.cpp -*-
+// -*- vm/addr.cpp -*-
 // Part of the Termite project
 // Usage permitted under terms of MIT license
 

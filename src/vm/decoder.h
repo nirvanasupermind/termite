@@ -1,4 +1,4 @@
-// -*- cpu/decoder.h -*-
+// -*- vm/decoder.h -*-
 // Part of the Termite project
 // Usage permitted under terms of MIT license
 

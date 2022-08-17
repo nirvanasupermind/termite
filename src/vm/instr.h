@@ -1,4 +1,4 @@
-// -*- cpu/instr.h -*-
+// -*- vm/instr.h -*-
 // Part of the Termite project
 // Usage permitted under terms of MIT license
 
