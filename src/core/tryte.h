@@ -67,13 +67,13 @@ namespace termite {
         Tryte operator*(const Tryte& other) const;
 
         // Returns the unsigned product of two BCT trytes.
-        Tryte mulu(const Tryte& other) const;
+        Tryte umul(const Tryte& other) const;
 
         // Returns the quotient of two BCT trytes.
         Tryte operator/(const Tryte& other) const;
 
         // Returns the unsigned quotient of two BCT trytes.
-        Tryte divu(const Tryte& other) const;
+        Tryte udiv(const Tryte& other) const;
 
         // Returns the tritwise NOT of the BCT tryte.
         Tryte operator~() const;

@@ -12,30 +12,33 @@
 
 namespace termite {
     // Specifies the operation to be performed in a CPU instruction.
-    class Opcode {
-    public:
-        uint8_t val;
-
-        Opcode(uint8_t val);
-
-        Opcode(const Tryte& tryte);
-
-        static const Opcode NOP;
-        static const Opcode INT;
-        static const Opcode SYS;
-        static const Opcode LD;
-        static const Opcode LDI;
-        static const Opcode ST;
-        static const Opcode STI;
-        static const Opcode NEG;
-        static const Opcode ADD;
-        static const Opcode ADDU;
-        static const Opcode SUB;
-        static const Opcode SUBU;
-        static const Opcode MUL;
-        static const Opcode MULU;
-        static const Opcode ADD;
-        static const Opcode ADDU;
+    enum class Opcode {
+        NOP,
+        LT,
+        LTV,
+        ST,
+        B,
+        BEQ,
+        BNE,
+        BLT,
+        BGT,
+        BLE,
+        BGE,
+        CMP,
+        SYS,
+        ADD,
+        SUB,
+        MUL,
+        UMUL,
+        DIV,
+        UDIV,
+        NEG,
+        AND,
+        OR,
+        XOR,
+        NOT,
+        LS,
+        RS
     };
 }
 

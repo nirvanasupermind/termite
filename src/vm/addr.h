@@ -7,24 +7,26 @@
 
 #include <cstdint>
 
-#include "../core/tryte.h"
+#include "../core/trybble.h"
 
 namespace termite {
-    // A memory address is 2 trytes wide in Termite's CPU architecture.
+    // A memory address is 9 trits wide in Termite's architecture.
 
     class Addr {
     public:
-        Tryte hi;
+        Trybble hi;
 
-        Tryte lo;
+        Trybble mid;
+
+        Trybble lo;
         
         // Convert two BCT trytes to a BCT address.
-        Addr(const Tryte& hi, const Tryte& lo);
+        Addr(const Trybble& hi, const Trybble& mid, const Trybble& lo);
     
-        // Converts the BCT address to a native uint32.
-        uint32_t to_uint32() const;
+        // Converts the memory address to a native uint16.
+        uint16_t to_uint16() const;
 
-        // Converts the BCT address to a ternary string.
+        // Converts the memory address to a ternary string.
         std::string to_ternary_str() const;
     };
 }

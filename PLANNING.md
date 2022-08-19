@@ -3,11 +3,10 @@ This document is used for planning and outlining Termite and it's features. Many
 As a convention, "0b" prefix is used for binary numbers and "0t" prefix is used for ternary numbers.
 
 # Sizes
-- Commonly-used sizes for data types and instructions are 3, 6, 12, 24, 48, etc. trits (3 times the powers of 2).
-
-- A trybble (ternary analogue to nybble) is 3 trits.
-- A tryte (ternary analogue to byte) is 2 trybbles, or 6 trits.
-
+- Trybble (ternary analogue to nybble): 3 trits
+- Tryte (ternary analogue to byte): 6 trits
+- Word: 18 trits
+<!-- 
 # Integer representation
 - Unbalanced ternary system with digits {0, 1, 2} is used to store integers.
 - Internally, each trit is stored as a pair of bits in "binary-coded ternary" format, with 0 = 0b00, 1 = 0b01, and 2 = 0b10.
@@ -22,58 +21,80 @@ As a convention, "0b" prefix is used for binary numbers and "0t" prefix is used 
 - 48-trit (double-precision) floating-point numbers will use an 12-trit exponent and 36-trit significand, 
   which translates to approximately 18 decimal digits of precision.
 - 60-trit (extended-precision) floating-point numbers will use a 24-trit exponent and 36-trit significand, 
-  which translates to approximately 18 decimal digits of precision.
+  which translates to approximately 18 decimal digits of precision. -->
 
 # Displaying numbers
 Integers and floating-point numbers may be input and displayed in three number systems:
-- Ternary (base 3), digits `012`
-- Decimal (base 10), digits `0123456789`
-- Heptavigesimal/Hept (base 27), digits `0123456789ABCDEFGHIJKLMNOPQ`
+- Ternary (base 3), with digits `012`
+- Decimal (base 10), with digits `0123456789`
+- Heptavigesimal/Hept (base 27), with digits `0123456789ABCDEFGHIJKLMNOPQ`
 
 # Memory
-- 3^10 = 59049 1-tryte memory registers
+- 3^9 = 19683 1-tryte memory registers
 
-# CPU registers
-- 1-tryte general-purpose registers `r0` - `r11`
-- 2-tryte program counter `pc`
-- 4-tryte instruction register `ir`
+# CPU register
+- 18-trit general-purpose registers `r0` - `r26`
+- 18-trit instruction register `ir` (`r27`)
+- 18-trit program counter `pc` (`r28`)
 
 # Instruction set architecture
-- All CPU instructions have a fixed width of 18 trits or 3 trytes
+- All CPU instructions have a fixed width of 1 word (18 trits)
 - Instruction format:
-  - For `nop`: `<4-trit opcode><14-trit unused space>`
-  - For arithmetic and logical instructions: `<4-trit opcode><4-trit register 1><4-trit register 2><4-trit destination><2-trit unused space>`
-  - For `ld`: `<4-trit opcode><10-trit source><4-trit destination>`
-  - For `ldv`: `<4-trit opcode><6-trit source><4-trit destination><4-trit unused space>`
-  - For `st`: `<4-trit opcode><4-trit source><10-trit destination>` 
+  - Empty-type: opcode (3 trits), unused space (15 trits)
+  - I-type: opcode (3 trits), immediate (6 trits), unused space (9 trits)
+  - A-type: opcode (3 trits), address (9 trits), unused space (6 trits)
+  - RR-type: opcode (3 trits), register A (3 trits), register B (3 trits)
+  - RA-type: opcode (3 trits), register (3 trits), address (9 trits) 
+  - IA-type: opcode (3 trits), immediate (6 trits), address (9 trits) 
+  - AR-type: opcode (3 trits), address (9 trits), register (3 trits)
+  - RRR-type: opcode (3 trits), register A (3 trits), register B (3 trits), register C (3 trits)
 
 - Instruction set:
-  - No operation (`nop`)
-  - Add (`add REG, REG`)
-  - Subtract (`sub REG, REG, REG`)
-  - Multiply (`mul REG, REG, REG`)
-  - Unsigned multiply (`umul REG, REG, REG`)
-  - Divide (`div RRG, REG, REG`)
-  - Unsigned divide (`udiv REG, REG, REG`)
-  - Tritwise AND (`and REG, REG, REG`)
-  - Tritwise OR (`or REG, REG, REG`)
-  - Tritwise XOR (`xor REG, REG, REG`)
-  - Load (`ld REG, REG, REG`)
-  - Load value (`ldv`)
-  - Store (`st`)
-  - Syscall (`sys`)
-- Syscall services: TBA
+  - No operation (`nop`, Empty-type)
+  - Load tryte (`lt`, RA-type)
+  - Load tryte immediate (`lti`, IA-type)
+  - Store (`st`, AR-type)
+  - Branch without condition (`b`, A-type)
+  - Branch if equal (`beq`, AR-type)
+  - Branch if not equal (`bne`, AR-type)
+  - Branch if less than (`blt`, AR-type)
+  - Branch if greater than (`bgt`, AR-type)
+  - Branch if less than or equal (`ble`, AR-type)
+  - Branch if greater than or equal (`bge`, AR-type)
+  - Compare (`cmp`, RRR-type)
+  - Syscall (`sys`, I-type)
+  - Add (`add`, RRR-type)
+  - Subtract (`sub`, RRR-type)
+  - Multiply (`mul`, RRR-type)
+  - Unsigned multiply (`umul`, RRR-type)
+  - Divide (`div`, RRR-type)
+  - Unsigned divide (`udiv`, RRR-type)
+  - Negate (`neg`, RR-type)
+  - Tritwise AND (`and`, RRR-type)
+  - Tritwise OR (`or`, RRR-type)
+  - Tritwise XOR (`xor`, RRR-type)
+  - Tritwise NOT (`not`, RRR-type)
+  - Left-shift (`ls`, RRR-type)
+  - Right-shift (`rs`, RRR-type)
+- Syscall services:
+  - `0`: Print decimal value
+  - `1`: Print ternary value
+  - `2`: Print heptavigesimal value
+  - `3`: Print TCE character
+  - `4`: Read decimal value
+  - `5`: Read ternary value
+  - `6`: Read heptavigesimal value
+  - `7`: Read TCE character
+  - `8`: Exit (terminates with value)
 
-- Example assembly program to print all numbers from 1 to 10:
+- Example assembly program to add two numbers:
 ```
 main:
-  ldv 1,r0; loads 1 into r0
-  add r0,r1,r2; adds r0 and r1, storing result in r2
+  lti 1,r0; loads 1 into r0
+  lti 2,r1; loads 1 into r0
+  add r2,r0,r1; adds r0 and r1, storing result in r2
   sys $00,r2; prints r2
-  ldv 10,r3; loads 10 into r3
-  ble main,r0,r3; goes back to start if r0 <= 10
-  sys $08,0; exits successfully
-  
+  sys $08,$00; exits with status code 0
 ```
 
 # C-like language example

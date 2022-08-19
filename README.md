@@ -1,5 +1,5 @@
 # Termite
-Termite is a RISC CPU architecture, emulated in C++11, that extensively uses a ternary (base 3) numeral system, an alternative basis for data representation in contrast to the prevailing binary system. Instead of having two memory cell states (0, 1), it has three (0, 1, 2).
+Termite is a C++11 emulator for a 18-trit RISC CPU architecture that extensively uses athe ternary (base 3) numeral system, an alternative basis for data representation in contrast to the prevailing binary system. Instead of having two memory cell states (0, 1), it has three (0, 1, 2).
 
 ## Resources used for the implementation
 * The Rust-based ternary VMs [Triton]([https://github.com/patrislav/triton]) and [BTM](https://github.com/jdanford/btm)
