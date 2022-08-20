@@ -8,6 +8,7 @@ As a convention, "0b" prefix is used for binary numbers and "0t" prefix is used 
 - Halfword: 12 trits (2 trytes)
 - Word: 24 trits (4 trytes)
 
+
 <!-- 
 # Integer representation
 - Unbalanced ternary system with digits {0, 1, 2} is used to store integers.
@@ -32,20 +33,19 @@ Integers and floating-point numbers may be input and displayed in three number s
 - Heptavigesimal/Hept (base 27), with digits `0123456789ABCDEFGHIJKLMNOPQ`
 
 # Memory
-- 3^12 = 531441 1-tryte memory registers
+- 3^18 = 387420489 1-tryte memory registers (387 MT of memory)
 
-# CPU register
+# CPU registers
 - 24-trit general-purpose registers `$r0` - `$r23`
 - 24-trit syscall code register (`$r24`)
 - 24-trit instruction register (`$r25`)
-- 24-trit instruction register (`$r26`)
-- 24-trit program counter (`$r27`)
+- 24-trit program counter (`$r26`)
 
 # Instruction set architecture
 - All CPU instructions have a fixed width of 1 word (24 trits)
 - Instruction format:
-  - R-type: opcode (6), register 1 (3), register 2 (3), register 3 (3), unused space (6)
-  - I-type: opcode (6), register 1 (3), register 2 (3), immediate (12), unused space (6)
+  - R-type: opcode (6), register 1 (3), register 2 (3), register 3 (3), unused space (9)
+  - I-type: opcode (6), register 1 (3), register 2 (3), immediate (12)
   - J-type: opcode (6), address (18)
 
 - Instruction set:
@@ -54,6 +54,8 @@ Integers and floating-point numbers may be input and displayed in three number s
   - `add`: add (R-type)
   - `sub`: subtract (R-type)
   - `addi`: add immediate (I-type)
+  <!-- `24-trit * 24-trit = 48-trit` -->
+  <!-- mult: stores the whole 48-trit result, via putting it in two registers -->
   - `mul`: multiply (R-type)
   - `mulu`: multiply unsigned (R-type)
   - `div`: divide (R-type)
@@ -63,14 +65,9 @@ Integers and floating-point numbers may be input and displayed in three number s
   - `andi`: tritwise AND immediate (I-type)
   - `ori`: tritwise OR immediate (I-type)
   - `lui`: load upper immediate (I-type)
-  - `lt`: load tryte (I-type)
-  - `lh`: load halfword (I-type)
   - `lw`: load word (I-type)
-  - `ltu`: load tryte unsigned (I-type)
-  - `lhu`: load halfword unsigned (I-type)
-  - `st`: store tryte (I-type)
-  - `sh`: store halfworld (I-type)
   - `sw`: store word (I-type)
+  - (note to self: add jump and comparison instructions here)
 
 - Syscall services:
   - `0`: Print decimal value
