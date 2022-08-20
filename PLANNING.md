@@ -5,7 +5,9 @@ As a convention, "0b" prefix is used for binary numbers and "0t" prefix is used 
 # Sizes
 - Trybble (ternary analogue to nybble): 3 trits
 - Tryte (ternary analogue to byte): 6 trits
-- Word: 18 trits
+- Halfword: 12 trits (2 trytes)
+- Word: 24 trits (4 trytes)
+
 <!-- 
 # Integer representation
 - Unbalanced ternary system with digits {0, 1, 2} is used to store integers.
@@ -30,52 +32,46 @@ Integers and floating-point numbers may be input and displayed in three number s
 - Heptavigesimal/Hept (base 27), with digits `0123456789ABCDEFGHIJKLMNOPQ`
 
 # Memory
-- 3^9 = 19683 1-tryte memory registers
+- 3^12 = 531441 1-tryte memory registers
 
 # CPU register
-- 18-trit general-purpose registers `r0` - `r26`
-- 18-trit instruction register `ir` (`r27`)
-- 18-trit program counter `pc` (`r28`)
+- 24-trit general-purpose registers `$r0` - `$r23`
+- 24-trit syscall code register (`$r24`)
+- 24-trit instruction register (`$r25`)
+- 24-trit instruction register (`$r26`)
+- 24-trit program counter (`$r27`)
 
 # Instruction set architecture
-- All CPU instructions have a fixed width of 1 word (18 trits)
+- All CPU instructions have a fixed width of 1 word (24 trits)
 - Instruction format:
-  - Empty-type: opcode (3 trits), unused space (15 trits)
-  - I-type: opcode (3 trits), immediate (6 trits), unused space (9 trits)
-  - A-type: opcode (3 trits), address (9 trits), unused space (6 trits)
-  - RR-type: opcode (3 trits), register A (3 trits), register B (3 trits)
-  - RA-type: opcode (3 trits), register (3 trits), address (9 trits) 
-  - IA-type: opcode (3 trits), immediate (6 trits), address (9 trits) 
-  - AR-type: opcode (3 trits), address (9 trits), register (3 trits)
-  - RRR-type: opcode (3 trits), register A (3 trits), register B (3 trits), register C (3 trits)
+  - R-type: opcode (6), register 1 (3), register 2 (3), register 3 (3), unused space (6)
+  - I-type: opcode (6), register 1 (3), register 2 (3), immediate (12), unused space (6)
+  - J-type: opcode (6), address (18)
 
 - Instruction set:
-  - No operation (`nop`, Empty-type)
-  - Load tryte (`lt`, RA-type)
-  - Load tryte immediate (`lti`, IA-type)
-  - Store (`st`, AR-type)
-  - Branch without condition (`b`, A-type)
-  - Branch if equal (`beq`, AR-type)
-  - Branch if not equal (`bne`, AR-type)
-  - Branch if less than (`blt`, AR-type)
-  - Branch if greater than (`bgt`, AR-type)
-  - Branch if less than or equal (`ble`, AR-type)
-  - Branch if greater than or equal (`bge`, AR-type)
-  - Compare (`cmp`, RRR-type)
-  - Syscall (`sys`, I-type)
-  - Add (`add`, RRR-type)
-  - Subtract (`sub`, RRR-type)
-  - Multiply (`mul`, RRR-type)
-  - Unsigned multiply (`umul`, RRR-type)
-  - Divide (`div`, RRR-type)
-  - Unsigned divide (`udiv`, RRR-type)
-  - Negate (`neg`, RR-type)
-  - Tritwise AND (`and`, RRR-type)
-  - Tritwise OR (`or`, RRR-type)
-  - Tritwise XOR (`xor`, RRR-type)
-  - Tritwise NOT (`not`, RRR-type)
-  - Left-shift (`ls`, RRR-type)
-  - Right-shift (`rs`, RRR-type)
+  - `nop`: no operation (R-type)
+  - `syscall`: system call using `$r24` as code (R-type)
+  - `add`: add (R-type)
+  - `sub`: subtract (R-type)
+  - `addi`: add immediate (I-type)
+  - `mul`: multiply (R-type)
+  - `mulu`: multiply unsigned (R-type)
+  - `div`: divide (R-type)
+  - `mod`: modulus (R-type)
+  - `and`: tritwise AND (R-type)
+  - `or`: tritwise OR (R-type)
+  - `andi`: tritwise AND immediate (I-type)
+  - `ori`: tritwise OR immediate (I-type)
+  - `lui`: load upper immediate (I-type)
+  - `lt`: load tryte (I-type)
+  - `lh`: load halfword (I-type)
+  - `lw`: load word (I-type)
+  - `ltu`: load tryte unsigned (I-type)
+  - `lhu`: load halfword unsigned (I-type)
+  - `st`: store tryte (I-type)
+  - `sh`: store halfworld (I-type)
+  - `sw`: store word (I-type)
+
 - Syscall services:
   - `0`: Print decimal value
   - `1`: Print ternary value
@@ -87,7 +83,7 @@ Integers and floating-point numbers may be input and displayed in three number s
   - `7`: Read TCE character
   - `8`: Exit (terminates with value)
 
-- Example assembly program to add two numbers:
+<!-- - Example assembly program to add two numbers:
 ```
 main:
   lti 1,r0; loads 1 into r0
@@ -95,7 +91,7 @@ main:
   add r2,r0,r1; adds r0 and r1, storing result in r2
   sys $00,r2; prints r2
   sys $08,$00; exits with status code 0
-```
+``` -->
 
 # C-like language example
 ```

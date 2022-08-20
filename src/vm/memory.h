@@ -11,11 +11,11 @@
 #include "addr.h"
 
 namespace termite {
-    // The random-access memory consists of 3^12 = 531441 memory registers, each of which holds 1 tryte.
+    // The random-access memory consists of 3^18 = 387420489 1-tryte memory registers.
     class Memory {
     protected:
         // Internal array of trytes.
-        std::array<Tryte, 531441> data;
+        std::array<Tryte, 19683> data;
     public:
         // Initializes the memory with all registers set to 0.
         Memory() = default;
