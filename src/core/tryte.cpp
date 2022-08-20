@@ -89,17 +89,17 @@ namespace termite {
 
     Tryte Tryte::operator*(const Tryte& other) const {
         if (is_neg() && other.is_neg()) {
-            return operator-().umul(-other);
+            return operator-().mulu(-other);
         } else if(is_neg()) {
-            return -(operator-().umul(other));
+            return -(operator-().mulu(other));
         } else if(other.is_neg()) {
-            return -umul(-other);
+            return -mulu(-other);
         } else {
-            return umul(other);
+            return mulu(other);
         }
     }
 
-    Tryte Tryte::umul(const Tryte& other) const {
+    Tryte Tryte::mulu(const Tryte& other) const {
         // Yet to find an algorithm for BCT (or even BCD) multiplication/division
         // so for now the multiplication and division functions are implemented
         // by converting to a native integer and back
@@ -113,17 +113,17 @@ namespace termite {
 
     Tryte Tryte::operator/(const Tryte& other) const {
         if (is_neg() && other.is_neg()) {
-            return operator-().udiv(-other);
+            return operator-().divu(-other);
         } else if(is_neg()) {
-            return -(operator-().udiv(other));
+            return -(operator-().divu(other));
         } else if(other.is_neg()) {
-            return -udiv(-other);
+            return -divu(-other);
         } else {
-            return udiv(other);
+            return divu(other);
         }
     }
 
-    Tryte Tryte::udiv(const Tryte& other) const {
+    Tryte Tryte::divu(const Tryte& other) const {
         int16_t a = to_int16();
         int16_t b = other.to_int16();
         int16_t c = a / b;
