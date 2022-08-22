@@ -15,26 +15,7 @@ namespace termite {
     enum class Opcode {
         NOP,
         SYSCALL,
-        ADD,
-        SUB,
-        ADDI,
-        MUL,
-        MULU,
-        DIV,
-        MOD,
-        AND,
-        OR,
-        ANDI,
-        ORI,
-        LUI,
-        LT,
-        LH,
-        LW,
-        LTU,
-        LHU,
-        ST,
-        SH,
-        SW
+
     };
 }
 

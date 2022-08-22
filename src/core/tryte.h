@@ -31,6 +31,9 @@ namespace termite {
         // Converts raw bits to a BCT tryte.
         Tryte(FromBits, uint16_t bits);
 
+        // Convert a native uint16 to a BCT tryte.
+        Tryte(uint16_t bits);
+
         // bool valid() const;
 
         // Returns a value of the BCT tryte's high trybble.

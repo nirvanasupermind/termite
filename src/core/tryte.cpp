@@ -20,6 +20,12 @@ namespace termite {
         // assert(valid());
     }
 
+
+    Tryte::Tryte(uint16_t val)
+        : hi(Trybble(val / 27)), lo(Trybble(val % 27)) {
+        // assert(valid());
+    }
+
     // bool Tryte::valid() const 
     // {
     //     uint16_t a = bits();
@@ -104,9 +110,9 @@ namespace termite {
         // so for now the multiplication and division functions are implemented
         // by converting to a native integer and back
 
-        int16_t a = to_int16();
-        int16_t b = other.to_int16();
-        int16_t c = a * b;
+        uint16_t a = to_uint16();
+        uint16_t b = other.to_uint16();
+        uint16_t c = a * b;
 
         return Tryte(c / 27, c % 27);
     }
@@ -128,7 +134,7 @@ namespace termite {
         int16_t b = other.to_int16();
         int16_t c = a / b;
 
-        return Tryte(c / 27, c % 27);
+        return Tryte(c);
     }
 
     Tryte Tryte::operator~() const {
