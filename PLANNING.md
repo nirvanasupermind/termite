@@ -36,7 +36,8 @@ Integers and floating-point numbers may be input and displayed in three number s
 - 3^18 = 387420489 1-tryte memory registers (387 MT of memory)
 
 # CPU registers
-- 24-trit general-purpose registers `$r0` - `$r23`
+- 24-trit always-0 register (`$r0`)
+- 24-trit general-purpose registers (`$r1` - `$r23`)
 - 24-trit syscall code register (`$r24`)
 - 24-trit instruction register (`$r25`)
 - 24-trit program counter (`$r26`)
@@ -59,7 +60,7 @@ Integers and floating-point numbers may be input and displayed in three number s
   - `mul`: multiply (R-type)
   - `mulu`: multiply unsigned (R-type)
   - `div`: divide (R-type)
-  - `mod`: modulus (R-type)
+  - `divu`: divide unsigned (R-type)
   - `and`: tritwise AND (R-type)
   - `or`: tritwise OR (R-type)
   - `andi`: tritwise AND immediate (I-type)
@@ -67,7 +68,18 @@ Integers and floating-point numbers may be input and displayed in three number s
   - `lui`: load upper immediate (I-type)
   - `lw`: load word (I-type)
   - `sw`: store word (I-type)
-  - (note to self: add jump and comparison instructions here)
+  - `b`: Branch unconditionally (A-type)
+  - `beq`: Branch if equal (I-type)
+  - `bne`: Branch if not equal (I-type)
+  - `blt`: Branch if less-than (I-type)
+  - `bltu`: Branch if less-than unsigned (I-type)
+  - `bgt`: Branch if greater-than (I-type)
+  - `bgtu`: Branch if greater-than unsigned (I-type)
+  - `ble`: Branch if less-than (I-type)
+  - `bleu`: Branch if less-than unsigned (I-type)
+  - `bge`: Branch if greater-than (I-type)
+  - `bgeu`: Branch if greater-than unsigned (I-type)
+
 
 - Syscall services:
   - `0`: Print decimal value

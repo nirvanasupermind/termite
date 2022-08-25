@@ -15,7 +15,7 @@ namespace termite {
     class Memory {
     protected:
         // Internal array of trytes.
-        std::array<Tryte, 19683> data;
+        std::array<Tryte, 387420489> data;
     public:
         // Initializes the memory with all registers set to 0.
         Memory() = default;
