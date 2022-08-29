@@ -68,6 +68,10 @@ namespace termite {
         return hi.to_ternary_str() + lo.to_ternary_str();
     }
 
+    std::string Tryte::to_hept_str() const {
+        return std::string() + hi.to_hept_chr() + lo.to_hept_chr();
+    }
+
     Tryte Tryte::operator+(const Tryte& other) const {
         uint16_t a = bits();
         uint16_t b = other.bits();

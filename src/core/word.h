@@ -28,6 +28,12 @@ namespace termite {
         // Convert two BCT halfwords to a BCT word.
         Word(const Halfword& hi, const Halfword& lo);
 
+        // Convert a single BCT halfword to a BCT word using sign extension.
+        Word(const Halfword& lo);
+
+        // Convert a single BCT halfword to a BCT word using zero extension.
+        Word(ZeroExt, const Halfword& lo);
+
         // Converts raw bits to a BCT word.
         Word(FromBits, uint64_t bits);
 
@@ -54,6 +60,9 @@ namespace termite {
 
         // Converts the BCT word to a ternary string.
         std::string to_ternary_str() const;
+
+        // Converts the BCT word to a heptavigesimal string.
+        std::string to_hept_str() const;
 
         // Returns the sum of two BCT words.
         Word operator+(const Word& other) const;

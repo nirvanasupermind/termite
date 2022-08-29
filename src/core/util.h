@@ -11,6 +11,11 @@ namespace termite
     {
         from_bits
     };
+
+    enum ZeroExt
+    {
+        zero_ext
+    };
 }
 
 #endif

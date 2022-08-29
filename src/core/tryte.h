@@ -57,6 +57,9 @@ namespace termite {
         // Converts the BCT tryte to a ternary string.
         std::string to_ternary_str() const;
 
+        // Converts the BCT tryte to a heptavigesimal string.
+        std::string to_hept_str() const;
+
         // Returns the sum of two BCT trytes.
         Tryte operator+(const Tryte& other) const;
 

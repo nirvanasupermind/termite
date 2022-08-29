@@ -48,15 +48,15 @@ Integers and floating-point numbers may be input and displayed in three number s
   - R-type: opcode (6), register 1 (3), register 2 (3), register 3 (3), unused space (9)
   - I-type: opcode (6), register 1 (3), register 2 (3), immediate (12)
   - J-type: opcode (6), address (18)
-
 - Instruction set:
   - `nop`: no operation (R-type)
-  - `syscall`: system call using `$r24` as code (R-type)
+  - `syscall`: system call using `$r24` as code (J-type)
   - `add`: add (R-type)
   - `sub`: subtract (R-type)
   - `addi`: add immediate (I-type)
-  <!-- `24-trit * 24-trit = 48-trit` -->
-  <!-- mult: stores the whole 48-trit result, via putting it in two registers -->
+  - `addu`: add unsigned (R-type)
+  - `subu`: subtract unsigned (R-type)
+  - `addiu`: add immediate unsigned (I-type)
   - `mul`: multiply (R-type)
   - `mulu`: multiply unsigned (R-type)
   - `div`: divide (R-type)
@@ -68,18 +68,17 @@ Integers and floating-point numbers may be input and displayed in three number s
   - `lui`: load upper immediate (I-type)
   - `lw`: load word (I-type)
   - `sw`: store word (I-type)
-  - `b`: Branch unconditionally (A-type)
+  - `b`: Branch unconditionally (J-type)
   - `beq`: Branch if equal (I-type)
   - `bne`: Branch if not equal (I-type)
-  - `blt`: Branch if less-than (I-type)
-  - `bltu`: Branch if less-than unsigned (I-type)
-  - `bgt`: Branch if greater-than (I-type)
-  - `bgtu`: Branch if greater-than unsigned (I-type)
-  - `ble`: Branch if less-than (I-type)
-  - `bleu`: Branch if less-than unsigned (I-type)
-  - `bge`: Branch if greater-than (I-type)
-  - `bgeu`: Branch if greater-than unsigned (I-type)
-
+  - `blt`: Branch if less than (I-type)
+  - `bltu`: Branch if less than unsigned (I-type)
+  - `bgt`: Branch if greater than (I-type)
+  - `bgtu`: Branch if greater than unsigned (I-type)
+  - `ble`: Branch if less than or equal (I-type)
+  - `bleu`: Branch if less than or equal unsigned (I-type)
+  - `bge`: Branch if greater than (I-type)
+  - `bgeu`: Branch if greate than or equal unsigned (I-type)
 
 - Syscall services:
   - `0`: Print decimal value
@@ -90,17 +89,19 @@ Integers and floating-point numbers may be input and displayed in three number s
   - `5`: Read ternary value
   - `6`: Read heptavigesimal value
   - `7`: Read TCE character
-  - `8`: Exit (terminates with value)
+  - `8`: Exit
 
-<!-- - Example assembly program to add two numbers:
+Example assembly program to add two numbers:
 ```
 main:
-  lti 1,r0; loads 1 into r0
-  lti 2,r1; loads 1 into r0
-  add r2,r0,r1; adds r0 and r1, storing result in r2
-  sys $00,r2; prints r2
-  sys $08,$00; exits with status code 0
-``` -->
+  lw 1, $r1;
+  lw 2, $r2;
+  add $r1, $r2, $r3;
+  lw 0, $r24;
+  syscall $r3;
+  lw 8, $r24;
+  syscall;
+```
 
 # C-like language example
 ```

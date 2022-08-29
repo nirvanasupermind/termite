@@ -56,6 +56,10 @@ namespace termite {
         return hi.to_ternary_str() + lo.to_ternary_str();
     }
 
+    std::string Halfword::to_hept_str() const {
+        return hi.to_hept_str() + lo.to_hept_str();
+    }
+
     Halfword Halfword::operator+(const Halfword& other) const {
         uint32_t a = bits();
         uint32_t b = other.bits();

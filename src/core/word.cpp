@@ -7,13 +7,16 @@
 
 #include "util.h"
 #include "trybble.h"
-#include "Halfword.h"
-#include "Word.h"
+#include "halfword.h"
+#include "word.h"
 
 namespace termite {
     Word::Word(const Halfword& hi, const Halfword& lo)
         : hi(hi), lo(lo) {
+    }
 
+    Word::Word(const Halfword& lo)
+        : hi(lo.is_neg() ? -Halfword::ONE : Halfword()), lo(lo) {
     }
 
     Word::Word(FromBits, uint64_t bits)
@@ -54,6 +57,10 @@ namespace termite {
 
     std::string Word::to_ternary_str() const {
         return hi.to_ternary_str() + lo.to_ternary_str();
+    }
+
+    std::string Word::to_hept_str() const {
+        return hi.to_hept_str() + lo.to_hept_str();
     }
 
     Word Word::operator+(const Word& other) const {
