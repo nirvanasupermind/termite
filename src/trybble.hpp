@@ -7,7 +7,7 @@
 #include "util.hpp"
 
 namespace termite {
-    // 3-trit ternary integer type implemented using binary-coded ternary
+    // 3-trit ternary integer type implemented using a binary-coded ternary or BCT data representation
     class Trybble {
     public:
         uint8_t bct;
