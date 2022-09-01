@@ -59,7 +59,7 @@ All instructions have a fixed width of 1 word (formats listed here with smaller 
 -  `add`, `sub`, `mul`, `mulu`, `div`, `divu`, `and`, `or`, `xor`, `ls`, `rs`, `lsu`, `rsu`: 
     3-trit opcode, 3-trit source register #1, 3-trit source register #2, 2, 3-trit destination register
 - `jmp`, `jmpz`, `jmpc`: 3-trit opcode, 9-trit address
-- `sys`: 3-trit opcode, 9-trit syscall code
+- `sys`: 3-trit opcode, 6-trit syscall code, 3-trit register
 
 ## Syscall Services
 - `0`: Exits cleanly
