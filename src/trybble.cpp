@@ -9,7 +9,7 @@ namespace termite {
     const Trybble Trybble::ZERO(from_bct, 0b00'00'00);
     const Trybble Trybble::ONE(from_bct, 0b00'00'01);
     const Trybble Trybble::THREE(from_bct, 0b00'01'00);
-    
+
     Trybble::Trybble(FromBCT, uint8_t bct)
         : bct(bct) {
     }
@@ -106,7 +106,7 @@ namespace termite {
         return operator~() + Trybble::ONE;
     }
 
-    Trybble Trybble::operator+(const Trybble &other) const {
+    Trybble Trybble::operator+(const Trybble& other) const {
         uint8_t a = bct;
         uint8_t b = other.bct;
 
@@ -122,15 +122,34 @@ namespace termite {
         return Trybble(from_bct, t7);
     }
 
-    Trybble Trybble::operator-(const Trybble &other) const {
+    Trybble Trybble::operator-(const Trybble& other) const {
         return operator+(-other);
-    }
-
-    Trybble Trybble::operator-(const Trybble &other) const {
-        return operator-(other);
     }
 
     Trybble Trybble::operator~() const {
         return Trybble(from_bct, 0b10'10'10 - bct);
+    }
+
+
+    uint8_t Trybble::to_uint8_t() const {
+        // unsigned int high, low, acc;
+
+        // high = (bct >> 2) & 0x333; /* high trits */
+        // low = bct & 0x333; /* low trits */
+        // acc = low + (3 * high);     /* binary-coded base 9 */
+
+        // high = (acc >> 4) & 0x0F0F0F0F; /* high nibbles */
+        // low = acc & 0x0F0F0F0F; /* low nibbles */
+        // acc = low + (9 * high);     /* binary-coded base 81 */
+
+        // high = (acc >> 8) & 0x00FF00FF; /* high bytes */
+        // low = acc & 0x00FF00FF; /* low bytes */
+        // acc = low + (81 * high);     /* binary-coded base 6561 */
+
+        // high = (acc >> 8) & 0x0000FFFF; /* high bytes */
+        // low = acc & 0x0000FFFF; /* low bytes */
+        // acc = low + (6561 * high);     /* now in binary */
+
+        // return acc;
     }
 } // namespace termite
