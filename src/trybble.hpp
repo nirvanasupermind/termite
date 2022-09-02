@@ -41,7 +41,7 @@ namespace termite {
         Trybble operator*(const Trybble& other) const;
 
         // Divide operator
-        Trybble operator*(const Trybble& other) const;
+        Trybble operator/(const Trybble& other) const;
 
         // Tritwise NOT
         Trybble operator~() const;

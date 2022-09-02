@@ -86,10 +86,10 @@ namespace termite {
             bct = 0b10'01'01; // 211
             break;
         case 23:
-            bct = 0b10'01'01; // 212
+            bct = 0b10'01'10; // 212
             break;
         case 24:
-            bct = 0b10'10'10; // 220
+            bct = 0b10'10'00; // 220
             break;
         case 25:
             bct = 0b10'10'01; // 221
@@ -126,30 +126,78 @@ namespace termite {
         return operator+(-other);
     }
 
+    Trybble Trybble::operator*(const Trybble& other) const {
+        return Trybble(from_val, to_uint8_t() * other.to_uint8_t());
+    }
+
+    Trybble Trybble::operator/(const Trybble& other) const {
+        return Trybble(from_val, to_uint8_t() / other.to_uint8_t());
+    }
+
+
+
     Trybble Trybble::operator~() const {
         return Trybble(from_bct, 0b10'10'10 - bct);
     }
 
-
     uint8_t Trybble::to_uint8_t() const {
-        // unsigned int high, low, acc;
-
-        // high = (bct >> 2) & 0x333; /* high trits */
-        // low = bct & 0x333; /* low trits */
-        // acc = low + (3 * high);     /* binary-coded base 9 */
-
-        // high = (acc >> 4) & 0x0F0F0F0F; /* high nibbles */
-        // low = acc & 0x0F0F0F0F; /* low nibbles */
-        // acc = low + (9 * high);     /* binary-coded base 81 */
-
-        // high = (acc >> 8) & 0x00FF00FF; /* high bytes */
-        // low = acc & 0x00FF00FF; /* low bytes */
-        // acc = low + (81 * high);     /* binary-coded base 6561 */
-
-        // high = (acc >> 8) & 0x0000FFFF; /* high bytes */
-        // low = acc & 0x0000FFFF; /* low bytes */
-        // acc = low + (6561 * high);     /* now in binary */
-
-        // return acc;
+        switch (bct) {
+        case 0b00'00'00:
+            return 0; // 000
+        case 0b00'00'01:
+            return 1; // 001
+        case 0b00'00'10:
+            return 2; // 002
+        case 0b00'01'00: // 010
+            return 3;
+        case 0b00'01'01:
+            return 4; // 011
+        case 0b00'01'10:
+            return 5; // 012
+        case 0b00'10'00:
+            return 6; // 020
+        case 0b00'10'01:
+            return 7; // 021
+        case 0b00'10'10:
+            return 8; // 022
+        case 0b01'00'00:
+            return 9; // 100
+        case 0b01'00'01:
+            return 10; // 101
+        case 0b01'00'10:
+            return 11; // 102
+        case 0b01'01'00:
+            return 12; // 110
+        case 0b01'01'01:
+            return 13; // 111
+        case 0b01'01'10:
+            return 14; // 112
+        case 0b01'10'00:
+            return 15; // 120
+        case 0b01'10'01:
+            return 16; // 121
+        case 0b01'10'10:
+            return 17; // 122
+        case 0b10'00'00:
+            return 18; // 200
+        case 0b10'00'01:
+            return 19; // 201
+        case 0b10'00'10:
+            return 20; // 202
+        case 0b10'01'00:
+            return 21; // 210 
+        case 0b10'01'01:
+            return 22; // 211
+        case 0b10'01'10:
+            return 23; // 212
+        case 0b10'10'00:
+            return 24; // 220
+        case 0b10'10'01:
+            return 25; // 221
+        case 0b10'10'10:
+            return 26; // 222
+        default:
+            throw std::string("[termite] unimplemented");
+        }
     }
 } // namespace termite
