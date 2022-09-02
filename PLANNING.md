@@ -60,8 +60,8 @@ All instructions have a fixed width of 1 word (formats listed here with smaller 
 -  `neg`, `not`, : 6-trit opcode, 3-trit source register, 3-trit destination register
 -  `add`, `sub`, `mul`, `umul`, `div`, `udiv`, `and`, `or`, `xor`, `ls`, `rs`, `uls`, `urs`: 
     3-trit opcode, 3-trit source register #1, 3-trit source register #2, 2, 3-trit destination register
-- `jmp`, `jmpz`, `jmpc`: 3-trit opcode, 9-trit address
-- `sys`: 3-trit opcode, 6-trit syscall code, 3-trit register
+- `jmp`, `jmpz`, `jmpc`: 6-trit opcode, 12-trit address
+- `sys`: 6-trit opcode, 6-trit syscall code, 3-trit register
 
 ## Syscall Services
 - `0`: Exits cleanly
