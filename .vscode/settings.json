@@ -1,9 +1,0 @@
-{
-    "files.associations": {
-        "*.punylisp": "lisp",
-        "*.eris": "dart",
-        "*.bnf": "bnf",
-        "*.csv": "plaintext",
-        "cassert": "cpp"
-    }
-}
