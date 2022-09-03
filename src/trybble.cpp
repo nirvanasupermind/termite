@@ -1,4 +1,3 @@
-#include <iostream>
 #include <cstdint>
 #include <string>
 #include <exception>
@@ -163,11 +162,8 @@ namespace termite {
         return Trybble(from_bct, 0b10'10'10 - bct);
     }
 
-
     bool Trybble::is_neg() const {
-        bool result = bct >= 0b01'01'01;
-
-        return result;
+        return bct >= 0b01'01'01;
     }
 
     uint8_t Trybble::to_uint8_t() const {
