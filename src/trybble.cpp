@@ -1,3 +1,4 @@
+#include <iostream>
 #include <cstdint>
 #include <string>
 #include <exception>
@@ -98,7 +99,7 @@ namespace termite {
             bct = 0b10'10'10; // 222
             break;
         default:
-            throw std::string("[termite] unimplemented");
+            throw std::runtime_error("[termite] unimplemented");
         }
     }
 
@@ -127,17 +128,46 @@ namespace termite {
     }
 
     Trybble Trybble::operator*(const Trybble& other) const {
-        return Trybble(from_val, to_uint8_t() * other.to_uint8_t());
+        // Avoid multiple calls
+        bool this_is_neg = is_neg(), other_is_neg = other.is_neg();
+
+        if (this_is_neg && other_is_neg) {
+            return operator-().umul(-other);
+        } else if(!this_is_neg && other_is_neg) {
+            return -umul(-other);
+        } else if(this_is_neg && !other_is_neg) {
+            return -operator-().umul(other);
+        } else {
+            return umul(other);
+        }
     }
 
+    Trybble Trybble::umul(const Trybble& other) const {
+        return Trybble(from_val, (to_uint8_t() * other.to_uint8_t()) % 27);
+    }
+
+
     Trybble Trybble::operator/(const Trybble& other) const {
+        if (is_neg() ^ other.is_neg()) {
+            return -udiv(other);
+        }
+
+        return udiv(other);
+    }
+
+    Trybble Trybble::udiv(const Trybble& other) const {
         return Trybble(from_val, to_uint8_t() / other.to_uint8_t());
     }
 
-
-
     Trybble Trybble::operator~() const {
         return Trybble(from_bct, 0b10'10'10 - bct);
+    }
+
+
+    bool Trybble::is_neg() const {
+        bool result = bct >= 0b01'01'01;
+
+        return result;
     }
 
     uint8_t Trybble::to_uint8_t() const {
@@ -197,7 +227,15 @@ namespace termite {
         case 0b10'10'10:
             return 26; // 222
         default:
-            throw std::string("[termite] unimplemented");
+            throw std::runtime_error("[termite] unimplemented");
+        }
+    }
+
+    int8_t Trybble::to_int8_t() const {
+        if (is_neg()) {
+            return to_uint8_t() - 27;
+        } else {
+            return to_uint8_t();
         }
     }
 } // namespace termite
