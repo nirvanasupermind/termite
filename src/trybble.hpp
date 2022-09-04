@@ -7,17 +7,18 @@
 #include "util.hpp"
 
 namespace termite {
-    // 3-trit ternary integer type implemented using a binary-coded ternary or BCT data representation
+    // 3-trit balanced ternary integer type implemented using a binary-coded ternary or BCT data representation
     class Trybble {
     public:
+        // The trybble with a value of -1
+        static const Trybble MINUS_ONE;
+    
         // The trybble with a value of 0
         static const Trybble ZERO;
 
         // The trybble with a value of 1
         static const Trybble ONE;
 
-        // The trybble with a value of 3
-        static const Trybble THREE;
 
         // The BCT encoding of the trybble
         uint8_t bct;
@@ -25,8 +26,8 @@ namespace termite {
         // Creates a trybble from it's BCT encoding
         Trybble(FromBCT, uint8_t bct);
 
-        // Creates a trybble from a native unsigned integer
-        Trybble(FromVal, uint8_t val);
+        // Creates a trybble from a native integer
+        Trybble(FromVal, int8_t val);
 
         // 3's complement negation
         Trybble operator-() const;
@@ -63,10 +64,6 @@ namespace termite {
 
         // Checks if trybble is negative
         bool is_neg() const;
-
-        // Converts a trybble to a native unsigned integer
-        uint8_t to_uint8_t() const;
-
 
         // Converts a trybble to a native signed integer
         int8_t to_int8_t() const;
