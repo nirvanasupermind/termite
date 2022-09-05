@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include <string>
+#include <array>
 
 #include "util.hpp"
 
@@ -19,7 +20,6 @@ namespace termite {
         // The trybble with a value of 1
         static const Trybble ONE;
 
-
         // The BCT encoding of the trybble
         uint8_t bct;
 
@@ -28,6 +28,9 @@ namespace termite {
 
         // Creates a trybble from a native integer
         Trybble(FromVal, int8_t val);
+
+        // Creates a trybble from it's constituent trits
+        Trybble(FromTrits, const std::array<uint8_t, 3> &trits);
 
         // 3's complement negation
         Trybble operator-() const;
@@ -59,17 +62,20 @@ namespace termite {
         // Tritwise OR
         Trybble operator|(const Trybble& other) const;
 
-        // Tritwise XOR
-        Trybble operator^(const Trybble& other) const;
-
         // Checks if trybble is negative
         bool is_neg() const;
 
-        // Converts a trybble to a native signed integer
+        // Converts a trybble into a trit array
+        std::array<uint8_t, 3> get_trits() const;
+
+        // Converts a trybble into a native signed integer
         int8_t to_int8_t() const;
 
-        // Converts a trybble to a ternary string
+        // Converts a trybble into a ternary string
         std::string to_ternary_str() const;
+
+        // Converts a trybble into a septemvigesimal digit
+        char to_sept_digit() const;
     };
 } // namespace termite
 

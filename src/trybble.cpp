@@ -1,6 +1,7 @@
 #include <cstdint>
 #include <string>
 #include <exception>
+#include <algorithm>
 
 #include "util.hpp"
 #include "trybble.hpp"
@@ -102,6 +103,10 @@ namespace termite {
         }
     }
 
+    Trybble::Trybble(FromTrits, const std::array<uint8_t, 3>& trits)
+        : bct((trits.at(0) << 4) + (trits.at(1) << 2) + (trits.at(2))) {
+    }
+
     Trybble Trybble::operator-() const {
         return operator~();
     }
@@ -127,7 +132,7 @@ namespace termite {
     }
 
     Trybble Trybble::operator*(const Trybble& other) const {
-        return Trybble(from_val, (to_int8_t() * other.to_int8_t()) % 27);        
+        return Trybble(from_val, (to_int8_t() * other.to_int8_t()) % 27);
     }
 
     Trybble Trybble::operator/(const Trybble& other) const {
@@ -147,21 +152,37 @@ namespace termite {
     }
 
     Trybble Trybble::operator&(const Trybble& other) const {
-        uint8_t a = bct;
-        uint8_t b = other.bct;
+        std::array<uint8_t, 3> a = get_trits();
+        std::array<uint8_t, 3> b = other.get_trits();
 
-        // 00 & n = 00
-        // 10 & n = n
+        std::array<uint8_t, 3> c{
+            std::min(a.at(0), b.at(0)),
+            std::min(a.at(1), b.at(1)),
+            std::min(a.at(2), b.at(2))
+        };
 
-        // n & 211 = 
+        return Trybble(from_trits, c);
+    }
 
-        uint16_t t1 = a ^ 0b00'01'00
+    Trybble Trybble::operator|(const Trybble& other) const {
+        std::array<uint8_t, 3> a = get_trits();
+        std::array<uint8_t, 3> b = other.get_trits();
 
-        return Trybble(from_bct, t7);
+        std::array<uint8_t, 3> c{
+            std::max(a.at(0), b.at(0)),
+            std::max(a.at(1), b.at(1)),
+            std::max(a.at(2), b.at(2))
+        };
+
+        return Trybble(from_trits, c);
     }
 
     bool Trybble::is_neg() const {
         return bct >= 0b01'01'01;
+    }
+
+    std::array<uint8_t, 3> Trybble::get_trits() const {
+        return { (uint8_t)((bct >> 4) & 3), (uint8_t)((bct >> 2) & 3), (uint8_t)(bct & 3) };
     }
 
     int8_t Trybble::to_int8_t() const {
@@ -172,54 +193,54 @@ namespace termite {
             return -12; // ZZ0
         case 0b00'00'10:
             return -11; // ZZ1
-        case 0b00'01'00: // 010
-            return 3;
+        case 0b00'01'00:
+            return -10; // Z0Z
         case 0b00'01'01:
-            return 4; // 011
+            return -9; // Z00
         case 0b00'01'10:
-            return 5; // 012
+            return -8; // Z01
         case 0b00'10'00:
-            return 6; // 020
+            return -7; // Z10
         case 0b00'10'01:
-            return 7; // 021
+            return -6; // Z11
         case 0b00'10'10:
-            return 8; // 022
+            return -5; // Z12
         case 0b01'00'00:
-            return 9; // 100
+            return -4; // 0ZZ
         case 0b01'00'01:
-            return 10; // 101
+            return -3; // 0Z0
         case 0b01'00'10:
-            return 11; // 102
+            return -2; // 0Z1
         case 0b01'01'00:
-            return 12; // 110
+            return -1; // 00Z
         case 0b01'01'01:
-            return 13; // 111
+            return 0; // 000
         case 0b01'01'10:
-            return 14; // 112
+            return 1; // 001
         case 0b01'10'00:
-            return 15; // 120
+            return 2; // 01Z
         case 0b01'10'01:
-            return 16; // 121
+            return 3; // 010
         case 0b01'10'10:
-            return 17; // 122
+            return 4; // 011
         case 0b10'00'00:
-            return 18; // 200
+            return 5; // 1ZZ
         case 0b10'00'01:
-            return 19; // 201
+            return 6; // 1Z0
         case 0b10'00'10:
-            return 20; // 202
+            return 7; // 1Z1
         case 0b10'01'00:
-            return 21; // 210 
+            return 8; // 10Z 
         case 0b10'01'01:
-            return 22; // 211
+            return 9; // 100
         case 0b10'01'10:
-            return 23; // 212
+            return 10; // 101
         case 0b10'10'00:
-            return 24; // 220
+            return 11; // 11Z
         case 0b10'10'01:
-            return 25; // 221
+            return 12; // 110
         case 0b10'10'10:
-            return 26; // 222
+            return 13; // 111
         default:
             throw std::runtime_error("[termite] unimplemented");
         }
@@ -228,59 +249,120 @@ namespace termite {
     std::string Trybble::to_ternary_str() const {
         switch (bct) {
         case 0b00'00'00:
-            return "000";
+            return "ZZZ";
         case 0b00'00'01:
-            return "001";
+            return "ZZ0";
         case 0b00'00'10:
-            return "002";
+            return "ZZ1";
         case 0b00'01'00:
-            return "010";
+            return "Z0Z";
         case 0b00'01'01:
-            return "011";
+            return "Z00";
         case 0b00'01'10:
-            return "012";
+            return "Z01";
         case 0b00'10'00:
-            return "020";
+            return "Z1Z";
         case 0b00'10'01:
-            return "021";
+            return "Z10";
         case 0b00'10'10:
-            return "022";
+            return "Z11";
         case 0b01'00'00:
-            return "100";
+            return "0ZZ";
         case 0b01'00'01:
-            return "101";
+            return "0Z0";
         case 0b01'00'10:
-            return "102";
+            return "0Z1";
         case 0b01'01'00:
-            return "110";
+            return "00Z";
         case 0b01'01'01:
-            return "111";
+            return "000";
         case 0b01'01'10:
-            return "112";
+            return "001";
         case 0b01'10'00:
-            return "120";
+            return "01Z";
         case 0b01'10'01:
-            return "121";
+            return "010";
         case 0b01'10'10:
-            return "122";
+            return "011";
         case 0b10'00'00:
-            return "200";
+            return "1ZZ";
         case 0b10'00'01:
-            return "201";
+            return "1Z0";
         case 0b10'00'10:
-            return "202";
+            return "1Z1";
         case 0b10'01'00:
-            return "210";
+            return "10Z";
         case 0b10'01'01:
-            return "211";
+            return "100";
         case 0b10'01'10:
-            return "212";
+            return "101";
         case 0b10'10'00:
-            return "220";
+            return "11Z";
         case 0b10'10'01:
-            return "221";
+            return "110";
         case 0b10'10'10:
-            return "222";
+            return "111";
+        default:
+            throw std::runtime_error("[termite] unimplemented");
+        }
+    }
+
+    char Trybble::to_sept_digit() const {
+        switch (bct) {
+        case 0b00'00'00:
+            return 'N';
+        case 0b00'00'01:
+            return 'O';
+        case 0b00'00'10:
+            return 'P';
+        case 0b00'01'00:
+            return 'Q';
+        case 0b00'01'01:
+            return 'R';
+        case 0b00'01'10:
+            return 'S';
+        case 0b00'10'00:
+            return 'T';
+        case 0b00'10'01:
+            return 'U';
+        case 0b00'10'10:
+            return 'V';
+        case 0b01'00'00:
+            return 'W';
+        case 0b01'00'01:
+            return 'X';
+        case 0b01'00'10:
+            return 'Y';
+        case 0b01'01'00:
+            return 'Z';
+        case 0b01'01'01:
+            return '0';
+        case 0b01'01'10:
+            return '1';
+        case 0b01'10'00:
+            return '2';
+        case 0b01'10'01:
+            return '3';
+        case 0b01'10'10:
+            return '4';
+        case 0b10'00'00:
+            return '5';
+        case 0b10'00'01:
+            return '6';
+        case 0b10'00'10:
+            return '7';
+        case 0b10'01'00:
+            return '8';
+        case 0b10'01'01:
+            return '9';
+        case 0b10'01'10:
+            return 'A';
+        case 0b10'10'00:
+            return 'B';
+        case 0b10'10'01:
+            return 'C';
+        case 0b10'10'10:
+            return 'D';
         default:
             throw std::runtime_error("[termite] unimplemented");
         }
