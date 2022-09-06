@@ -103,10 +103,6 @@ namespace termite {
         }
     }
 
-    Trybble::Trybble(FromTrits, const std::array<uint8_t, 3>& trits)
-        : bct((trits.at(0) << 4) + (trits.at(1) << 2) + (trits.at(2))) {
-    }
-
     Trybble Trybble::operator-() const {
         return operator~();
     }
@@ -152,38 +148,47 @@ namespace termite {
     }
 
     Trybble Trybble::operator&(const Trybble& other) const {
-        std::array<uint8_t, 3> a = get_trits();
-        std::array<uint8_t, 3> b = other.get_trits();
+        uint8_t a = bct;
+        uint8_t b = other.bct;
+        
 
-        std::array<uint8_t, 3> c{
-            std::min(a.at(0), b.at(0)),
-            std::min(a.at(1), b.at(1)),
-            std::min(a.at(2), b.at(2))
-        };
+        uint8_t t1 = ((bct >> 4) & 3), u1 = (other.bct >> 2) & 3;
+        uint8_t t2 = ((bct >> 2) & 3), u2 = ((other.bct >> 2) & 3);
+        uint8_t t3 = (bct & 3), u3 = (other.bct & 3);
 
-        return Trybble(from_trits, c);
+        return Trybble(from_bct, std::min(t1, u1) >> 4 + std::min(t2, u2) >> 2 + std::min(t3, u3));
     }
 
     Trybble Trybble::operator|(const Trybble& other) const {
-        std::array<uint8_t, 3> a = get_trits();
-        std::array<uint8_t, 3> b = other.get_trits();
+        uint8_t a = bct;
+        uint8_t b = other.bct;
 
-        std::array<uint8_t, 3> c{
-            std::max(a.at(0), b.at(0)),
-            std::max(a.at(1), b.at(1)),
-            std::max(a.at(2), b.at(2))
-        };
+        uint8_t t1 = ((bct >> 4) & 3), u1 = (other.bct >> 2) & 3;
+        uint8_t t2 = ((bct >> 2) & 3), u2 = ((other.bct >> 2) & 3);
+        uint8_t t3 = (bct & 3), u3 = (other.bct & 3);
 
-        return Trybble(from_trits, c);
+        return Trybble(from_bct, std::max(t1, u1) >> 4 + std::max(t2, u2) >> 2 + std::max(t3, u3));
+    }
+
+    Trybble Trybble::operator^(const Trybble& other) const {
+        uint8_t a = bct;
+        uint8_t b = other.bct;
+
+
+        uint8_t t1 = ((bct >> 4) & 3), u1 = (other.bct >> 2) & 3;
+        uint8_t t2 = ((bct >> 2) & 3), u2 = ((other.bct >> 2) & 3);
+        uint8_t t3 = (bct & 3), u3 = (other.bct & 3);
+
+        return Trybble(from_bct, ((t1 * -u1) + t1 + u1) >> 4 + ((t2 * -u2) + t2 + u2) >> 2 + ((t3 * -u3) + t3 + u3));
     }
 
     bool Trybble::is_neg() const {
-        return bct >= 0b01'01'01;
+        return bct < 0b01'01'01;
     }
 
-    std::array<uint8_t, 3> Trybble::get_trits() const {
-        return { (uint8_t)((bct >> 4) & 3), (uint8_t)((bct >> 2) & 3), (uint8_t)(bct & 3) };
-    }
+    // std::array<uint8_t, 3> Trybble::get_trits() const {
+    //     return { (uint8_t)((bct >> 4) & 3), (uint8_t)((bct >> 2) & 3), (uint8_t)(bct & 3) };
+    // }
 
     int8_t Trybble::to_int8_t() const {
         switch (bct) {
