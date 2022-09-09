@@ -23,11 +23,17 @@ namespace termite {
         // The BCT encoding of the trybble
         uint8_t bct;
 
+        /////////////////////////////////////////
+        // Constructors
+        
         // Creates a trybble from it's BCT encoding
         Trybble(FromBCT, uint8_t bct);
 
         // Creates a trybble from a native integer
         Trybble(FromVal, int8_t val);
+
+        /////////////////////////////////////////
+        // Constructors
         
         // 3's complement negation
         Trybble operator-() const;
@@ -41,14 +47,8 @@ namespace termite {
         // Multiply operator
         Trybble operator*(const Trybble& other) const;
 
-        // Unsigned multiply operator
-        Trybble umul(const Trybble& other) const;
-
         // Divide operator
         Trybble operator/(const Trybble& other) const;
-
-        // Unsigned divide operator
-        Trybble udiv(const Trybble& other) const;
 
         // Tritwise NOT
         Trybble operator~() const;
@@ -62,17 +62,23 @@ namespace termite {
         // Tritwise XOR
         Trybble operator^(const Trybble& other) const;
 
-        // Checks if trybble is negative
-        bool is_neg() const;
-
-        // Converts a trybble into a native signed integer
+        /////////////////////////////////////////
+        // Conversion
+        
+        // Converts a trybble into a native integer
         int8_t to_int8_t() const;
 
         // Converts a trybble into a ternary string
         std::string to_ternary_str() const;
 
-        // Converts a trybble into a septemvigesimal digit
-        char to_sept_digit() const;
+        // Converts a trybble into a heptavigesimal digit
+        char to_hept_digit() const;
+
+        /////////////////////////////////////////
+        // Misc
+
+        // Checks if a trybble is negative
+        bool is_neg() const;
     };
 } // namespace termite
 

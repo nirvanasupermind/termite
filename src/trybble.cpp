@@ -150,45 +150,35 @@ namespace termite {
     Trybble Trybble::operator&(const Trybble& other) const {
         uint8_t a = bct;
         uint8_t b = other.bct;
-        
 
-        uint8_t t1 = ((bct >> 4) & 3), u1 = (other.bct >> 2) & 3;
-        uint8_t t2 = ((bct >> 2) & 3), u2 = ((other.bct >> 2) & 3);
-        uint8_t t3 = (bct & 3), u3 = (other.bct & 3);
+        uint8_t a1 = ((bct >> 4) & 3), b1 = (other.bct >> 2) & 3;
+        uint8_t a2 = ((bct >> 2) & 3), b2 = ((other.bct >> 2) & 3);
+        uint8_t a3 = (bct & 3), b3 = (other.bct & 3);
 
-        return Trybble(from_bct, std::min(t1, u1) >> 4 + std::min(t2, u2) >> 2 + std::min(t3, u3));
+        return Trybble(from_bct, std::min(a1, b1) >> 4 + std::min(a2, b2) >> 2 + std::min(a3, b3));
     }
 
     Trybble Trybble::operator|(const Trybble& other) const {
         uint8_t a = bct;
         uint8_t b = other.bct;
 
-        uint8_t t1 = ((bct >> 4) & 3), u1 = (other.bct >> 2) & 3;
-        uint8_t t2 = ((bct >> 2) & 3), u2 = ((other.bct >> 2) & 3);
-        uint8_t t3 = (bct & 3), u3 = (other.bct & 3);
+        uint8_t a1 = ((bct >> 4) & 3), b1 = (other.bct >> 2) & 3;
+        uint8_t a2 = ((bct >> 2) & 3), b2 = ((other.bct >> 2) & 3);
+        uint8_t a3 = (bct & 3), b3 = (other.bct & 3);
 
-        return Trybble(from_bct, std::max(t1, u1) >> 4 + std::max(t2, u2) >> 2 + std::max(t3, u3));
+        return Trybble(from_bct, std::max(a1, b1) >> 4 + std::max(a2, b2) >> 2 + std::max(a3, b3));
     }
 
     Trybble Trybble::operator^(const Trybble& other) const {
         uint8_t a = bct;
         uint8_t b = other.bct;
 
+        uint8_t a1 = ((bct >> 4) & 3), b1 = (other.bct >> 2) & 3;
+        uint8_t a2 = ((bct >> 2) & 3), b2 = ((other.bct >> 2) & 3);
+        uint8_t a3 = (bct & 3), b3 = (other.bct & 3);
 
-        uint8_t t1 = ((bct >> 4) & 3), u1 = (other.bct >> 2) & 3;
-        uint8_t t2 = ((bct >> 2) & 3), u2 = ((other.bct >> 2) & 3);
-        uint8_t t3 = (bct & 3), u3 = (other.bct & 3);
-
-        return Trybble(from_bct, ((t1 * -u1) + t1 + u1) >> 4 + ((t2 * -u2) + t2 + u2) >> 2 + ((t3 * -u3) + t3 + u3));
+        return Trybble(from_bct, ((a1 * -b1) + a1 + b1) >> 4 + ((a2 * -b2) + a2 + b2) >> 2 + ((a3 * -b3) + a3 + b3));
     }
-
-    bool Trybble::is_neg() const {
-        return bct < 0b01'01'01;
-    }
-
-    // std::array<uint8_t, 3> Trybble::get_trits() const {
-    //     return { (uint8_t)((bct >> 4) & 3), (uint8_t)((bct >> 2) & 3), (uint8_t)(bct & 3) };
-    // }
 
     int8_t Trybble::to_int8_t() const {
         switch (bct) {
@@ -312,7 +302,7 @@ namespace termite {
         }
     }
 
-    char Trybble::to_sept_digit() const {
+    char Trybble::to_hept_digit() const {
         switch (bct) {
         case 0b00'00'00:
             return 'N';
@@ -371,5 +361,9 @@ namespace termite {
         default:
             throw std::runtime_error("[termite] unimplemented");
         }
+    }
+
+    bool Trybble::is_neg() const {
+        return bct < 0b01'01'01;
     }
 } // namespace termite
