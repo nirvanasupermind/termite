@@ -9,7 +9,8 @@
 #include "trybble.hpp"
 
 namespace termite {
-    // 6-trit balanced ternary integer type implemented using a binary-coded ternary or BCT data representation
+    // 6-trit balanced ternary integer type implemented using a binary-coded ternary (BCT) data representation
+    // A total of 729 states (-364 through 364)
     class Tryte { 
     public:
         // The tryte with a value of -1

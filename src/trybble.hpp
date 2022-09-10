@@ -8,7 +8,8 @@
 #include "util.hpp"
 
 namespace termite {
-    // 3-trit balanced ternary integer type implemented using a binary-coded ternary or BCT data representation
+    // 3-trit balanced ternary integer type implemented using a binary-coded ternary (BCT) data representation
+    // A total of 27 states (-13 through 13)
     class Trybble {
     public:
         // The trybble with a value of -1
