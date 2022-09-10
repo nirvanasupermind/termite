@@ -22,14 +22,14 @@ namespace termite
     }
 
     Tryte::Tryte(const Trybble &hi, const Trybble &lo)
-        : bct(hi.bct << 6 + lo.bct) {
+        : bct((hi.bct << 6) + lo.bct) {
     }
 
     Tryte Tryte::operator-() const {
         return operator~();
     }
 
-    Tryte Tryte::operator+(const Trybble& other) const {
+    Tryte Tryte::operator+(const Tryte& other) const {
         // BCT addition algorithm based on https://homepage.cs.uiowa.edu/~dwjones/bcd/bcd.html
 
         uint16_t a = bct;
@@ -44,5 +44,64 @@ namespace termite
         uint16_t t7 = 0b10'10'10'10'10'10 - (t2 - t6);
 
         return Tryte(from_bct, t7);
+    }
+
+
+    Tryte Tryte::operator-(const Tryte& other) const {
+        return operator+(-other);
+    }
+
+    Tryte Tryte::operator*(const Tryte& other) const {
+        // Naive implementation that converts to native integer and back
+        // This implementation will remain until I find an algorithm for BCT multiplication
+
+        return Tryte(from_val, balmod(to_int16_t() * other.to_int16_t(), 729));
+    }
+
+    Tryte Tryte::operator/(const Tryte& other) const {
+        // Naive implementation that converts to native integer and back
+        // This implementation will remain until I find an algorithm for BCT division
+
+        return Tryte(from_val, to_int16_t() / other.to_int16_t());
+    }
+
+    Tryte Tryte::operator~() const {
+        return Tryte(from_bct, 0b10'10'10'10'10'10 - bct);
+    }
+
+    Tryte Tryte::operator&(const Tryte& other) const {
+        return Tryte(hi_trybble() & other.hi_trybble(), lo_trybble() & other.lo_trybble());
+    }
+
+    Tryte Tryte::operator|(const Tryte& other) const {
+        return Tryte(hi_trybble() | other.hi_trybble(), lo_trybble() | other.lo_trybble());
+    }
+
+    Tryte Tryte::operator^(const Tryte& other) const {
+        return Tryte(hi_trybble() ^ other.hi_trybble(), lo_trybble() ^ other.lo_trybble());
+    }
+
+    int16_t Tryte::to_int16_t() const {
+        return hi_trybble().to_int8_t() * 27 + lo_trybble().to_int8_t();
+    }
+
+    std::string Tryte::to_ternary_str() const {
+        return hi_trybble().to_ternary_str() + lo_trybble().to_ternary_str();
+    }
+
+    std::string Tryte::to_hept_str() const {
+        return std::string() + hi_trybble().to_hept_digit() + lo_trybble().to_hept_digit();
+    }
+
+    bool Tryte::is_neg() const {
+        return bct < 0b01'01'01'01'01;
+    }
+
+    Trybble Tryte::hi_trybble() const {
+        return Trybble(from_bct, bct >> 6);
+    }
+
+    Trybble Tryte::lo_trybble() const {
+        return Trybble(from_bct, bct & 63);
     }
 } // namespace termite

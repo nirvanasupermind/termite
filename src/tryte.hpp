@@ -76,7 +76,7 @@ namespace termite {
         std::string to_ternary_str() const;
 
         // Converts a tryte into a heptavigesimal string
-        std::string to_hept_string() const;
+        std::string to_hept_str() const;
 
         /////////////////////////////////////////
         // Misc
