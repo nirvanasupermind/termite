@@ -10,7 +10,7 @@
 
 namespace termite {
     // 6-trit balanced ternary integer type implemented using a binary-coded ternary or BCT data representation
-    class Tryte {
+    class Tryte { 
     public:
         // The tryte with a value of -1
         static const Tryte MINUS_ONE;
@@ -27,12 +27,15 @@ namespace termite {
         /////////////////////////////////////////
         // Constructors
         
-        // Creates a trybble from it's BCT encoding
+        // Creates a tryte from it's BCT encoding
         Tryte(FromBCT, uint16_t bct);
 
-        // Creates a trybble from a native integer
+        // Creates a tryte from a native integer
         Tryte(FromVal, int16_t val);
         
+        // Creates a tryte from it's high and low trybbles
+        Tryte(const Trybble &hi, const Trybble &lo);
+
         // 3's complement negation
         Tryte operator-() const;
         

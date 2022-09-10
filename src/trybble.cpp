@@ -108,10 +108,11 @@ namespace termite {
     }
 
     Trybble Trybble::operator+(const Trybble& other) const {
+        // BCT addition algorithm based on https://homepage.cs.uiowa.edu/~dwjones/bcd/bcd.html
+
         uint8_t a = bct;
         uint8_t b = other.bct;
 
-        // BCT addition algorithm based on https://homepage.cs.uiowa.edu/~dwjones/bcd/bcd.html
         uint8_t t1 = a + 0b01'01'01;
         uint8_t t2 = t1 + b;
         uint8_t t3 = t1 ^ b;
@@ -128,18 +129,16 @@ namespace termite {
     }
 
     Trybble Trybble::operator*(const Trybble& other) const {
-        return Trybble(from_val, (to_int8_t() * other.to_int8_t()) % 27);
+        // Naive implementation that converts to native integer and back
+        // This implementation will remain until I find an algorithm for BCT multiplication
+
+        return Trybble(from_val, balmod(to_int8_t() * other.to_int8_t(), 27));
     }
 
     Trybble Trybble::operator/(const Trybble& other) const {
-        if (is_neg() ^ other.is_neg()) {
-            return -udiv(other);
-        }
+        // Naive implementation that converts to native integer and back
+        // This implementation will remain until I find an algorithm for BCT division
 
-        return udiv(other);
-    }
-
-    Trybble Trybble::udiv(const Trybble& other) const {
         return Trybble(from_val, to_int8_t() / other.to_int8_t());
     }
 
