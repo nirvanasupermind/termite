@@ -33,20 +33,19 @@ The processor status word contains the following 1-trit flags:
 - Subtract (`sub`): Loads the difference of two registers into the destination
 - Floating-point subtract (`fsub`): Loads the floating-point difference of two 24-trit floats into the destination
 - Multiply (`mul`): Loads the product of two registers into the destination
+- Unsigned multiply (`umul`) Loads the unsigned product of two registers into the destination
 - Floating-point multiply (`fmul`) Loads the floating-point product of two 24-trit floats into the destination
 - Divide (`div`): Loads the quotient of two registers into the destination
-- Floating-point divide (`fdiv`) Loads the floating-point quotient of two 24-trit floats into the destination
+- Unsigned divide (`udiv`) Loads the unsigned quotient of two registers into the destination
 - Tritwise NOT (`not`): Loads the tritwise NOT of a register into the destination
 - Tritwise AND (`and`): Loads the tritwise AND of two registers into the destination
 - Tritwise OR (`or`): Loads the tritwise OR of two registers into the destination
-- Tritwise XOR (`xor`): Loads the tritwise XOR of two registers into the destination
 - Left-shift (`ls`): Loads the left-shift of a register into the destination
 - Right-shift (`rs`): Loads the right-shift of a register into the destination
 - Jump (`jmp`): Jumps to a label unconditionally
 - Jump if zero (`jmpz`): Jumps to a label if the processor's zero flag is true
 - Jump if carry (`jmpc`): Jumps to a label if the processor's carry flag is true
 - Syscall (`sys`): Handles high-level operations including I/O
-
 
 ## Instruction Format
 All instructions have a fixed width of 1 word (formats listed here with smaller sizes are padded to 1 word):

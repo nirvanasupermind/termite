@@ -2,16 +2,17 @@
 #include <cassert>
 
 #include "../src/util.hpp"
-#include "../src/tryte.hpp"
+#include "../src/word.hpp"
 
 void test() {
-    termite::Tryte x(termite::from_val, 164);
-    termite::Tryte y(termite::from_val, -2);
+    termite::Word x(termite::from_val, -7398);
+    termite::Word y(termite::from_val, 6);
 
-    assert(x.to_int16_t() == 164);
-    assert(y.to_int16_t() == -2);
-    assert((x * y).to_int16_t() == -328);
-    assert((x * y).to_hept_str() == "OW");
+    assert((x * y).to_int32_t() == -44388);
+    assert((x - ~y).to_int32_t() == -7392);
+    assert((x - ~y).to_hept_str() == "0QW6");
+    assert((x & y).to_int32_t() == -7401);
+    assert((x & y).to_hept_str() == "0QWX");
 }
 
 int main() {

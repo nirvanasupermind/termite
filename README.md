@@ -1,6 +1,5 @@
 ![Termite icon](./icon.png)
 # Termite
-Termite an open-source emulator for a ternary RISC CPU architecture in C++11. It uses the balanced ternary numeral system and three-valued ternary logic instead of the two-valued binary logic prevalent in other computers, so it has three memory cell states (-1, 0, 1) as opposed to the usual two (0, 1).
-
+Termite an open-source emulator for a balanced ternary RISC CPU architecture in C++11. Unlike the prevailing binary representation, a balanced ternary integer is in base 3, and each digit can have the values 1, 0, or −1. This system allows for more efficient reuse of data and has higher security due to being wholly incompatible with existing infrastructure. Balanced ternary data may be stored on binary computers using binary-coded ternary (BCT), where each ternary digit (or trit) is encoded as two bits.
 # Status
-There were two previous iterations of Termite, but they were scrapped and reset due to having complex and hard-to-implement architectures. There is no implementation progress on the current iteration, only planning.
+There were two previous iterations of Termite, but they were scrapped and reset due to having complex and hard-to-implement architectures. The current implementation has arithmetic for trybbles, trytes, and words partially working, but there is a significant bug with addition that has yet to be resolved.
