@@ -10,7 +10,7 @@ namespace termite {
         : bct(bct) {
     }
 
-    Trybble::Trybble(FromInt, int8_t num) {
+    Trybble::Trybble(int8_t num) {
         try {
             bct = INT_TO_BCT_TRYBBLE.at(num);
         }

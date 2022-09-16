@@ -8,15 +8,18 @@
 
 namespace termite {
     // 3-trit balanced ternary integer type with values values from -13 through 13
-    // Implemented using binary-coded ternary (BCT) representation
+    // Implemented using binary-coded ternary (BCT) representation, where each trit is encoded by 2 bits
 
     class Trybble {
     public:
+        // Default constructor
+        Trybble() = default;
+        
         // Creates a trybble from it's BCT encoding
         Trybble(FromBCT, uint8_t bct);
 
         // Creates a trybble from a native integer
-        Trybble(FromInt, int8_t num);
+        Trybble(int8_t num);
 
         // Returns the BCT encoding of a trybble
         uint8_t get_bct() const;
