@@ -13,13 +13,22 @@ namespace termite {
     class Trybble {
     public:
         // Default constructor
-        Trybble() = default;
+        Trybble();
         
         // Creates a trybble from it's BCT encoding
         Trybble(FromBCT, uint8_t bct);
 
         // Creates a trybble from a native integer
         Trybble(int8_t num);
+
+        // Returns the tritwise NOT of a trybble
+        Trybble operator~() const;
+
+        // Returns the tritwise AND of two trybbles
+        Trybble operator&(const Trybble &other) const;
+
+        // Returns the tritwise OR of two trybbles
+        Trybble operator|(const Trybble &other) const;
 
         // Returns the BCT encoding of a trybble
         uint8_t get_bct() const;

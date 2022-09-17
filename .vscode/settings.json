@@ -1,0 +1,11 @@
+{
+    "files.associations": {
+        "*.punylisp": "lisp",
+        "*.eris": "dart",
+        "*.bnf": "bnf",
+        "*.csv": "plaintext",
+        "cinttypes": "cpp",
+        "string": "cpp",
+        "tuple": "cpp"
+    }
+}

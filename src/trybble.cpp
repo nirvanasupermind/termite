@@ -6,6 +6,11 @@
 #include "tables.hpp"
 
 namespace termite {
+    Trybble::Trybble()
+        : bct(0b00'00'00) {
+     
+    }
+    
     Trybble::Trybble(FromBCT, uint8_t bct)
         : bct(bct) {
     }
@@ -16,6 +21,28 @@ namespace termite {
         }
         catch (const std::exception& e) {
             throw std::runtime_error("[termite] out-of-range number " + std::to_string(num) + " in Trybble:Trybble");
+        }
+    }
+
+    Trybble Trybble::operator~() const {
+        return Trybble(from_bct, 0b10'10'10 - bct);
+    }
+
+    Trybble Trybble::operator&(const Trybble& other) const {
+        try {
+            return Trybble(from_bct, BCT_TRYBBLE_AND.at(bct).at(other.bct));
+        } 
+        catch (const std::exception& e) {
+            throw std::runtime_error("[termite] invalid BCT encoding in Trybble::operator&");
+        }
+    }
+
+    Trybble Trybble::operator|(const Trybble& other) const {
+        try {
+            return Trybble(from_bct, BCT_TRYBBLE_OR.at(bct).at(other.bct));
+        } 
+        catch (const std::exception& e) {
+            throw std::runtime_error("[termite] invalid BCT encoding in Trybble::operator|");
         }
     }
 
@@ -44,7 +71,8 @@ namespace termite {
     char Trybble::to_sept_digit() const {
         try {
             return BCT_TRYBBLE_TO_SEPT_DIGIT.at(bct);
-        } catch (const std::exception& e) {
+        }
+        catch (const std::exception& e) {
             throw std::runtime_error("[termite] invalid BCT encoding in Trybble::to_sept_digit");
         }
     }
