@@ -1,3 +1,6 @@
+// -*- word.hpp -*-
+// Part of the Termite project, under the MIT License.
+
 #if !defined(WORD_HPP)
 #define WORD_HPP
 
@@ -61,9 +64,9 @@ namespace termite
         // Returns a Termite Character Set character corresponding to a word
         std::string to_tcs_char() const;
     protected:
-        Trybble hi;
+        Tryte hi;
 
-        Trybble lo;
+        Tryte lo;
     };
 } // namespace termite
 

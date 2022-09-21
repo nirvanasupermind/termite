@@ -1,3 +1,6 @@
+// -*- trybble.hpp -*-
+// Part of the Termite project, under the MIT License.
+
 #if !defined(TRYBBLE_HPP)
 #define TRYBBLE_HPP
 

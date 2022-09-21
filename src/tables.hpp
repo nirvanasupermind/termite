@@ -1,3 +1,6 @@
+// -*- tables.hpp -*-
+// Part of the Termite project, under the MIT License.
+
 #if !defined(TABLES_HPP)
 #define TABLES_HPP
 
@@ -911,7 +914,7 @@ namespace termite {
             {0b10'10'10, 0b10'10'10}
         }}
     };
-    
+
     const std::map<uint8_t, std::map<uint8_t, uint8_t> > BCT_TRYBBLE_OR{
         {0b00'00'00, std::map<uint8_t, uint8_t>{
             {0b00'00'00, 0b00'00'00},
@@ -1697,6 +1700,103 @@ namespace termite {
             {0b10'10'10, 0b10'10'10}
         }}
     };
+
+    const std::map<std::string, char32_t> SEPT_TO_TCS_CHAR{
+        // -*- Block 0: Latin-A -*-
+        {"EEEE", U'\0'}, // Null character
+        {"EEEF", U'\a'}, // Bell character
+        {"EEEG", U'\b'}, // Backspace
+        {"EEEH", U'\t'}, // Horizontal tab 
+        {"EEEI", U'\n'}, // Line feed
+        {"EEEJ", U'\v'}, // Vertical tab
+        {"EEEK", U'\f'}, // Form feed
+        {"EEEL", U'\r'}, // Carriage return
+        {"EEEM", U'\x1a'}, // Control-Z
+        {"EEEN", U' '}, // Space
+        {"EEEO", U'.'}, // Period
+        {"EEEP", U'?'}, // Question mark
+        {"EEEQ", U'!'}, // Exclamation mark
+        {"EEE0", U','}, // Comma
+        {"EEE1", U'\''}, // Apostrophe
+        {"EEE2", U'"'}, // Quotation mark
+        {"EEE3", U'+'}, // Plus sign
+        {"EEE4", U'-'}, // Minus sign
+        {"EEE5", U'0'}, // Digit zero
+        {"EEE6", U'1'}, // Digit one
+        {"EEE7", U'2'}, // Digit two
+        {"EEE8", U'3'}, // Digit three
+        {"EEE9", U'4'}, // Digit four
+        {"EEEA", U'5'}, // Digit five
+        {"EEEB", U'6'}, // Digit six
+        {"EEEC", U'7'}, // Digit seven
+        {"EEED", U'8'}, // Digit eight
+        {"EEFE", U'9'}, // Digit nine
+        {"EEFF", U'A'}, // Latin capital letter A
+        {"EEFG", U'B'}, // Latin capital letter B
+        {"EEFH", U'C'}, // Latin capital letter C
+        {"EEFI", U'D'}, // Latin capital letter D
+        {"EEFJ", U'E'}, // Latin capital letter E
+        {"EEFK", U'F'}, // Latin capital letter F
+        {"EEFL", U'G'}, // Latin capital letter G
+        {"EEFM", U'H'}, // Latin capital letter H
+        {"EEFN", U'I'}, // Latin capital letter I
+        {"EEFO", U'J'}, // Latin capital letter J
+        {"EEFP", U'K'}, // Latin capital letter K
+        {"EEFQ", U'L'}, // Latin capital letter L
+        {"EEF0", U'M'}, // Latin capital letter M
+        {"EEF1", U'N'}, // Latin capital letter N
+        {"EEF2", U'O'}, // Latin capital letter O
+        {"EEF3", U'P'}, // Latin capital letter P
+        {"EEF4", U'Q'}, // Latin capital letter Q
+        {"EEF5", U'R'}, // Latin capital letter R
+        {"EEF6", U'S'}, // Latin capital letter S
+        {"EEF7", U'T'}, // Latin capital letter T
+        {"EEF8", U'U'}, // Latin capital letter U
+        {"EEF9", U'V'}, // Latin capital letter V
+        {"EEFA", U'W'}, // Latin capital letter W
+        {"EEFB", U'X'}, // Latin capital letter X
+        {"EEFC", U'Y'}, // Latin capital letter Y
+        {"EEFD", U'Z'}, // Latin capital letter Z
+        {"EEGE", U'_'}, // Low line
+        {"EEGF", U'a'}, // Latin lowercase letter A
+        {"EEGG", U'b'}, // Latin lowercase letter B
+        {"EEGH", U'c'}, // Latin lowercase letter C
+        {"EEGI", U'd'}, // Latin lowercase letter D
+        {"EEGJ", U'e'}, // Latin lowercase letter E
+        {"EEGK", U'f'}, // Latin lowercase letter F
+        {"EEGL", U'g'}, // Latin lowercase letter G
+        {"EEGM", U'h'}, // Latin lowercase letter H
+        {"EEGN", U'i'}, // Latin lowercase letter I
+        {"EEGO", U'j'}, // Latin lowercase letter J
+        {"EEGP", U'k'}, // Latin lowercase letter K
+        {"EEGQ", U'l'}, // Latin lowercase letter L
+        {"EEG0", U'm'}, // Latin lowercase letter M
+        {"EEG1", U'n'}, // Latin lowercase letter N
+        {"EEG2", U'o'}, // Latin lowercase letter O
+        {"EEG3", U'p'}, // Latin lowercase letter P
+        {"EEG4", U'q'}, // Latin lowercase letter Q
+        {"EEG5", U'r'}, // Latin lowercase letter R
+        {"EEG6", U's'}, // Latin lowercase letter S
+        {"EEG7", U't'}, // Latin lowercase letter T
+        {"EEG8", U'u'}, // Latin lowercase letter U
+        {"EEG9", U'v'}, // Latin lowercase letter V
+        {"EEGA", U'w'}, // Latin lowercase letter W
+        {"EEGB", U'x'}, // Latin lowercase letter X
+        {"EEGC", U'y'}, // Latin lowercase letter Y
+        {"EEGD", U'z'}, // Latin lowercase letter Z
+        // -*- Block 1: Latin-B -*-
+        {"EEHE", U':'}, // Colon
+        {"EEHF", U';'}, // Semicolon
+        {"EEHG", U'*'}, // Asterisk
+        {"EEHH", U'/'}, // Slash
+        {"EEHI", U'|'}, // Vertical bar
+        {"EEHJ", U'\\'}, // Backslash
+        {"EEHK", U'<'}, // Less-than sign
+        {"EEHL", U'='}, // Equals sign
+        {"EEHM", U'>'}, // Greater-than sign
+
+    };
+
 } // namespace termite
 
 #endif // TABLES_HPP

@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cassert>
+#include <string>
 
 #include "../src/util.hpp"
 #include "../src/trybble.hpp"
@@ -31,9 +32,12 @@ void test_tryte() {
     assert(x.to_sept_str() == "2I");
 }
 
+
 int main() {
     test_trybble();
-    test_tryte();
+    std::cout << "All trybble tests succeeded" << '\n';
 
+    test_tryte();
+    std::cout << "All tryte tests succeeded" << '\n';
     return 0;
 }

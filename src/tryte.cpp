@@ -1,3 +1,6 @@
+// -*- tryte.cpp -*-
+// Part of the Termite project, under the MIT License.
+
 #include <string>
 #include <cinttypes>
 

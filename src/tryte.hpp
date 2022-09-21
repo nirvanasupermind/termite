@@ -1,3 +1,6 @@
+// -*- tryte.hpp -*-
+// Part of the Termite project, under the MIT License.
+
 #if !defined(TRYTE_HPP)
 #define TRYTE_HPP
 

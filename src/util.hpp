@@ -1,3 +1,6 @@
+// -*- util.hpp -*-
+// Part of the Termite project, under the MIT License.
+
 #if !defined(UTIL_HPP)
 #define UTIL_HPP
 
