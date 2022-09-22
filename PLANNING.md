@@ -7,7 +7,7 @@
 The 12-trit word size enables access to 531,441 words of memory.
 
 ## CPU registers
-The CPU contains 27 general-purpose 12-trit registers (r0 to r26). r26 is the program counter (PC), and r25 is the stack pointer (SP).
+The CPU contains 81 general-purpose 12-trit registers (r0 to r80). r80 is the program counter (PC), and r79 is the stack pointer (SP).
 
              
 ## Instructions
@@ -24,11 +24,12 @@ The CPU contains 27 general-purpose 12-trit registers (r0 to r26). r26 is the pr
 | `FMUL`    | `rs`, `rd`           | Floating-point multiply                 | `0nD4`   |
 | `FDIV`    | `rs`, `rd`           | Floating-point divide                   | `0nCD`   |
 | `FMOD`    | `rs`, `rd`           | FLoating-point modulo                   | `0nCC`   |
-| `SHL`     | `sh`, `rd`           | Shift left                              | `0nCB`   |
-| `SHR`     | `sh`, `rd`           | Shift right                             | `0nCA`   |
+| `SHL`     | `imm`, `rd`          | Shift left                              | `0nCB`   |
+| `SHR`     | `imm`, `rd`          | Shift right                             | `0nCA`   |
 | `AND`     | `rs`, `rd`           | Tritwise AND                            | `0nC0`   |
 | `OR`      | `rs`, `rd`           | Tritwise OR                             | `0nC1`   |
 | `NOT`     | `rd`                 | Tritwise NOT (or negation)              | `0nC2`   |
 | `LD`      | `rs`, `rd`           | Load memory into register               | `0nC3`   |
-| `LI`      | `rs`, `rd`           | Load small immediate into register      | `0nC4`   |
+| `LI`      | `imm`, `rd`          | Load small immediate into register      | `0nC4`   |
 | `ST`      | `rs`, `rd`           | Store register into memory              | `0nBD`   |
+| `JMP`     | `addr`               | Jumps to address of instruction         | `0nBC`   |
