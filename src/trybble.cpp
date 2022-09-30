@@ -11,6 +11,10 @@
 #include "trybble.hpp"
 
 namespace termite {
+    const Trybble Trybble::ZERO(0b00'00'00);
+
+    const Trybble Trybble::ONE(0b00'00'01);
+    
     Trybble::Trybble()  
         : bct(0) {
     }
@@ -35,6 +39,7 @@ namespace termite {
             throw std::runtime_error("[termite] unhandled number in Trybble::from_u8");
         }
     }
+
 
     Trybble Trybble::operator&(const Trybble& other) const {
         try {
@@ -63,6 +68,10 @@ namespace termite {
         }
     }
 
+    Trybble Trybble::operator~() const {
+        return Trybble(0b10'10'10 - bct);
+    }
+
     u8 Trybble::get_bct() const {
         return bct;
     }
@@ -86,7 +95,6 @@ namespace termite {
         }
     }
 
-
     std::string Trybble::to_ternary_str() const {
         try {
             return BCT_TRYBBLE_TO_TERNARY_STR.at(bct);
@@ -104,6 +112,5 @@ namespace termite {
             throw std::runtime_error("[termite] unhandled BCT trybble in Trybble::to_sept_char");
         }
     }
-
 
 } // namespace termite

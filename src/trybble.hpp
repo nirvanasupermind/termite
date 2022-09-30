@@ -4,16 +4,24 @@
 #ifndef TRYBBLE_HPP
 #define TRYBBLE_HPP
 
+#include <string>
 #include <cinttypes>
 
 #include "typedefs.hpp"
 
 namespace termite
 {
+    // 3-trit integer which represents values that range from -13 to 13 (3's complement signed) or 0 to 26 (unsigned)
     class Trybble {
     private:
         u8 bct;
     public:
+        // A trybble with a value of 0
+        static const Trybble ZERO;
+
+        // A trybble with a value of 1
+        static const Trybble ONE;
+
         // Default constructor
         Trybble();
 
@@ -34,6 +42,9 @@ namespace termite
 
         // Tritwise XOR
         Trybble operator^(const Trybble &other) const;
+
+        // Tritwise NOT
+        Trybble operator~() const;
 
         // Gets BCT data from a trybble
         u8 get_bct() const;
