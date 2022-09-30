@@ -1,53 +1,55 @@
 // -*- trybble.hpp -*-
 // Part of the Termite project, under the MIT License.
 
-#if !defined(TRYBBLE_HPP)
+#ifndef TRYBBLE_HPP
 #define TRYBBLE_HPP
 
-#include <string>
 #include <cinttypes>
 
-#include "util.hpp"
+#include "typedefs.hpp"
 
-namespace termite {
-    // 3-trit balanced ternary integer type with values values from -13 through 13
-    // Implemented using binary-coded ternary (BCT) representation, where each trit is encoded by 2 bits
-
+namespace termite
+{
     class Trybble {
+    private:
+        u8 bct;
     public:
         // Default constructor
         Trybble();
-        
-        // Creates a trybble from it's BCT encoding
-        Trybble(FromBCT, uint8_t bct);
 
-        // Creates a trybble from a native integer
-        Trybble(int8_t num);
+        // Converts BCT data to a trybble
+        Trybble(u8 bct);
 
-        // Returns the tritwise NOT of a trybble
-        Trybble operator~() const;
+        // Converts a native signed integer to a trybble
+        static Trybble from_i8(i8 num);
 
-        // Returns the tritwise AND of two trybbles
+        // Converts a native unsigned integer to a trybble
+        static Trybble from_u8(u8 num);
+
+        // Tritwise AND
         Trybble operator&(const Trybble &other) const;
 
-        // Returns the tritwise OR of two trybbles
+        // Tritwise OR
         Trybble operator|(const Trybble &other) const;
 
-        // Returns the BCT encoding of a trybble
-        uint8_t get_bct() const;
+        // Tritwise XOR
+        Trybble operator^(const Trybble &other) const;
 
-        // Returns a native integer representation of a trybble
-        int8_t to_int() const;
+        // Gets BCT data from a trybble
+        u8 get_bct() const;
+    
+        // Converts a trybble to a native signed integer
+        i8 to_i8() const;
+    
+        // Converts a trybble to a native unsigned integer
+        u8 to_u8() const;
 
-        // Returns a ternary string representation of a trybble
+        // Converts a trybble to a ternary string
         std::string to_ternary_str() const;
 
-        // Returns a septemvigesimal (base 27) digit representation of a trybble
-        char to_sept_digit() const;
-    protected:
-        uint8_t bct;
-    };
+        // Converts a trybble to a septemvigesimal (base 27) character, compact representation of ternary
+        char to_sept_char() const;
+    }; 
 } // namespace termite
-
 
 #endif // TRYBBLE_HPP

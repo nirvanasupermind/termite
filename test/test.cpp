@@ -2,42 +2,38 @@
 #include <cassert>
 #include <string>
 
-#include "../src/util.hpp"
+#include "../src/tables.hpp"
 #include "../src/trybble.hpp"
-#include "../src/tryte.hpp"
 
+void test_tables() {
+    uint8_t bct1 = 0b01'01'00; // 110
+    uint8_t bct2 = 0b10'00'00; // 200
+    
+    assert(termite::BCT_TRYBBLE_TO_TERNARY_STR.at(bct1) == "110");
+    assert(termite::BCT_TRYBBLE_TO_SEPT_CHAR.at(bct1) == 'C');
+    assert(termite::BCT_TRYBBLE_AND.at(bct1).at(bct2) == 0b01'00'00); // 100
+    assert(termite::BCT_TRYBBLE_OR.at(bct1).at(bct2) == 0b10'01'00); // 210
+    assert(termite::BCT_TRYBBLE_XOR.at(bct1).at(bct2) == 0b00'01'00); // 010
+}
 
 void test_trybble() {
-    termite::Trybble x(-5);
-    termite::Trybble y(3);
+    termite::Trybble trybble1(0b10'00'01); // 201
+    termite::Trybble trybble2(0b00'00'10); // 002
 
-    assert((x & y).to_int() == -6);
-    assert((x | y).to_int() == 4);
-    assert(x.get_bct() == 0b00'10'10);
-    assert(x.to_int() == -5);
-    assert(x.to_ternary_str() == "T11");
-    assert(x.to_sept_digit() == 'M');
+    assert((trybble1 & trybble2).to_ternary_str() == "001");
+    assert((trybble1 | trybble2).to_ternary_str() == "202");
+    assert((trybble1 ^ trybble2).to_ternary_str() == "200");
+    assert(trybble1.to_i8() == -8);
+    assert(trybble1.to_u8() == 19);
+    assert(trybble1.to_ternary_str() == "201");
+    assert(trybble1.to_sept_char() == 'J');
 }
-
-void test_tryte() {
-    termite::Tryte x(45);
-    termite::Tryte y(-13);
-
-    assert((x & y).to_int() == -40);
-    assert((x | y).to_int() == 72);
-    assert(x.get_hi().to_int() == 2);
-    assert(x.get_lo().to_int() == -9);
-    assert(x.to_int() == 45);
-    assert(x.to_ternary_str() == "01TT00");
-    assert(x.to_sept_str() == "2I");
-}
-
 
 int main() {
-    test_trybble();
-    std::cout << "All trybble tests succeeded" << '\n';
+    test_tables();
+    std::cout << "test_tables succeeded" << '\n';
 
-    test_tryte();
-    std::cout << "All tryte tests succeeded" << '\n';
+    test_trybble();
+    std::cout << "test_trybble succeeded" << '\n';
     return 0;
 }

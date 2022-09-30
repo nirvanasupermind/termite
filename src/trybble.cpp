@@ -3,80 +3,107 @@
 
 #include <string>
 #include <cinttypes>
+#include <exception>
+#include <stdexcept>
 
-#include "util.hpp"
-#include "trybble.hpp"
+#include "typedefs.hpp"
 #include "tables.hpp"
+#include "trybble.hpp"
 
 namespace termite {
-    Trybble::Trybble()
-        : bct(0b00'00'00) {
-     
+    Trybble::Trybble()  
+        : bct(0) {
     }
-    
-    Trybble::Trybble(FromBCT, uint8_t bct)
+
+    Trybble::Trybble(u8 bct)
         : bct(bct) {
     }
 
-    Trybble::Trybble(int8_t num) {
-        try {
-            bct = INT_TO_BCT_TRYBBLE.at(num);
+    Trybble Trybble::from_i8(i8 num) {
+        if (num < 0) {
+            return Trybble::from_u8(num + 27);
         }
-        catch (const std::exception& e) {
-            throw std::runtime_error("[termite] out-of-range number " + std::to_string(num) + " in Trybble:Trybble");
-        }
+
+        return Trybble::from_u8(num);
     }
 
-    Trybble Trybble::operator~() const {
-        return Trybble(from_bct, 0b10'10'10 - bct);
+    Trybble Trybble::from_u8(u8 num) {
+        try {
+            return Trybble(U8_TO_BCT_TRYBBLE.at(num));
+        }
+        catch (const std::exception& e) {
+            throw std::runtime_error("[termite] unhandled number in Trybble::from_u8");
+        }
     }
 
     Trybble Trybble::operator&(const Trybble& other) const {
         try {
-            return Trybble(from_bct, BCT_TRYBBLE_AND.at(bct).at(other.bct));
-        } 
-        catch (const std::exception& e) {
-            throw std::runtime_error("[termite] invalid BCT encoding in Trybble::operator&");
+            return Trybble(BCT_TRYBBLE_AND.at(bct).at(other.bct));
+        }
+                catch (const std::exception& e) {
+            throw std::runtime_error("[termite] unhandled BCT trybble in Trybble::operator&");
         }
     }
 
     Trybble Trybble::operator|(const Trybble& other) const {
         try {
-            return Trybble(from_bct, BCT_TRYBBLE_OR.at(bct).at(other.bct));
-        } 
-        catch (const std::exception& e) {
-            throw std::runtime_error("[termite] invalid BCT encoding in Trybble::operator|");
+            return Trybble(BCT_TRYBBLE_OR.at(bct).at(other.bct));
+        }
+                catch (const std::exception& e) {
+            throw std::runtime_error("[termite] unhandled BCT trybble in Trybble::operator&");
         }
     }
 
-    uint8_t Trybble::get_bct() const {
+    Trybble Trybble::operator^(const Trybble& other) const {
+        try {
+            return Trybble(BCT_TRYBBLE_XOR.at(bct).at(other.bct));
+        }
+                catch (const std::exception& e) {
+            throw std::runtime_error("[termite] unhandled BCT trybble in Trybble::operator&");
+        }
+    }
+
+    u8 Trybble::get_bct() const {
         return bct;
     }
 
-    int8_t Trybble::to_int() const {
+    i8 Trybble::to_i8() const {
+        i8 result = to_u8();
+
+        if (result > 13) {
+            return result - 27;
+        }
+
+        return result;
+    }
+
+    u8 Trybble::to_u8() const {
         try {
-            return BCT_TRYBBLE_TO_INT.at(bct);
+            return BCT_TRYBBLE_TO_U8.at(bct);
         }
         catch (const std::exception& e) {
-            throw std::runtime_error("[termite] invalid BCT encoding in Trybble::to_int");
+            throw std::runtime_error("[termite] unhandled BCT trybble in Trybble::to_u8");
         }
     }
+
 
     std::string Trybble::to_ternary_str() const {
         try {
             return BCT_TRYBBLE_TO_TERNARY_STR.at(bct);
         }
         catch (const std::exception& e) {
-            throw std::runtime_error("[termite] invalid BCT encoding in Trybble::to_ternary_str");
+            throw std::runtime_error("[termite] unhandled BCT trybble in Trybble::to_ternary_str");
         }
     }
 
-    char Trybble::to_sept_digit() const {
+    char Trybble::to_sept_char() const {
         try {
-            return BCT_TRYBBLE_TO_SEPT_DIGIT.at(bct);
+            return BCT_TRYBBLE_TO_SEPT_CHAR.at(bct);
         }
         catch (const std::exception& e) {
-            throw std::runtime_error("[termite] invalid BCT encoding in Trybble::to_sept_digit");
+            throw std::runtime_error("[termite] unhandled BCT trybble in Trybble::to_sept_char");
         }
     }
+
+
 } // namespace termite
