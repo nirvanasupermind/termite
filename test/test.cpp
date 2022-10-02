@@ -5,6 +5,7 @@
 #include "../src/tables.hpp"
 #include "../src/trybble.hpp"
 #include "../src/tryte.hpp"
+#include "../src/word.hpp"
 
 void test_tables() {
     uint8_t bct1 = 0b01'01'00; // 110
@@ -35,25 +36,49 @@ void test_tryte() {
     termite::Tryte tryte1 = termite::Tryte::from_i16(41); // 001112
     termite::Tryte tryte2(termite::Trybble(0b10'10'10), termite::Trybble(0b10'10'00)); // 222220
 
-    assert((tryte1 + tryte2).to_i16() == 39);
-    assert((tryte1 - tryte2).to_i16() == 43);
-    assert((tryte1 * tryte2).to_i16() == 262);
-    assert((tryte1.smul(tryte2)).to_i16() == -82);
-    assert((tryte1 / tryte2).to_i16() == 0);
-    assert((tryte1.sdiv(tryte2)).to_i16() == -20);
-    assert((tryte1 % tryte2).to_i16() == 41);
-    assert((tryte1.smod(tryte2)).to_i16() == 1);
     assert((tryte1 & tryte2).to_ternary_str() == "001110");
     assert((tryte1 | tryte2).to_ternary_str() == "222222");
     assert((tryte1 ^ tryte2).to_ternary_str() == "220002");
     assert(tryte1.get_hi().to_i8() == 1); 
     assert(tryte1.get_lo().to_i8() == -13);
     assert(tryte1.to_i16() == 41);
-    assert(tryte2.to_i16() == -2);
+    assert(tryte2.to_i16() == -3);    
     assert(tryte1.to_u16() == 41);
-    assert(tryte2.to_u16() == 362);    
+    assert(tryte2.to_u16() == 726);    
     assert(tryte1.to_ternary_str() == "001112");
     assert(tryte1.to_sept_str() == "1E");
+}
+
+
+void test_word() {
+    termite::Word word1 = termite::Word::from_i32(1984); // 000000000002201111
+    termite::Word word2 = termite::Word::from_i32(-504); // 222222222222022100
+
+    // 000000000002201111
+    // 222222222222022100
+    // 222222222221220211
+
+    assert((word1 + word2).to_i32() == 1480);
+    assert((word1 - word2).to_i32() == 2488);
+    assert((word1 * word2).to_i32() == -999936);
+    assert((word1.mulu(word2)).to_u32() == 386420553);
+    assert((word1 / word2).to_i32() == -3);
+    assert((word1.divu(word2)).to_u32() == 0);
+    assert((word1 % word2).to_i32() == 472);
+    assert((word1.modu(word2)).to_u32() == 1984);
+    assert((-word1).to_i32() == -1984);
+    assert((word1 & word2).to_ternary_str() == "000000000002001100");
+    assert((word1 | word2).to_ternary_str() == "222222222222222111");
+    assert((word1 ^ word2).to_ternary_str() == "222222222221220211");
+    assert(word1.get_hi().to_i16() == 0); 
+    assert(word1.get_mid().to_i16() == 2); 
+    assert(word1.get_lo().to_i16() == -203);
+    assert(word1.to_i32() == 1984);
+    assert(word2.to_i32() == -504);
+    assert(word1.to_u32() == 1984);
+    assert(word2.to_u32() == 387419985);    
+    assert(word1.to_ternary_str() == "000000000002201111");
+    assert(word1.to_sept_str() == "0002JD");
 }
 
 int main() {
@@ -65,5 +90,9 @@ int main() {
     
     test_tryte();
     std::cout << "test_tryte succeeded" << '\n';
+    
+    test_word();
+    std::cout << "test_word succeeded" << '\n';
+
     return 0;
 }

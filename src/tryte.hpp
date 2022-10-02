@@ -32,33 +32,6 @@ namespace termite {
         // Converts a native unsigned integer to a trybble
         static Tryte from_u16(u16 num);
 
-        // Add
-        Tryte operator+(const Tryte& other) const;
-
-        // Subtract
-        Tryte operator-(const Tryte& other) const;
-
-        // Multiply
-        Tryte operator*(const Tryte& other) const;
-
-        // Signed multiply
-        Tryte smul(const Tryte& other) const;
-
-        // Divide
-        Tryte operator/(const Tryte& other) const;
-
-        // Signed divide
-        Tryte sdiv(const Tryte& other) const;
-
-        // Modulo
-        Tryte operator%(const Tryte& other) const;
-
-        // Signed modulo
-        Tryte smod(const Tryte& other) const;
-
-        // Three's complement / negation
-        Tryte operator-() const;
-
         // Tritwise AND
         Tryte operator&(const Tryte& other) const;
 
@@ -91,4 +64,4 @@ namespace termite {
     };
 } // namespace termite
 
-#endif // TRYBBLE_HPP
+#endif // TRYTE_HPP

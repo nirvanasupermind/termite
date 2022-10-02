@@ -1,3 +1,6 @@
+// -*- tryte.cpp -*-
+// Part of the Termite project, under the MIT License.
+
 #include <string>
 #include <cinttypes>
 
@@ -23,46 +26,10 @@ namespace termite {
     }
 
     Tryte Tryte::from_u16(u16 num) {
-        u8 quot = num / 27;
-        u8 rem = num % 27;
+        u16 hi_num = num / 27;
+        u16 lo_num = num % 27;
 
-        return Tryte(Trybble::from_u8(quot), Trybble::from_u8(rem));
-    }
-
-    Tryte Tryte::operator+(const Tryte& other) const {
-        return Tryte::from_u16(to_u16() + other.to_u16());
-    }
-
-    Tryte Tryte::operator-(const Tryte& other) const {
-        return Tryte::from_u16(to_u16() - other.to_u16());
-    }
-
-    Tryte Tryte::operator*(const Tryte& other) const {
-        return Tryte::from_u16(to_u16() * other.to_u16());
-    }
-
-    Tryte Tryte::smul(const Tryte& other) const {
-        return Tryte::from_i16(to_i16() * other.to_i16());
-    }
-
-    Tryte Tryte::operator/(const Tryte& other) const {
-        return Tryte::from_u16(to_u16() / other.to_u16());
-    }
-
-    Tryte Tryte::sdiv(const Tryte& other) const {
-        return Tryte::from_i16(to_i16() / other.to_i16());
-    }
-
-    Tryte Tryte::operator%(const Tryte& other) const {
-        return Tryte::from_u16(to_u16() % other.to_u16());
-    }
-
-    Tryte Tryte::smod(const Tryte& other) const {
-        return Tryte::from_i16(to_i16() % other.to_i16());
-    }
-
-    Tryte Tryte::operator-() const {
-        return operator~() + Tryte::ONE;
+        return Tryte(Trybble::from_u8(hi_num), Trybble::from_u8(lo_num));
     }
 
     Tryte Tryte::operator&(const Tryte& other) const {
