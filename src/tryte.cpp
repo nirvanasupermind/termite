@@ -26,8 +26,8 @@ namespace termite {
     }
 
     Tryte Tryte::from_u16(u16 num) {
-        u16 hi_num = num / 27;
-        u16 lo_num = num % 27;
+        u8 hi_num = num / 27;
+        u8 lo_num = num % 27;
 
         return Tryte(Trybble::from_u8(hi_num), Trybble::from_u8(lo_num));
     }

@@ -23,6 +23,9 @@ namespace termite {
         // A tryte with a value of 1
         static const Tryte ONE;
 
+        // Default constructor
+        Tryte() = default;
+
         // Converts two trybbles to a tryte
         Tryte(const Trybble& hi, const Trybble& lo);
 

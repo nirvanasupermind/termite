@@ -15,9 +15,7 @@ namespace termite
     class Trybble {
     private:
         u8 bct;
-    public:
-        const u8 MAX = 13;
-        
+    public:        
         // A trybble with a value of 0
         static const Trybble ZERO;
 

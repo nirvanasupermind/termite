@@ -11,12 +11,11 @@
 #include "tryte.hpp"
 
 namespace termite {
-    // 18-trit integer which represents values that range from -193710244 to 193710244 (3's complement signed)
-    // or 0 to 387420488 (unsigned)
+    // 12-trit integer which represents values that range from -265720 to 265720 (3's complement signed)
+    // or 0 to 531440 (unsigned)
     class Word {
     private:
         Tryte hi;
-        Tryte mid;
         Tryte lo;
     public:        
         // A word with a value of 0
@@ -25,8 +24,8 @@ namespace termite {
         // A word with a value of 1
         static const Word ONE;
 
-        // Converts three trytes to a word
-        Word(const Tryte& hi, const Tryte &mid, const Tryte& lo);
+        // Converts two trytes to a word
+        Word(const Tryte& hi, const Tryte& lo);
 
         // Converts a native signed integer to a word
         static Word from_i32(i32 num);
@@ -43,20 +42,20 @@ namespace termite {
         // Multiply
         Word operator*(const Word& other) const;
 
-        // Multiply unsigned
-        Word mulu(const Word& other) const;
+        // Unsigned multiply
+        Word umul(const Word& other) const;
 
         // Divide
         Word operator/(const Word& other) const;
 
-        // Divide unsigned
-        Word divu(const Word& other) const;
+        // Unsigned divide
+        Word udiv(const Word& other) const;
 
         // Modulo
         Word operator%(const Word& other) const;
 
-        // Modulo unsigned
-        Word modu(const Word& other) const;
+        // Unsigned modulo
+        Word umod(const Word& other) const;
 
         // Negate
         Word operator-() const;
@@ -75,9 +74,6 @@ namespace termite {
         
         // Gets high tryte (6 trits) from a word
         Tryte get_hi() const;
-
-        // Gets middle tryte (6 trits) from a word
-        Tryte get_mid() const;
 
         // Gets low tryte (6 trits) from a word
         Tryte get_lo() const;
