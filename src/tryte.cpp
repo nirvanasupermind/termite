@@ -13,6 +13,8 @@ namespace termite {
 
     const Tryte Tryte::ONE(Trybble::ZERO, Trybble::ONE);
 
+    const Tryte Tryte::TWO(Trybble::ZERO, Trybble::TWO);
+
     Tryte::Tryte(const Trybble& hi, const Trybble& lo)
         : hi(hi), lo(lo) {
     }
@@ -30,6 +32,10 @@ namespace termite {
         u8 lo_num = num % 27;
 
         return Tryte(Trybble::from_u8(hi_num), Trybble::from_u8(lo_num));
+    }
+    
+    Tryte Tryte::from_sept_str(const std::string& str) {
+        return Tryte(Trybble::from_sept_char(str[0]), Trybble::from_sept_char(str[1]));
     }
 
     Tryte Tryte::operator&(const Tryte& other) const {
@@ -55,7 +61,7 @@ namespace termite {
     Trybble Tryte::get_lo() const {
         return lo;
     }
-    
+
     i16 Tryte::to_i16() const {
         i16 result = to_u16();
 

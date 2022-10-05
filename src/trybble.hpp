@@ -22,6 +22,9 @@ namespace termite
         // A trybble with a value of 1
         static const Trybble ONE;
 
+        // A trybble with a value of 2
+        static const Trybble TWO;
+
         // Default constructor
         Trybble();
 
@@ -33,6 +36,9 @@ namespace termite
 
         // Converts a native unsigned integer to a trybble
         static Trybble from_u8(u8 num);
+
+        // Converts a septemvigesimal character to a trybble
+        static Trybble from_sept_char(char character);
 
         // Tritwise AND
         Trybble operator&(const Trybble &other) const;

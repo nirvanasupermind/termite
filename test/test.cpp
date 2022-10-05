@@ -7,6 +7,7 @@
 #include "../src/tryte.hpp"
 #include "../src/word.hpp"
 #include "../src/mem.hpp"
+#include "../src/cpu.hpp"
 
 void test_tables() {
     uint8_t bct1 = 0b01'01'00; // 110
@@ -14,14 +15,14 @@ void test_tables() {
     
     assert(termite::BCT_TRYBBLE_TO_TERNARY_STR.at(bct1) == "110");
     assert(termite::BCT_TRYBBLE_TO_SEPT_CHAR.at(bct1) == 'C');
-    assert(termite::BCT_TRYBBLE_AND.at(bct1).at(bct2) == 0b01'00'00); // 100
-    assert(termite::BCT_TRYBBLE_OR.at(bct1).at(bct2) == 0b10'01'00); // 210
-    assert(termite::BCT_TRYBBLE_XOR.at(bct1).at(bct2) == 0b00'01'00); // 010
+    assert(termite::BCT_TRYBBLE_AND.at(bct1).at(bct2) == 0b01'00'00); // ter 100
+    assert(termite::BCT_TRYBBLE_OR.at(bct1).at(bct2) == 0b10'01'00); // ter 210
+    assert(termite::BCT_TRYBBLE_XOR.at(bct1).at(bct2) == 0b00'01'00); // ter 010
 }
 
 void test_trybble() {
-    termite::Trybble trybble1(0b10'00'01); // 201
-    termite::Trybble trybble2 = termite::Trybble::from_i8(2); // 002
+    termite::Trybble trybble1(0b10'00'01); // dec -8, ter 201
+    termite::Trybble trybble2 = termite::Trybble::from_i8(2); // ter 002
 
     assert((trybble1 & trybble2).to_ternary_str() == "001");
     assert((trybble1 | trybble2).to_ternary_str() == "202");
@@ -34,8 +35,8 @@ void test_trybble() {
 }
 
 void test_tryte() {
-    termite::Tryte tryte1 = termite::Tryte::from_i16(41); // 001112
-    termite::Tryte tryte2(termite::Trybble(0b10'10'10), termite::Trybble(0b10'10'00)); // 222220
+    termite::Tryte tryte1 = termite::Tryte::from_i16(41); // ter 001112
+    termite::Tryte tryte2(termite::Trybble(0b10'10'10), termite::Trybble(0b10'10'00)); // dec -3, ter 222220
 
     assert((tryte1 & tryte2).to_ternary_str() == "001110");
     assert((tryte1 | tryte2).to_ternary_str() == "222222");
@@ -50,10 +51,9 @@ void test_tryte() {
     assert(tryte1.to_sept_str() == "1E");
 }
 
-
 void test_word() {
-    termite::Word word1 = termite::Word::from_i32(1984); // 0000002201111
-    termite::Word word2 = termite::Word::from_i32(-504); // 2222222022100
+    termite::Word word1 = termite::Word::from_sept_str("02JD"); // dec 1984, ter 0000002201111
+    termite::Word word2 = termite::Word::from_i32(-504); // ter 2222222022100
 
     // 000000000002201111
     // 222222222222022100
@@ -82,18 +82,71 @@ void test_word() {
 }
 
 void test_mem(termite::Mem &mem) {
-    termite::Word word1 = termite::Word::from_i32(1984); // 000000000002201111
-    termite::Word word2 = termite::Word::from_i32(-504); // 222222222222022100
-
     mem.write_tryte(termite::Word::ONE, termite::Tryte::ONE);
-    mem.write_tryte(termite::Word::from_u32(2), termite::Tryte::from_i16(360));
+    mem.write_tryte(termite::Word::TWO, termite::Tryte::from_i16(360));
 
     assert(mem.read_tryte(termite::Word::ONE).to_i16() == 1);
     assert(mem.read_word(termite::Word::ONE).to_i32() == 1089);
 }
 
+void test_mov(termite::CPU &cpu) {
+    termite::Word i = termite::Word::from_i32(-2);
+
+    // mov <abs>,<imm>
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("00")); // mov
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("01")); // 0s0100
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("00"));
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("00")); // #5
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("05"));
+
+    // mov <abs>,<abs>
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("01")); // mov
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("01")); // 0s0101
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("01"));
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("01")); // 0s0100
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("00"));
+
+    // mov <abs>,<reg>
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("02")); // mov
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("01")); // 0s0102
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("02"));
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("00")); // r0
+
+    // mov <reg>,<imm>
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("03")); // mov
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("00")); // r0
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("00")); // #12
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("0C"));
+
+    // mov <reg>,<abs>
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("04")); // mov
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("01")); // r1
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("01")); // 0s0100
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("00")); 
+    
+    // mov <reg>,<reg>
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("05")); // mov
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("21")); // r2, r1
+    cpu.execute();
+
+    // mov <reg>,<reg>
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("06")); // hlt
+    cpu.execute();
+
+    
+    assert(cpu.mem.read_word(termite::Word::from_sept_str("0100")).to_i32() == 5);
+    assert(cpu.mem.read_word(termite::Word::from_sept_str("0101")).to_i32() == 5);
+    assert(cpu.mem.read_word(termite::Word::from_sept_str("0102")).to_i32() == 0);
+
+    assert(cpu.register_file[0].to_i32() == 12);
+    assert(cpu.register_file[1].to_i32() == 5);
+    assert(cpu.register_file[2].to_i32() == 12);
+
+    cpu.reset();
+}
+
 int main() {
-    termite::Mem mem;
+    termite::CPU cpu;
 
     test_tables();
     std::cout << "test_tables succeeded" << '\n';
@@ -107,8 +160,11 @@ int main() {
     test_word();
     std::cout << "test_word succeeded" << '\n';
 
-    test_mem(mem);
+    test_mem(cpu.mem);
     std::cout << "test_mem succeeded" << '\n';
+    
+    test_mov(cpu);
+    std::cout << "test_mov succeeded" << '\n';
 
     return 0;
-}
+} 

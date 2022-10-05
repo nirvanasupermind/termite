@@ -8,37 +8,13 @@
 
 namespace termite {
     enum class Opcode : u16 {
-        ADD,
-        SUB,
-        MUL,
-        MULU,
-        DIV,
-        DIVU,
-        MOD,
-        MODU,
-        SL,
-        SR,
-        SRU,
-        AND,
-        OR,
-        XOR,
-        NOT,
-        CMP,
-        LD,
-        LI,
-        LIU,
-        ST,
-        JMP,
-        BR,
-        BEQ,
-        BNE,
-        BLT,
-        BGT,
-        BLE,
-        BGE,
-        PUSH,
-        POP,
-        INT
+        MOV_ABS_IMM,
+        MOV_ABS_ABS,
+        MOV_ABS_REG,
+        MOV_REG_IMM,
+        MOV_REG_ABS,
+        MOV_REG_REG,
+        HLT
     };
 } // namespace termite
 

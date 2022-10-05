@@ -24,6 +24,12 @@ namespace termite {
         // A word with a value of 1
         static const Word ONE;
 
+        // A word with a value of 2
+        static const Word TWO;
+
+        // Default constructor
+        Word() = default;
+        
         // Converts two trytes to a word
         Word(const Tryte& hi, const Tryte& lo);
 
@@ -32,6 +38,9 @@ namespace termite {
 
         // Converts a native unsigned integer to a word
         static Word from_u32(u32 num);
+
+        // Converts a native unsigned integer to a word
+        static Word from_sept_str(const std::string &str);
 
         // Add
         Word operator+(const Word& other) const;
@@ -59,6 +68,9 @@ namespace termite {
 
         // Negate
         Word operator-() const;
+
+        // Increments a word
+        Word operator++();
 
         // Tritwise AND
         Word operator&(const Word& other) const;

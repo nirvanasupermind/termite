@@ -4,7 +4,7 @@ uWIP
 # Processor architecture
 
 ## Memory
-<!-- The 12-trit word size enables access to 531,441 words of memory.  -->
+The 12-trit word size enables access to 531,441 words of memory. 
 
 ## CPU registers
 The CPU contains 27 general-purpose 12-trit registers (`r0` to `r26`). `r25` is the stack pointer (`sp`), and `r26` is the program counter (`pc`).
@@ -17,11 +17,13 @@ The CPU contains 27 general-purpose 12-trit registers (`r0` to `r26`). `r25` is 
 | Absolute           | `x`           | `x` is the address of the operand            | 
 | Register           | `rx`          | `rx` contains the operand                    | 
 
+
 ## Processor status word
 
 ## Instruction set
 | Mnemonic | Operation                                                  |
 | -------- | ---------------------------------------------------------- |
+| `nop`    | Move: `dest <- src`                                        |
 | `mov`    | Move: `dest <- src`                                        |
 | `add`    | Add: `dest <- dest + src`                                  |
 | `sub`    | Subtract: `dest <- dest - src`                             |
@@ -46,4 +48,4 @@ The CPU contains 27 general-purpose 12-trit registers (`r0` to `r26`). `r25` is 
 | `jle`    | Jump if less than or equal (`S == 2 | S == 0`)             |
 | `jge`    | Jump if greater than or equal (`S == 1 | S == 0`)          |
 | `jc`     | Jump if carry (`C == 1 | C == 2`)                          |
-| `int`    | Software interrupt                                         |
+| `hlt`    | Halt                                                       |

@@ -13,6 +13,8 @@ namespace termite {
 
     const Word Word::ONE(Tryte::ZERO, Tryte::ONE);
 
+    const Word Word::TWO(Tryte::ZERO, Tryte::TWO);
+
     Word::Word(const Tryte& hi, const Tryte& lo)
         : hi(hi), lo(lo) {
 
@@ -31,6 +33,10 @@ namespace termite {
         u16 lo_num = num % 729;
 
         return Word(Tryte::from_u16(hi_num), Tryte::from_u16(lo_num));
+    }
+
+    Word Word::from_sept_str(const std::string &str) {
+        return Word(Tryte::from_sept_str(str.substr(0, 2)), Tryte::from_sept_str(str.substr(2, 2)));
     }
 
     Word Word::operator+(const Word& other) const {
@@ -75,6 +81,13 @@ namespace termite {
 
     Word Word::operator-() const {
         return operator~() + Word::ONE;
+    }
+
+    Word Word::operator++() {
+        Word inc = operator+(Word::ONE);
+        hi = inc.hi;
+        lo = inc.lo;
+        return *this;
     }
 
     Word Word::operator&(const Word& other) const {

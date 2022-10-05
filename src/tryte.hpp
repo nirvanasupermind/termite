@@ -23,6 +23,9 @@ namespace termite {
         // A tryte with a value of 1
         static const Tryte ONE;
 
+        // A tryte with a value of 2
+        static const Tryte TWO;
+
         // Default constructor
         Tryte() = default;
 
@@ -35,6 +38,9 @@ namespace termite {
         // Converts a native unsigned integer to a trybble
         static Tryte from_u16(u16 num);
 
+        // Converts a septemvigesimal string to a tryte
+        static Tryte from_sept_str(const std::string& str);
+
         // Tritwise AND
         Tryte operator&(const Tryte& other) const;
 
@@ -46,7 +52,7 @@ namespace termite {
 
         // Tritwise NOT
         Tryte operator~() const;
-        
+
         // Gets high trybble (3 trits) from a tryte
         Trybble get_hi() const;
 

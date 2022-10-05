@@ -14,7 +14,9 @@ namespace termite {
     const Trybble Trybble::ZERO(0b00'00'00);
 
     const Trybble Trybble::ONE(0b00'00'01);
-    
+
+    const Trybble Trybble::TWO(0b00'00'10);
+
     Trybble::Trybble()  
         : bct(0) {
     }
@@ -40,6 +42,14 @@ namespace termite {
         }
     }
 
+    Trybble Trybble::from_sept_char(char character) {
+        try {
+            return Trybble(SEPT_CHAR_TO_BCT_TRYBBLE.at(character));
+        }
+        catch (const std::exception& e) {
+            throw std::runtime_error("[termite] unhandled character in Trybble::from_sept_char");
+        }
+    }
 
     Trybble Trybble::operator&(const Trybble& other) const {
         try {
