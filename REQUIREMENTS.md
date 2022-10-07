@@ -34,7 +34,7 @@ The CPU contains 27 general-purpose 12-trit registers (`r0` to `r26`). `r25` is 
 | `mod`    | Modulo: `dest <- dest % src`                               |
 | `umod`   | Unsigned modulo: `dest <- dest % src`                      |
 | `and`    | Tritwise AND: `dest <- dest & src`                         |
-| `or`     | Tritwise OR: `dest <- dest | src`                          |
+| `or`     | Tritwise OR: `dest <- dest \| src`                         |
 | `xor`    | Tritwise XOR: `dest <- dest ^ src`                         |
 | `asl`    | Arithmetic shift left: `dest <- dest >> src`               |
 | `asr`    | Arithmetic shift right: `dest <- dest << src`              |
@@ -42,10 +42,10 @@ The CPU contains 27 general-purpose 12-trit registers (`r0` to `r26`). `r25` is 
 | `cmp`    | Compare: `set-flags(dest - src)`                           |
 | `jmp`    | Jump: `pc <- addr`                                         |
 | `je`     | Jump if equal (`S == 0`)                                   |
-| `jne`    | Jump if not equal (`S == 1 | S == 2`)                      |
+| `jne`    | Jump if not equal (`S == 1 \| S == 2`)                     |
 | `jl`     | Jump if less (`S == 2`)                                    |
 | `jg`     | Jump if greater (`S == 1`)                                 |
-| `jle`    | Jump if less than or equal (`S == 2 | S == 0`)             |
-| `jge`    | Jump if greater than or equal (`S == 1 | S == 0`)          |
-| `jc`     | Jump if carry (`C == 1 | C == 2`)                          |
+| `jle`    | Jump if less than or equal (`S == 2 \| S == 0`)            |
+| `jge`    | Jump if greater than or equal (`S == 1 \| S == 0`)         |
+| `jc`     | Jump if carry (`C == 1 \| C == 2`)                         |
 | `hlt`    | Halt                                                       |
