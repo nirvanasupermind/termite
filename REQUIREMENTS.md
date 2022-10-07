@@ -23,7 +23,7 @@ The CPU contains 27 general-purpose 12-trit registers (`r0` to `r26`). `r25` is 
 ## Instruction set
 | Mnemonic | Operation                                                  |
 | -------- | ---------------------------------------------------------- |
-| `nop`    | Move: `dest <- src`                                        |
+| `nop`    | No operation                                               |
 | `mov`    | Move: `dest <- src`                                        |
 | `add`    | Add: `dest <- dest + src`                                  |
 | `sub`    | Subtract: `dest <- dest - src`                             |
