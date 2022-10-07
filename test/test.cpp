@@ -90,7 +90,7 @@ void test_mem(termite::Mem &mem) {
 }
 
 void test_mov(termite::CPU &cpu) {
-    termite::Word i = termite::Word::from_i32(-2);
+    termite::Word i = termite::Word::from_i32(-1);
 
     // mov <abs>,<imm>
     cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("00")); // mov
@@ -101,15 +101,15 @@ void test_mov(termite::CPU &cpu) {
 
     // mov <abs>,<abs>
     cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("01")); // mov
-    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("01")); // 0s0101
-    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("01"));
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("01")); // 0s0102
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("02"));
     cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("01")); // 0s0100
     cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("00"));
 
     // mov <abs>,<reg>
     cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("02")); // mov
-    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("01")); // 0s0102
-    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("02"));
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("01")); // 0s0104
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("04"));
     cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("00")); // r0
 
     // mov <reg>,<imm>
@@ -126,21 +126,116 @@ void test_mov(termite::CPU &cpu) {
     
     // mov <reg>,<reg>
     cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("05")); // mov
-    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("21")); // r2, r1
-    cpu.execute();
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("20")); // r2, r0
 
     // mov <reg>,<reg>
-    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("06")); // hlt
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("0O")); // hlt
+
     cpu.execute();
 
-    
     assert(cpu.mem.read_word(termite::Word::from_sept_str("0100")).to_i32() == 5);
-    assert(cpu.mem.read_word(termite::Word::from_sept_str("0101")).to_i32() == 5);
-    assert(cpu.mem.read_word(termite::Word::from_sept_str("0102")).to_i32() == 0);
+    assert(cpu.mem.read_word(termite::Word::from_sept_str("0102")).to_i32() == 5);
+    assert(cpu.mem.read_word(termite::Word::from_sept_str("0104")).to_i32() == 0);
 
     assert(cpu.register_file[0].to_i32() == 12);
     assert(cpu.register_file[1].to_i32() == 5);
     assert(cpu.register_file[2].to_i32() == 12);
+
+    cpu.reset();
+}
+
+void test_add(termite::CPU &cpu) {
+    termite::Word i = termite::Word::from_i32(-1);
+
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("03")); // mov
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("00")); // r0
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("00")); // #26
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("0Q")); 
+
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("03")); // mov
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("01")); // r1
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("00")); // #16
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("0G"));
+
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("0B")); // add
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("01")); // r0,r1
+
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("09")); // add
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("00")); // r0
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("00")); // #100
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("3J"));
+    
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("08")); // add
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("01")); // 0s0100
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("00"));
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("00")); // r0
+
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("0O")); // hlt
+    
+    cpu.execute();
+
+    assert(cpu.register_file[0].to_i32() == 142);
+    assert(cpu.mem.read_word(termite::Word::from_sept_str("0100")).to_i32() == 142);
+
+    cpu.reset();
+}
+
+void test_sub(termite::CPU &cpu) {
+    termite::Word i = termite::Word::from_i32(-1);
+
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("03")); // mov
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("00")); // r0
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("00")); // #13
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("0D")); 
+
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("03")); // mov
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("01")); // r1
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("00")); // #29
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("12"));
+
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("0H")); // sub
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("01")); // r0,r1
+
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("0C")); // sub
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("01")); // 0s0100
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("00"));
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("00")); // #14
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("0E"));
+
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("0O")); // hlt
+    
+    cpu.execute();
+
+    assert(cpu.register_file[0].to_i32() == -16);
+    assert(cpu.mem.read_word(termite::Word::from_sept_str("0100")).to_i32() == -14);
+
+    cpu.reset();
+}
+
+void test_mul(termite::CPU &cpu) {
+    termite::Word i = termite::Word::from_i32(-1);
+
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("03")); // mov
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("00")); // r0
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("00")); // #65
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("2B")); 
+
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("00")); // mov
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("01")); // 0s0100
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("00"));
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("00")); // #32
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("15"));
+
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("0M")); // mul
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("00")); // r0
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("01")); // 0s100
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("00"));
+
+    cpu.mem.write_tryte(++i, termite::Tryte::from_sept_str("0O")); // hlt
+    
+    cpu.execute();
+
+    assert(cpu.register_file[0].to_i32() == 2080);
 
     cpu.reset();
 }
@@ -165,6 +260,15 @@ int main() {
     
     test_mov(cpu);
     std::cout << "test_mov succeeded" << '\n';
+
+    test_add(cpu);
+    std::cout << "test_add succeeded" << '\n';
+
+    test_sub(cpu);
+    std::cout << "test_sub succeeded" << '\n';
+
+    test_mul(cpu);
+    std::cout << "test_mul succeeded" << '\n';
 
     return 0;
 } 

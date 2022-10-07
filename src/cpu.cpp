@@ -13,12 +13,6 @@ namespace termite {
         reset();
     }
 
-    // void CPU::debug() {
-    //     for(size_t i = 0; i < registers.size(); i++) {
-    //         std::cout << "r" << i << ": " << registers[i].to_sept_str() << '\n';
-    //     }
-    // }
-
     void CPU::reset() {
         mem.reset();
         std::fill(std::begin(register_file), std::end(register_file), Word::ZERO);
@@ -51,8 +45,13 @@ namespace termite {
     void CPU::execute() {
 
         while (true) {
-            Tryte tryte = fetch_tryte();
-            Opcode opcode = decode_opcode(tryte);
+            if(register_file[26].to_i32() >= 30)  {
+                break;
+            }
+
+            Tryte op_tryte = fetch_tryte();
+
+            Opcode opcode = decode_opcode(op_tryte);
 
             switch (opcode) {
             case Opcode::MOV_ABS_IMM: {
@@ -91,19 +90,161 @@ namespace termite {
             };
 
             case Opcode::MOV_REG_REG: {
-                Tryte tryte = fetch_tryte();
-                Trybble dest = tryte.get_hi();
-                Trybble src = tryte.get_lo();
+                Tryte temp = fetch_tryte();
+                Trybble dest = temp.get_hi();
+                Trybble src = temp.get_lo();
                 register_file[dest.to_u8()] = register_file[src.to_u8()];
                 break;
             };
 
-            case Opcode::HLT: {
+            case Opcode::ADD_ABS_IMM: {
+                Word dest = fetch_word();
+                Word src = fetch_word();
+                mem.write_word(dest, mem.read_word(dest) + src);
                 break;
             };
 
+            case Opcode::ADD_ABS_ABS: {
+                Word dest = fetch_word();
+                Word src = fetch_word();
+                mem.write_word(dest, mem.read_word(dest) + mem.read_word(src));
+                break;
+            };
+
+            case Opcode::ADD_ABS_REG: {
+                Word dest = fetch_word();
+                Trybble src = fetch_tryte().get_lo();
+            
+                mem.write_word(dest, mem.read_word(dest) + register_file[src.to_u8()]);
+                break;
+            };
+
+            case Opcode::ADD_REG_IMM: {
+                Trybble dest = fetch_tryte().get_lo();
+                Word src = fetch_word();
+                u8 idx = dest.to_u8();
+                register_file[idx] = register_file[idx] + src;
+                break;
+            };
+
+            case Opcode::ADD_REG_ABS: {
+                Trybble dest = fetch_tryte().get_lo();
+                Word src = fetch_word();
+                u8 idx = dest.to_u8();
+                register_file[idx] = register_file[idx] + mem.read_word(src);
+                break;
+            };
+
+            case Opcode::ADD_REG_REG: {
+                Tryte temp = fetch_tryte();
+                Trybble dest = temp.get_hi();
+                Trybble src = temp.get_lo();
+                u8 idx = dest.to_u8();
+                register_file[idx] = register_file[idx] + register_file[src.to_u8()];
+                break;
+            };
+
+            case Opcode::SUB_ABS_IMM: {
+                Word dest = fetch_word();
+                Word src = fetch_word();
+                mem.write_word(dest, mem.read_word(dest) - src);
+                break;
+            };
+
+            case Opcode::SUB_ABS_ABS: {
+                Word dest = fetch_word();
+                Word src = fetch_word();
+                mem.write_word(dest, mem.read_word(dest) - mem.read_word(src));
+                break;
+            };
+
+            case Opcode::SUB_ABS_REG: {
+                Word dest = fetch_word();
+                Trybble src = fetch_tryte().get_lo();
+
+                mem.write_word(dest, mem.read_word(dest) - register_file[src.to_u8()]);
+                break;
+            };
+
+            case Opcode::SUB_REG_IMM: {
+                Trybble dest = fetch_tryte().get_lo();
+                Word src = fetch_word();
+                u8 idx = dest.to_u8();
+                register_file[idx] = register_file[idx] - src;
+                break;
+            };
+
+            case Opcode::SUB_REG_ABS: {
+                Trybble dest = fetch_tryte().get_lo();
+                Word src = fetch_word();
+                u8 idx = dest.to_u8();
+                register_file[idx] = register_file[idx] - mem.read_word(src);
+                break;
+            };
+
+            case Opcode::SUB_REG_REG: {
+                Tryte temp = fetch_tryte();
+                Trybble dest = temp.get_hi();
+                Trybble src = temp.get_lo();
+                u8 idx = dest.to_u8();
+
+                register_file[idx] = register_file[idx] - register_file[src.to_u8()];
+                break;
+            };
+
+            case Opcode::MUL_ABS_IMM: {
+                Word dest = fetch_word();
+                Word src = fetch_word();
+                mem.write_word(dest, mem.read_word(dest) * src);
+                break;
+            };
+
+            case Opcode::MUL_ABS_ABS: {
+                Word dest = fetch_word();
+                Word src = fetch_word();
+                mem.write_word(dest, mem.read_word(dest) * mem.read_word(src));
+                break;
+            };
+
+            case Opcode::MUL_ABS_REG: {
+                Word dest = fetch_word();
+                Trybble src = fetch_tryte().get_lo();
+
+                mem.write_word(dest, mem.read_word(dest) * register_file[src.to_u8()]);
+                break;
+            };
+
+            case Opcode::MUL_REG_IMM: {
+                Trybble dest = fetch_tryte().get_lo();
+                Word src = fetch_word();
+                u8 idx = dest.to_u8();
+                register_file[idx] = register_file[idx] * src;
+                break;
+            };
+
+            case Opcode::MUL_REG_ABS: {
+                Trybble dest = fetch_tryte().get_lo();
+                Word src = fetch_word();
+                u8 idx = dest.to_u8();
+                register_file[idx] = register_file[idx] * mem.read_word(src);
+                break;
+            };
+
+            case Opcode::MUL_REG_REG: {
+                Tryte temp = fetch_tryte();
+                Trybble dest = temp.get_hi();
+                Trybble src = temp.get_lo();
+                u8 idx = dest.to_u8();
+                register_file[idx] = register_file[idx] * register_file[src.to_u8()];
+                break;
+            };
+
+            case Opcode::HLT: {
+                return;
+            };
+
             default:
-                throw std::runtime_error("[termite] illegal opcode: " + tryte.to_sept_str());
+                throw std::runtime_error("[termite] illegal opcode: " + op_tryte.to_sept_str());
             }
         }
     }

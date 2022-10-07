@@ -11,6 +11,7 @@
 
 namespace termite {
     const size_t MAX_MEM = 531441;
+    
     // Represents the main memory of the VM
     class Mem {
     private:
