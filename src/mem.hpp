@@ -34,7 +34,6 @@ namespace termite {
         // Writes a word to memory
         void write_word(const Word &addr, const Word &val);
     };
-
 } // namespace termite
 
 #endif // MEM_HPP

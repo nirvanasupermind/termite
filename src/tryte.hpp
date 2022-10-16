@@ -7,7 +7,6 @@
 #include <string>
 #include <cinttypes>
 
-#include "typedefs.hpp"
 #include "trybble.hpp"
 
 namespace termite {
@@ -32,14 +31,11 @@ namespace termite {
         // Converts two trybbles to a tryte
         Tryte(const Trybble& hi, const Trybble& lo);
 
-        // Converts a native signed integer to a trybble
-        static Tryte from_i16(i16 num);
+        // Converts a native integer to a trybble
+        Tryte(NativeInt, int num);
 
-        // Converts a native unsigned integer to a trybble
-        static Tryte from_u16(u16 num);
-
-        // Converts a septemvigesimal string to a tryte
-        static Tryte from_sept_str(const std::string& str);
+        // Converts a septemvigesimal (base 27) string to a tryte
+        Tryte(Sept, const std::string& str); 
 
         // Tritwise AND
         Tryte operator&(const Tryte& other) const;
@@ -59,17 +55,11 @@ namespace termite {
         // Gets low trybble (3 trits) from a tryte
         Trybble get_lo() const;
 
-        // Converts a tryte to a native signed integer
-        i16 to_i16() const;
+        // Converts a tryte to a native integer
+        operator unsigned int() const;
 
-        // Converts a tryte to a native unsigned integer
-        u16 to_u16() const;
-
-        // Converts a tryte to a ternary string
-        std::string to_ternary_str() const;
-
-        // Converts a tryte to a septemvigesimal (base 27) string, a compact representation of ternary
-        std::string to_sept_str() const;
+        // Converts a tryte to a septemvigesimal (base 27) string
+        operator std::string() const;
     };
 } // namespace termite
 

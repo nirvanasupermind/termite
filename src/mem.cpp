@@ -1,7 +1,6 @@
 #include <array>
 #include <exception>
 
-#include "typedefs.hpp"
 #include "tryte.hpp"
 #include "word.hpp"
 #include "mem.hpp"
@@ -16,42 +15,43 @@ namespace termite {
     }
 
     Tryte Mem::read_tryte(const Word &addr) const {
-        u32 idx = addr.to_u32();
+        int idx = static_cast<int>(addr);
 
         if(idx >= MAX_MEM) {
-            throw std::runtime_error("[termite] memory address out of bounds: " + addr.to_sept_str());
+            throw std::runtime_error("[termite] memory address out of bounds: " + static_cast<std::string>(addr));
         }
 
         return data[idx];
     }
 
     Word Mem::read_word(const Word &addr) const {
-        u32 idx = addr.to_u32();
+        int idx = static_cast<int>(addr);
 
         if(idx >= MAX_MEM) {
-            throw std::runtime_error("[termite] memory address out of bounds: " + addr.to_sept_str());
+            throw std::runtime_error("[termite] memory address out of bounds: " + static_cast<std::string>(addr));
         }
         
         return Word(data[idx], data[idx + 1]);
     }
 
     void Mem::write_tryte(const Word &addr, const Tryte &val) {
-        try {
-            data[addr.to_u32()] = val;
-        } catch(const std::exception &e) {
-            throw std::runtime_error("[termite] memory error");
+        int idx = static_cast<int>(addr);
+
+        if(idx >= MAX_MEM) {
+            throw std::runtime_error("[termite] memory address out of bounds: " + static_cast<std::string>(addr));
         }
+
+        data[idx] = val;
     }
 
     void Mem::write_word(const Word &addr, const Word &val) {
-        u32 idx = addr.to_u32();
+        int idx = static_cast<int>(addr);
 
-
-        try {
-            data[idx] = val.get_hi();
-            data[idx + 1] = val.get_lo();
-        } catch(const std::exception &e) {
-            throw std::runtime_error("[termite] memory error");
+        if(idx >= MAX_MEM - 1) {
+            throw std::runtime_error("[termite] memory address out of bounds: " + static_cast<std::string>(addr));
         }
+
+        data[idx] = val.get_hi();
+        data[idx + 1] = val.get_lo();
     }
 }

@@ -5,57 +5,40 @@
 #include <cinttypes>
 #include <exception>
 #include <stdexcept>
+#include <iostream>
 
-#include "typedefs.hpp"
 #include "tables.hpp"
 #include "trybble.hpp"
+#include "util.hpp"
 
 namespace termite {
-    const Trybble Trybble::ZERO(0b00'00'00);
+    const Trybble Trybble::ZERO(native_int, 0);
 
-    const Trybble Trybble::ONE(0b00'00'01);
+    const Trybble Trybble::ONE(native_int, 1);
 
-    const Trybble Trybble::TWO(0b00'00'10);
+    const Trybble Trybble::TWO(native_int, 2);
 
-    Trybble::Trybble()  
+    Trybble::Trybble()
         : bct(0) {
     }
 
-    Trybble::Trybble(u8 bct)
+    Trybble::Trybble(char bct)
         : bct(bct) {
     }
 
-    Trybble Trybble::from_i8(i8 num) {
-        if (num < 0) {
-            return Trybble::from_u8(num + 27);
-        }
-
-        return Trybble::from_u8(num);
+    Trybble::Trybble(NativeInt, int num)
+        : bct(NATIVE_INT_TO_BCT_TRYBBLE.at(num)) {
     }
 
-    Trybble Trybble::from_u8(u8 num) {
-        try {
-            return Trybble(U8_TO_BCT_TRYBBLE.at(num));
-        }
-        catch (const std::exception& e) {
-            throw std::runtime_error("[termite] unhandled number in Trybble::from_u8");
-        }
-    }
-
-    Trybble Trybble::from_sept_char(char character) {
-        try {
-            return Trybble(SEPT_CHAR_TO_BCT_TRYBBLE.at(character));
-        }
-        catch (const std::exception& e) {
-            throw std::runtime_error("[termite] unhandled character in Trybble::from_sept_char");
-        }
+    Trybble::Trybble(Sept, char digit)
+        : bct(SEPT_DIGIT_TO_BCT_TRYBBLE.at(digit)) {
     }
 
     Trybble Trybble::operator&(const Trybble& other) const {
         try {
             return Trybble(BCT_TRYBBLE_AND.at(bct).at(other.bct));
         }
-                catch (const std::exception& e) {
+        catch (const std::exception& e) {
             throw std::runtime_error("[termite] unhandled BCT trybble in Trybble::operator&");
         }
     }
@@ -64,7 +47,7 @@ namespace termite {
         try {
             return Trybble(BCT_TRYBBLE_OR.at(bct).at(other.bct));
         }
-                catch (const std::exception& e) {
+        catch (const std::exception& e) {
             throw std::runtime_error("[termite] unhandled BCT trybble in Trybble::operator&");
         }
     }
@@ -73,7 +56,7 @@ namespace termite {
         try {
             return Trybble(BCT_TRYBBLE_XOR.at(bct).at(other.bct));
         }
-                catch (const std::exception& e) {
+        catch (const std::exception& e) {
             throw std::runtime_error("[termite] unhandled BCT trybble in Trybble::operator&");
         }
     }
@@ -82,44 +65,25 @@ namespace termite {
         return Trybble(0b10'10'10 - bct);
     }
 
-    u8 Trybble::get_bct() const {
+    uint8_t Trybble::get_bct() const {
         return bct;
     }
 
-    i8 Trybble::to_i8() const {
-        i8 result = to_u8();
-
-        if (result > 13) {
-            return result - 27;
-        }
-
-        return result;
-    }
-
-    u8 Trybble::to_u8() const {
+    Trybble::operator unsigned int() const {
         try {
-            return BCT_TRYBBLE_TO_U8.at(bct);
+            return BCT_TRYBBLE_TO_NATIVE_INT.at(bct);
         }
         catch (const std::exception& e) {
             throw std::runtime_error("[termite] unhandled BCT trybble in Trybble::to_u8");
         }
     }
 
-    std::string Trybble::to_ternary_str() const {
+    Trybble::operator char() const {
         try {
-            return BCT_TRYBBLE_TO_TERNARY_STR.at(bct);
+            return BCT_TRYBBLE_TO_SEPT_DIGIT.at(bct);
         }
         catch (const std::exception& e) {
             throw std::runtime_error("[termite] unhandled BCT trybble in Trybble::to_ternary_str");
-        }
-    }
-
-    char Trybble::to_sept_char() const {
-        try {
-            return BCT_TRYBBLE_TO_SEPT_CHAR.at(bct);
-        }
-        catch (const std::exception& e) {
-            throw std::runtime_error("[termite] unhandled BCT trybble in Trybble::to_sept_char");
         }
     }
 

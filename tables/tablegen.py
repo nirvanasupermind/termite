@@ -1,7 +1,7 @@
 # -*- tablegen.py -*-
 # Part of the Termite project, under the MIT License.
 
-# This Python script generates lookup tables used in the table.hpp file.
+# This Python script generates lookup tables used in the tables.hpp file.
 
 def ter(n):
     if n == 0:
@@ -27,14 +27,14 @@ def tritwise_or(a, b):
 def tritwise_xor(a, b):
     return [((x + y) % 3) for x, y in zip(a, b)]
 
-def create_table(fn):
+def create_tritwise_table(fn):
     table = '\t{\n'
 
     for i in range(0, 27):
         if i:
             table += '\n'
 
-        table += f'\t\t{{{bct_str(ter(i))}, std::map<u8, u8>{{'
+        table += f'\t\t{{{bct_str(ter(i))}, std::map<char, char>{{'
 
         for j in range(0, 27):
             table += f'\n\t\t\t{{{bct_str(ter(j))}, {bct_str(fn(ter(i), ter(j)))}}}'
@@ -48,13 +48,12 @@ def create_table(fn):
             table += '\n\t\t}},'
 
     return table
-            
-and_table = create_table(tritwise_and)
 
-or_table = create_table(tritwise_or)
+if __name__ == '__main__':                
+    tritwise_and_table = create_tritwise_table(tritwise_and)
+    tritwise_or_table = create_tritwise_table(tritwise_or)
+    tritwise_xor_table = create_tritwise_table(tritwise_xor)
 
-xor_table = create_table(tritwise_xor)
-if __name__ == '__main__':
-    open('src/tables/and_table.txt', 'w').write(and_table)
-    open('src/tables/or_table.txt', 'w').write(or_table)
-    open('src/tables/xor_table.txt', 'w').write(xor_table)
+    open('tables/tritwise_and_table.txt', 'w').write(tritwise_and_table)
+    open('tables/tritwise_or_table.txt', 'w').write(tritwise_or_table)
+    open('tables/tritwise_xor_table.txt', 'w').write(tritwise_xor_table)

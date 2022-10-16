@@ -5,7 +5,6 @@
 #define CPU_HPP
 #include <array>
 
-#include "typedefs.hpp"
 #include "tryte.hpp"
 #include "word.hpp"
 #include "mem.hpp"
@@ -15,14 +14,15 @@ namespace termite {
     class CPU {
     private:    
         // Sign flag
-        u8 s_flag : 2;
+        unsigned int s_flag : 2;
 
         // Overflow flag
-        u8 v_flag : 2;  
+        unsigned int v_flag : 2;  
 
         // Carry flag
-        u8 c_flag : 2;
+        unsigned int c_flag : 2;
     public:
+        // An array of general-purpose registers, including the stack pointer and program counter
         std::array<Word, 27> register_file;
 
         Mem mem;
@@ -30,13 +30,16 @@ namespace termite {
         // Default constructor
         CPU();
 
-        // void debug();
+        // Debugs the state of the CPU
+        void debug();
+
+        // Resets the state of the CPU
         void reset();
 
-        // Increments the progmem counter
+        // Increments the program counter
         void inc_pc();
 
-        // Increments the progmem counter twice
+        // Increments the program counter twice
         void inc2_pc();
 
         // Fetches a tryte from memory

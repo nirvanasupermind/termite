@@ -4,9 +4,9 @@
 #include <string>
 #include <cinttypes>
 
-#include "typedefs.hpp"
 #include "trybble.hpp"
 #include "tryte.hpp"
+#include "util.hpp"
 
 namespace termite {
     const Tryte Tryte::ZERO(Trybble::ZERO, Trybble::ZERO);
@@ -19,23 +19,12 @@ namespace termite {
         : hi(hi), lo(lo) {
     }
 
-    Tryte Tryte::from_i16(i16 num) {
-        if (num < 0) {
-            return Tryte::from_u16(num + 729);
-        }
-
-        return Tryte::from_u16(num);
+    Tryte::Tryte(NativeInt, int num) 
+        : hi(Trybble(native_int, num / 27)), lo(Trybble(native_int, num % 27)) {
     }
 
-    Tryte Tryte::from_u16(u16 num) {
-        u8 hi_num = num / 27;
-        u8 lo_num = num % 27;
-
-        return Tryte(Trybble::from_u8(hi_num), Trybble::from_u8(lo_num));
-    }
-    
-    Tryte Tryte::from_sept_str(const std::string& str) {
-        return Tryte(Trybble::from_sept_char(str[0]), Trybble::from_sept_char(str[1]));
+    Tryte::Tryte(Sept, const std::string& str)
+        : hi(Trybble(sept, str.at(0))), lo(Trybble(sept, str.at(1))) {
     }
 
     Tryte Tryte::operator&(const Tryte& other) const {
@@ -62,25 +51,11 @@ namespace termite {
         return lo;
     }
 
-    i16 Tryte::to_i16() const {
-        i16 result = to_u16();
-
-        if (result > 364) {
-            return result - 729;
-        }
-
-        return result;
+    Tryte::operator unsigned int() const {
+        return static_cast<unsigned int>(hi) * 27 + static_cast<unsigned int>(lo);
     }
-
-    u16 Tryte::to_u16() const {
-        return hi.to_u8() * 27 + lo.to_u8();
-    }
-
-    std::string Tryte::to_ternary_str() const {
-        return hi.to_ternary_str() + lo.to_ternary_str();
-    }
-
-    std::string Tryte::to_sept_str() const {
-        return std::string() + hi.to_sept_char() + lo.to_sept_char();
+    
+    Tryte::operator std::string() const {
+        return std::string() + static_cast<char>(hi) + static_cast<char>(lo);
     }
 } // namespace termite

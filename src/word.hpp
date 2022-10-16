@@ -7,7 +7,6 @@
 #include <string>
 #include <cinttypes>
 
-#include "typedefs.hpp"
 #include "tryte.hpp"
 
 namespace termite {
@@ -33,14 +32,11 @@ namespace termite {
         // Converts two trytes to a word
         Word(const Tryte& hi, const Tryte& lo);
 
-        // Converts a native signed integer to a word
-        static Word from_i32(i32 num);
+        // Converts a native integer to a word
+        Word(NativeInt, int num);
 
-        // Converts a native unsigned integer to a word
-        static Word from_u32(u32 num);
-
-        // Converts a native unsigned integer to a word
-        static Word from_sept_str(const std::string &str);
+        // Converts a septemvigesimal (base 27) string to a word
+        Word(Sept, const std::string& str);
 
         // Add
         Word operator+(const Word& other) const;
@@ -62,9 +58,6 @@ namespace termite {
 
         // Modulo
         Word operator%(const Word& other) const;
-
-        // Unsigned modulo
-        Word umod(const Word& other) const;
 
         // Negate
         Word operator-() const;
@@ -90,17 +83,11 @@ namespace termite {
         // Gets low tryte (6 trits) from a word
         Tryte get_lo() const;
 
-        // Converts a word to a native signed integer
-        i32 to_i32() const;
+        // Converts a word to a native integer
+        operator unsigned int() const;
 
-        // Converts a word to a native unsigned integer
-        u32 to_u32() const;
-        
-        // Converts a word to a ternary string
-        std::string to_ternary_str() const;
-
-        // Converts a word to a septemvigesimal (base 27) string, a compact representation of ternary
-        std::string to_sept_str() const;
+        // Converts a word to a septemvigesimal (base 27) string
+        operator std::string() const;
     };
 } // namespace termite
 

@@ -4,7 +4,6 @@
 #include <string>
 #include <cinttypes>
 
-#include "typedefs.hpp"
 #include "tryte.hpp"
 #include "word.hpp"
 
@@ -20,63 +19,37 @@ namespace termite {
 
     }
 
-    Word Word::from_i32(i32 num) {
-        if (num < 0) {
-            return Word::from_u32(num + 531441);
-        }
-
-        return Word::from_u32(num);
+    Word::Word(NativeInt, int num) 
+        : hi(Tryte(native_int, num / 729)), lo(Tryte(native_int, num % 729)) {
     }
 
-    Word Word::from_u32(u32 num) {
-        u16 hi_num = num / 729;
-        u16 lo_num = num % 729;
-
-        return Word(Tryte::from_u16(hi_num), Tryte::from_u16(lo_num));
-    }
-
-    Word Word::from_sept_str(const std::string &str) {
-        return Word(Tryte::from_sept_str(str.substr(0, 2)), Tryte::from_sept_str(str.substr(2, 2)));
+    Word::Word(Sept, const std::string &str)
+        : hi(Tryte(sept, str.substr(0, 2))), lo(Tryte(sept, str.substr(2, 2))) {
     }
 
     Word Word::operator+(const Word& other) const {
-        i32 result = to_i32() + other.to_i32();
-        return Word::from_i32(result % 531441);
+        int result = static_cast<unsigned int>(*this) + static_cast<unsigned int>(other);
+        return Word(native_int, result % 531441);
     }
 
     Word Word::operator-(const Word& other) const {
-        i32 result = to_i32() - other.to_i32();
-        return Word::from_i32(result % 531441);
+        int result = static_cast<unsigned int>(*this) - static_cast<unsigned int>(other);
+        return Word(native_int, result % 531441);
     }
 
     Word Word::operator*(const Word& other) const {
-        i32 result = to_i32() * other.to_i32();
-        return Word::from_i32(result % 531441);
-    }
-
-    Word Word::umul(const Word& other) const {
-        u32 result = to_u32() * other.to_u32();
-        return Word::from_u32(result % 531441);
+        int result = static_cast<unsigned int>(*this) * static_cast<unsigned int>(other);
+        return Word(native_int, result % 531441);
     }
 
     Word Word::operator/(const Word& other) const {
-        i32 result = to_i32() / other.to_i32();
-        return Word::from_i32(result % 531441);
-    }
-
-    Word Word::udiv(const Word& other) const {
-        u32 result = to_u32() / other.to_u32();
-        return Word::from_u32(result % 531441);
+        int result = static_cast<unsigned int>(*this) / static_cast<unsigned int>(other);
+        return Word(native_int, result % 531441);
     }
 
     Word Word::operator%(const Word& other) const {
-        i32 result = to_i32() % other.to_i32();
-        return Word::from_i32(result % 531441);
-    }
-
-    Word Word::umod(const Word& other) const {
-        u32 result = to_u32() % other.to_u32();
-        return Word::from_u32(result % 531441);
+        int result = static_cast<unsigned int>(*this) / static_cast<unsigned int>(other);
+        return Word(native_int, result % 531441);
     }
 
     Word Word::operator-() const {
@@ -113,26 +86,12 @@ namespace termite {
     Tryte Word::get_lo() const {
         return lo;
     }
-    
-    i32 Word::to_i32() const {
-        i32 result = to_u32();
 
-        if (result > 265720) {
-            return result - 531441;
-        }
-
-        return result;
+    Word::operator unsigned int() const {
+        return static_cast<unsigned int>(hi) * 729 + static_cast<unsigned int>(lo);
     }
 
-    u32 Word::to_u32() const {
-        return hi.to_u16() * 729 + lo.to_u16();
-    }
-
-    std::string Word::to_ternary_str() const {
-        return hi.to_ternary_str() + lo.to_ternary_str();
-    }
-
-    std::string Word::to_sept_str() const {
-        return hi.to_sept_str() + lo.to_sept_str();
+    Word::operator std::string() const {
+        return static_cast<std::string>(hi) + static_cast<std::string>(lo);
     }
 } // namespace termite
