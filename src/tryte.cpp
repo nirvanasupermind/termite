@@ -4,9 +4,9 @@
 #include <string>
 #include <cinttypes>
 
+#include "util.hpp"
 #include "trybble.hpp"
 #include "tryte.hpp"
-#include "util.hpp"
 
 namespace termite {
     const Tryte Tryte::ZERO(Trybble::ZERO, Trybble::ZERO);

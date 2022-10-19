@@ -58,7 +58,6 @@ The following 1-trit status flags are used:
 | `pop`    | Pop from stack: `mem[opr] <- mem[sp]; sp <- sp + 1`            | 1        |
 | `hlt`    | Halt                                                           | 0        |
 
-
 ## Instruction format
 Two-operand instructions have 6 combinations of addressing modes that can be used as operands, which are each encoded seperately as 6 distinct opcodes.
 
@@ -66,7 +65,7 @@ Two-operand instructions have 6 combinations of addressing modes that can be use
 * One-operand instructions: `opc` (6), `opr` (12)
 * Two-operand instructions (absolute-absolute & absolute-immediate): `opc` (6), `dest` (12), `src` (12)
 * Two-operand instructions (absolute-register): `opc` (6), `dest` (12), unused (3), `src` (3)
-* Two-operand instructions (register-absolute & register-immediate): `opcode` (6), unused (3), `dest` (3), `src` (12)
+* Two-operand instructions (register-absolute & register-immediate): `opc` (6), unused (3), `dest` (3), `src` (12)
 * Two-operand instructions (register-register): `opc` (6), `dest` (3), `src` (3)
 
 ## Assembly format

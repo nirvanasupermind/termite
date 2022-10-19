@@ -59,9 +59,6 @@ namespace termite {
         // Modulo
         Word operator%(const Word& other) const;
 
-        // Negate
-        Word operator-() const;
-
         // Increments a word
         Word operator++();
 

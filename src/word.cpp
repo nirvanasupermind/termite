@@ -4,6 +4,7 @@
 #include <string>
 #include <cinttypes>
 
+#include "util.hpp"
 #include "tryte.hpp"
 #include "word.hpp"
 
@@ -28,32 +29,31 @@ namespace termite {
     }
 
     Word Word::operator+(const Word& other) const {
-        int result = static_cast<unsigned int>(*this) + static_cast<unsigned int>(other);
+        unsigned int result = static_cast<unsigned int>(*this) + static_cast<unsigned int>(other);
         return Word(native_int, result % 531441);
     }
 
     Word Word::operator-(const Word& other) const {
         int result = static_cast<unsigned int>(*this) - static_cast<unsigned int>(other);
+        if(result < 0) {
+            return Word(native_int, 531441 + (result % 531441));
+        }
         return Word(native_int, result % 531441);
     }
 
     Word Word::operator*(const Word& other) const {
-        int result = static_cast<unsigned int>(*this) * static_cast<unsigned int>(other);
+        unsigned int result = static_cast<unsigned int>(*this) * static_cast<unsigned int>(other);
         return Word(native_int, result % 531441);
     }
 
     Word Word::operator/(const Word& other) const {
-        int result = static_cast<unsigned int>(*this) / static_cast<unsigned int>(other);
+        unsigned int result = static_cast<unsigned int>(*this) / static_cast<unsigned int>(other);
         return Word(native_int, result % 531441);
     }
 
     Word Word::operator%(const Word& other) const {
-        int result = static_cast<unsigned int>(*this) / static_cast<unsigned int>(other);
+        unsigned int result = static_cast<unsigned int>(*this) % static_cast<unsigned int>(other);
         return Word(native_int, result % 531441);
-    }
-
-    Word Word::operator-() const {
-        return operator~() + Word::ONE;
     }
 
     Word Word::operator++() {

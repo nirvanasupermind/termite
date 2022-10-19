@@ -12,7 +12,7 @@ namespace termite {
     static_assert(CHAR_BIT == 8, "char of at least 8 bits falsely assumed");
     static_assert(sizeof(int) >= 4, "int of at least 32 bits falsely assumed");
 
-    const std::map<int, char> NATIVE_INT_TO_BCT_TRYBBLE{
+    const std::map<unsigned int, char> NATIVE_INT_TO_BCT_TRYBBLE{
         {0, 0b00'00'00},
         {1, 0b00'00'01},
         {2, 0b00'00'10},
@@ -72,7 +72,7 @@ namespace termite {
         {'Q', 0b10'10'10}
     };
 
-    const std::map<char, int> BCT_TRYBBLE_TO_NATIVE_INT{
+    const std::map<char, unsigned int> BCT_TRYBBLE_TO_NATIVE_INT{
         {0b00'00'00, 0},
         {0b00'00'01, 1},
         {0b00'00'10, 2},
