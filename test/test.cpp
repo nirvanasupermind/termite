@@ -7,8 +7,7 @@
 #include "../src/trybble.hpp"
 #include "../src/tryte.hpp"
 #include "../src/word.hpp"
-#include "../src/mem.hpp"
-#include "../src/cpu.hpp"
+#include "../src/vm.hpp"
 
 void test_tables() {
     int native_int = 5;
@@ -170,40 +169,13 @@ void test_word() {
 }
 
 
-void test_mem(termite::Mem &mem) {
-}
-
-void test_mov(termite::CPU &cpu) {
-}
-
-void test_add(termite::CPU &cpu) {
-}
-
-void test_sub(termite::CPU &cpu) {
-}
-
-void test_mul(termite::CPU &cpu) {
-}
-
-void test_umul(termite::CPU &cpu) {
-}
-
-void test_div(termite::CPU &cpu) {
-}
-
-
 int main() {
-    termite::CPU cpu;
+    termite::VM vm;
 
     test_tables();
     test_trybble();
     test_tryte();    
     test_word();
-    // test_mem(cpu.mem);    
-    // test_mov(cpu);
-    // test_add(cpu);
-    // test_sub(cpu);
-    // test_mul(cpu);
 
     return 0;
 } 

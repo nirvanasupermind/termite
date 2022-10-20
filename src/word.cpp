@@ -2,7 +2,6 @@
 // Part of the Termite project, under the MIT License.
 
 #include <string>
-#include <cinttypes>
 
 #include "util.hpp"
 #include "tryte.hpp"
@@ -20,7 +19,7 @@ namespace termite {
 
     }
 
-    Word::Word(NativeInt, int num) 
+    Word::Word(NativeInt, unsigned int num) 
         : hi(Tryte(native_int, num / 729)), lo(Tryte(native_int, num % 729)) {
     }
 
@@ -35,9 +34,11 @@ namespace termite {
 
     Word Word::operator-(const Word& other) const {
         int result = static_cast<unsigned int>(*this) - static_cast<unsigned int>(other);
+
         if(result < 0) {
             return Word(native_int, 531441 + (result % 531441));
         }
+        
         return Word(native_int, result % 531441);
     }
 

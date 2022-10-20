@@ -5,8 +5,9 @@
 #define OPCODES_HPP
 
 namespace termite {
-    enum class Opcode {
+    enum Opcode {
         NOP,
+        HLT,
         MOV_ABS_IMM,
         MOV_ABS_ABS,
         MOV_ABS_REG,
@@ -116,8 +117,7 @@ namespace termite {
         RET,
         PUSH,
         POP,
-        HLT
     };
 } // namespace termite
 
-#endif // TRYTE_HPP
+#endif // OPCODES_HPP

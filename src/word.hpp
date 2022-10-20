@@ -33,7 +33,7 @@ namespace termite {
         Word(const Tryte& hi, const Tryte& lo);
 
         // Converts a native integer to a word
-        Word(NativeInt, int num);
+        Word(NativeInt, unsigned int num);
 
         // Converts a septemvigesimal (base 27) string to a word
         Word(Sept, const std::string& str);
@@ -59,7 +59,7 @@ namespace termite {
         // Modulo
         Word operator%(const Word& other) const;
 
-        // Increments a word
+        // Increments a word, only used as a utility when writing test machine code programs
         Word operator++();
 
         // Tritwise AND
