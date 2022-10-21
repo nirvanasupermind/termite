@@ -10,7 +10,7 @@
 #include "trybble.hpp"
 
 namespace termite {
-    // 6-trit integer which represents values that range from -364 to 364 (3's complement signed) or 0 to 728 (unsigned)
+    // 6-trit integer which represents values that range from -364 to 364 (3's complement signed) or 0 to 728 (int)
     class Tryte {
     private:
         Trybble hi;
@@ -56,7 +56,7 @@ namespace termite {
         Trybble get_lo() const;
 
         // Converts a tryte to a native integer
-        operator unsigned int() const;
+        operator int() const;
 
         // Converts a tryte to a septemvigesimal (base 27) string
         operator std::string() const;

@@ -19,7 +19,7 @@ namespace termite {
 
     }
 
-    Word::Word(NativeInt, unsigned int num) 
+    Word::Word(NativeInt, int num) 
         : hi(Tryte(native_int, num / 729)), lo(Tryte(native_int, num % 729)) {
     }
 
@@ -28,12 +28,12 @@ namespace termite {
     }
 
     Word Word::operator+(const Word& other) const {
-        unsigned int result = static_cast<unsigned int>(*this) + static_cast<unsigned int>(other);
+        int result = static_cast<int>(*this) + static_cast<int>(other);
         return Word(native_int, result % 531441);
     }
 
     Word Word::operator-(const Word& other) const {
-        int result = static_cast<unsigned int>(*this) - static_cast<unsigned int>(other);
+        int result = static_cast<int>(*this) - static_cast<int>(other);
 
         if(result < 0) {
             return Word(native_int, 531441 + (result % 531441));
@@ -43,17 +43,17 @@ namespace termite {
     }
 
     Word Word::operator*(const Word& other) const {
-        unsigned int result = static_cast<unsigned int>(*this) * static_cast<unsigned int>(other);
+        int result = static_cast<int>(*this) * static_cast<int>(other);
         return Word(native_int, result % 531441);
     }
 
     Word Word::operator/(const Word& other) const {
-        unsigned int result = static_cast<unsigned int>(*this) / static_cast<unsigned int>(other);
+        int result = static_cast<int>(*this) / static_cast<int>(other);
         return Word(native_int, result % 531441);
     }
 
     Word Word::operator%(const Word& other) const {
-        unsigned int result = static_cast<unsigned int>(*this) % static_cast<unsigned int>(other);
+        int result = static_cast<int>(*this) % static_cast<int>(other);
         return Word(native_int, result % 531441);
     }
 
@@ -88,8 +88,8 @@ namespace termite {
         return lo;
     }
 
-    Word::operator unsigned int() const {
-        return static_cast<unsigned int>(hi) * 729 + static_cast<unsigned int>(lo);
+    Word::operator int() const {
+        return static_cast<int>(hi) * 729 + static_cast<int>(lo);
     }
 
     Word::operator std::string() const {

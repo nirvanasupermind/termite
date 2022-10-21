@@ -6,21 +6,21 @@
 
 namespace termite {
     enum Opcode {
-        NOP,
-        HLT,
-        MOV_ABS_IMM,
+        NOP, // No operation
+        HLT, // Halt
+        MOV_ABS_IMM, // Move
         MOV_ABS_ABS,
         MOV_ABS_REG,
         MOV_REG_IMM,
         MOV_REG_ABS,
         MOV_REG_REG,
         ADD_ABS_IMM,
-        ADD_ABS_ABS,
+        ADD_ABS_ABS, // Add
         ADD_ABS_REG,
         ADD_REG_IMM,
         ADD_REG_ABS,
         ADD_REG_REG,
-        ADC_ABS_IMM,
+        ADC_ABS_IMM, // Add with carry
         ADC_ABS_ABS,
         ADC_ABS_REG,
         ADC_REG_IMM,

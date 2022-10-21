@@ -10,7 +10,7 @@
 
 namespace termite
 {
-    // 3-trit integer which represents values that range from -13 to 13 (3's complement signed) or 0 to 26 (unsigned)
+    // 3-trit integer which represents values that range from -13 to 13 (3's complement signed) or 0 to 26 (int)
     class Trybble {
     private:
         char bct;
@@ -33,8 +33,8 @@ namespace termite
         // Converts a native integer to a trybble
         Trybble(NativeInt, int num);
 
-        // Converts a septemvigesimal (base 27) digit to a trybble
-        Trybble(Sept, char digit);
+        // Converts a septemvigesimal (base 27) string to a trybble
+        Trybble(Sept, const std::string& str);
 
         // Tritwise AND
         Trybble operator&(const Trybble &other) const;
@@ -52,10 +52,10 @@ namespace termite
         uint8_t get_bct() const;
 
         // Converts a trybble to a native integer
-        operator unsigned int() const;
+        operator int() const;
 
-        // Converts a trybble to a septemvigesimal (base 27) digit
-        operator char() const;
+        // Converts a trybble to a septemvigesimal (base 27) string
+        operator std::string() const;
     }; 
 } // namespace termite
 

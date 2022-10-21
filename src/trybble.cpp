@@ -30,8 +30,8 @@ namespace termite {
         : bct(NATIVE_INT_TO_BCT_TRYBBLE.at(num)) {
     }
 
-    Trybble::Trybble(Sept, char digit)
-        : bct(SEPT_DIGIT_TO_BCT_TRYBBLE.at(digit)) {
+    Trybble::Trybble(Sept, const std::string& str)
+        : bct(SEPT_STR_TO_BCT_TRYBBLE.at(str)) {
     }
 
     Trybble Trybble::operator&(const Trybble& other) const {
@@ -69,7 +69,7 @@ namespace termite {
         return bct;
     }
 
-    Trybble::operator unsigned int() const {
+    Trybble::operator int() const {
         try {
             return BCT_TRYBBLE_TO_NATIVE_INT.at(bct);
         }
@@ -78,9 +78,9 @@ namespace termite {
         }
     }
 
-    Trybble::operator char() const {
+    Trybble::operator std::string() const {
         try {
-            return BCT_TRYBBLE_TO_SEPT_DIGIT.at(bct);
+            return BCT_TRYBBLE_TO_SEPT_STR.at(bct);
         }
         catch (const std::exception& e) {
             throw std::runtime_error("[termite] unhandled BCT trybble in Trybble::to_ternary_str");

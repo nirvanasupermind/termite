@@ -10,61 +10,89 @@
 #include "vm.hpp"
 
 namespace termite {
-    void VM::assert_register_val(size_t idx, unsigned int expected_val) const {
-        assert(static_cast<unsigned int>(registers[idx]) == expected_val);
+    void VM::assert_register_val(size_t idx, int expected_val) const {
+        assert(static_cast<int>(registers[idx]) == expected_val);
     }
 
     Tryte VM::fetch_tryte() {
-        Tryte tryte = mem[registers[VM::pc_idx]];
-        ++registers[VM::pc_idx];
+        Tryte tryte = mem[registers[VM::PC]];
+        ++registers[VM::PC];
         return tryte;
     }
 
     Word VM::fetch_word() {
-        Tryte hi = mem[registers[VM::pc_idx]];
-        ++registers[VM::pc_idx];
-        Tryte lo = mem[registers[VM::pc_idx]];
-        ++registers[VM::pc_idx];
+        Tryte hi = mem[registers[VM::PC]];
+        ++registers[VM::PC];
+        Tryte lo = mem[registers[VM::PC]];
+        ++registers[VM::PC];
         Word word = Word(hi, lo);
         return word;
     }
 
-    void VM::cycle() {
+    Word VM::read_word(const Word &addr) {
+        Tryte hi = mem[registers[addr]];
+        Tryte lo = mem[registers[addr + Word::ONE]];
+        Word word = Word(hi, lo);
+        return word;
+    }
+
+    void VM::write_word(const Word &addr, const Word &val) {
+        mem[addr] = val.get_hi();
+        mem[addr + Word::ONE] = val.get_lo();
+    }
+
+    void VM::step() {
         Tryte opcode = fetch_tryte();
 
-        switch (static_cast<unsigned int>(opcode)) {
+        switch (static_cast<int>(opcode)) {
         case NOP:
             break;
         case HLT:
             exit(EXIT_SUCCESS);
-        case MOV_ABS_ABS: {
-            Word dest_addr = fetch_word();
-            Word src_addr = fetch_word();
-            unsigned int dest_idx = static_cast<unsigned int>(dest_addr);
-            unsigned int src_idx = static_cast<unsigned int>(src_addr);
-            mem[dest_idx] = mem[src_idx];
-            mem[dest_idx + 1] = mem[src_idx + 1];
-            break;
-        }
         case MOV_ABS_IMM: {
             Word dest_addr = fetch_word();
             Word src = fetch_word();
-            unsigned int dest_idx = static_cast<unsigned int>(dest_addr);
-            mem[dest_idx] = src.get_hi();
-            mem[dest_idx + 1] = src.get_lo();
+            write_word(dest_addr, src);
+            break;
+        }
+        case MOV_ABS_ABS: {
+            Word dest_addr = fetch_word();
+            Word src_addr = fetch_word();
+            write_word(dest_addr, read_word(src_addr));
             break;
         }
         case MOV_ABS_REG: {
             Word dest_addr = fetch_word();
-            Trybble src_addr = fetch_tryte().get_lo();
-            unsigned int dest_idx = static_cast<unsigned int>(dest_addr);
-            unsigned int src_idx = static_cast<unsigned int>(src_addr);
-            Word src = registers[src_idx];
-            mem[dest_idx] = src.get_hi();
-            mem[dest_idx + 1] = src.get_lo();
+            Trybble src_idx = fetch_tryte().get_lo();
+            write_word(dest_addr, registers[src_idx]);
+            break;
+        }
+        case MOV_REG_IMM: {
+            Trybble dest_idx = fetch_tryte().get_lo();
+            Word src = fetch_word();
+            registers[dest_idx] = src;
+            break;
+        }
+        case MOV_REG_ABS: {
+            Trybble dest_idx = fetch_tryte().get_lo();
+            Word src_addr = fetch_word();
+            registers[dest_idx] = read_word(src_addr); 
+            break;
+        }
+        case MOV_REG_REG: {
+            Tryte tryte = fetch_tryte();
+            Trybble dest_idx = tryte.get_hi();
+            Trybble src_idx = tryte.get_lo();
+            registers[dest_idx] = registers[src_idx];
             break;
         }
         }
     }
 
+
+    void VM::run() {
+        while(true) {
+            step();
+        }
+    }
 } // namespace termite

@@ -24,7 +24,7 @@ namespace termite {
     }
 
     Tryte::Tryte(Sept, const std::string& str)
-        : hi(Trybble(sept, str.at(0))), lo(Trybble(sept, str.at(1))) {
+        : hi(Trybble(sept, std::string() + str[0])), lo(Trybble(sept, std::string() + str[1])) {
     }
 
     Tryte Tryte::operator&(const Tryte& other) const {
@@ -51,11 +51,11 @@ namespace termite {
         return lo;
     }
 
-    Tryte::operator unsigned int() const {
-        return static_cast<unsigned int>(hi) * 27 + static_cast<unsigned int>(lo);
+    Tryte::operator int() const {
+        return hi * 27 + lo;
     }
     
     Tryte::operator std::string() const {
-        return std::string() + static_cast<char>(hi) + static_cast<char>(lo);
+        return static_cast<std::string>(hi) + static_cast<std::string>(lo);
     }
 } // namespace termite

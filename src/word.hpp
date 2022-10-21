@@ -11,7 +11,7 @@
 
 namespace termite {
     // 12-trit integer which represents values that range from -265720 to 265720 (3's complement signed)
-    // or 0 to 531440 (unsigned)
+    // or 0 to 531440 (int)
     class Word {
     private:
         Tryte hi;
@@ -33,7 +33,7 @@ namespace termite {
         Word(const Tryte& hi, const Tryte& lo);
 
         // Converts a native integer to a word
-        Word(NativeInt, unsigned int num);
+        Word(NativeInt, int num);
 
         // Converts a septemvigesimal (base 27) string to a word
         Word(Sept, const std::string& str);
@@ -47,13 +47,13 @@ namespace termite {
         // Multiply
         Word operator*(const Word& other) const;
 
-        // Unsigned multiply
+        // int multiply
         Word umul(const Word& other) const;
 
         // Divide
         Word operator/(const Word& other) const;
 
-        // Unsigned divide
+        // int divide
         Word udiv(const Word& other) const;
 
         // Modulo
@@ -81,7 +81,7 @@ namespace termite {
         Tryte get_lo() const;
 
         // Converts a word to a native integer
-        operator unsigned int() const;
+        operator int() const;
 
         // Converts a word to a septemvigesimal (base 27) string
         operator std::string() const;
