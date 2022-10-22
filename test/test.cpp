@@ -1,18 +1,23 @@
-#include <iostream>
 #include <cassert>
+#include <cinttypes>
+#include <iostream>
 #include <string>
+#include <vector>
 
 #include "../src/util.hpp"
 #include "../src/tables.hpp"
 #include "../src/trybble.hpp"
 #include "../src/tryte.hpp"
 #include "../src/word.hpp"
-// #include "../src/vm.hpp"
+#include "../src/opcodes.hpp"
+#include "../src/vm.hpp"
+
+const bool verbose = false;
 
 void test_tables() {
     int native_int = 5;
-    char bct_trybble_a = 0b01'10'10; // decimal 17, sept H, ternary 212
-    char bct_trybble_b = 0b00'01'00; // decimal 3, sept 3, ternary 010
+    uint8_t bct_trybble_a = 0b01'10'10; // decimal 17, sept H, ternary 212
+    uint8_t bct_trybble_b = 0b00'01'00; // decimal 3, sept 3, ternary 010
 
     assert(termite::NATIVE_INT_TO_BCT_TRYBBLE.at(native_int) == 0b00'01'10);
 
@@ -168,14 +173,91 @@ void test_word() {
     std::cout << "test_word: All tests succeeded" << '\n';
 }
 
+void test_mov(termite::VM &vm) {
+    vm.load_machine_code(std::vector<std::string>{
+        "02", // mov [abs, imm]
+        "10", "00", // 0s1000
+        "09", "3M", // #6664
+        "06", // mov [reg, abs]
+        "00", // r0
+        "10", "00", // 0s1000
+        "01", // hlt
+    });
+
+    vm.run(verbose);
+    vm.assert_register_val(0, 6664);   
+    vm.clear();
+    std::cout << "test_mov: All tests succeeded" << '\n';
+}
+
+void test_add(termite::VM &vm) {
+    vm.load_machine_code(std::vector<std::string>{
+        "05", // mov [reg, imm]
+        "00", // r0
+        "0C", "1H", // #8792
+        "05", // mov [reg, imm]
+        "01", // r1
+        "00", "G6", // #438
+        "0D", // add [reg, reg]
+        "01", // r0, r1
+        "01" // hlt
+    });
+
+    vm.run(verbose);
+    vm.assert_register_val(0, 9230);   
+    vm.clear();
+    std::cout << "test_add: All tests succeeded" << '\n';
+}
+
+void test_sub(termite::VM &vm) {
+    vm.load_machine_code(std::vector<std::string>{
+        "05", // mov [reg, imm]
+        "00", // r0
+        "01", "7Q", // #944
+        "02", // mov [abs, imm]
+        "10", "00", // 0s1000
+        "06", "QC", // #5088
+        "0O", // sub [reg, abs]
+        "00", // r0
+        "10", "00", // 0s1000
+        "01" // hlt
+    });
+
+    vm.run(verbose);
+    vm.assert_register_val(0, 527297);   
+    vm.clear();
+    std::cout << "test_sub: All tests succeeded" << '\n';
+}
+
+void test_mul(termite::VM &vm) {
+    vm.load_machine_code(std::vector<std::string>{
+        "05", // mov [reg, imm]
+        "00", // r0
+        "08", "H3", // #6294
+        "12", // mul [reg, imm]
+        "00", // r0
+        "08", "KM", // #6394
+        "01" // hlt
+    });
+
+    vm.run(verbose);
+    vm.assert_register_val(0, 385761);   
+    vm.clear();
+    std::cout << "test_mul: All tests succeeded" << '\n';
+}
+
 
 int main() {
-    // termite::VM vm;
+    termite::VM vm;
 
     test_tables();
     test_trybble();
     test_tryte();    
     test_word();
+    test_mov(vm);
+    test_add(vm);
+    test_sub(vm);
+    test_mul(vm);
 
     return 0;
 } 

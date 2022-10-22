@@ -4,6 +4,7 @@
 #ifndef TRYBBLE_HPP
 #define TRYBBLE_HPP
 
+#include <cinttypes>
 #include <string>
 
 #include "util.hpp"
@@ -13,7 +14,7 @@ namespace termite
     // 3-trit integer which represents values that range from -13 to 13 (3's complement signed) or 0 to 26 (int)
     class Trybble {
     private:
-        char bct;
+        uint8_t bct;
     public:        
         // A trybble with a value of 0
         static const Trybble ZERO;
@@ -28,7 +29,7 @@ namespace termite
         Trybble();
 
         // Converts BCT data to a trybble
-        Trybble(char bct);
+        Trybble(uint8_t bct);
 
         // Converts a native integer to a trybble
         Trybble(NativeInt, int num);

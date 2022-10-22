@@ -26,19 +26,19 @@ namespace termite {
         ADC_REG_IMM,
         ADC_REG_ABS,
         ADC_REG_REG,
-        SUB_ABS_IMM,
+        SUB_ABS_IMM, // Subtract
         SUB_ABS_ABS,
         SUB_ABS_REG,
         SUB_REG_IMM,
         SUB_REG_ABS,
         SUB_REG_REG,
-        MUL_ABS_IMM,
+        MUL_ABS_IMM, // Multiply
         MUL_ABS_ABS,
         MUL_ABS_REG,
         MUL_REG_IMM,
         MUL_REG_ABS,
         MUL_REG_REG,
-        DIV_ABS_IMM,
+        DIV_ABS_IMM, // Divide
         DIV_ABS_ABS,
         DIV_ABS_REG,
         DIV_REG_IMM,
@@ -50,7 +50,7 @@ namespace termite {
         // UDIV_REG_IMM,
         // UDIV_REG_ABS,
         // UDIV_REG_REG,
-        MOD_ABS_IMM,
+        MOD_ABS_IMM, // Modulo
         MOD_ABS_ABS,
         MOD_ABS_REG,
         MOD_REG_IMM,
@@ -62,13 +62,13 @@ namespace termite {
         // UMOD_REG_IMM,
         // UMOD_REG_ABS,
         // UMOD_REG_REG,
-        AND_ABS_IMM,
+        AND_ABS_IMM, // Tritwise AND
         AND_ABS_ABS,
         AND_ABS_REG,
         AND_REG_IMM,
         AND_REG_ABS,
         AND_REG_REG,
-        OR_ABS_IMM,
+        OR_ABS_IMM, // Tritwise OR
         OR_ABS_ABS,
         OR_ABS_REG,
         OR_REG_IMM,

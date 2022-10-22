@@ -1,11 +1,9 @@
 // -*- trybble.cpp -*-
 // Part of the Termite project, under the MIT License.
 
-#include <string>
 #include <cinttypes>
-#include <exception>
+#include <string>
 #include <stdexcept>
-#include <iostream>
 
 #include "tables.hpp"
 #include "trybble.hpp"
@@ -22,7 +20,7 @@ namespace termite {
         : bct(0) {
     }
 
-    Trybble::Trybble(char bct)
+    Trybble::Trybble(uint8_t bct)
         : bct(bct) {
     }
 
