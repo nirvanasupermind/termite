@@ -121,10 +121,6 @@ void test_word() {
     termite::Word word_b(termite::native_int, 14152); // decimal 14152, sept 0JB4, ternary 0000201102011
     termite::Word word_c(termite::native_int, 4170); // decimal 4170, sept 05JC, ternary 0000012201110
 
-    // 0000110110201
-    // 0000201102011
-    // 0000011212212
-
     assert(static_cast<int>(word_a + word_b) == 23243);
     assert(static_cast<int>(word_a - word_b) == 526380);
     assert(static_cast<int>(word_a * word_b) == 47110);
@@ -289,6 +285,27 @@ void test_mod(termite::VM &vm) {
     std::cout << "test_mod: All tests succeeded" << '\n';
 }
 
+void test_and(termite::VM &vm) {
+    vm.load_machine_code(std::vector<std::string>{
+        "05", // mov [reg, imm]
+        "00", // r0
+        "09", "JP", // #7099
+        "05", // mov [reg, imm]
+        "01", // 0s1002
+        "01", "LF", // #1311
+        "1M", // and [reg, reg]
+        "01", // r0, r1
+        "01" // hlt
+    });
+
+
+    vm.run(verbose);
+    vm.assert_register_val(0, 501);   
+    vm.clear();
+    std::cout << "test_and: All tests succeeded" << '\n';
+}
+
+
 int main() {
     termite::VM vm;
 
@@ -302,6 +319,7 @@ int main() {
     test_mul(vm);
     test_div(vm);
     test_mod(vm);
-    
+    test_and(vm);
+
     return 0;
 } 
