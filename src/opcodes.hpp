@@ -44,24 +44,12 @@ namespace termite {
         DIV_REG_IMM,
         DIV_REG_ABS,
         DIV_REG_REG,
-        // UDIV_ABS_IMM,
-        // UDIV_ABS_ABS,
-        // UDIV_ABS_REG,
-        // UDIV_REG_IMM,
-        // UDIV_REG_ABS,
-        // UDIV_REG_REG,
         MOD_ABS_IMM, // Modulo
         MOD_ABS_ABS,
         MOD_ABS_REG,
         MOD_REG_IMM,
         MOD_REG_ABS,
         MOD_REG_REG,
-        // UMOD_ABS_IMM,
-        // UMOD_ABS_ABS,
-        // UMOD_ABS_REG,
-        // UMOD_REG_IMM,
-        // UMOD_REG_ABS,
-        // UMOD_REG_REG,
         AND_ABS_IMM, // Tritwise AND
         AND_ABS_ABS,
         AND_ABS_REG,
@@ -74,49 +62,43 @@ namespace termite {
         OR_REG_IMM,
         OR_REG_ABS,
         OR_REG_REG,
-        XOR_ABS_IMM,
+        XOR_ABS_IMM, // Tritwise XOR
         XOR_ABS_ABS,
         XOR_ABS_REG,
         XOR_REG_IMM,
         XOR_REG_ABS,
         XOR_REG_REG,
-        SL_ABS_IMM,
+        SL_ABS_IMM, // Shift left
         SL_ABS_ABS,
         SL_ABS_REG,
         SL_REG_IMM,
         SL_REG_ABS,
         SL_REG_REG,
-        SR_ABS_IMM,
+        SR_ABS_IMM, // Shift right
         SR_ABS_ABS,
         SR_ABS_REG,
         SR_REG_IMM,
         SR_REG_ABS,
         SR_REG_REG,
-        // LSR_ABS_IMM,
-        // LSR_ABS_ABS,
-        // LSR_ABS_REG,
-        // LSR_REG_IMM,
-        // LSR_REG_ABS,
-        // LSR_REG_REG,
-        CMP_ABS_IMM,
+        CMP_ABS_IMM, // Compare
         CMP_ABS_ABS,
         CMP_ABS_REG,
         CMP_REG_IMM,
         CMP_REG_ABS,
         CMP_REG_REG,
-        JMP,
-        JE,
-        JNE,
-        JL,
-        JG,
-        JLE,
-        JGE,
-        JC,
-        JNC,
-        JSR,
-        RET,
-        PUSH,
-        POP,
+        JMP, // Jump
+        JE, // Jump if equal
+        JNE, // Jump if not equal
+        JL, // Jump if less
+        JG, // Jump if greater
+        JLE, // Jump if less than or equal
+        JGE, // Jump if greater than or equal
+        JC, // Jump if carry
+        JNC, // Jump if not carry
+        JSR, // Jump to subroutine
+        RET, // Return from subroutine
+        PUSH, // Push to stack
+        POP // Pop from stack
     };
 } // namespace termite
 

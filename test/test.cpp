@@ -246,6 +246,48 @@ void test_mul(termite::VM &vm) {
     std::cout << "test_mul: All tests succeeded" << '\n';
 }
 
+void test_div(termite::VM &vm) {
+    vm.load_machine_code(std::vector<std::string>{
+        "02", // mov [abs, imm]
+        "10", "00", // 0s1000
+        "0D", "B4", // #9778
+        "15", // div [abs, imm]
+        "10", "00", // 0s1000
+        "00", "AC", // #282
+        "06", // mov [reg, abs]
+        "00", // r0
+        "10", "00", // 0s1000        
+        "01" // hlt
+    });
+
+    vm.run(verbose);
+    vm.assert_register_val(0, 34);   
+    vm.clear();
+    std::cout << "test_div: All tests succeeded" << '\n';
+}
+
+void test_mod(termite::VM &vm) {
+    vm.load_machine_code(std::vector<std::string>{
+        "02", // mov [abs, imm]
+        "10", "00", // 0s1000
+        "0B", "J9", // #8541
+        "02", // mov [abs, imm]
+        "10", "02", // 0s1002
+        "00", "1I", // #45
+        "1C", // mod [abs, abs]
+        "10", "00", // 0s1000
+        "10", "02", // 0s1002
+        "06", // mov [reg, abs]
+        "00", // r0
+        "10", "00", // 0s1000        
+        "01" // hlt
+    });
+
+    vm.run(verbose);
+    vm.assert_register_val(0, 36);   
+    vm.clear();
+    std::cout << "test_mod: All tests succeeded" << '\n';
+}
 
 int main() {
     termite::VM vm;
@@ -258,6 +300,8 @@ int main() {
     test_add(vm);
     test_sub(vm);
     test_mul(vm);
-
+    test_div(vm);
+    test_mod(vm);
+    
     return 0;
 } 

@@ -86,6 +86,7 @@ namespace termite {
     }
 
     void VM::write_word(const Word& addr, const Word& val) {
+
         mem[addr] = val.get_hi();
         mem[addr + Word::ONE] = val.get_lo();
     }
@@ -336,6 +337,5 @@ namespace termite {
         while (running) {
             step(verbose);
         }
-
     }
 } // namespace termite

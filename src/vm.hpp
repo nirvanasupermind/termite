@@ -66,8 +66,8 @@ namespace termite {
         // Assert the value of a register, only used for testing
         void assert_register_val(size_t idx, int expected_val) const;
         
+        // Runs the VM
         void run(bool verbose = false);
-
     };
 } // namespace termite
 
