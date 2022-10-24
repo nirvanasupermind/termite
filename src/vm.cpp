@@ -39,7 +39,7 @@ namespace termite {
 
         std::cout << '\n';
 
-        for (size_t i = 19683; i < 19737; i += 3) {
+        for (size_t i = 19683; i < 19710; i += 3) {
             std::string sept_i = static_cast<std::string>(Word(native_int, i));
             std::string sept_i_1 = static_cast<std::string>(Word(native_int, i + 1));
             std::string sept_i_2 = static_cast<std::string>(Word(native_int, i + 2));
@@ -94,7 +94,7 @@ namespace termite {
     void VM::step(bool verbose) {
         if (verbose) {
             display_state();
-            std::cout << "*** EXECUTED INSTRUCTION @0s" << static_cast<std::string>(registers[VM::PC]) << "\n\n";
+            std::cout << "*** NOW EXECUTING INSTRUCTION @0s" << static_cast<std::string>(registers[VM::PC]) << "\n\n";
         }
 
         Tryte opcode = fetch_tryte();
@@ -329,6 +329,12 @@ namespace termite {
             registers[dest_idx] = registers[dest_idx] % registers[src_idx];
             break;
         }
+        case AND_ABS_IMM: {
+            Word dest_addr = fetch_word();
+            Word src = fetch_word();
+            write_word(dest_addr, read_word(dest_addr) & src);
+            break;
+        }
         case AND_ABS_ABS: {
             Word dest_addr = fetch_word();
             Word src_addr = fetch_word();
@@ -358,6 +364,12 @@ namespace termite {
             Trybble dest_idx = tryte.get_hi();
             Trybble src_idx = tryte.get_lo();
             registers[dest_idx] = registers[dest_idx] & registers[src_idx];
+            break;
+        }
+        case OR_ABS_IMM: {
+            Word dest_addr = fetch_word();
+            Word src = fetch_word();
+            write_word(dest_addr, read_word(dest_addr) | src);
             break;
         }
         case OR_ABS_ABS: {
@@ -391,6 +403,12 @@ namespace termite {
             registers[dest_idx] = registers[dest_idx] | registers[src_idx];
             break;
         }
+        case XOR_ABS_IMM: {
+            Word dest_addr = fetch_word();
+            Word src = fetch_word();
+            write_word(dest_addr, read_word(dest_addr) ^ src);
+            break;
+        }
         case XOR_ABS_ABS: {
             Word dest_addr = fetch_word();
             Word src_addr = fetch_word();
@@ -420,6 +438,80 @@ namespace termite {
             Trybble dest_idx = tryte.get_hi();
             Trybble src_idx = tryte.get_lo();
             registers[dest_idx] = registers[dest_idx] ^ registers[src_idx];
+            break;
+        }
+        case SL_ABS_IMM: {
+            Word dest_addr = fetch_word();
+            Word src = fetch_word();
+            write_word(dest_addr, read_word(dest_addr) >> src);
+            break;
+        }
+        case SL_ABS_ABS: {
+            Word dest_addr = fetch_word();
+            Word src_addr = fetch_word();
+            write_word(dest_addr, read_word(dest_addr) >> read_word(src_addr));
+            break;
+        }
+        case SL_ABS_REG: {
+            Word dest_addr = fetch_word();
+            Trybble src_idx = fetch_tryte().get_lo();
+            write_word(dest_addr, read_word(dest_addr) >> registers[src_idx]);
+            break;
+        }
+        case SL_REG_IMM: {
+            Trybble dest_idx = fetch_tryte().get_lo();
+            Word src = fetch_word();
+            registers[dest_idx] = registers[dest_idx] >> src;
+            break;
+        }
+        case SL_REG_ABS: {
+            Trybble dest_idx = fetch_tryte().get_lo();
+            Word src_addr = fetch_word();
+            registers[dest_idx] = registers[dest_idx] >> read_word(src_addr);
+            break;
+        }
+        case SL_REG_REG: {
+            Tryte tryte = fetch_tryte();
+            Trybble dest_idx = tryte.get_hi();
+            Trybble src_idx = tryte.get_lo();
+            registers[dest_idx] = registers[dest_idx] >> registers[src_idx];
+            break;
+        }
+        case SR_ABS_IMM: {
+            Word dest_addr = fetch_word();
+            Word src = fetch_word();
+            write_word(dest_addr, read_word(dest_addr) << src);
+            break;
+        }
+        case SR_ABS_ABS: {
+            Word dest_addr = fetch_word();
+            Word src_addr = fetch_word();
+            write_word(dest_addr, read_word(dest_addr) << read_word(src_addr));
+            break;
+        }
+        case SR_ABS_REG: {
+            Word dest_addr = fetch_word();
+            Trybble src_idx = fetch_tryte().get_lo();
+            write_word(dest_addr, read_word(dest_addr) << registers[src_idx]);
+            break;
+        }
+        case SR_REG_IMM: {
+            Trybble dest_idx = fetch_tryte().get_lo();
+            Word src = fetch_word();
+            registers[dest_idx] = registers[dest_idx] << src;
+            break;
+        }
+        case SR_REG_ABS: {
+            Trybble dest_idx = fetch_tryte().get_lo();
+            Word src_addr = fetch_word();
+            registers[dest_idx] = registers[dest_idx] << read_word(src_addr);
+            break;
+        }
+        case SR_REG_REG: {
+            Tryte tryte = fetch_tryte();
+            Trybble dest_idx = tryte.get_hi();
+            Trybble src_idx = tryte.get_lo();
+            registers[dest_idx] = registers[dest_idx] << registers[src_idx];
             break;
         }
         }

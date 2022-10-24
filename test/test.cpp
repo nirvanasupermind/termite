@@ -305,6 +305,83 @@ void test_and(termite::VM &vm) {
     std::cout << "test_and: All tests succeeded" << '\n';
 }
 
+void test_or(termite::VM &vm) {
+    vm.load_machine_code(std::vector<std::string>{
+        "05", // mov [reg, imm]
+        "00", // r0
+        "06", "DO", // #4749
+        "1Q", // or [reg, imm]
+        "00", // r0
+        "05", "LN", // #4235
+        "01" // hlt
+    });
+
+    vm.run(verbose);
+    vm.assert_register_val(0, 6452);   
+    vm.clear();
+    std::cout << "test_or: All tests succeeded" << '\n';
+}
+
+void test_xor(termite::VM &vm) {
+    vm.load_machine_code(std::vector<std::string>{
+        "02", // mov [abs, imm]
+        "10", "00", // 0s1000
+        "06", "NO", // #5019
+        "22", // xor [abs, imm]
+        "10", "00", // 0s1000
+        "06", "AN", // #4235
+        "06", // mov [reg, abs]
+        "00", // r0
+        "10", "00", // 0s1000
+        "01" // hlt
+    });
+
+    // 20212220
+    // 20101212
+    // 1
+
+    vm.run(verbose);
+    vm.assert_register_val(0, 2279);   
+    vm.clear();
+    std::cout << "test_xor: All tests succeeded" << '\n';
+}
+
+void test_sl(termite::VM &vm) {
+    vm.load_machine_code(std::vector<std::string>{
+        "02", // mov [abs, imm]
+        "10", "00", // 0s1000
+        "0C", "6L", // #8931
+        "28", // sl [abs, imm]
+        "10", "00", // 0s1000
+        "00", "03", // #3
+        "06", // mov [reg, abs]
+        "00", // r0
+        "10", "00", // 0s1000
+        "01" // hlt
+    });
+
+    vm.run(verbose);
+    vm.assert_register_val(0, 330);   
+    vm.clear();
+    std::cout << "test_sl: All tests succeeded" << '\n';
+}
+ 
+void test_sr(termite::VM &vm) {
+    vm.load_machine_code(std::vector<std::string>{
+        "05", // mov [reg, imm]
+        "00", // r0
+        "08", "JH", // #6362
+        "2H", // sr [reg, imm]
+        "00", // r0
+        "00", "04", // #4
+        "01" // hlt
+    });
+
+    vm.run(verbose);
+    vm.assert_register_val(0, 515322);
+    vm.clear();
+    std::cout << "test_sr: All tests succeeded" << '\n';
+}
 
 int main() {
     termite::VM vm;
@@ -320,6 +397,10 @@ int main() {
     test_div(vm);
     test_mod(vm);
     test_and(vm);
+    test_or(vm);
+    test_xor(vm);
+    test_sl(vm);
+    test_sr(vm);
 
     return 0;
 } 

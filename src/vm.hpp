@@ -5,6 +5,7 @@
 #define VM_HPP
 
 #include <array>
+#include <cinttypes>
 #include <string>
 #include <vector>
 
@@ -18,7 +19,7 @@ namespace termite {
     private:
         std::array<Word, 27> registers;
         std::array<Tryte, 531441> mem;
-        std::array<char, 3> flags;
+        std::array<uint8_t, 3> flags;
         bool running;
 
         // Fetches a tryte
@@ -35,6 +36,9 @@ namespace termite {
 
         // Writes a word to memory
         void write_word(const Word &addr, const Word &val);
+
+        // Sets flags to report on a value
+        void set_flags(const Word &val);
 
         // Displays the state of the VM
         void display_state() const;

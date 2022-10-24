@@ -73,6 +73,12 @@ namespace termite {
 
         // Tritwise NOT
         Word operator~() const;
+
+        // Shift left
+        Word operator>>(const Word& other) const;
+        
+        // Shift right
+        Word operator<<(const Word& other) const;
         
         // Gets high tryte (6 trits) from a word
         Tryte get_hi() const;

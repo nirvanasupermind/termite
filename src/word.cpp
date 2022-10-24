@@ -80,6 +80,26 @@ namespace termite {
         return Word(~hi, ~lo);
     }
 
+    Word Word::operator>>(const Word &other) const {
+        int power = 1;
+
+        for(size_t i = 0; i < other; i++) {
+            power *= 3;
+        }
+
+        return Word(native_int, operator int() / power);
+    }
+
+    Word Word::operator<<(const Word &other) const {
+        int power = 1;
+
+        for(size_t i = 0; i < other; i++) {
+            power *= 3;
+        }
+
+        return Word(native_int, operator int() * power);
+    }
+
     Tryte Word::get_hi() const {
         return hi;
     }
