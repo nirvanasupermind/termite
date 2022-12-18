@@ -1,61 +1,69 @@
-// -*- tryte.cpp -*-
-// Part of the Termite project, under the MIT License.
-
-#include <string>
-#include <cinttypes>
-
-#include "util.hpp"
-#include "trybble.hpp"
-#include "tryte.hpp"
+#include <array>
+#include <iostream>
+#include <tuple>
+#include "tryte.h"
 
 namespace termite {
-    const Tryte Tryte::ZERO(Trybble::ZERO, Trybble::ZERO);
-
-    const Tryte Tryte::ONE(Trybble::ZERO, Trybble::ONE);
-
-    const Tryte Tryte::TWO(Trybble::ZERO, Trybble::TWO);
-
-    Tryte::Tryte(const Trybble& hi, const Trybble& lo)
-        : hi(hi), lo(lo) {
+    Tryte::Tryte(const std::array<Trit, 6>& trits)
+        : trits(trits) {
     }
 
-    Tryte::Tryte(NativeInt, int num) 
-        : hi(Trybble(native_int, num / 27)), lo(Trybble(native_int, num % 27)) {
+    Tryte::Tryte(int n) {
+        for (int i = 5; i >= 0; i--) {
+            int rem = n % 3;
+            n = n / 3;
+            if (rem == 2) {
+                rem = -1;
+                n++;
+            }
+            trits[i] = Trit(rem);
+        }
     }
 
-    Tryte::Tryte(Sept, const std::string& str)
-        : hi(Trybble(sept, std::string() + str[0])), lo(Trybble(sept, std::string() + str[1])) {
+    Tryte Tryte::operator-() const {
+        std::array<Trit, 6> result;
+
+        for (int i = 5; i >= 0; i--) {
+            result[i] = ~trits[i];
+        }
+
+        return Tryte(result);
     }
 
-    Tryte Tryte::operator&(const Tryte& other) const {
-        return Tryte(hi & other.hi, lo & other.lo);
-    }
+    Tryte Tryte::operator+(const Tryte& other) const {
+        std::array<Trit, 6> result;
 
-    Tryte Tryte::operator|(const Tryte& other) const {
-        return Tryte(hi | other.hi, lo | other.lo);
-    }
+        Trit sum, carry;
 
-    Tryte Tryte::operator^(const Tryte& other) const {
-        return Tryte(hi ^ other.hi, lo ^ other.lo);
-    }
+        for (int i = 5; i >= 0; i--) {
+            char old_carry = carry.to_char();
+            std::tie(sum, carry) = trits[i].full_add(other.trits[i], carry);
+            result[i] = sum;
+        }
 
-    Tryte Tryte::operator~() const {
-        return Tryte(~hi, ~lo);
-    }
-
-    Trybble Tryte::get_hi() const {
-        return hi;
-    }
-
-    Trybble Tryte::get_lo() const {
-        return lo;
-    }
-
-    Tryte::operator int() const {
-        return hi * 27 + lo;
+        return Tryte(result);
     }
     
-    Tryte::operator std::string() const {
-        return static_cast<std::string>(hi) + static_cast<std::string>(lo);
+    Tryte Tryte::operator-(const Tryte& other) const {
+        return operator+(-other);
+    }
+
+    int Tryte::to_int() const {
+        return trits[0].val * 243
+            + trits[1].val * 81
+            + trits[2].val * 27
+            + trits[3].val * 9
+            + trits[4].val * 3
+            + trits[5].val;
+    }
+
+    std::string Tryte::to_string() const {
+        std::string result;
+
+        for (int i = 0; i < 6; i++) {
+            result += trits[i].to_char();
+        }
+
+        return result;
     }
 } // namespace termite

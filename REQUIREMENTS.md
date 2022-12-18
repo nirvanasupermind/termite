@@ -20,43 +20,43 @@ The following addressing modes can be used for operands:
 ## Status flags
 The following 1-trit status flags are used:
 
-| Name               | Symbol        | Description                                                 | States                                                     |
-| ------------------ | ------------- | ----------------------------------------------------------- | ---------------------------------------------------------- |
-| Sign flag          | `s`           | Reports the sign of the result of the previous operation    | `s == 0`: zero, `s == 1`: positive, `s == 2`: negative     |
-| Overflow flag      | `v`           | Reports if an overflow occurred in the previous operation   | `v == 0`: no overflow, `v == 1`: overflow, `v == 2`: never |
-| Carry flag         | `c`           | Reports if a carry was generated in the previous operation  | `c == 0`: no carry, `c == 1`: carry, `c == 2`:  never       |
+| Name               | Symbol        | Description                                                | States                                                     |
+| ------------------ | ------------- | ---------------------------------------------------------- | ---------------------------------------------------------- |
+| Sign flag          | `s`           | Reports the sign of the result of the previous operation   | `s == 0`: zero, `s == 1`: positive, `s == 2`: negative     |
+| Carry flag         | `c`           | Reports if a carry was generated in the previous operation | `c == 0`: no carry, `c == 1`: carry, `c == 2`:  never       |
 
 ## Instruction set
-| Mnemonic | Operation                                                      | Operands |
-| -------- | -------------------------------------------------------------  | -------  |
-| `nop`    | No operation                                                   | 0        |
-| `mov`    | Move: `dest <- src`                                            | 2        |
-| `add`    | Add: `dest <- dest + src`                                      | 2        |
-| `adc`    | Add with carry: `dest <- dest + src + c`                       | 2        |
-| `sub`    | Subtract: `dest <- dest - src`                                 | 2        |
-| `mul`    | Multiply: `dest <- dest * src`                                 | 2        |
-| `div`    | Divide: `dest <- dest / src`                                   | 2        |
-| `mod`    | Modulo: `dest <- dest % src`                                   | 2        |
-| `and`    | Tritwise AND: `dest <- dest & src`                             | 2        |
-| `or`     | Tritwise OR: `dest <- dest \| src`                             | 2        |
-| `xor`    | Tritwise XOR: `dest <- dest ^ src`                             | 2        |
-| `sl`     | Shift left: `dest <- dest >> src`                              | 2        |
-| `sr`     | Shift right: `dest <- dest << src`                             | 2        |
-| `cmp`    | Compare: `set-flags(dest - src)`                               | 2        |
-| `jmp`    | Jump: `pc <- opr`                                              | 1        |
-| `je`     | Jump if equal (`s == 0`)                                       | 1        |
-| `jne`    | Jump if not equal (`s == 1 \| s == 2`)                         | 1        |
-| `jl`     | Jump if less (`s == 2`)                                        | 1        |
-| `jg`     | Jump if greater (`s == 1`)                                     | 1        |
-| `jle`    | Jump if less than or equal (`s == 2 \| s == 0`)                | 1        |
-| `jge`    | Jump if greater than or equal (`s == 1 \| s == 0`)             | 1        |
-| `jc`     | Jump if carry (`c == 1`)                                       | 1        |
-| `jnc`    | Jump if not carry (`c == 0`)                                   | 1        |
-| `jsr`    | Jump to subrotuine: `sp <- sp - 1; mem[sp] <- pc; pc <- opr`   | 1        |
-| `ret`    | Return from subroutine: `pc <- mem[sp]; sp <- sp + 1`          | 0        |
-| `push`   | Push to stack: `sp <- sp - 1; mem[sp] <- opr`                  | 1        |
-| `pop`    | Pop from stack: `mem[opr] <- mem[sp]; sp <- sp + 1`            | 1        |
-| `hlt`    | Halt                                                           | 0        |
+| Mnemonic | Operation                                                               | Operands |
+| -------- | ----------------------------------------------------------------------- | -------  |
+| `nop`    | No operation                                                            | 0        |
+| `mov`    | Move: `dest <- src`                                                     | 2        |
+| `add`    | Add: `dest <- dest + src`                                               | 2        |
+| `adc`    | Add with carry: `dest <- dest + src + c; set-flags(dest + src + c)`     | 2        |
+| `sub`    | Subtract: `dest <- dest - src; set-flags(dest - src)`                   | 2        |
+| `sbb`    | Subtract with borrow: `dest <- dest - src; set-flags(dest - src - c)`   | 2        |
+| `mul`    | Multiply: `dest <- dest * src; set-flags(dest / src)`                   | 2        |
+| `div`    | Divide: `dest <- dest / src; set-flags(dest / src)`                     | 2        |
+| `mod`    | Modulo: `dest <- dest % src; set-flags(dest % src)`                     | 2        |
+| `and`    | Tritwise AND: `dest <- dest & src; set-flags(dest & src)`               | 2        |
+| `or`     | Tritwise OR: `dest <- dest \| src; set-flags(dest \| src)`              | 2        |
+| `xor`    | Tritwise XOR: `dest <- dest ^ src; set-flags(dest ^ src)`               | 2        |
+| `sl`     | Shift left: `dest <- dest >> src; set-flags(dest >> src)`               | 2        |
+| `sr`     | Shift right: `dest <- dest << src; set-flags(dest << src)`              | 2        |
+| `cmp`    | Compare: `set-flags(dest - src)`                                        | 2        |
+| `jmp`    | Jump: `pc <- opr`                                                       | 1        |
+| `je`     | Jump if equal (`s == 0`)                                                | 1        |
+| `jne`    | Jump if not equal (`s == 1 \| s == 2`)                                  | 1        |
+| `jl`     | Jump if less (`s == 2`)                                                 | 1        |
+| `jg`     | Jump if greater (`s == 1`)                                              | 1        |
+| `jle`    | Jump if less than or equal (`s == 2 \| s == 0`)                         | 1        |
+| `jge`    | Jump if greater than or equal (`s == 1 \| s == 0`)                      | 1        |
+| `jc`     | Jump if carry (`c == 1`)                                                | 1        |
+| `jnc`    | Jump if not carry (`c == 0`)                                            | 1        |
+| `jsr`    | Jump to subrotuine: `sp <- sp - 1; mem[sp] <- pc; pc <- opr`            | 1        |
+| `ret`    | Return from subroutine: `pc <- mem[sp]; sp <- sp + 1`                   | 0        |
+| `push`   | Push to stack: `sp <- sp - 1; mem[sp] <- opr`                           | 1        |
+| `pop`    | Pop from stack: `mem[opr] <- mem[sp]; sp <- sp + 1`                     | 1        |
+| `hlt`    | Halt                                                                    | 0        |
 
 ## Instruction format
 Two-operand instructions have 6 combinations of addressing modes that can be used as operands, which are each encoded seperately as 6 distinct opcodes.
