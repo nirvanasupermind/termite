@@ -1,14 +1,21 @@
 #include <array>
-#include <iostream>
+#include <cinttypes>
+#include <string>
 #include <tuple>
+#include <utility>
 #include "tryte.h"
 
 namespace termite {
+    Tryte::Tryte()
+        : trits(std::array<Trit, 6>()) {
+    }
+
     Tryte::Tryte(const std::array<Trit, 6>& trits)
         : trits(trits) {
     }
-
-    Tryte::Tryte(int n) {
+    
+    Tryte Tryte::from_int(int n) {
+        std::array<Trit, 6> result;
         for (int i = 5; i >= 0; i--) {
             int rem = n % 3;
             n = n / 3;
@@ -16,8 +23,20 @@ namespace termite {
                 rem = -1;
                 n++;
             }
-            trits[i] = Trit(rem);
+            result[i] = Trit(rem);
         }
+        return Tryte(result);
+    }
+
+    Tryte Tryte::from_bct(uint16_t bct) {
+        std::array<Trit, 6> result;
+
+        for (int i = 5; i >= 0; i--) {
+            uint16_t trit = (bct >> (2 * (5 - i))) & 3;
+            result[i] = Trit(trit == 2 ? -1 : trit);
+        }
+
+        return Tryte(result);
     }
 
     Tryte Tryte::operator-() const {
@@ -43,9 +62,62 @@ namespace termite {
 
         return Tryte(result);
     }
-    
+
     Tryte Tryte::operator-(const Tryte& other) const {
         return operator+(-other);
+    }
+
+    Tryte Tryte::operator*(const Tryte& other) const {
+        Tryte result;
+
+        for (int i = 5; i >= 0; i--) {
+            Trit trit = other.trits[i];
+
+            Tryte summand;
+
+            if (trit.val == -1) {
+                summand = -operator<<(5 - i);
+            }
+            else if (trit.val == 1) {
+                summand = operator<<(5 - i);
+            }
+
+            result = result + summand;
+        }
+
+        return result;
+    }
+
+    std::pair<Tryte, Tryte> Tryte::operator/(const Tryte& other) const {
+        Tryte remainder = *this, quotient;
+
+        while (remainder.to_int() >= other.to_int()) {
+            remainder = remainder - other;
+            quotient = quotient + Tryte::from_int(1);
+        }
+
+        return std::make_pair(quotient, remainder);
+    }
+
+
+    Tryte Tryte::operator>>(int amount) const {
+        std::array<Trit, 6> result = trits;
+
+        for (int i = 0; i < amount; i++) {
+            result = { 0, result[0], result[1], result[2], result[3], result[4] };
+        }
+
+        return Tryte(result);
+    }
+
+    Tryte Tryte::operator<<(int amount) const {
+        std::array<Trit, 6> result = trits;
+
+        for (int i = 0; i < amount; i++) {
+            result = { result[1], result[2], result[3], result[4], result[5], 0 };
+        }
+
+        return Tryte(result);
     }
 
     int Tryte::to_int() const {

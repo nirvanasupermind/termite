@@ -1,1 +1,1 @@
-g++ -std=c++14 src/*.cpp test/test.cpp -o test/test
+clang++ -std=c++14 src/*.cpp test/test.cpp -o test/test
