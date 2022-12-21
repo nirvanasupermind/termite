@@ -1,34 +1,42 @@
 #ifndef TRYTE_H
 #define TRYTE_H
 
-#include <array>
 #include <cinttypes>
 #include <string>
-#include <utility>
 #include "trit.h"
 
-namespace termite {
+namespace termite
+{
+    // 6-trit unbalanced ternary integer type, efficiently packed using binary-coded ternary
     class Tryte {
+    private:
+        uint16_t bct = 0;
     public:
-        std::array<Trit, 6> trits;
-        Tryte();
-        Tryte(const std::array<Trit, 6>& trits);
-        static Tryte from_int(int n);
-        static Tryte from_bct(uint16_t bct);
-        Tryte operator-() const;
-        Tryte operator+(const Tryte& other) const;
-        Tryte operator-(const Tryte& other) const;
-        Tryte operator*(const Tryte& other) const;
-        std::pair<Tryte, Tryte> operator/(const Tryte& other) const;
-        Tryte operator&(const Tryte& other) const;   
-        Tryte operator|(const Tryte& other) const;
-        Tryte operator^(const Tryte& other) const;
-        Tryte operator>>(int amount) const;
-        Tryte operator<<(int amount) const;
-        int to_int() const;
-        uint16_t to_bct() const;
-        std::string to_string() const;
+        static const int MAX = 729;
+
+        Tryte() = default;
+
+        // Converts binary-coded-ternary data to a tryte
+        Tryte(uint32_t bct);
+
+        // Convert an int to a tryte
+        static Tryte from_int(int val);
+
+        // Get a trit from a tryte
+        Trit get_trit(int i) const;
+
+        // Set a trit in a tryte
+        void set_trit(int i, const Trit& val);
+
+        // Convert tryte to an int
+        int to_int() const;    
+
+        // Convert a tryte to a ternary string for printing
+        std::string to_ter_string() const;
+
+        // Convert a tryte to a septemvigesimal (base 27) string for printing
+        std::string to_sep_string() const;
     };
 } // namespace termite
 
-#endif // TRIT_H
+#endif // TRYTE_H

@@ -1,9 +1,11 @@
 #include <iostream>
 #include "../src/tryte.h"
-#include "../src/tcs.h"
+#include "../src/word.h"
 
 int main() {
-    termite::Tryte tryte1 = termite::Tryte::from_bct(0b10'01'10);
-    std::cout << tryte1.to_int() << '\n';
+    termite::Word word1 = termite::Word::from_int(-1);
+    termite::Word word2 = termite::Word::from_int(2);
+
+    std::cout << (word1).to_int() << '\n';
     return 0;
 }
