@@ -1,6 +1,7 @@
 #include <cinttypes>
 #include <string>
 #include <tuple>
+#include <iostream>
 #include "trit.h"
 #include "tryte.h"
 #include "tables.h"
@@ -30,7 +31,7 @@ namespace termite {
     }
 
     void Word::set_trit(int i, const Trit& val) {
-        uint16_t bitmask = -(3 * (1 << (i * 2)) + 1);
+        uint32_t bitmask = -(3 * (1 << (i * 2)) + 1);
         bct = (bct & bitmask) + (val.to_int() << (i * 2));
     }
 
@@ -55,7 +56,7 @@ namespace termite {
 
         Trit sum, carry;
 
-        for(int i = 11; i >= 0; i--) {
+        for(int i = 0; i < 12; i++) {
             std::tie(sum, carry) = get_trit(i).full_add(other.get_trit(i), carry);
             result.set_trit(i, sum);
         }
@@ -70,23 +71,21 @@ namespace termite {
     Word Word::operator*(const Word& other) const {
         Word result;
 
-        for (int i = 11; i >= 0; i--) {
+        for (int i = 0; i < 12; i++) {
             Trit trit = other.get_trit(i);
 
             Word summand;
 
             if (trit.to_int() == 1) {
-                summand = asr(11 - i);
+                summand = asr(i);
             } else if(trit.to_int() == 2) {
-                summand = asr(11 - i) + asr(11 - i);
+                summand = asr(i) + asr(i);
             }
-
             result = result + summand;
         }
 
         return result;
     }
-    
 
     Word Word::operator~() const {
         Word result;

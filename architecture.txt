@@ -1,0 +1,60 @@
+FLAGS
+S (sign flag) (0 = zero, 1 = positive, 2 = negative)
+C (carry flag) (0 = no carry, 1 = carry, 2 = undefined)
+
+
+REGISTERS
+r0, r1, r2, r3, r4, r5, r6, sp (r7), pc (r8)
+
+INSTRUCTIONS
+- nop (No operation): op [12:6], unused [6:0]
+- ld (Load): op [12:6], rdest [6:4], raddr [4:2], unused [2:0] 
+- ldi (Load immediate): op [12:6], rdest [6:4], imm [4:0]
+- ldps (Load processor status word): op [12:6], rdest [6:4], unused [2: 0]
+- st (Store): op [12:6], rsrc [6:4], raddr [4:2], unused [2:0]
+- add (Add): op [12:6], rdest [6:4], rsrc [4:2], unused [2:0]
+- addc (Add with carry): op [12:6], rdest [6:4], rsrc [4:2], unused [2:0]
+- sub (Subtract): op [12:6], rdest [6:4], rsrc [4:2], unused [2:0]
+- subb (Subtract with borrow): op [12:6], rdest [6:4], rsrc [4:2], unused [2:0]
+- mul (Multiply): op [12:6], rdest [6:4], rsrc [4:2], unused [2:0]
+- sdiv (Signed divide): op [12:6], rdest [6:4], rsrc [4:2], unused [2:0]
+- udiv (Unsigned divide): op [12:6], rdest [6:4], rsrc [4:2], unused [2:0]
+- smod (Signed modulo): op [12:6], rdest [6:4], rsrc [4:2], unused [2:0]
+- umod (Unsigned modulo): op [12:6], rdest [6:4], rsrc [4:2], unused [2:0]
+- sl (Shift left): op [12:6], rdest [6:4], rsrc [4:2], unused [2:0]
+- asr (Arithmetic shift right): op [12:6], rdest [6:4], rsrc [4:2], unused [2:0]
+- lsr (Logical shift right): op [12:6], rdest [6:4], rsrc [4:2], unused [2:0]
+- and (AND): op [12:6], rdest [6:4], rsrc [4:2], unused [2:0]
+- or (OR): op [12:6], rdest [6:4], rsrc [4:2], unused [2:0]
+- xor (XOR): op [12:6], rdest [6:4], rsrc [4:2], unused [2:0]
+- cmp (Compare): op [12:6], rdest [6:4], rsrc [4:2], unused [2:0]
+- jmp (Jump): op [12:6], raddr [6:4], unused [4:0]
+- jeq (Jump if equal): op [12:6], raddr [6:4], unused [4:0]
+- jne (Jump if not equal): op [12:6], raddr [6:4], unused [4:0]
+- jlt (Jump if less than): op [12:6], raddr [6:4], unused [4:0]
+- jle (Jump if less than or equal): op [12:6], raddr [6:4], unused [4:0]
+- jgt (Jump if greater than): op [12:6], raddr [6:4], unused [4:0]
+- jge (Jump if greater than or equal): op [12:6], raddr [6:4], unused [4:0]
+- push (Push to stack): op [12:6], rsrc [6:4], unused [2:0]
+- pop (Pop from stack): op [12:6], raddr [6:4], unused [4:0]
+- call (Call subroutine): op [12:6], raddr [6:4], unused [4:0]
+- ret (Return from subroutine): op [12:6], raddr [6:4], unused [4:0]
+- int (Software interrupt): op [12:6], code [6:0]
+
+INTERRUPT SERVICES
+- 0n000: Program terminate
+- 0n001: TCS character input
+- 0n002: TCS character output
+- 0n003: Decimal input
+- 0n004: Decimal output
+- 0n005: Ternary input
+- 0n006: Ternary output
+- 0n007: Sept input
+- 0n008: Sept output
+- 0n010: Read file*
+- 0n011: Write file*
+- 0n012: Create file*
+- 0n013: Delete file*
+- 0n014: Rename file*
+
+*Will not be in 1.0
