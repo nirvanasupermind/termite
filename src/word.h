@@ -3,6 +3,7 @@
 
 #include <cinttypes>
 #include <string>
+#include <utility>
 #include "trit.h"
 #include "tryte.h"
 #include "word.h"
@@ -15,8 +16,9 @@ namespace termite
     private:
         uint32_t bct = 0;
     public:
+        static const Word ZERO;
+        static const Word ONE;
         static const int MAX = 531441;
-
         Word() = default;
 
         // Converts binary-coded-ternary data to a word
@@ -24,6 +26,8 @@ namespace termite
 
         // Convert an int to a word
         static Word from_int(int val);
+
+        static Word from_trytes(const Tryte& hi, const Tryte& lo);
 
         // Get a trit from a word
         Trit get_trit(int idx) const;
@@ -43,11 +47,11 @@ namespace termite
         // Negate
         Word operator-() const;
 
-        // Add
-        Word operator+(const Word& other) const;
+        // Add with carry
+        std::pair<Word, Trit> operator+(const Word& other) const;
 
-        // Subtract
-        Word operator-(const Word& other) const;
+        // Subtract with borrow
+        std::pair<Word, Trit> operator-(const Word& other) const;
 
         // Multiply
         Word operator*(const Word& other) const;
@@ -85,8 +89,8 @@ namespace termite
         // Convert a word to a ternary string for printing
         std::string to_ter_string() const;
 
-        // Convert a word to a septemvigesimal (base 27) string for printing
-        std::string to_sep_string() const;
+        // Convert a word to a nonary (base 9) string for printing
+        std::string to_non_string() const;
     };
 } // namespace termite
 

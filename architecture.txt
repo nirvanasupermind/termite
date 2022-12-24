@@ -1,7 +1,9 @@
-FLAGS
-S (sign flag) (0 = zero, 1 = positive, 2 = negative)
-C (carry flag) (0 = no carry, 1 = carry, 2 = undefined)
+MEMORY
+- 531,441 trytes with 729 pages of 729 trytes each
 
+FLAGS
+- S (sign flag) (0 = zero, 1 = positive, 2 = negative)
+- C (borrow-carry flag) (0 = no carry, 1 = carry, 2 = undefined)
 
 REGISTERS
 r0, r1, r2, r3, r4, r5, r6, sp (r7), pc (r8)
@@ -13,14 +15,13 @@ INSTRUCTIONS
 - ldps (Load processor status word): op [12:6], rdest [6:4], unused [2: 0]
 - st (Store): op [12:6], rsrc [6:4], raddr [4:2], unused [2:0]
 - add (Add): op [12:6], rdest [6:4], rsrc [4:2], unused [2:0]
+- addi (Add immediate): op [12:6], rdest [6:4], imm [4:0]
 - addc (Add with carry): op [12:6], rdest [6:4], rsrc [4:2], unused [2:0]
 - sub (Subtract): op [12:6], rdest [6:4], rsrc [4:2], unused [2:0]
 - subb (Subtract with borrow): op [12:6], rdest [6:4], rsrc [4:2], unused [2:0]
 - mul (Multiply): op [12:6], rdest [6:4], rsrc [4:2], unused [2:0]
-- sdiv (Signed divide): op [12:6], rdest [6:4], rsrc [4:2], unused [2:0]
 - udiv (Unsigned divide): op [12:6], rdest [6:4], rsrc [4:2], unused [2:0]
-- smod (Signed modulo): op [12:6], rdest [6:4], rsrc [4:2], unused [2:0]
-- umod (Unsigned modulo): op [12:6], rdest [6:4], rsrc [4:2], unused [2:0]
+- sdiv (Signed divide): op [12:6], rdest [6:4], rsrc [4:2], unused [2:0]
 - sl (Shift left): op [12:6], rdest [6:4], rsrc [4:2], unused [2:0]
 - asr (Arithmetic shift right): op [12:6], rdest [6:4], rsrc [4:2], unused [2:0]
 - lsr (Logical shift right): op [12:6], rdest [6:4], rsrc [4:2], unused [2:0]
@@ -49,8 +50,8 @@ INTERRUPT SERVICES
 - 0n004: Decimal output
 - 0n005: Ternary input
 - 0n006: Ternary output
-- 0n007: Sept input
-- 0n008: Sept output
+- 0n007: Nonary input
+- 0n008: Nonary output
 - 0n010: Read file*
 - 0n011: Write file*
 - 0n012: Create file*

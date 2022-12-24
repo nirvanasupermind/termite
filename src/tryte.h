@@ -34,8 +34,8 @@ namespace termite
         // Convert a tryte to a ternary string for printing
         std::string to_ter_string() const;
 
-        // Convert a tryte to a septemvigesimal (base 27) string for printing
-        std::string to_sep_string() const;
+        // Convert a tryte to a nonary (base 9) string for printing
+        std::string to_non_string() const;
     };
 } // namespace termite
 

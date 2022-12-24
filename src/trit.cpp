@@ -8,7 +8,7 @@ namespace termite {
     }
 
     Trit Trit::operator~() const {
-        return Trit(-val);
+        return Trit(2 - val);
     }
 
     Trit Trit::operator&(const Trit& other) const {

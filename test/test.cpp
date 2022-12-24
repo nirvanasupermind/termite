@@ -1,11 +1,19 @@
 #include <iostream>
 #include "../src/tryte.h"
 #include "../src/word.h"
+#include "../src/vm.h"
 
 int main() {
-    termite::Word word1 = termite::Word::from_int(505);
-    termite::Word word2 = termite::Word::from_int(30);
+    termite::VM vm;
+    // Assembly:
+    // int 0n003;
+    // int 0n000;
 
-    std::cout << (word1 * word2).to_int() << '\n';
+    vm.mem.data[0] = termite::Tryte::from_int(31);
+    vm.mem.data[1] = termite::Tryte::from_int(3);
+    vm.mem.data[2] = termite::Tryte::from_int(31);
+    vm.mem.data[3] = termite::Tryte::from_int(0);
+    vm.run();
+
     return 0;
 }

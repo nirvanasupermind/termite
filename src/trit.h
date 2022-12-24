@@ -30,10 +30,10 @@ namespace termite
         // Full adder returning a std::pair of the sum and carry
         std::pair<Trit, Trit> full_add(const Trit& other, const Trit& carry_in) const;
 
-        // Convert a trit to int
+        // Convert a trit to an int
         int to_int() const;
 
-        // Convert trit to char for printing
+        // Converts a trit to a char for printing
         char to_char() const;
     };
 } // namespace termite

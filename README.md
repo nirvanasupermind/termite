@@ -1,3 +1,3 @@
 ![Termite icon](./icon.png)
 # Termite
-Termite is an emulator for a functional 12-trit unbalanced ternary computer written in C++11. The [processor architecture](REQUIREMENTS.md#processor-architecture) is comparable to some of the 16-bit minicomputers of the 1970s, although more minimal. Unlike the prevailing binary representation, a ternary integer is in base 3, and each digit can have the values 0, 1, or 2. Ternary data may be stored on binary computers using binary-coded ternary (BCT), where each ternary digit (or trit) is encoded as two bits.
+Termite is an emulator and assembler for a 12-trit unbalanced ternary computer, written in C++14. Many have 

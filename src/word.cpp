@@ -1,6 +1,7 @@
 #include <cinttypes>
 #include <string>
 #include <tuple>
+#include <utility>
 #include <iostream>
 #include "trit.h"
 #include "tryte.h"
@@ -8,6 +9,10 @@
 #include "word.h"
 
 namespace termite {
+    const Word Word::ZERO = Word::from_int(0);
+
+    const Word Word::ONE = Word::from_int(1);
+
     Word::Word(uint32_t bct)
         : bct(bct) {
     }
@@ -24,6 +29,10 @@ namespace termite {
             }
             return result;
         }
+    }
+
+    Word Word::from_trytes(const Tryte& hi, const Tryte& lo) {
+        return Word::from_int(hi.to_int() * 729 + lo.to_int());
     }
 
     Trit Word::get_trit(int i) const {
@@ -48,10 +57,10 @@ namespace termite {
     }
 
     Word Word::operator-() const {
-        return operator~() + 1;
+        return (operator~() + Word::from_int(1)).first;
     }
 
-    Word Word::operator+(const Word& other) const {
+    std::pair<Word, Trit> Word::operator+(const Word& other) const {
         Word result;
 
         Trit sum, carry;
@@ -61,10 +70,10 @@ namespace termite {
             result.set_trit(i, sum);
         }
 
-        return result;
+        return std::make_pair(result, carry);
     }
 
-    Word Word::operator-(const Word& other) const {
+    std::pair<Word, Trit> Word::operator-(const Word& other) const {
         return operator+(-other);
     }
 
@@ -79,19 +88,74 @@ namespace termite {
             if (trit.to_int() == 1) {
                 summand = asr(i);
             } else if(trit.to_int() == 2) {
-                summand = asr(i) + asr(i);
+                summand = (asr(i) + asr(i)).first;
             }
-            result = result + summand;
+            result = (result + summand).first;
         }
 
         return result;
     }
 
+    std::pair<Word, Word> Word::udiv(const Word& other) const {
+        int i = 0;
+        Word remainder = *this, quotient;
+
+        while (remainder.to_int() >= other.to_int()) {
+            remainder = (remainder - other).first;
+            quotient = (quotient + Word::from_int(1)).first;
+            i++;
+        }
+
+        return std::make_pair(quotient, remainder);
+    }
+
+    std::pair<Word, Word> Word::sdiv(const Word& other) const {
+        if(is_neg() && other.is_neg()) {
+            return operator-().udiv(-other);
+        } else if(is_neg() && !other.is_neg()) {
+            return std::make_pair(-operator-().udiv(other).first, -operator-().udiv(other).second);
+        } else if(!is_neg() && other.is_neg()) {
+            return std::make_pair(-udiv(-other).first, -udiv(-other).second);
+        } else {
+            return udiv(other);
+        }
+    }
+
     Word Word::operator~() const {
         Word result;
 
-        for (int i = 11; i >= 0; i--) {
+        for (int i = 0; i < 12; i++) {
             result.set_trit(i, ~get_trit(i));
+        }
+
+        return result;
+    }
+
+    Word Word::operator&(const Word& other) const {
+        Word result;
+
+        for (int i = 0; i < 12; i++) {
+            result.set_trit(i, get_trit(i) & other.get_trit(i));
+        }
+
+        return result;
+    }
+
+    Word Word::operator|(const Word& other) const {
+        Word result;
+
+        for (int i = 0; i < 12; i++) {
+            result.set_trit(i, get_trit(i) | other.get_trit(i));
+        }
+
+        return result;
+    }
+
+    Word Word::operator^(const Word& other) const {
+        Word result;
+
+        for (int i = 0; i < 12; i++) {
+            result.set_trit(i, get_trit(i) ^ other.get_trit(i));
         }
 
         return result;
@@ -123,7 +187,6 @@ namespace termite {
         return result;
     }
 
-
     std::string Word::to_ter_string() const {
         std::string result;
 
@@ -134,7 +197,7 @@ namespace termite {
         return result;
     }
 
-    std::string Word::to_sep_string() const {
-        return hi_tryte().to_sep_string() + lo_tryte().to_sep_string();
+    std::string Word::to_non_string() const {
+        return hi_tryte().to_non_string() + lo_tryte().to_non_string();
     }
 } // namespace termite

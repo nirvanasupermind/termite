@@ -52,7 +52,9 @@ namespace termite {
         return result;
     }
 
-    std::string Tryte::to_sep_string() const {
-        return std::string() + SEPT_DIGITS.at(to_int() / 27) + SEPT_DIGITS.at(to_int() % 27);
+    std::string Tryte::to_non_string() const {
+        return std::to_string(to_int() / 81)
+            + std::to_string((to_int() % 81) / 9)
+            + std::to_string(to_int() / 9);
     }
 } // namespace termite
