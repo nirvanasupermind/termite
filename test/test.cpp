@@ -5,6 +5,7 @@
 
 int main() {
     termite::VM vm;
+
     // Assembly:
     // int 0n003;
     // int 0n000;
