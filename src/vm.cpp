@@ -37,7 +37,7 @@ namespace termite
                 
                 if(interrupt_code.to_int() == 0) {
                     std::exit(0);   
-                } else if (interrupt_code.to_int() == 3) {
+                } else if (interrupt_code.to_int() == 4) {
                     std::cout << reg.at(0).to_int() << '\n';
                 }
             }
