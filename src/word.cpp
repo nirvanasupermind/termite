@@ -22,6 +22,7 @@ namespace termite {
             return Word::from_int(Word::MAX + val);
         }
         else {
+           val = val % 531441;
             Word result;
             for (int i = 0; i < 12; i++) {
                 result.set_trit(i, Trit(val % 3));
@@ -36,7 +37,7 @@ namespace termite {
     }
 
     Trit Word::get_trit(int i) const {
-        return (bct >> (i * 2)) & 3;
+        return Trit((bct >> (i * 2)) & 3);
     }
 
     void Word::set_trit(int i, const Trit& val) {

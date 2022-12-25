@@ -1,5 +1,6 @@
 MEMORY
 - 531,441 trytes with 729 pages of 729 trytes each
+- Pages 0-700 are free, page 701 is reserved for stack, and pages 702-728 are reserved for program
 
 FLAGS
 - S (sign flag) (0 = zero, 1 = positive, 2 = negative)
@@ -12,7 +13,7 @@ INSTRUCTIONS
 - nop (No operation): op [12:6], unused [6:0]
 - ld (Load): op [12:6], rdest [6:4], raddr [4:2], unused [2:0] 
 - ldi (Load immediate): op [12:6], rdest [6:4], imm [4:0]
-- ldps (Load processor status word): op [12:6], rdest [6:4], unused [2: 0]
+- ldps (Load processor status word): op [12:6], rdest [6:4], unused [4:0]
 - st (Store): op [12:6], rsrc [6:4], raddr [4:2], unused [2:0]
 - add (Add): op [12:6], rdest [6:4], rsrc [4:2], unused [2:0]
 - addi (Add immediate): op [12:6], rdest [6:4], imm [4:0]
@@ -22,27 +23,27 @@ INSTRUCTIONS
 - mul (Multiply): op [12:6], rdest [6:4], rsrc [4:2], unused [2:0]
 - udiv (Unsigned divide): op [12:6], rdest [6:4], rsrc [4:2], unused [2:0]
 - sdiv (Signed divide): op [12:6], rdest [6:4], rsrc [4:2], unused [2:0]
-- sl (Shift left): op [12:6], rdest [6:4], rsrc [4:2], unused [2:0]
-- asr (Arithmetic shift right): op [12:6], rdest [6:4], rsrc [4:2], unused [2:0]
-- lsr (Logical shift right): op [12:6], rdest [6:4], rsrc [4:2], unused [2:0]
+- sl (Shift left): op [12:6], rdest [6:4], imm [4:0]
+- asr (Arithmetic shift right): op [12:6], rdest [6:4], imm [4:0]
+- lsr (Logical shift right): op [12:6], rdest [6:4], imm [4:0]
 - and (AND): op [12:6], rdest [6:4], rsrc [4:2], unused [2:0]
 - or (OR): op [12:6], rdest [6:4], rsrc [4:2], unused [2:0]
 - xor (XOR): op [12:6], rdest [6:4], rsrc [4:2], unused [2:0]
 - cmp (Compare): op [12:6], rdest [6:4], rsrc [4:2], unused [2:0]
 - jmp (Jump): op [12:6], raddr [6:4], unused [4:0]
-- jeq (Jump if equal): op [12:6], raddr [6:4], unused [4:0]
+- je (Jump if equal): op [12:6], raddr [6:4], unused [4:0]
 - jne (Jump if not equal): op [12:6], raddr [6:4], unused [4:0]
-- jlt (Jump if less than): op [12:6], raddr [6:4], unused [4:0]
+- jl (Jump if less than): op [12:6], raddr [6:4], unused [4:0]
 - jle (Jump if less than or equal): op [12:6], raddr [6:4], unused [4:0]
-- jgt (Jump if greater than): op [12:6], raddr [6:4], unused [4:0]
+- jg (Jump if greater than): op [12:6], raddr [6:4], unused [4:0]
 - jge (Jump if greater than or equal): op [12:6], raddr [6:4], unused [4:0]
 - push (Push to stack): op [12:6], rsrc [6:4], unused [2:0]
 - pop (Pop from stack): op [12:6], raddr [6:4], unused [4:0]
 - call (Call subroutine): op [12:6], raddr [6:4], unused [4:0]
 - ret (Return from subroutine): op [12:6], raddr [6:4], unused [4:0]
-- int (Software interrupt): op [12:6], code [6:0]
+- syscall (Syscall): op [12:6], service [6:0]
 
-INTERRUPT SERVICES
+SYSCALL SERVICES
 - 0n000: Program terminate
 - 0n001: TCS character input
 - 0n002: TCS character output

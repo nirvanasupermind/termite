@@ -11,13 +11,19 @@ namespace termite
     // Termite virtual machine
     class VM {
     private:
-    public:
-        Mem mem{};
         Word psw{};
         std::array<Word, 9> reg{};
+        bool running;
+    public:
         static const int SP = 7;
-        static const int PC = 8;        
+        static const int PC = 8;   
+        Mem mem{};     
         VM();
+
+        // Sets the sign flag
+        void set_sign_flag(const Word& word);
+
+        // Resets the VM
         void reset();
 
         // Fetches a tryte from memory

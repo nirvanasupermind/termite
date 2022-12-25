@@ -24,7 +24,7 @@ namespace termite {
     }
 
     Trit Tryte::get_trit(int i) const {
-        return (bct >> (i * 2)) & 3;
+        return Trit((bct >> (i * 2)) & 3);
     }
 
     void Tryte::set_trit(int i, const Trit& val) {
