@@ -10,18 +10,22 @@ int main() {
     auto start = std::chrono::system_clock::now();
 
     // assembly:
-    // ldi r0,20;
-    // ldi r1,6;
-    // udiv r0,r1;
-    // syscall 0n004;
-    // syscall 0n000;
+    // main:
+    //  nop;
+    //  ldi r0, 5;
+    //  addi r0, 3;
+    //  ldi r1, 13;
+    //  mul r0, r1;
+    //  syscall 0n004;
 
     int addr = 511758;
     vm.mem.data[++addr] = termite::Tryte::from_int(2);
-    vm.mem.data[++addr] = termite::Tryte::from_int(20);
+    vm.mem.data[++addr] = termite::Tryte::from_int(5);
+    vm.mem.data[++addr] = termite::Tryte::from_int(7);
+    vm.mem.data[++addr] = termite::Tryte::from_int(3);
     vm.mem.data[++addr] = termite::Tryte::from_int(2);
-    vm.mem.data[++addr] = termite::Tryte::from_int(81 + 6);
-    vm.mem.data[++addr] = termite::Tryte::from_int(11);
+    vm.mem.data[++addr] = termite::Tryte::from_int(81 + 13);
+    vm.mem.data[++addr] = termite::Tryte::from_int(10);
     vm.mem.data[++addr] = termite::Tryte::from_int(9);
     vm.mem.data[++addr] = termite::Tryte::from_int(31);
     vm.mem.data[++addr] = termite::Tryte::from_int(4);

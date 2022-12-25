@@ -47,7 +47,6 @@ namespace termite {
         Opcode opcode = static_cast<Opcode>(fetch_tryte().to_int());
         switch (opcode) {
         case Opcode::NOP: {
-            fetch_tryte();
             break;
         }
 
@@ -300,12 +299,47 @@ namespace termite {
             break;
         }
 
+        case Opcode::JGE: {
+            Tryte tryte = fetch_tryte();
+            int raddr = tryte.to_int() / 81;
+            if (psw.get_trit(11).to_int() != 2) {
+                reg[VM::PC] = reg[raddr];
+            }
+            break;
+        }
+
         case Opcode::PUSH: {
             Tryte tryte = fetch_tryte();
             int rsrc = tryte.to_int() / 81;
             Word sp = reg.at(VM::SP);
-            mem.write_word((sp - Word::ONE).first.to_int(), reg.at(rsrc));
+            mem.write_word(sp.to_int(), reg.at(rsrc));
             reg[VM::SP] = (sp - Word::from_int(2)).first;
+            break;
+        }
+
+        case Opcode::POP: {
+            Tryte tryte = fetch_tryte();
+            int raddr = tryte.to_int() / 81;
+            Word sp = reg.at(VM::SP);
+            mem.write_word(reg.at(raddr).to_int(), mem.read_word(sp.to_int()));
+            reg[VM::SP] = (sp + Word::from_int(2)).first;
+            break;
+        }
+
+        case Opcode::CALL: {
+            Tryte tryte = fetch_tryte();
+            int raddr = tryte.to_int() / 81;
+            Word sp = reg.at(VM::SP);
+            mem.write_word(sp.to_int(), reg.at(VM::PC));
+            reg[VM::SP] = (sp - Word::from_int(2)).first;
+            reg[VM::PC] = reg[raddr];
+            break;
+        }
+
+        case Opcode::RET: {
+            Word sp = reg.at(VM::SP);
+            mem.write_word(reg.at(VM::PC).to_int(), mem.read_word(sp.to_int()));
+            reg[VM::SP] = (sp + Word::from_int(2)).first;
             break;
         }
 
