@@ -40,4 +40,4 @@ namespace termite
     };
 } // namespace termite
 
-#endif // MEM_H
+#endif // VM_H

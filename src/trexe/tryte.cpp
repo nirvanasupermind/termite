@@ -1,5 +1,6 @@
 #include <cinttypes>
 #include <string>
+#include <iostream>
 #include "trit.h"
 #include "tryte.h"
 #include "tables.h"
@@ -22,7 +23,7 @@ namespace termite {
             return result;
         }
     }
-
+    
     Trit Tryte::get_trit(int i) const {
         return Trit((bct >> (i * 2)) & 3);
     }
@@ -55,6 +56,6 @@ namespace termite {
     std::string Tryte::to_non_string() const {
         return std::to_string(to_int() / 81)
             + std::to_string((to_int() % 81) / 9)
-            + std::to_string(to_int() / 9);
+            + std::to_string(to_int() % 9);
     }
 } // namespace termite

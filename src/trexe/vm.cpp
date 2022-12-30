@@ -1,6 +1,7 @@
 #include <iostream>
 #include <array>
 #include <tuple>
+#include "tables.h"
 #include "trit.h"
 #include "tryte.h"
 #include "word.h"
@@ -78,6 +79,14 @@ namespace termite {
             int rsrc = tryte.to_int() / 81;
             int raddr = (tryte.to_int() % 81) / 9;
             mem.write_word(reg.at(raddr).to_int(), reg.at(rsrc));
+            break;
+        }
+
+        case Opcode::NEG: {
+            Tryte tryte = fetch_tryte();
+            int rdest = tryte.to_int() / 81;
+            reg[rdest] = -reg[rdest];
+            set_sign_flag(reg.at(rdest));
             break;
         }
 
@@ -204,6 +213,14 @@ namespace termite {
             int rdest = tryte.to_int() / 81;
             int imm = tryte.to_int() % 81;
             reg[rdest] = reg.at(rdest).lsr(imm);
+            set_sign_flag(reg.at(rdest));
+            break;
+        }
+
+        case Opcode::NOT: {
+            Tryte tryte = fetch_tryte();
+            int rdest = tryte.to_int() / 81;
+            reg[rdest] = ~reg[rdest];
             set_sign_flag(reg.at(rdest));
             break;
         }
@@ -349,13 +366,27 @@ namespace termite {
             if (service.to_int() == 0) {
                 running = false;
             }
+            else if (service.to_int() == 1) {
+                wchar_t ch;
+                std::wcin >> ch;
+                reg[0] = Word::from_int(TCS_CHAR_TO_CODEPOINT.at(ch));
+            }
+            else if (service.to_int() == 2) {
+                std::wcout << CODEPOINT_TO_TCS_CHAR.at(reg.at(0).to_int());
+            }
             else if (service.to_int() == 3) {
                 int val;
                 std::cin >> val;
                 reg[0] = Word::from_int(val);
             }
             else if (service.to_int() == 4) {
-                std::cout << reg.at(0).to_int() << '\n';
+                std::cout << reg.at(0).to_int();
+            }
+            else if (service.to_int() == 5) {
+                std::cout << reg.at(0).to_ter_string();
+            }
+            else if (service.to_int() == 6) {
+                std::cout << reg.at(0).to_non_string();
             }
 
             break;

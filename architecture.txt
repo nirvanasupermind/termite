@@ -49,14 +49,7 @@ SYSCALL SERVICES
 - 0n002: TCS character output
 - 0n003: Decimal input
 - 0n004: Decimal output
-- 0n005: Ternary input
-- 0n006: Ternary output
-- 0n007: Nonary input
-- 0n008: Nonary output
-- 0n010: Read file*
-- 0n011: Write file*
-- 0n012: Create file*
-- 0n013: Delete file*
-- 0n014: Rename file*
+- 0n005: Ternary output
+- 0n006: Nonary output
 
 *Will not be in 1.0

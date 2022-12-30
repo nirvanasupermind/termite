@@ -36,6 +36,6 @@ namespace termite {
     }
 
     char Trit::to_char() const {
-        return val + 48;
+        return val + '0';
     }
 } // namespace termite
