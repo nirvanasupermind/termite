@@ -8,10 +8,9 @@
 
 namespace termite {
 
-    const std::string WHITESPACE = " \n\t";
-    const std::string TER_DIGITS = "012";
-    const std::string NON_DIGITS = "012345678";
-    const std::string DEC_DIGITS = "0123456789";
+    const std::string WHITESPACE(" \n\t");
+    const std::string TER_DIGITS("012");
+    const std::string NON_DIGITS("012345678");
 
     class Lexer {
     public:
@@ -26,6 +25,7 @@ namespace termite {
         void advance();
         std::vector<Token> generate_tokens();
         Token generate_number();
+        Token generate_identifier();        
     };
 
 } // namespace termite

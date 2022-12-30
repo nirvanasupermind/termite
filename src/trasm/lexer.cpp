@@ -29,15 +29,31 @@ namespace termite {
             if (WHITESPACE.find_first_of(current) != std::string::npos) {
                 advance();
             }
-            else if (DEC_DIGITS.find_first_of(current) != std::string::npos) {
+            else if (current == '#') {
+                while(current != '\n') {
+                    advance();
+                }
+            }
+            else if (isdigit(current)) {
                 tokens.push_back(generate_number());
+            }
+            else if (isalpha(current) || current == '_') {
+                tokens.push_back(generate_identifier());
             }
             else if (current == ':') {
                 advance();
                 tokens.push_back(Token(TokenType::COLON, line));
             }
+            else if (current == ',') {
+                advance();
+                tokens.push_back(Token(TokenType::COMMA, line));
+            }
+            else if (current == ';') {
+                advance();
+                tokens.push_back(Token(TokenType::SEMICOLON, line));
+            }
             else {
-                throw std::string(std::to_string(line) + ": " + "Illegal character '" + std::string(1, current) + "'");
+                throw filename + ":" + std::to_string(line) + ": " + "illegal character '" + std::string(1, current) + "'";
             }
         }
 
@@ -73,13 +89,25 @@ namespace termite {
             return Token(TokenType::NON_LITERAL, number_str, line);
         } else {
             // Decimal literal
-            while (current && (DEC_DIGITS.find_first_of(current) != std::string::npos)) {
+            while (current && isdigit(current)) {
                 number_str += current;
                 advance();
             }
 
             return Token(TokenType::DEC_LITERAL, number_str, line);
         }
+    }
+
+    Token Lexer::generate_identifier() {
+        std::string identifier(1, current);
+        advance();
+
+        while (current && (current == '_' || std::isalnum(current))) {
+            identifier += current;
+            advance();
+        }
+
+        return Token(TokenType::IDENTIFIER, identifier, line);
     }
 
 } // namespace termite

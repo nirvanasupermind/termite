@@ -15,14 +15,17 @@ namespace termite {
         std::string result;
 
         switch (type) {
-        case TokenType::COMMENT:
-            result += "COMMENT";
-            break;
         case TokenType::IDENTIFIER:
             result += "IDENTIFIER";
             break;
         case TokenType::COLON:
             result += "COLON";
+            break;
+        case TokenType::COMMA:
+            result += "COMMA";
+            break;
+        case TokenType::SEMICOLON:
+            result += "SEMICOLON";
             break;
         case TokenType::DEC_LITERAL:
             result += "DEC_LITERAL";

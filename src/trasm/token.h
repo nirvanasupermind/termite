@@ -7,9 +7,10 @@
 namespace termite {
 
     enum class TokenType {
-        COMMENT,
         IDENTIFIER,
         COLON,
+        COMMA,
+        SEMICOLON,
         DEC_LITERAL,
         TER_LITERAL,
         NON_LITERAL,        

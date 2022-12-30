@@ -7,7 +7,7 @@
 int main(int argc, char** argv) {
     assert(argc >= 2);
 
-    std::array<char, 200> buffer;
+    std::array<char, 20000> buffer;
 
     //open file
     std::ifstream infile(argv[1]);
