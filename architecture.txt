@@ -1,6 +1,6 @@
 MEMORY
 - 531,441 trytes with 729 pages of 729 trytes each
-- Pages 0-700 are free, page 701 is reserved for stack, and pages 702-728 are reserved for program
+- Page 0 is reversed for stack, pages 1-8 are reversed for program, pages 9-17 are reserved for future use (graphics?), rest are free
 
 FLAGS
 - S (sign flag) (0 = zero, 1 = positive, 2 = negative)
@@ -10,11 +10,14 @@ REGISTERS
 r0, r1, r2, r3, r4, r5, r6, sp (r7), pc (r8)
 
 INSTRUCTIONS
-- nop (No operation): op [12:6]
-- ld (Load): op [12:6], rdest [6:4], raddr [4:2], unused [2:0] 
+- nop (No operation): op [12:6], unused [6:0]
+- ldt (Load tryte): op [12:6], rdest [6:4], raddr [4:2], unused [2:0] 
+- ldw (Load word): op [12:6], rdest [6:4], raddr [4:2], unused [2:0] 
 - ldi (Load immediate): op [12:6], rdest [6:4], imm [4:0]
 - ldps (Load processor status word): op [12:6], rdest [6:4], unused [4:0]
-- st (Store): op [12:6], rsrc [6:4], raddr [4:2], unused [2:0]
+- stt (Store tryte): op [12:6], rsrc [6:4], raddr [4:2], unused [2:0]
+- stw (Store tryte): op [12:6], rsrc [6:4], raddr [4:2], unused [2:0]
+- neg (Negation): op [12:6], rdest [6:4], unused [4:0]
 - add (Add): op [12:6], rdest [6:4], rsrc [4:2], unused [2:0]
 - addi (Add immediate): op [12:6], rdest [6:4], imm [4:0]
 - addc (Add with carry): op [12:6], rdest [6:4], rsrc [4:2], unused [2:0]
@@ -26,9 +29,10 @@ INSTRUCTIONS
 - sl (Shift left): op [12:6], rdest [6:4], imm [4:0]
 - asr (Arithmetic shift right): op [12:6], rdest [6:4], imm [4:0]
 - lsr (Logical shift right): op [12:6], rdest [6:4], imm [4:0]
-- and (AND): op [12:6], rdest [6:4], rsrc [4:2], unused [2:0]
-- or (OR): op [12:6], rdest [6:4], rsrc [4:2], unused [2:0]
-- xor (XOR): op [12:6], rdest [6:4], rsrc [4:2], unused [2:0]
+- not (Tritwise NOT): op [12:6], rdest [6:4], unused [4:0]
+- and (Tritwise AND): op [12:6], rdest [6:4], rsrc [4:2], unused [2:0]
+- or (Tritwise OR): op [12:6], rdest [6:4], rsrc [4:2], unused [2:0]
+- xor (Tritwise XOR): op [12:6], rdest [6:4], rsrc [4:2], unused [2:0]
 - cmp (Compare): op [12:6], rdest [6:4], rsrc [4:2], unused [2:0]
 - jmp (Jump): op [12:6], raddr [6:4], unused [4:0]
 - je (Jump if equal): op [12:6], raddr [6:4], unused [4:0]
@@ -40,7 +44,7 @@ INSTRUCTIONS
 - push (Push to stack): op [12:6], rsrc [6:4], unused [2:0]
 - pop (Pop from stack): op [12:6], raddr [6:4], unused [4:0]
 - call (Call subroutine): op [12:6], raddr [6:4], unused [4:0]
-- ret (Return from subroutine): op [12:6]
+- ret (Return from subroutine): op [12:6], unused [6:0]
 - syscall (Syscall): op [12:6], service [6:0]
 
 SYSCALL SERVICES

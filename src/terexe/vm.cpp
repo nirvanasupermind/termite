@@ -1,10 +1,10 @@
 #include <iostream>
 #include <array>
 #include <tuple>
-#include "tables.h"
-#include "trit.h"
-#include "tryte.h"
-#include "word.h"
+#include "../core/tables.h"
+#include "../core/trit.h"
+#include "../core/tryte.h"
+#include "../core/word.h"
 #include "mem.h"
 #include "opcode.h"
 #include "vm.h"
@@ -28,13 +28,12 @@ namespace termite {
 
     void VM::reset() {
         running = true;
-        reg[VM::PC] = Word::from_int(511757);
-        reg[VM::SP] = Word::from_int(511756);
+        reg[VM::PC] = Word::from_int(1458);
+        reg[VM::SP] = Word::from_int(728);
     }
 
     Tryte VM::fetch_tryte() {
         reg[VM::PC] = (reg[VM::PC] + Word::ONE).first;
-
         return mem.data.at(reg[VM::PC].to_int());
     }
 
@@ -46,12 +45,24 @@ namespace termite {
 
     void VM::step() {
         Opcode opcode = static_cast<Opcode>(fetch_tryte().to_int());
+        // if(static_cast<int>(opcode) != 0) {
+        // std::cout << "APOPLAALOALALOLOAAP JOURNALISM : " << static_cast<int>(opcode) << '\n';
+        // }
         switch (opcode) {
         case Opcode::NOP: {
+            fetch_tryte();
             break;
         }
 
-        case Opcode::LD: {
+        case Opcode::LDT: {
+            Tryte tryte = fetch_tryte();
+            int rdest = tryte.to_int() / 81;
+            int raddr = (tryte.to_int() % 81) / 9;
+            reg[rdest] = Word::from_trytes(Tryte(), mem.data.at(reg.at(raddr).to_int()));
+            break;
+        }
+
+        case Opcode::LDW: {
             Tryte tryte = fetch_tryte();
             int rdest = tryte.to_int() / 81;
             int raddr = (tryte.to_int() % 81) / 9;
@@ -74,7 +85,15 @@ namespace termite {
             break;
         }
 
-        case Opcode::ST: {
+        case Opcode::STT: {
+            Tryte tryte = fetch_tryte();
+            int rsrc = tryte.to_int() / 81;
+            int raddr = (tryte.to_int() % 81) / 9;
+            mem.data[reg.at(raddr).to_int()] = reg.at(rsrc).lo_tryte();
+            break;
+        }
+
+        case Opcode::STW: {
             Tryte tryte = fetch_tryte();
             int rsrc = tryte.to_int() / 81;
             int raddr = (tryte.to_int() % 81) / 9;
@@ -354,6 +373,7 @@ namespace termite {
         }
 
         case Opcode::RET: {
+            fetch_tryte();
             Word sp = reg.at(VM::SP);
             mem.write_word(reg.at(VM::PC).to_int(), mem.read_word(sp.to_int()));
             reg[VM::SP] = (sp + Word::from_int(2)).first;
@@ -362,7 +382,6 @@ namespace termite {
 
         case Opcode::SYSCALL: {
             Tryte service = fetch_tryte();
-
             if (service.to_int() == 0) {
                 running = false;
             }
@@ -388,7 +407,6 @@ namespace termite {
             else if (service.to_int() == 6) {
                 std::cout << reg.at(0).to_non_string();
             }
-
             break;
         }
         }

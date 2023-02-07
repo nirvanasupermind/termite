@@ -6,7 +6,7 @@
 #include "tables.h"
 
 namespace termite {
-    Tryte::Tryte(uint32_t bct)
+    Tryte::Tryte(uint16_t bct)
         : bct(bct) {
     }
 
@@ -57,5 +57,9 @@ namespace termite {
         return std::to_string(to_int() / 81)
             + std::to_string((to_int() % 81) / 9)
             + std::to_string(to_int() % 9);
+    }
+
+    uint16_t Tryte::to_bct() const {
+        return bct;
     }
 } // namespace termite

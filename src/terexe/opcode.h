@@ -7,10 +7,12 @@ namespace termite
     // Enum of all opcodes supported by the ISA
     enum class Opcode {
         NOP,
-        LD,
+        LDT,
+        LDW,
         LDI,
         LDPS,
-        ST,
+        STT,
+        STW,
         NEG,
         ADD,
         ADDC,

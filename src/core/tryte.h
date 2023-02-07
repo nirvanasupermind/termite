@@ -17,9 +17,9 @@ namespace termite
         Tryte() = default;
 
         // Converts binary-coded-ternary data to a tryte
-        Tryte(uint32_t bct);
+        Tryte(uint16_t bct);
 
-        // Convert an int to a tryte
+        // Converts an int to a tryte
         static Tryte from_int(int val);
 
         // Get a trit from a tryte
@@ -31,11 +31,16 @@ namespace termite
         // Convert tryte to an int
         int to_int() const;    
 
-        // Convert a tryte to a ternary string for printing
+        // Converts a tryte to a ternary string for printing
         std::string to_ter_string() const;
 
-        // Convert a tryte to a nonary (base 9) string for printing
+        // Converts a tryte to a nonary (base 9) string for printing
         std::string to_non_string() const;
+
+        // Converts a tryte to binary-coded-ternary data
+        uint16_t to_bct() const;
+
+
     };
 } // namespace termite
 

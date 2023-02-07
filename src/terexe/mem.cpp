@@ -1,5 +1,6 @@
-#include "tryte.h"
-#include "word.h"
+#include <array>
+#include "../core/tryte.h"
+#include "../core/word.h"
 #include "mem.h"
 
 namespace termite {
@@ -11,6 +12,4 @@ namespace termite {
         data[addr] = val.hi_tryte();
         data[addr + 1] = val.lo_tryte();
     }
-
-
 } // namespace termite

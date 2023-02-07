@@ -18,6 +18,9 @@ namespace termite {
         case TokenType::IDENTIFIER:
             result += "IDENTIFIER";
             break;
+        case TokenType::REGISTER:
+            result += "REGISTER";
+            break;
         case TokenType::COLON:
             result += "COLON";
             break;

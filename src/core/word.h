@@ -10,7 +10,6 @@
 
 namespace termite
 {
-    // 12-trit unbalanced ternary integer type, efficiently packed using binary-coded ternary
     // This is the main numeric type used in the VM
     class Word {
     private:
@@ -86,7 +85,6 @@ namespace termite
         // Convert a word to an int
         int to_int() const;
         
-        // Convert a word to a ternary string for printing
         std::string to_ter_string() const;
 
         // Convert a word to a nonary (base 9) string for printing

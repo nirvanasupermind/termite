@@ -1,3 +1,4 @@
+#include <cstdlib>
 #include <string>
 #include <vector>
 #include "token.h"
@@ -12,8 +13,7 @@ namespace termite {
     void Lexer::advance() {
         if (pos < text.length()) {
             current = text.at(pos++);
-        }
-        else {
+        }  else {
             current = '\0';
         }
 
@@ -37,7 +37,7 @@ namespace termite {
             else if (isdigit(current)) {
                 tokens.push_back(generate_number());
             }
-            else if (isalpha(current) || current == '_') {
+            else if (current == '_' || isalpha(current)) {
                 tokens.push_back(generate_identifier());
             }
             else if (current == ':') {
@@ -53,10 +53,11 @@ namespace termite {
                 tokens.push_back(Token(TokenType::SEMICOLON, line));
             }
             else {
-                throw filename + ":" + std::to_string(line) + ": " + "illegal character '" + std::string(1, current) + "'";
+                throw std::string(filename + ":" + std::to_string(line) + ": illegal character '" + std::string(1, current) + "'");
             }
         }
 
+        tokens.push_back(Token(TokenType::EOF_, line));
         return tokens;
     }
 
@@ -107,6 +108,11 @@ namespace termite {
             advance();
         }
 
+
+        if(std::count(REGISTER_NAMES.begin(), REGISTER_NAMES.end(), identifier)) {
+            return Token(TokenType::REGISTER, identifier, line);
+        }
+        
         return Token(TokenType::IDENTIFIER, identifier, line);
     }
 

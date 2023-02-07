@@ -5,9 +5,9 @@
 #include <vector>
 
 namespace termite {
-
     enum class TokenType {
         IDENTIFIER,
+        REGISTER,
         COLON,
         COMMA,
         SEMICOLON,
@@ -20,8 +20,9 @@ namespace termite {
     class Token {
     public:
         TokenType type;
-        std::string val;
+        std::string val{};
         size_t line;
+        Token() = default;
         Token(TokenType type, size_t line);
         Token(TokenType type, const std::string& val, size_t line);
         std::string str() const;
