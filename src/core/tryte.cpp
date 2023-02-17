@@ -16,8 +16,8 @@ namespace termite {
         }
         else {
             Tryte result;
-            for (int i = 0; i < 6; i++) {
-                result.set_trit(i, Trit(val % 3));
+            for (int i = 5; i >= 0; i--) {
+                result.set_trit(5 - i, Trit(val % 3));
                 val /= 3;
             }
             return result;
@@ -29,8 +29,8 @@ namespace termite {
     }
 
     void Tryte::set_trit(int i, const Trit& val) {
-        uint16_t bitmask = -(3 * (1 << (i * 2)) + 1);
-        bct = (bct & bitmask) + (val.to_int() << (i * 2));
+        uint16_t bitmask = -(3 * (1 << ((5 - i) * 2)) + 1);
+        bct = (bct & bitmask) + (val.to_int() << ((5 - i) * 2));
     }
 
     int Tryte::to_int() const {
@@ -46,8 +46,8 @@ namespace termite {
     std::string Tryte::to_ter_string() const {
         std::string result;
 
-        for (int i = 5; i >= 0; i--) {
-            result += get_trit(5 - i).to_char();
+        for (int i = 0; i < 6; i++) {
+            result += get_trit(i).to_char();
         }
 
         return result;

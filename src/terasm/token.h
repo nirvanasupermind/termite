@@ -13,7 +13,7 @@ namespace termite {
         SEMICOLON,
         DEC_LITERAL,
         TER_LITERAL,
-        NON_LITERAL,        
+        NON_LITERAL,      
         EOF_
     };
 

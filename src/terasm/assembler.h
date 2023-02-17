@@ -19,7 +19,7 @@ namespace termite {
         void append_num(int num, int trits);
         std::string to_lower(std::string s) const;
         void advance();
-        void imm();
+        void imm(int trits);
         void reg();
         void instruction();
     public:

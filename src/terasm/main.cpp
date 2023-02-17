@@ -3,6 +3,7 @@
 #include <string>
 #include <sstream>
 #include "../core/trit.h"
+#include "../core/tryte.h"
 #include "token.h"
 #include "lexer.h"
 #include "assembler.h"
@@ -13,12 +14,18 @@ void assemble(const std::string& in_filename, const std::string& out_filename, c
     std::vector<termite::Token> tokens = lexer.generate_tokens();
     termite::Assembler assembler(tokens, in_filename);
     std::vector<termite::Trit> machine_code = assembler.generate_machine_code();
-    for(const termite::Trit& trit : machine_code) {
-        std::cout << trit.to_int();
-    }
-    std::cout << '\n';
     std::ofstream out_file;
     out_file.open(out_filename);
+    for(int i = 0; i < machine_code.size(); i += 4) {
+        termite::Tryte t;
+        t.set_trit(0, 0);
+        t.set_trit(1, 0);
+        t.set_trit(2, machine_code.at(i));
+        t.set_trit(3, machine_code.at(i + 1));
+        t.set_trit(4, machine_code.at(i + 2));
+        t.set_trit(5, machine_code.at(i + 3));
+        out_file << (char)(t.to_bct());
+    }
     out_file.close();
 }
 

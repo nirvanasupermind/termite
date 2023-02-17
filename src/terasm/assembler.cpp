@@ -1,4 +1,3 @@
-#include <iostream>
 #include <string>
 #include <map>
 #include <vector>
@@ -21,8 +20,7 @@ namespace termite {
 
     void Assembler::append_num(int num, int trits) {
         Tryte t = Tryte::from_int(num);
-
-        for (int i = 0; i < trits; i++) {
+        for (int i = (6 - trits); i < 6; i++) {
             machine_code.push_back(t.get_trit(i));
         }
     }
@@ -33,7 +31,7 @@ namespace termite {
         return s;
     }
 
-    void Assembler::imm() {
+    void Assembler::imm(int trits) {
         int num;
 
         if (current.type == TokenType::DEC_LITERAL) {
@@ -42,11 +40,10 @@ namespace termite {
         else if (current.type == TokenType::NON_LITERAL) {
             num = std::stoi(current.val.substr(2), 0, 9);
         } else {
-            // std::cout << "dbg " << static_cast<int>(current.type) << '\n';
             throw std::string(filename + ":" + std::to_string(current.line) + ": invalid syntax");
         }
         
-        append_num(num, 4);
+        append_num(num, trits);
         advance();
     }
 
@@ -101,7 +98,7 @@ namespace termite {
                 throw std::string(filename + ":" + std::to_string(current.line) + ": invalid syntax");
             }
             advance();
-            imm();
+            imm(4);
         }
         else if (instr_name == "ldps") {
             append_num(4, 6);
@@ -111,7 +108,7 @@ namespace termite {
                 throw std::string(filename + ":" + std::to_string(current.line) + ": invalid syntax");
             }
             advance();
-            imm();
+            imm(4);
         }
         else if (instr_name == "stt") {
             append_num(5, 6);
@@ -160,7 +157,7 @@ namespace termite {
                 throw std::string(filename + ":" + std::to_string(current.line) + ": invalid syntax");
             }
             advance();
-            imm();
+            imm(4);
         }
         else if (instr_name == "addc") {
             append_num(8, 6);
@@ -173,13 +170,17 @@ namespace termite {
             reg();
             append_num(0, 2);
         }
+        else if (instr_name == "syscall") {
+            append_num(35, 6);
+            advance();
+            imm(6);
+        }
         else {
             throw std::string(filename + ":" + std::to_string(current.line) + ": unknown instruction: " + current.val);
         }
     }
 
     std::vector<Trit> Assembler::generate_machine_code() {
-        // std::cout << 144 << '\n';
         instruction();
         return machine_code;
     }

@@ -28,7 +28,7 @@ namespace termite {
 
     void VM::reset() {
         running = true;
-        reg[VM::PC] = Word::from_int(1458);
+        reg[VM::PC] = Word::from_int(729);
         reg[VM::SP] = Word::from_int(728);
     }
 
@@ -45,9 +45,6 @@ namespace termite {
 
     void VM::step() {
         Opcode opcode = static_cast<Opcode>(fetch_tryte().to_int());
-        // if(static_cast<int>(opcode) != 0) {
-        // std::cout << "APOPLAALOALALOLOAAP JOURNALISM : " << static_cast<int>(opcode) << '\n';
-        // }
         switch (opcode) {
         case Opcode::NOP: {
             fetch_tryte();
@@ -409,6 +406,9 @@ namespace termite {
             }
             break;
         }
+
+        default:
+            throw std::string("unknown opcode: " + Tryte::from_int(static_cast<int>(opcode)).to_non_string());
         }
     }
 

@@ -1,1 +1,1 @@
-ldi r0,5;
+syscall 0n003;
