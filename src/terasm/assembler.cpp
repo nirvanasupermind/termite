@@ -1,8 +1,10 @@
 #include <string>
 #include <map>
+#include <array>
 #include <vector>
 #include <cinttypes>
 #include <locale>
+#include <iostream>
 #include "token.h"
 #include "assembler.h"
 #include "../core/trit.h"
@@ -10,7 +12,7 @@
 
 namespace termite {
     Assembler::Assembler(const std::vector<Token>& tokens, const std::string& filename)
-        : tokens(tokens), filename(filename), pos(-1) {
+        : tokens(tokens), filename(filename), pos(-1), addr(0) {
         advance();
     }
 
@@ -21,7 +23,10 @@ namespace termite {
     void Assembler::append_num(int num, int trits) {
         Tryte t = Tryte::from_int(num);
         for (int i = (6 - trits); i < 6; i++) {
-            machine_code.push_back(t.get_trit(i));
+            if(addr >= machine_code.size()) {
+                machine_code.resize(addr + 12);
+            }
+            machine_code[addr++] = t.get_trit(i);
         }
     }
 
@@ -39,10 +44,11 @@ namespace termite {
         }
         else if (current.type == TokenType::NON_LITERAL) {
             num = std::stoi(current.val.substr(2), 0, 9);
-        } else {
+        }
+        else {
             throw std::string(filename + ":" + std::to_string(current.line) + ": invalid syntax");
         }
-        
+
         append_num(num, trits);
         advance();
     }
@@ -52,7 +58,8 @@ namespace termite {
             int num = std::stoi(current.val.substr(1));
             append_num(num, 2);
             advance();
-        } else {
+        }
+        else {
             throw std::string(filename + ":" + std::to_string(current.line) + ": invalid syntax");
         }
     }
@@ -151,8 +158,8 @@ namespace termite {
         }
         else if (instr_name == "addi") {
             append_num(9, 6);
-            advance();
             reg();
+            advance();
             if (current.type != TokenType::COMMA) {
                 throw std::string(filename + ":" + std::to_string(current.line) + ": invalid syntax");
             }
@@ -180,8 +187,43 @@ namespace termite {
         }
     }
 
+    void Assembler::label() {
+        if (current.type != TokenType::IDENTIFIER && current.val == "label") {
+            throw std::string(filename + ":" + std::to_string(current.line) + ": invalid syntax");
+        }
+
+        advance();
+
+        if (current.type != TokenType::IDENTIFIER) {
+            throw std::string(filename + ":" + std::to_string(current.line) + ": invalid syntax");
+        }
+        
+        std::string label_name = current.val;
+        labels[label_name] = addr;
+        advance();
+
+        if (current.type != TokenType::COLON) {
+            throw std::string(filename + ":" + std::to_string(current.line) + ": invalid syntax");
+        }
+
+        advance();
+
+        while (!(current.type == TokenType::EOF_)) {
+            if(current.type == TokenType::IDENTIFIER && current.val == "label") {
+                break;
+            }
+            instruction();
+            if (current.type != TokenType::SEMICOLON) {
+                throw std::string(filename + ":" + std::to_string(current.line) + ": invalid syntax");
+            }
+            advance();
+        }        
+    }
+
     std::vector<Trit> Assembler::generate_machine_code() {
-        instruction();
+        while(current.type != TokenType::EOF_) {
+            label();
+        }
         return machine_code;
     }
 } // namespace termite

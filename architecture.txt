@@ -1,6 +1,6 @@
 MEMORY
 - 531,441 trytes with 729 pages of 729 trytes each
-- Page 0 is reversed for stack, pages 1-8 are reversed for program, rest are free
+- Page 0 is reversed for stack, pages 1-26 are reversed for program, rest are free
 
 FLAGS
 - S (sign flag) (0 = zero, 1 = positive, 2 = negative)

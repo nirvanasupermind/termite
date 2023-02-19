@@ -5,7 +5,7 @@ Termite is an emulator and assembler for an unbalanced ternary computer, written
 
 ## Features
 * 531441 trytes of system RAM
-* 12-trit VM with ≈340 kHz instruction rate
+* 12-trit VM with ~100 kHz instruction rate
 * Versatile architecture and assembly language
 
 ## Status
