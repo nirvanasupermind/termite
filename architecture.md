@@ -1,6 +1,6 @@
 # Data and memory
 
-A single ternary (base 3) digit is a trit, which may take on the values 0, 1 and 2. Trits are grouped into trytes of 8 trits and a words of 16 trits. When a compact representation of ternary is needed, nonary (base 9) is used, with the digits 0, 1, 2, 3, 4, 5, 6, 7, 8. Each nonary digit corresponds to ternary digits. Termite has a 16-trit address space which can address 3^16 (43046721) trytes of memory. 
+Termite uses a tryte of 8 trits and a word of 16 trits.  Termite has a 16-trit address space which can address 3^16 (43046721) trytes of memory. 
 
 # Registers
 The processor has 27 general 16-trit registers (`r0`-`r26`). `r25` is also referred to as `lr`, the link register. `r26` is also referred to as `pc`, the program counter.
