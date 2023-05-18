@@ -55,7 +55,7 @@ namespace termite {
         void reset();
         Tryte fetch_tryte(int& cycles);
         Word fetch_word(int& cycles);
-        void execute(int cycles);
+        void execute(int cycles, bool verbose = false);
         void print_state();
         void invalid_opcode(const Word& opcode);
         void set_sign_flag(const Word& result);

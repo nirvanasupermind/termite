@@ -16,14 +16,14 @@ namespace termite {
 
     class Tryte {
     public:
-        static Tryte from_int(int n);
+        static Tryte from_int16(int16_t n);
         uint16_t bct;
         Tryte();
         Tryte(uint16_t bct);
         Tryte operator-() const;
         Trit get_trit(int i) const;
         void set_trit(int i, const Trit& trit);
-        int to_int() const;
+        int16_t to_int16() const;
         std::string to_ternary_str() const;
     };
 } // namespace termite

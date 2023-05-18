@@ -15,7 +15,7 @@ namespace termite {
     
     class Word {
     public:
-        static Word from_int(int n);
+        static Word from_int32(int32_t n);
         uint32_t bct;
         Word();
         Word(uint32_t bct);
@@ -31,7 +31,7 @@ namespace termite {
         Word operator|(const Word& other) const;
         Word operator>>(int shift) const;
         Word operator<<(int shift) const;
-        int to_int() const;
+        int32_t to_int32() const;
         std::string to_ternary_str() const;
         std::string to_nonary_str() const;
         Tryte lo_tryte() const;

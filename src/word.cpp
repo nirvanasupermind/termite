@@ -8,9 +8,10 @@
 #include "word.h"
 
 namespace termite {
-    Word Word::from_int(int n) {
+    Word Word::from_int32(int32_t n) {
         if (n < 0) {
-            return Word::from_int(WORD_MAX + n);
+            // Use three's complement for negative numbers
+            return Word::from_int32(WORD_MAX + n);
         }
 
         Word result;
@@ -54,7 +55,7 @@ namespace termite {
     }
 
     Word Word::operator-() const {
-        return (operator~() + Word::from_int(1)).first;
+        return (operator~() + Word::from_int32(1)).first;
     }
 
 
@@ -139,8 +140,8 @@ namespace termite {
     }
 
 
-    int Word::to_int() const {
-        int result = 0;
+    int32_t Word::to_int32() const {
+        int32_t result = 0;
         for (int i = 0; i < WORD_TRIT; i++) {
             result = result + POW3[i] * get_trit(i).val;
         }
@@ -156,7 +157,7 @@ namespace termite {
     }
 
     std::string Word::to_nonary_str() const {
-        int n = to_int();
+        int32_t n = to_int32();
         std::string result;
         for (int i = 0; i < WORD_TRIT / 2; i++) {
             result = ((char)((n % 9) + '0')) + result;
@@ -166,7 +167,7 @@ namespace termite {
     }
 
     Tryte Word::lo_tryte() const {
-        return Tryte(bct & (1 << WORD_TRIT - 1));
+        return Tryte(bct & (1 << (WORD_TRIT - 1)));
     }
 
     Tryte Word::hi_tryte() const {

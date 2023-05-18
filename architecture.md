@@ -1,13 +1,14 @@
-# Data and memory
+Nte: In this document, nonary numbers are represented with prefix of 0n
 
-Termite uses a tryte of 8 trits and a word of 16 trits.  Termite has a 16-trit address space which can address 3^16 (43046721) trytes of memory. 
+Termite's ISA is loosely based on early versions of ARM, but entirely ternary. Termite uses trytes (ternary bytes) of 8 trits (ternary digits), and little-endian words of 16 trits. Addresses are 1 word long, so Termite can address 3^16 = 43046721 trytes of memory.
 
 # Registers
 The processor has 27 general 16-trit registers (`r0`-`r26`). `r25` is also referred to as `lr`, the link register. `r26` is also referred to as `pc`, the program counter.
 
-The current program status registers (CPSR) has the following 16 trits.
+The current program status register (`cpsr`) has the following 16 trits.
 * `s` (trit 0): Three's complement sign flag, 0 = negative, 1 = zero, 2 = positive
 * `c` (trit 1): Carry flag
+* trits 2-15: Unused
 
 # Instructions
 |Opcode|Mnemonic|Description                     |Action                        |Flags affected|
@@ -135,23 +136,25 @@ The current program status registers (CPSR) has the following 16 trits.
 
 
 # System calls
-System call API is accesible via calling `swi` with an interrupt vector of `0`.
-|`r0` |Description                   |Input                                       | Output                          |
-|-----|------------------------------|--------------------------------------------|---------------------------------|
-|`0n0`|Terminate program             |                                            |                                 |
-|`0n1`|Print character               |`r1` = character code (high tryte ignored)  |                                 |
-|`0n2`|Get Unix time as 32 trits     |                                            |`r1` = low word, `r2` = high word|
+System call API is accesible via executing the instruction `swi 0`.
+|`r0`|Description                     |Arguments                                   |Result                               |
+|----|--------------------------------|--------------------------------------------|-------------------------------------|
+|0   |Terminate program               |                                            |                                     |
+|1   |Read character from stdin       |                                            |low tryte of `r1` = character code   |
+|2   |Write character to stdout       |low tryte of `r1` = character code          |                                     |
+|3   |Get UNIX timestamp milliseconds |                                            |`r1` = low word , `r2` = high word   |
 
 # Character encoding
 Because nearly all existing standards such as ASCII are binary-based, Termite uses a custom character encoding with each character as 1 tryte. As of Termite 1.0, only the first 81 out of 6561 possible characters have been allocated, with the rest left undefined.
-|   |0  |1  |2  |3  |4  |5  |6  |7  |8  |
-|---|---|---|---|---|---|---|---|---|---|
-|0x |NUL|BEL|BS |HT |LF |VT |FF |CR |SUB|
-|1x |SP |-  |:  |;  |'  |,  |.  |?  |!  |
-|2x |0  |1  |2  |3  |4  |5  |6  |7  |8  |
-|3x |9  |A  |B  |C  |D  |E  |F  |G  |H  |
-|4x |I  |J  |K  |L  |M  |N  |O  |P  |Q  |
-|5x |R  |S  |T  |U  |V  |W  |X  |Y  |Z  |
-|6x |_  |a  |b  |c  |d  |e  |f  |g  |h  |
-|7x |i  |j  |k  |l  |m  |n  |o  |p  |q  |
-|8x |r  |s  |t  |u  |v  |w  |x  |y  |z  |
+Below is a table of the current character encoding with codes in nonary:
+|     |0  |1  |2  |3  |4  |5  |6  |7  |8  |
+|-----|---|---|---|---|---|---|---|---|---|
+|000x |NUL|BEL|BS |HT |LF |VT |FF |CR |SUB|
+|001x |SP |-  |:  |;  |'  |,  |.  |?  |!  |
+|002x |0  |1  |2  |3  |4  |5  |6  |7  |8  |
+|003x |9  |A  |B  |C  |D  |E  |F  |G  |H  |
+|004x |I  |J  |K  |L  |M  |N  |O  |P  |Q  |
+|005x |R  |S  |T  |U  |V  |W  |X  |Y  |Z  |
+|006x |_  |a  |b  |c  |d  |e  |f  |g  |h  |
+|007x |i  |j  |k  |l  |m  |n  |o  |p  |q  |
+|008x |r  |s  |t  |u  |v  |w  |x  |y  |z  |

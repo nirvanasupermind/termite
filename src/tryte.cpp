@@ -4,9 +4,9 @@
 #include "tryte.h"
 
 namespace termite {
-    Tryte Tryte::from_int(int n) {
+    Tryte Tryte::from_int16(int16_t n) {
         if(n < 0) {
-            return Tryte::from_int(TRYTE_MAX + n);
+            return Tryte::from_int16(TRYTE_MAX + n);
         }
 
         Tryte result;
@@ -37,8 +37,8 @@ namespace termite {
     }
 
 
-    int Tryte::to_int() const {
-        int result = 0;
+    int16_t Tryte::to_int16() const {
+        int16_t result = 0;
         for (int i = 0; i < TRYTE_TRIT; i++) {
             result = result + POW3[i] * get_trit(i).val;
         }
