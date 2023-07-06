@@ -1,4 +1,4 @@
-Nte: In this document, nonary numbers are represented with prefix of 0n
+Note: In this document, nonary numbers are represented with prefix of 0n
 
 Termite's ISA is loosely based on early versions of ARM, but entirely ternary. Termite uses trytes (ternary bytes) of 8 trits (ternary digits), and little-endian words of 16 trits. Addresses are 1 word long, so Termite can address 3^16 = 43046721 trytes of memory.
 
