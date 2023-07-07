@@ -1,2 +1,10 @@
+ifeq ($(OS),Windows_NT)
+    SOURCE := src\ter\*.cpp
+    TARGET := C:\Program Files\ter
+else
+    SOURCE := src/ter/*.cpp
+    TARGET := /usr/local/bin/ter
+endif
+
 default:
-	clang++ src/*.cpp -o /usr/local/bin/ter -std=c++11
+	clang++ $(SOURCE) -o $(TARGET) -std=c++11
