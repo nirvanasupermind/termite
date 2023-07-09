@@ -39,4 +39,4 @@ namespace termite {
     };
 } // namespace termite
 
-#endif // TRYTE_H
+#endif // WORD_H

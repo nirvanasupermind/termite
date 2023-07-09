@@ -11,6 +11,7 @@ namespace termite {
     Word Word::from_int32(int32_t n) {
         if (n < 0) {
             // Use three's complement for negative numbers
+            // https://homepage.cs.uiowa.edu/~dwjones/ternary/numbers.shtml
             return Word::from_int32(WORD_MAX + n);
         }
 
@@ -57,7 +58,6 @@ namespace termite {
     Word Word::operator-() const {
         return (operator~() + Word::from_int32(1)).first;
     }
-
 
     std::pair<Word, Trit> Word::operator+(const Word& other) const {
         Word result;

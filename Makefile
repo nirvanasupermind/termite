@@ -1,9 +1,9 @@
 ifeq ($(OS),Windows_NT)
-    SOURCE := src\ter\*.cpp
+    SOURCE := src\teremu\*.cpp
     TARGET := C:\Program Files\ter
 else
-    SOURCE := src/ter/*.cpp
-    TARGET := /usr/local/bin/ter
+    SOURCE := src/teremu/*.cpp
+    TARGET := /usr/local/bin/teremu
 endif
 
 default:

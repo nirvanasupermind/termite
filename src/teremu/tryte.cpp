@@ -6,6 +6,8 @@
 namespace termite {
     Tryte Tryte::from_int16(int16_t n) {
         if(n < 0) {
+            // Use three's complement for negative numbers
+            // https://homepage.cs.uiowa.edu/~dwjones/ternary/numbers.shtml
             return Tryte::from_int16(TRYTE_MAX + n);
         }
 

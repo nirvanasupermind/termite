@@ -23,7 +23,6 @@ namespace termite {
         return val > other.val ? Trit(val) : Trit(other.val);
     }
 
-
     std::pair<Trit, Trit> Trit::full_add(const Trit& other, const Trit& carry_in) const {
         int8_t temp = val + other.val + carry_in.val;
         int8_t carry_out = temp / 3;
@@ -35,9 +34,7 @@ namespace termite {
        return val + '0';
     }
 
-
     bool Trit::to_bool() const {
         return val == 2;
     }
-
 } // namespace termite

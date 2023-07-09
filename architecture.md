@@ -76,7 +76,7 @@ The current program status register (`cpsr`) has the following 16 trits.
 </table>
 
 
-## Load/store, immediate and shift instructions
+## Load/store, move, immediate and shift instructions
 <table>
     <tr>
         <td>15</td>

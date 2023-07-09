@@ -1,4 +1,6 @@
 // Class for the Termite emulator CPU
+#ifndef CPU_H
+
 #include <iostream>
 #include "tryte.h"
 #include "word.h"
@@ -61,3 +63,5 @@ namespace termite {
         void set_sign_flag(const Word& result);
     };
 } // namespace termite
+
+#endif // CPU_H

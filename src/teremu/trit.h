@@ -22,4 +22,4 @@ namespace termite {
     };
 } // namespace termite
 
-#endif // TRYTE_H
+#endif // TRIT_H
