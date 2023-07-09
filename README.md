@@ -11,13 +11,9 @@ Ternary is the base-3 numeral system, using three digits {0, 1, 2}. Ternary digi
 
 To store ternary data on a binary computer, Termite internally uses a system known as [binary-coded ternary](https://en.wikipedia.org/wiki/Ternary_numeral_system#Binary-coded_ternary) (BCT) where each trit is mapped to two bits. Additionally, the nonary (base 9) number system, where each nonary digit is two ternary digits, is used to provide more compact representation of ternary, analogous to how hexadecimal is used for binary.
 
-## Use
-To build Termite:
-`make`
-
-To run a Termite machine code file (encoded as binary-coded ternary):
-`teremu file.termite`
-
+## Included executables
+These can be built using the Makefile.
+* `teremu`: For running Termite ternary machine code files encoded in binary-coded ternary. -v option can be added for verbose mode.
 
 ## Future ideas
 * Assembler to convert assembly files into Termite machine code files.
