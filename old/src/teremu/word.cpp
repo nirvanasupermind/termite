@@ -39,12 +39,6 @@ namespace termite {
     }
 
     Word Word::get_trit_range(int start, int width) const {
-        // Word result;
-        // for(int i = 0; i < width; i++) {
-        //     result.set_trit(i, get_trit(i + start));
-        // }
-        // return result;
-        
         uint32_t mask = ((1 << (2 * width)) - 1) << (2 * start);
         return Word((bct & mask) >> (2 * start));
     }

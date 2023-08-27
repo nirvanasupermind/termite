@@ -1,8 +1,10 @@
-Note: In this document, nonary numbers are represented with prefix of 0n
+# Ternary
+TBA
 
+# Architecture
 Termite's ISA is loosely based on early versions of ARM, but entirely ternary. Termite uses trytes (ternary bytes) of 8 trits (ternary digits), and little-endian words of 16 trits. Addresses are 1 word long, so Termite can address 3^16 = 43046721 trytes of memory.
 
-# Registers
+## Registers
 The processor has 27 general 16-trit registers (`r0`-`r26`). `r25` is also referred to as `lr`, the link register. `r26` is also referred to as `pc`, the program counter.
 
 The current program status register (`cpsr`) has the following 16 trits.
@@ -10,7 +12,7 @@ The current program status register (`cpsr`) has the following 16 trits.
 * `c` (trit 1): Carry flag
 * trits 2-15: Unused
 
-# Instructions
+## Instructions
 |Opcode|Mnemonic|Description                     |Action                        |Flags affected|
 |------|--------|--------------------------------|------------------------------|--------------|
 |`0n00`|`mov`   |Move                            |`rd = rs`                     |              |
@@ -46,10 +48,10 @@ The current program status register (`cpsr`) has the following 16 trits.
 |`0n33`|`bl`    |Branch and link                 |`lr = pc; pc = pc + imm`      |              |
 |`0n34`|`swi`   |Software interrupt              |                              |              |
 
-# Instruction formats
 
+## Instruction formats
 
-## Software interrupt instruction
+### Software interrupt instruction
 <table>
     <tr>
         <td>15</td>
@@ -76,7 +78,7 @@ The current program status register (`cpsr`) has the following 16 trits.
 </table>
 
 
-## Load/store, move, immediate and shift instructions
+### Move, load/store, immediate and shift instructions
 <table>
     <tr>
         <td>15</td>
@@ -105,7 +107,7 @@ The current program status register (`cpsr`) has the following 16 trits.
 </table>
 
 
-## All other instructions
+### All other instructions
 <table>
     <tr>
         <td>15</td>
@@ -135,14 +137,16 @@ The current program status register (`cpsr`) has the following 16 trits.
 </table>
 
 
-# System calls
+## System calls
 System call API is accesible via executing the instruction `swi 0`.
-|`r0`|Description                     |Arguments                                   |Result                               |
-|----|--------------------------------|--------------------------------------------|-------------------------------------|
-|0   |Terminate program               |                                            |                                     |
-|1   |Read character from stdin       |                                            |low tryte of `r1` = character code   |
-|2   |Write character to stdout       |low tryte of `r1` = character code          |                                     |
-|3   |Get UNIX timestamp milliseconds |                                            |`r1` = low word , `r2` = high word   |
+|`r0`|Description                                      |Arguments                                   |Result                               |
+|----|-------------------------------------------------|--------------------------------------------|-------------------------------------|
+|0   |Terminate program                                |                                            |                                     |
+|1   |Read character from stdin                        |                                            |low tryte of `r1` = character code   |
+|2   |Write character to stdout                        |low tryte of `r1` = character code          |                                     |
+|3   |Write unsigned decimal number to stdout          |`r1` = number to print                      |                                     |
+|4   |Write unsigned nonary number to stdout           |`r1` = number to print                     |                                     |
+|5   |Get UNIX timestamp milliseconds as 2-word number |                                            |`r1` = low word , `r2` = high word   |
 
 # Character encoding
 Because nearly all existing standards such as ASCII are binary-based, Termite uses a custom character encoding with each character as 1 tryte. As of Termite 1.0, only the first 81 out of 6561 possible characters have been allocated, with the rest left undefined.

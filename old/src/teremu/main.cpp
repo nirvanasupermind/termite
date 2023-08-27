@@ -11,11 +11,14 @@
 // Decode binary-coded ternary into trytes that can be put in VM memory
 std::vector<termite::Tryte> decode_bct(const std::vector<uint8_t>& bct_bytes) {
     std::vector<termite::Tryte> result;
-    for (int i = 0; i < (bct_bytes.size() / 2) * 2; i += 2) {
-        uint8_t hi_bct = bct_bytes.at(i);
-        uint8_t lo_bct = bct_bytes.at(i + 1);
+    for (int i = 0; i < bct_bytes.size(); i += 2) {
+        // std::cout << "A " << (int)bct_bytes.at(i) << '\n';
+        // std::cout << "B " << (int)bct_bytes.at(i + 1) << '\n';
+        uint8_t lo_bct = bct_bytes.at(i);
+        uint8_t hi_bct = bct_bytes.at(i + 1);
         uint16_t tryte_bct = lo_bct + (hi_bct << 8);
         result.push_back(termite::Tryte(tryte_bct));
+        // std::cout << "C " << termite::Tryte(tryte_bct).to_ternary_str() << '\n';
     }
     return result;
 }
@@ -65,14 +68,14 @@ int main(int argc, char** argv) {
     termite::CPU cpu;
 
     for (int i = 0; i < trytes.size(); i++) {
-        cpu.memory.data[i] = trytes.at(i);
+        cpu.memory.set_tryte(termite::Word::from_int32(i), trytes.at(i));
     }
 
     if (option == "-v") {
-        cpu.execute((trytes.size() / 2), true);
+        cpu.execute(trytes.size() / 2, true);
+    } else {
+        cpu.execute(trytes.size() / 2);
     }
-    else {
-        cpu.execute((trytes.size() / 2));
-    }
+
     return 0;
 }

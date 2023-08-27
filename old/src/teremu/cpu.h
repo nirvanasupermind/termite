@@ -52,7 +52,7 @@ namespace termite {
     class CPU {
     public:
         Word registers[27];
-        Word flags;
+        Word cpsr;
         Mem memory;
         void reset();
         Tryte fetch_tryte(int& cycles);
