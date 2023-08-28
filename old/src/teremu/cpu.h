@@ -55,7 +55,7 @@ namespace termite {
         Word cpsr;
         Mem memory;
         void reset();
-        Tryte fetch_tryte(int& cycles);
+        Word fetch_tryte(int& cycles);
         Word fetch_word(int& cycles);
         void execute(int cycles, bool verbose = false);
         void print_state();

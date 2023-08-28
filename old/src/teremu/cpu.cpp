@@ -11,11 +11,11 @@
 namespace termite {
     void CPU::reset() {
         std::fill(registers, registers + 27, 0);
-        memory.data = std::vector<Tryte>(WORD_MAX);
+        memory.data = std::vector<Word>(WORD_MAX);
     }
 
-    Tryte CPU::fetch_tryte(int& cycles) {
-        Tryte tryte = memory.get_tryte(registers[PC]);
+    Word CPU::fetch_tryte(int& cycles) {
+        Word tryte = memory.get_tryte(registers[PC]);
         registers[PC] = (registers[PC] + Word::from_int32(1)).first;
         cycles--;
         return tryte;

@@ -1,7 +1,7 @@
 #include <iostream>
-#include "../src/tryte.h"
+#include "../src/word.h"
 
 int main() {
-    termite::Tryte t(0b0110);
-    std::cout << (int)t.get_trit(0) << '\n';
+    termite::Word x = termite::Word::from_int32(5);
+    std::cout << (x*termite::Word::from_int32(394)).to_int32() << '\n';
 }

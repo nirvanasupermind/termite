@@ -9,15 +9,15 @@
 #include "cpu.h"
 
 // Decode binary-coded ternary into trytes that can be put in VM memory
-std::vector<termite::Tryte> decode_bct(const std::vector<uint8_t>& bct_bytes) {
-    std::vector<termite::Tryte> result;
+std::vector<termite::Word> decode_bct(const std::vector<uint8_t>& bct_bytes) {
+    std::vector<termite::Word> result;
     for (int i = 0; i < bct_bytes.size(); i += 2) {
         // std::cout << "A " << (int)bct_bytes.at(i) << '\n';
         // std::cout << "B " << (int)bct_bytes.at(i + 1) << '\n';
         uint8_t lo_bct = bct_bytes.at(i);
         uint8_t hi_bct = bct_bytes.at(i + 1);
         uint16_t tryte_bct = lo_bct + (hi_bct << 8);
-        result.push_back(termite::Tryte(tryte_bct));
+        result.push_back(termite::Word(tryte_bct));
         // std::cout << "C " << termite::Tryte(tryte_bct).to_ternary_str() << '\n';
     }
     return result;
@@ -64,7 +64,7 @@ int main(int argc, char** argv) {
         std::istream_iterator<uint8_t>(file),
         std::istream_iterator<uint8_t>());
 
-    std::vector<termite::Tryte> trytes = decode_bct(vec);
+    std::vector<termite::Word> trytes = decode_bct(vec);
     termite::CPU cpu;
 
     for (int i = 0; i < trytes.size(); i++) {

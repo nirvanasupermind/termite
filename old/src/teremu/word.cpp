@@ -160,11 +160,11 @@ namespace termite {
         return result;
     }
 
-    Tryte Word::lo_tryte() const {
-        return Tryte(bct & (1 << (WORD_TRIT - 1)));
+    Word Word::lo_tryte() const {
+        return Word(bct & (1 << (WORD_TRIT - 1)));
     }
 
-    Tryte Word::hi_tryte() const {
-        return Tryte(bct >> WORD_TRIT);
+    Word Word::hi_tryte() const {
+        return Word(bct >> WORD_TRIT);
     }
 } // namespace termite

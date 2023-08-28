@@ -4,14 +4,14 @@
 #include "tryte.h"
 
 namespace termite {
-    Tryte Tryte::from_int16(int16_t n) {
+    Word Word::from_int16(int16_t n) {
         if(n < 0) {
             // Use three's complement for negative numbers
             // https://homepage.cs.uiowa.edu/~dwjones/ternary/numbers.shtml
-            return Tryte::from_int16(TRYTE_MAX + n);
+            return Word::from_int16(TRYTE_MAX + n);
         }
 
-        Tryte result;
+        Word result;
         for(int i = 0; i < TRYTE_TRIT; i++) {
             int r = n % 3;
             result.set_trit(i, Trit(r));
@@ -20,18 +20,18 @@ namespace termite {
         return result;
     }
 
-    Tryte::Tryte() 
+    Word::Word() 
         : bct(0) {
 
 
     }
-    Tryte::Tryte(uint16_t bct) 
+    Word::Word(uint16_t bct) 
         : bct(bct) {
 
     }
 
-    Tryte Tryte::operator-() const {
-        Tryte result;
+    Word Word::operator-() const {
+        Word result;
         for(int i = 0; i < TRYTE_TRIT; i++) {
             result.set_trit(i, ~get_trit(i));
         }
@@ -39,7 +39,7 @@ namespace termite {
     }
 
 
-    int16_t Tryte::to_int16() const {
+    int16_t Word::to_int16() const {
         int16_t result = 0;
         for (int i = 0; i < TRYTE_TRIT; i++) {
             result = result + POW3[i] * get_trit(i).val;
@@ -47,17 +47,17 @@ namespace termite {
         return result;
     }
 
-    Trit Tryte::get_trit(int i) const {
+    Trit Word::get_trit(int i) const {
         return Trit((bct >> (2 * i) & 0b11));
     }
     
-    void Tryte::set_trit(int i, const Trit& trit) {
+    void Word::set_trit(int i, const Trit& trit) {
         int shift = 2 * i;
         bct &= ~(1 << shift);
         bct |= trit.val << shift;
     } 
 
-    std::string Tryte::to_ternary_str() const {
+    std::string Word::to_ternary_str() const {
         std::string result;
         for(int i = TRYTE_TRIT - 1; i >= 0; i--) {
             result = result + get_trit(i).to_char();

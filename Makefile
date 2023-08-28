@@ -1,2 +1,2 @@
 default:
-    clang++ src/*.cpp test/main.cpp -o test/main -std=c++11
+	clang++ test/main.cpp src/*.cpp -o test/main -std=c++11

@@ -34,8 +34,8 @@ namespace termite {
         int32_t to_int32() const;
         std::string to_ternary_str() const;
         std::string to_nonary_str() const;
-        Tryte lo_tryte() const;
-        Tryte hi_tryte() const;
+        Word lo_tryte() const;
+        Word hi_tryte() const;
     };
 } // namespace termite
 

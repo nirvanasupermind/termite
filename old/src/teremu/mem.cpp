@@ -7,23 +7,23 @@
 
 namespace termite {
     Mem::Mem()
-        : data(std::vector<Tryte>(WORD_MAX)) {
+        : data(std::vector<Word>(WORD_MAX)) {
     }
 
-    Tryte Mem::get_tryte(const Word& addr) {
+    Word Mem::get_tryte(const Word& addr) {
         int idx = addr.to_int32();
         return data.at(idx);
     }
 
-    void Mem::set_tryte(const Word& addr, const Tryte& tryte) {
+    void Mem::set_tryte(const Word& addr, const Word& tryte) {
         int idx = addr.to_int32();
         data[idx] = tryte;
     }
 
     Word Mem::get_word(const Word& addr) {
         int idx = addr.to_int32();
-        Tryte lo_tryte = data.at(idx);
-        Tryte hi_tryte = data.at(idx + 1);
+        Word lo_tryte = data.at(idx);
+        Word hi_tryte = data.at(idx + 1);
         return Word((hi_tryte.bct << 16) + lo_tryte.bct);
     }
     

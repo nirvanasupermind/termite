@@ -14,13 +14,13 @@ namespace termite {
     19683, 59049, 177147, 531441, 1594323, 4782969, 14348907 };
 
 
-    class Tryte {
+    class Word {
     public:
-        static Tryte from_int16(int16_t n);
+        static Word from_int16(int16_t n);
         uint16_t bct;
-        Tryte();
-        Tryte(uint16_t bct);
-        Tryte operator-() const;
+        Word();
+        Word(uint16_t bct);
+        Word operator-() const;
         Trit get_trit(int i) const;
         void set_trit(int i, const Trit& trit);
         int16_t to_int16() const;
