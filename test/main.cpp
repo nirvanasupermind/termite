@@ -1,7 +1,10 @@
 #include <iostream>
+#include "../src/tryte.h"
 #include "../src/word.h"
+#include "../src/mem.h"
 
 int main() {
-    termite::Word x = termite::Word::from_int32(5);
-    std::cout << (x*termite::Word::from_int32(394)).to_int32() << '\n';
+    termite::Mem mem;
+    mem.set_word(0, termite::Word::from_int32(10000));
+    std::cout << mem.get_word(0).str() << '\n';
 }

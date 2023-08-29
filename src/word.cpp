@@ -2,6 +2,8 @@
 #include <string>
 #include <iostream>
 #include <algorithm>
+
+#include "tryte.h"
 #include "word.h"
 
 namespace termite {
@@ -15,6 +17,10 @@ namespace termite {
 
     }
 
+    Word::Word(const Tryte& lo, const Tryte& hi)
+        : bct(lo.get_bct() + (hi.get_bct() << 16)) {
+    }
+
     uint32_t Word::get_bct() const {
         return bct;
     }
@@ -26,6 +32,14 @@ namespace termite {
     void Word::set_bct_trit(int i, uint8_t val) {
         bct = bct & ~(1 << (2 * i));
         bct = bct | (val << (2 * i));
+    }
+    
+    Tryte Word::get_lo_tryte() const {
+        return Tryte(bct & 0xffff);
+    }
+
+    Tryte Word::get_hi_tryte() const {
+        return Tryte(bct >> 16);
     }
 
     Word Word::operator~() const {

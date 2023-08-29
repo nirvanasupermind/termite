@@ -1,8 +1,11 @@
 
 #ifndef WORD_H
 #define WORD_H
+
 #include <cstdint>
 #include <string>
+
+#include "tryte.h"
 
 namespace termite {
     const int TRITS_PER_WORD = 16;
@@ -22,9 +25,12 @@ namespace termite {
     public:
         Word();
         Word(uint32_t bct);
+        Word(const Tryte& lo, const Tryte& hi);
         uint32_t get_bct() const;
         uint8_t get_bct_trit(int i) const;
         void set_bct_trit(int i, uint8_t val);
+        Tryte get_lo_tryte() const;
+        Tryte get_hi_tryte() const;
         // NOT is also same as negation
         Word operator~() const;
         Word operator&(const Word& other) const;
