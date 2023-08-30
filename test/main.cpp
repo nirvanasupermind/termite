@@ -5,6 +5,6 @@
 
 int main() {
     termite::Mem mem;
-    mem.set_word(0, termite::Word::from_int32(10000));
-    std::cout << mem.get_word(0).str() << '\n';
+    mem.load_bct_file("test/bctfile");
+    std::cout << mem.get_word(termite::Word::from_int32(-21523360)).to_int32() << '\n';
 }

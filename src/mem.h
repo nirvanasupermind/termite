@@ -18,6 +18,7 @@ namespace termite {
         void set_tryte(const Word& addr, const Tryte& tryte);
         Word get_word(const Word& addr) const;
         void set_word(const Word& addr, const Word& word);
+        void load_bct_file(const std::string& filename);
     };
 } // namespace termite
 
