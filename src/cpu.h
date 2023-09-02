@@ -5,11 +5,11 @@
 #include "mem.h"
 
 namespace termite {
-    enum Opcode { 
-    MOV,
-    MOVI,
-    MVN,
-    MVNI
+    enum Opcode {
+        MOV,
+        MOVI,
+        MVN,
+        MVNI
     };
 
     class CPU {
@@ -25,9 +25,7 @@ namespace termite {
         void print_state();
         void invalid_opcode(const Word& opcode);
         void set_sign_flag(const Word& result);
-
     };
-
 } // namespace termite
 
 
