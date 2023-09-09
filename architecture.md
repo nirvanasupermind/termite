@@ -5,43 +5,51 @@ Note that "tryte" is used here to refer to an 8-trit data type and "word" is use
 All instructions are 16 trits or one word long, and there is a 16-trit address space of up to 3^16 (43046721) trytes of memory. Each memory address points to a tryte, and words are stored in memory as two trytes in little-endian order.
 
 ## Registers
-There are 27 general purpose 16-trit registers numbered as `r-13` to `r13`.  `r12` is also referred to as `sp`, the stack pointer, starting at 3^16-1 and goes downwards. `r13` is also referred to as `pc`, the program counter. All other registers do not have any designated purpose. 
-
+There are 27 general purpose 16-trit registers numbered as `r-13` to `r13`.  `r12` is also referred to as `sp`, the stack pointer, initiallized to (3^16-1)/2 - 1 (21523360) and going downwards. `r13` is also referred to as `pc`, the program counter,  starting at -(3^16-1)/2 (-21523360).  There is also the special-purpose program status register `psr` for holding status flags.
+## Flags
+There are two status flags held in the program status register. The zeroth trit is the sign flag (`SF`), which is set to the sign of the result (-1, 0, or 1) after any arithmetic, tritwise, or compare instruction. The first trit is the carry flag (`CF`) which is set to the carry after an addition, subtraction, or compare instruction.
 ## Instruction listing
-|Opcode (ternary) |Mnemonic|Description                           |Format                                                 |Action                        |
-|-----------------|--------|--------------------------------------|-------------------------------------------------------|------------------------------|
-|`TTTT`           |`mov`   |Move                                  |opcode [15:12], `rd` [11:9], `rs` [8:6]                |`rd = rs`                     |              
-|`TTT0`           |`movi`  |Move immediate                        |opcode [15:12], `rd` [11:9], `imm` [8:0]               |`rd = imm`                    |
-|`TTT1`           |`ld`    |Load                                  |opcode [15:12], `rd` [11:9], `rs` [8:6], `imm` [5:0]   |`rd = mem[rs + imm]`          |
-|`TT0T`           |`st`    |Store                                 |opcode [15:12], `rd` [11:9], `rs` [8:6], `imm` [5:0]   |`mem[rs + imm] = rd`          |
-|`TT00`           |`add`   |Add                                   |opcode [15:12], `rd` [11:9], `rs` [8:6], `rt` [5:3]    |`rd = rs + rt`                |
-|`TT01`           |`addi`  |Add immediate                         |opcode [15:12], `rd` [11:9], `rs` [8:6], `imm` [5:0]   |`rd = rs + imm`               |
-|`TT1T`           |`addc`  |Add with carry                        |opcode [15:12], `rd` [11:9], `rs` [8:6], `imm` [5:0]   |`rd = rs + imm`               |
-|`TT10`           |`addc`  |Add with carry immediate              |opcode [15:12], `rd` [11:9], `rs` [8:6], `imm` [5:0]   |`rd = rs + imm`               |
-|`TT11`           |`sub`   |Subtract                              |opcode [15:12], `rd` [11:9], `rs` [8:6], `rt` [5:3]    |`rd = rs - rt`                |
-|`T0TT`           |`subi`  |Subtract immediate                    |opcode [15:12], `rd` [11:9], `rs` [8:6], `imm` [5:0]   |`rd = rs - imm`               |
-|`T0T0`           |`subc`  |Subtract with carry                   |opcode [15:12], `rd` [11:9], `rs` [8:6], `rt` [5:3]    |`rd = rs - rt - C`            |
-|`T0T1`           |`subci` |Subtract with carry immediate         |opcode [15:12], `rd` [11:9], `rs` [8:6], `imm` [5:0]   |`rd = rs - imm - C`           |
-|`T00T`           |`mul`   |Multiply                              |opcode [15:12], `rd` [11:9], `rs` [8:6], `rt` [5:3]    |`rd = rs * rt`                |
-|`T000`           |`muli`  |Multiply immediate                    |opcode [15:12], `rd` [11:9], `rs` [8:6], `imm` [5:0]   |`rd = rs * imm`               |
-|`T001`           |`not`   |Tritwise NOT                          |opcode [15:12], `rd` [11:9], `rs` [8:6]                |`rd = ~rs`                    |
-|`T01T`           |`noti`  |Tritwise NOT immediate                |opcode [15:12], `rd` [11:9], `imm` [8:6]               |`rd = ~imm`                   |
-|`T010`           |`and`   |Tritwise AND                          |opcode [15:12], `rd` [11:9], `rs` [8:6]                |`rd = rs & rt`                |
-|`T011`           |`andi`  |Tritwise AND immediate                |opcode [15:12], `rd` [11:9], `rs` [8:6]                |`rd = rs & imm`               |
-|`T1TT`           |`or`    |Tritwise OR                           |opcode [15:12], `rd` [11:9], `rs` [8:6]                |`rd = rs | rt`                |
-|`T1T0`           |`ori`   |Tritwise OR immediate                 |opcode [15:12], `rd` [11:9], `rs` [8:6]                |`rd = rs | imm`               |
-|`T1T1`           |`lsh`   |Left shift                            |opcode [15:12], `rd` [11:9], `rs` [8:6], `rt` [5:3]    |`rd = rs << rt`               |
-|`T10T`           |`lshi`  |Left shift immediate                  |opcode [15:12], `rd` [11:9], `rs` [8:6], `imm` [5:0]   |`rd = rs << imm`              |
-|`T100`           |`rsh`   |Right shift                           |opcode [15:12], `rd` [11:9], `rs` [8:6], `rt` [5:3]    |`rd = rs >> rt`               |
-|`T101`           |`rshi`  |Right shift immediate                 |opcode [15:12], `rd` [11:9], `rs` [8:6], `imm` [5:0]   |`rd = rs >> imm`              |
-|`T11T`           |`cmp`   |Compare                               |opcode [15:12], `rd` [11:9], `rs` [8:6]                |`S = sign(rd - rs)`           |
-|`T110`           |`jmp`   |Uncoditional jump                     |opcode [15:12], `imm` [11:0]                           |`pc = imm`                    |
-|`T111`           |`jeq`   |Jump if equal                         |opcode [15:12], `imm` [11:0]                           |`pc = imm` if `S == 0`        |
-|`0TTT`           |`jne`   |Jump if not equal                     |opcode [15:12], `imm` [11:0]                           |`pc = imm` if `S != 0`        |
-|`0TT0`           |`jlt`   |Jump if less than                     |opcode [15:12], `imm` [11:0]                           |`pc = imm` if `S < 0`         |
-|`0TT1`           |`jle`   |Jump if less than or equal            |opcode [15:12], `imm` [11:0]                           |`pc = imm` if `S <= 0`        |
-|`0T0T`           |`jgt`   |Jump if greater than                  |opcode [15:12], `imm` [11:0]                           |`pc = imm` if `S > 0`         |
-|`0T00`           |`jge`   |Jump if greater than or equal         |opcode [15:12], `imm` [11:0]                           |`pc = imm` if `S >= 0`        |
-|`0T01`           |`call`  |Call subroutine                       |opcode [15:12], `imm` [11:0]                           |`pc = imm`                    |
+|Opcode (ternary) |Mnemonic|Description                           |Format                                                 |Action                             |
+|-----------------|--------|--------------------------------------|-------------------------------------------------------|-----------------------------------|
+|`TTTT`           |`mov`   |Move                                  |opcode [15:12], `rd` [11:9], `rs` [8:6]                |`rd = rs`                          |           
+|`TTT0`           |`movi`  |Move immediate                        |opcode [15:12], `rd` [11:9], `imm` [8:0]               |`rd = imm`                         |
+|`TTT1`           |`movps` |Move program status register          |opcode [15:12], `rd` [11:9]                            |`rd = psr`                         |
+|`TT0T`           |`ld`    |Load                                  |opcode [15:12], `rd` [11:9], `rs` [8:6], `imm` [5:0]   |`rd = mem[rs + imm]`               |
+|`TT00`           |`st`    |Store                                 |opcode [15:12], `rd` [11:9], `rs` [8:6], `imm` [5:0]   |`mem[rs + imm] = rd`               |
+|`TT01`           |`add`   |Add                                   |opcode [15:12], `rd` [11:9], `rs` [8:6], `rt` [5:3]    |`rd = rs + rt`                     |
+|`TT1T`           |`addi`  |Add immediate                         |opcode [15:12], `rd` [11:9], `rs` [8:6], `imm` [5:0]   |`rd = rs + imm`                    |
+|`TT10`           |`addc`  |Add with carry                        |opcode [15:12], `rd` [11:9], `rs` [8:6], `imm` [5:0]   |`rd = rs + rt + CF`                |
+|`TT11`           |`addci` |Add with carry immediate              |opcode [15:12], `rd` [11:9], `rs` [8:6], `imm` [5:0]   |`rd = rs + imm + CF`               |
+|`T0TT`           |`sub`   |Subtract                              |opcode [15:12], `rd` [11:9], `rs` [8:6], `rt` [5:3]    |`rd = rs - rt`                     |
+|`T0T0`           |`subi`  |Subtract immediate                    |opcode [15:12], `rd` [11:9], `rs` [8:6], `imm` [5:0]   |`rd = rs - imm`                    |
+|`T0T1`           |`subc`  |Subtract with carry                   |opcode [15:12], `rd` [11:9], `rs` [8:6], `rt` [5:3]    |`rd = rs - rt - CF`                |
+|`T00T`           |`subci` |Subtract with carry immediate         |opcode [15:12], `rd` [11:9], `rs` [8:6], `imm` [5:0]   |`rd = rs - imm - CF`               |
+|`T000`           |`mul`   |Multiply                              |opcode [15:12], `rd` [11:9], `rs` [8:6], `rt` [5:3]    |`rd = rs * rt`                     |
+|`T001`           |`muli`  |Multiply immediate                    |opcode [15:12], `rd` [11:9], `rs` [8:6], `imm` [5:0]   |`rd = rs * imm`                    |
+|`T01T`           |`not`   |Tritwise NOT                          |opcode [15:12], `rd` [11:9], `rs` [8:6]                |`rd = ~rs`                         |
+|`T010`           |`noti`  |Tritwise NOT immediate                |opcode [15:12], `rd` [11:9], `imm` [8:6]               |`rd = ~imm`                        |
+|`T011`           |`and`   |Tritwise AND                          |opcode [15:12], `rd` [11:9], `rs` [8:6]                |`rd = rs & rt`                     |
+|`T1TT`           |`andi`  |Tritwise AND immediate                |opcode [15:12], `rd` [11:9], `rs` [8:6]                |`rd = rs & imm`                    |
+|`T1T0`           |`or`    |Tritwise OR                           |opcode [15:12], `rd` [11:9], `rs` [8:6]                |`rd = rs \| rt`                    |
+|`T1T1`           |`ori`   |Tritwise OR immediate                 |opcode [15:12], `rd` [11:9], `rs` [8:6]                |`rd = rs \| imm`                   |
+|`T10T`           |`lsh`   |Left shift                            |opcode [15:12], `rd` [11:9], `rs` [8:6], `rt` [5:3]    |`rd = rs << rt`                    |
+|`T100`           |`lshi`  |Left shift immediate                  |opcode [15:12], `rd` [11:9], `rs` [8:6], `imm` [5:0]   |`rd = rs << imm`                   |
+|`T101`           |`rsh`   |Right shift                           |opcode [15:12], `rd` [11:9], `rs` [8:6], `rt` [5:3]    |`rd = rs >> rt`                    |
+|`T11T`           |`rshi`  |Right shift immediate                 |opcode [15:12], `rd` [11:9], `rs` [8:6], `imm` [5:0]   |`rd = rs >> imm`                   |
+|`T110`           |`cmp`   |Compare                               |opcode [15:12], `rd` [11:9], `rs` [8:6]                |`SF = sign(rd - rs)`               |
+|`T111`           |`jmp`   |Uncoditional jump                     |opcode [15:12], `imm` [11:0]                           |`pc = imm`                         |
+|`0TTT`           |`jeq`   |Jump if equal                         |opcode [15:12], `imm` [11:0]                           |`pc = imm` if `SF == 0`            |
+|`0TT0`           |`jne`   |Jump if not equal                     |opcode [15:12], `imm` [11:0]                           |`pc = imm` if `SF != 0`            |
+|`0TT1`           |`jlt`   |Jump if less than                     |opcode [15:12], `imm` [11:0]                           |`pc = imm` if `SF < 0`             |
+|`0T0T`           |`jle`   |Jump if less than or equal            |opcode [15:12], `imm` [11:0]                           |`pc = imm` if `SF <= 0`            |
+|`0T00`           |`jgt`   |Jump if greater than                  |opcode [15:12], `imm` [11:0]                           |`pc = imm` if `SF > 0`             |
+|`0T01`           |`jge`   |Jump if greater than or equal         |opcode [15:12], `imm` [11:0]                           |`pc = imm` if `SF >= 0`            |
+|`0T1T`           |`push`  |Push to stack                         |opcode [15:12], `imm` [11:0]                           |`sp = sp - 2; mem[sp] = imm`       |
+|`0T00`           |`pop`   |Pop from stack                        |opcode [15:12], `imm` [11:0]                           |`mem[imm] = mem[sp]; sp = sp + 2;` |
+|`0T1T`           |`call`  |Call                                  |opcode [15:12], `imm` [11:0]                           |`sp = sp - 2; mem[sp] = imm`        |
 
 ## System calls
+
+
+01234567 01234567 01234567 01234567
+00000001 00000001 01010101 01011000

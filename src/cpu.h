@@ -1,30 +1,70 @@
 #ifndef CPU_H
 #define CPU_H
 
+#include "tryte.h"
 #include "word.h"
 #include "mem.h"
 
 namespace termite {
     enum Opcode {
-        MOV,
+        MOV = -40,
         MOVI,
-        MVN,
-        MVNI
+        MOVPS,
+        LD,
+        ST,
+        ADD,
+        ADDI,
+        ADDC,
+        ADDCI,
+        SUB,
+        SUBI,
+        SUBC,
+        SUBCI,
+        MUL,
+        MULI,
+        NOT,
+        NOTI,
+        AND,
+        ANDI,
+        OR,
+        ORI,
+        LSH,
+        LSHI,
+        RSH,
+        RSHI,
+        CMP,
+        CMPI,
+        JMP,
+        JEQ,
+        JNE,
+        JLT,
+        JLE,
+        JGT,
+        JGE,
+        SYS
+    };
+
+
+    enum Register {
+        SP = 25,
+        PC
+    };
+
+    enum Flag {
+        SF,
+        CF
     };
 
     class CPU {
     public:
-        Word registers[9];
-        Word cpsr;
         Mem mem;
+        Word registers[27];
+        Word psr;
         CPU();
         void reset();
-        Word fetch_tryte(int& cycles);
         Word fetch_word(int& cycles);
-        void execute(int cycles, bool verbose = false);
-        void print_state();
-        void invalid_opcode(const Word& opcode);
-        void set_sign_flag(const Word& result);
+        void set_sign_flag(Word& result);
+        void execute(int cycles);
     };
 } // namespace termite
 

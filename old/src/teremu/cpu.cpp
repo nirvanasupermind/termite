@@ -82,7 +82,7 @@ namespace termite {
                 Word rt = ins.get_trit_range(3, 3);
                 std::pair<Word, Trit> sum = registers[rs.to_int32()] + registers[rt.to_int32()];
                 registers[rd.to_int32()] = sum.first;
-                cpsr.set_trit(C, sum.second);
+                sr.set_trit(C, sum.second);
                 set_sign_flag(sum.first);
                 break;
             }
@@ -92,7 +92,7 @@ namespace termite {
                 Word imm = ins.get_trit_range(0, 6);
                 std::pair<Word, Trit> sum = registers[rs.to_int32()] + imm;
                 registers[rd.to_int32()] = sum.first;
-                cpsr.set_trit(C, sum.second);
+                sr.set_trit(C, sum.second);
                 set_sign_flag(sum.first);
                 break;
             }
@@ -101,8 +101,8 @@ namespace termite {
                 Word rs = ins.get_trit_range(6, 3);
                 Word rt = ins.get_trit_range(3, 3);
                 std::pair<Word, Trit> sum = registers[rs.to_int32()] + registers[rt.to_int32()];
-                registers[rd.to_int32()] = (sum.first + Word::from_int32(cpsr.get_trit(C).val)).first;
-                cpsr.set_trit(C, sum.second);
+                registers[rd.to_int32()] = (sum.first + Word::from_int32(sr.get_trit(C).val)).first;
+                sr.set_trit(C, sum.second);
                 set_sign_flag(sum.first);
                 break;
             }
@@ -111,8 +111,8 @@ namespace termite {
                 Word rs = ins.get_trit_range(6, 3);
                 Word imm = ins.get_trit_range(0, 6);
                 std::pair<Word, Trit> sum = registers[rs.to_int32()] + imm;
-                registers[rd.to_int32()] = (sum.first + Word::from_int32(cpsr.get_trit(C).val)).first;
-                cpsr.set_trit(C, sum.second);
+                registers[rd.to_int32()] = (sum.first + Word::from_int32(sr.get_trit(C).val)).first;
+                sr.set_trit(C, sum.second);
                 set_sign_flag(sum.first);
                 break;
             }
@@ -122,7 +122,7 @@ namespace termite {
                 Word rt = ins.get_trit_range(3, 3);
                 std::pair<Word, Trit> diff = registers[rs.to_int32()] - registers[rt.to_int32()];
                 registers[rd.to_int32()] = diff.first;
-                cpsr.set_trit(C, diff.second);
+                sr.set_trit(C, diff.second);
                 set_sign_flag(diff.first);
                 break;
             }
@@ -132,7 +132,7 @@ namespace termite {
                 Word imm = ins.get_trit_range(0, 6);
                 std::pair<Word, Trit> diff = registers[rs.to_int32()] - imm;
                 registers[rd.to_int32()] = diff.first;
-                cpsr.set_trit(C, diff.second);
+                sr.set_trit(C, diff.second);
                 set_sign_flag(diff.first);
                 break;
             }
@@ -141,8 +141,8 @@ namespace termite {
                 Word rs = ins.get_trit_range(6, 3);
                 Word rt = ins.get_trit_range(3, 3);
                 std::pair<Word, Trit> diff = registers[rs.to_int32()] - registers[rt.to_int32()];
-                registers[rd.to_int32()] = (diff.first + Word::from_int32(cpsr.get_trit(C).val)).first;
-                cpsr.set_trit(C, diff.second);
+                registers[rd.to_int32()] = (diff.first + Word::from_int32(sr.get_trit(C).val)).first;
+                sr.set_trit(C, diff.second);
                 set_sign_flag(diff.first);
                 break;
             }
@@ -151,8 +151,8 @@ namespace termite {
                 Word rs = ins.get_trit_range(6, 3);
                 Word imm = ins.get_trit_range(0, 6);
                 std::pair<Word, Trit> diff = registers[rs.to_int32()] - imm;
-                registers[rd.to_int32()] = (diff.first + Word::from_int32(cpsr.get_trit(C).val)).first;
-                cpsr.set_trit(C, diff.second);
+                registers[rd.to_int32()] = (diff.first + Word::from_int32(sr.get_trit(C).val)).first;
+                sr.set_trit(C, diff.second);
                 set_sign_flag(diff.first);
                 break;
             }
@@ -363,13 +363,13 @@ namespace termite {
     void CPU::set_sign_flag(const Word& result) {
         int n = result.to_int32();
         if (n == 0) {
-            cpsr.set_trit(S, Trit(0));
+            sr.set_trit(S, Trit(0));
         }
         else if (n <= (WORD_MAX / 2)) {
-            cpsr.set_trit(S, Trit(1));
+            sr.set_trit(S, Trit(1));
         }
         else if (n > (WORD_MAX / 2)) {
-            cpsr.set_trit(S, Trit(2));
+            sr.set_trit(S, Trit(2));
         }
     }
 

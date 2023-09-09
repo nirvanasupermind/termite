@@ -2,11 +2,15 @@
 #include <string>
 #include <iostream>
 #include <algorithm>
+#include <utility>
 
 #include "tryte.h"
 #include "word.h"
 
 namespace termite {
+    const Word Word::ONE = Word::from_int32(1);
+    const Word Word::TWO = Word::from_int32(2);
+
     // This is the binary-coded ternary representation of 0
     Word::Word()
         : bct(0x55555555) {
@@ -33,7 +37,17 @@ namespace termite {
         bct = bct & ~(1 << (2 * i));
         bct = bct | (val << (2 * i));
     }
+        
+    Word Word::get_trit_range(int start, int end) const {
+        Word result;
+        for(int i = start; i <= end; i++) {
+            result.set_bct_trit(i, get_bct_trit(i));
+        }
+        result = result >> Word::from_int32(start);
+        return result;
+    }
     
+
     Tryte Word::get_lo_tryte() const {
         return Tryte(bct & 0xffff);
     }
@@ -97,6 +111,10 @@ namespace termite {
     }
 
     Word Word::operator+(const Word& other) const {
+        return add_with_carry(other).first;
+    }
+
+    std::pair<Word, uint8_t> Word::add_with_carry(const Word& other) const {
         Word result;
         uint8_t sum = 0b01;
         uint8_t carry = 0b01;
@@ -105,11 +123,15 @@ namespace termite {
             carry = TRIT_CARRY[get_bct_trit(i)][other.get_bct_trit(i)][carry];
             result.set_bct_trit(i, sum);
         }
-        return result;
+        return std::make_pair(result, carry);
     }
 
     Word Word::operator-(const Word& other) const {
         return operator+(~other);
+    }
+
+    std::pair<Word, uint8_t> Word::sub_with_carry(const Word& other) const {
+        return add_with_carry(~other);
     }
 
     Word Word::operator*(const Word& other) const {
@@ -131,7 +153,7 @@ namespace termite {
         }
         return result;
     }
-
+    
     std::string Word::str() const {
         std::string result = "";
         for (int i = 0; i < TRITS_PER_WORD; i++) {

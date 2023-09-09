@@ -4,6 +4,7 @@
 
 #include <cstdint>
 #include <string>
+#include <utility>
 
 #include "tryte.h"
 
@@ -23,12 +24,15 @@ namespace termite {
     protected:
         uint32_t bct;
     public:
+        static const Word ONE;
+        static const Word TWO;
         Word();
         Word(uint32_t bct);
         Word(const Tryte& lo, const Tryte& hi);
         uint32_t get_bct() const;
         uint8_t get_bct_trit(int i) const;
         void set_bct_trit(int i, uint8_t val);
+        Word get_trit_range(int start, int end) const;
         Tryte get_lo_tryte() const;
         Tryte get_hi_tryte() const;
         // NOT is also same as negation
@@ -38,8 +42,11 @@ namespace termite {
         Word operator<<(const Word& other) const;
         Word operator>>(const Word& other) const;
         Word operator+(const Word& other) const;
+        std::pair<Word, uint8_t> add_with_carry(const Word& other) const;
         Word operator-(const Word& other) const;
+        std::pair<Word, uint8_t> sub_with_carry(const Word& other) const;
         Word operator*(const Word& other) const;
+        bool operator<(const Word& other) const;
         std::string str() const;
         int32_t to_int32() const;
         static Word from_int32(int32_t n);
