@@ -33,7 +33,6 @@ namespace termite {
 
     void CPU::execute(int cycles) {
         while (cycles > 0) {
-            std::cout << registers[PC].to_int32() << '\n';
             Word instr = fetch_word(cycles);
             int opcode = instr.get_trit_range(12, 15).to_int32();
             switch (opcode) {
@@ -335,6 +334,30 @@ namespace termite {
                 if (psr.get_bct_trit(SF) >= 0b01) {
                     registers[PC] = imm;
                 }
+                break;
+            }
+            case PUSH: {
+                Word imm = instr.get_trit_range(11, 0);
+                registers[SP] = registers[SP] - Word::TWO;
+                mem.set_word(registers[SP], imm);
+                break;
+            }
+            case POP: {
+                int rd_idx = instr.get_trit_range(11, 9).to_int32() + 13;
+                registers[rd_idx] = mem.get_word(registers[SP]);
+                registers[SP] = registers[SP] + Word::TWO;
+                break;
+            }
+            case CALL: {
+                Word imm = instr.get_trit_range(11, 0);
+                registers[SP] = registers[SP] - 2;
+                mem.set_word(registers[SP], registers[PC]);
+                registers[PC] = imm;
+                break;
+            }
+            case RET: {
+                registers[PC] = mem.get_word(registers[SP]);
+                registers[SP] = registers[SP] + Word::TWO;
                 break;
             }
             case SYS: {

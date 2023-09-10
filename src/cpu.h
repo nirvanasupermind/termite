@@ -41,6 +41,10 @@ namespace termite {
         JLE,
         JGT,
         JGE,
+        PUSH,
+        POP,
+        CALL,
+        RET,
         SYS
     };
 

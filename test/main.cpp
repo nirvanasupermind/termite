@@ -7,6 +7,6 @@
 int main() {
     termite::CPU cpu;
     cpu.mem.load_bct_file("test/bctfile");
-    cpu.execute(1);
-    std::cout << cpu.registers[0].to_int32() << '\n';
+    cpu.execute(2);
+    // std::cout << cpu.registers[0].to_int32() << '\n';
 }
