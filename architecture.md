@@ -37,25 +37,23 @@ There are two status flags held in the program status register. The zeroth trit 
 |`T101`           |`rsh`   |Right shift                           |opcode [15:12], `rd` [11:9], `rs` [8:6], `rt` [5:3]    |`rd = rs >> rt`                       |
 |`T11T`           |`rshi`  |Right shift immediate                 |opcode [15:12], `rd` [11:9], `rs` [8:6], `imm` [5:0]   |`rd = rs >> imm`                      |
 |`T110`           |`cmp`   |Compare                               |opcode [15:12], `rd` [11:9], `rs` [8:6]                |`SF = sign(rd - rs)`                  |
-|`T111`           |`jmp`   |Uncoditional jump                     |opcode [15:12], `imm` [11:0]                           |`pc = imm`                            |
-|`0TTT`           |`jeq`   |Jump if equal                         |opcode [15:12], `imm` [11:0]                           |`pc = imm` if `SF == 0`               |
-|`0TT0`           |`jne`   |Jump if not equal                     |opcode [15:12], `imm` [11:0]                           |`pc = imm` if `SF != 0`               |
-|`0TT1`           |`jlt`   |Jump if less than                     |opcode [15:12], `imm` [11:0]                           |`pc = imm` if `SF < 0`                |
-|`0T0T`           |`jle`   |Jump if less than or equal            |opcode [15:12], `imm` [11:0]                           |`pc = imm` if `SF <= 0`               |
-|`0T00`           |`jgt`   |Jump if greater than                  |opcode [15:12], `imm` [11:0]                           |`pc = imm` if `SF > 0`                |
-|`0T01`           |`jge`   |Jump if greater than or equal         |opcode [15:12], `imm` [11:0]                           |`pc = imm` if `SF >= 0`               |
+|`T111`           |`jmp`   |Uncoditional jump                     |opcode [15:12], `rd` [11:9]                            |`pc = rd`                             |
+|`0TTT`           |`jeq`   |Jump if equal                         |opcode [15:12], `rd` [11:9]                            |`pc = rd` if `SF == 0`                |
+|`0TT0`           |`jne`   |Jump if not equal                     |opcode [15:12], `rd` [11:9]                            |`pc = rd` if `SF != 0`                |
+|`0TT1`           |`jlt`   |Jump if less than                     |opcode [15:12], `rd` [11:9]                            |`pc = rd` if `SF < 0`                 |
+|`0T0T`           |`jle`   |Jump if less than or equal            |opcode [15:12], `rd` [11:9]                            |`pc = rd` if `SF <= 0`                |
+|`0T00`           |`jgt`   |Jump if greater than                  |opcode [15:12], `rd` [11:9]                            |`pc = rd` if `SF > 0`                 |
+|`0T01`           |`jge`   |Jump if greater than or equal         |opcode [15:12], `rd` [11:9]                            |`pc = rd` if `SF >= 0`                |
 |`0T1T`           |`push`  |Push to stack                         |opcode [15:12], `imm` [11:0]                           |`sp = sp - 2; mem[sp] = imm`          |
 |`0T10`           |`pop`   |Pop from stack                        |opcode [15:12], `rd` [11:9]                            |`rd = mem[sp]; sp = sp + 2`           |
 |`0T11`           |`call`  |Call subroutine                       |opcode [15:12], `imm` [11:0]                           |`sp = sp - 2; mem[sp] = pc; pc = imm;`|
 |`00TT`           |`ret`   |Return from subroutine                |opcode [15:12]                                         |`pc = mem[sp]; sp = sp + 2`           |
-|`00T0`           |`sys`   |Syhstem call                          |opcode [15:12], `imm` [11:0]                           |                                      |
+|`00T0`           |`sys`   |System call                           |opcode [15:12], `imm` [11:0]                           |                                      |
 
-# System calls
+## System calls
 |Code in `imm`    |Description                          |Operands       |         
 |-----------------|-------------------------------------|---------------|
 |0                |Print `r-13` as decimal number       |`r-13`         |
 |1                |Print `r-13` as ternary number       |`r-13`         |
 |2                |Print `r-13` as character            |`r-13`         |
 
-00T1 0000 0000 0000
-01 01 00 10

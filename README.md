@@ -21,4 +21,4 @@ These can be built using `make` (may require root permission).
 * High-level C-like programming language which compiles into Termite assembly.
 
 ## Changelog
-* 1.0 (2023-07-09): Initial release
+* 1.0 (2023-07-09): Initial release, no assembler yet

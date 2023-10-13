@@ -49,7 +49,7 @@ namespace termite {
     };
 
 
-    enum Register {
+    enum Regfter {
         SP = 25,
         PC
     };

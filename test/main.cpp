@@ -1,12 +1,10 @@
 #include <iostream>
-#include "../src/tryte.h"
-#include "../src/word.h"
-#include "../src/mem.h"
-#include "../src/cpu.h"
+#include "../src/terasm/lexer.h"
 
 int main() {
-    termite::CPU cpu;
-    cpu.mem.load_bct_file("test/bctfile");
-    cpu.execute(2);
-    // std::cout << cpu.registers[0].to_int32() << '\n';
+    termite::Lexer lexer("movps r0 r-5 9\t\nabcde\r:;,");
+    std::vector<termite::Token> tokens = lexer.generate_tokens();
+    for(int i = 0; i < tokens.size(); i++) {
+        std::cout << tokens.at(i).type << ' ' << tokens.at(i).value << '\n';
+    }
 }
