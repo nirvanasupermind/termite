@@ -3,8 +3,8 @@
 
 #include <vector>
 
-#include "tryte.h"
-#include "word.h"
+#include "../core/tryte.h"
+#include "../core/word.h"
 
 namespace termite {
     class Mem {

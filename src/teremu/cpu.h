@@ -1,9 +1,9 @@
 #ifndef CPU_H
 #define CPU_H
 
-#include "tryte.h"
-#include "word.h"
-#include "mem.h"
+#include "../core/tryte.h"
+#include "../core/word.h"
+#include "./mem.h"
 
 namespace termite {
     enum Opcode {
@@ -68,7 +68,8 @@ namespace termite {
         void reset();
         Word fetch_word(int& cycles);
         void set_sign_flag(Word& result);
-        void execute(int cycles);
+        void print_state() const;
+        void execute(int cycles, bool verbose = false);
     };
 } // namespace termite
 

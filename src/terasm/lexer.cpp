@@ -43,7 +43,7 @@ namespace termite {
                 advance();
             }
             else {
-                throw std::string("Illegal character '") + current + "'";
+                throw std::string("Error: illegal character '") + current + "'";
                 break;
             }
         }

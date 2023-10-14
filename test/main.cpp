@@ -1,10 +1,19 @@
 #include <iostream>
+#include "../src/core/word.h"
 #include "../src/terasm/lexer.h"
+#include "../src/terasm/assembler.h"
 
 int main() {
-    termite::Lexer lexer("movps r0 r-5 9\t\nabcde\r:;,");
-    std::vector<termite::Token> tokens = lexer.generate_tokens();
-    for(int i = 0; i < tokens.size(); i++) {
-        std::cout << tokens.at(i).type << ' ' << tokens.at(i).value << '\n';
+    try {
+        termite::Lexer lexer("mov r3, rrofvigjm;");
+        std::vector<termite::Token> tokens = lexer.generate_tokens();
+        termite::Assembler assembler(tokens);
+        assembler.assemble_program();
+        for (int i = 0; i < assembler.code.size(); i++) {
+            std::cout << assembler.code.at(i).str() << '\n';
+        }
+    }
+    catch (const std::string& e) {
+        std::cout << e << '\n';
     }
 }

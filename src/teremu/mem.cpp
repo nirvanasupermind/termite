@@ -1,8 +1,8 @@
 #include <vector>
 
-#include "tryte.h"
-#include "word.h"
-#include "mem.h"
+#include "../core/tryte.h"
+#include "../core/word.h"
+#include "./mem.h"
 
 
 namespace termite {

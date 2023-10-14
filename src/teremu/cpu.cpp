@@ -3,10 +3,10 @@
 #include <utility>
 #include <tuple>
 
-#include "tryte.h"
-#include "word.h"
-#include "mem.h"
-#include "cpu.h"
+#include "../core/tryte.h"
+#include "../core/word.h"
+#include "./mem.h"
+#include "./cpu.h"
 
 namespace termite {
     CPU::CPU() {
@@ -31,7 +31,18 @@ namespace termite {
         psr.set_bct_trit(SF, (result_int32 < 0) ? 0b00 : ((result_int32 == 0) ? 0b01 : 0b10));
     }
 
-    void CPU::execute(int cycles) {
+    void CPU::print_state() const {
+        std::cout << "********* Program counter = " << registers[PC].to_int32() << '\n';
+        for (int i = 0; i < 27; i++) {
+            std::cout << "r" << i - 13 << " = " << registers[i].to_int32() << '\n';
+        }
+    }
+
+    void CPU::execute(int cycles, bool verbose) {
+        if (verbose) {
+            print_state();
+        }
+
         while (cycles > 0) {
             Word instr = fetch_word(cycles);
             int opcode = instr.get_trit_range(12, 15).to_int32();
@@ -44,6 +55,7 @@ namespace termite {
             }
             case MOVI: {
                 int rd_idx = instr.get_trit_range(9, 11).to_int32() + 13;
+                std::cout << "YES " << rd_idx << '\n';
                 Word imm = instr.get_trit_range(0, 8);
                 registers[rd_idx] = imm;
                 break;
@@ -292,7 +304,6 @@ namespace termite {
             case JMP: {
                 int rd_idx = instr.get_trit_range(9, 11).to_int32() + 13;
                 registers[PC] = registers[rd_idx];
-                std::cout << "jump time " << registers[rd_idx].to_int32() << '\n';
                 cycles += (registers[PC] - registers[rd_idx]).to_int32();
                 break;
             }
@@ -382,6 +393,9 @@ namespace termite {
                 throw std::string("Invalid opcode");
                 break;
             }
+            }
+            if (verbose) {
+                print_state();
             }
         }
     }
