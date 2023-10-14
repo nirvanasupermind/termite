@@ -48,7 +48,7 @@ namespace termite {
             }
         }
         
-        tokens.push_back(Token(TokenType::EOF_, ""));
+        // tokens.push_back(Token(TokenType::EOF_, ""));
 
         return tokens;
     }
