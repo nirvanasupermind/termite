@@ -17,6 +17,7 @@ namespace termite {
     const uint8_t TRIT_NOT[3] = { 2,1,0 };
     const uint8_t TRIT_AND[3][3] = { {0,0,0},{0,1,1},{0,1,2} };
     const uint8_t TRIT_OR[3][3] = { {0,1,2},{1,1,2},{2,2,2} };
+    const uint8_t TRIT_XOR[3][3] = { {0,1,2},{1,2,0},{2,0,1} };
     const uint8_t TRIT_SUM[3][3][3] = { {{1,2,0},{2,0,1},{0,1,2}},{{2,0,1},{0,1,2},{1,2,0}},{{0,1,2},{1,2,0},{2,0,1}} };
     const uint8_t TRIT_CARRY[3][3][3] = { {{0,0,1},{0,1,1},{1,1,1}},{{0,1,1},{1,1,1},{1,1,2}},{{1,1,1},{1,1,2},{1,2,2}} };
 
@@ -39,6 +40,7 @@ namespace termite {
         Word operator~() const;
         Word operator&(const Word& other) const;
         Word operator|(const Word& other) const;
+        Word operator^(const Word& other) const;
         Word operator<<(const Word& other) const;
         Word operator>>(const Word& other) const;
         Word operator+(const Word& other) const;
@@ -47,9 +49,14 @@ namespace termite {
         std::pair<Word, uint8_t> sub_with_carry(const Word& other) const;
         Word operator*(const Word& other) const;
         bool operator<(const Word& other) const;
-        std::string str() const;
         int32_t to_int32() const;
+        std::string to_ternary_str() const;
+        // I did not want to use wchar because it is platform-specific
+        // But char is only 8 bits, char16_t can't be printed
+        wchar_t to_wchar() const;
         static Word from_int32(int32_t n);
+        static Word from_ternary_str(const std::string& s);
+        static Word from_wchar(wchar_t wc);
     };
 
 } // namespace termite

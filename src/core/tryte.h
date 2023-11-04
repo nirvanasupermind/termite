@@ -16,7 +16,7 @@ namespace termite {
         uint16_t get_bct() const;
         uint8_t get_bct_trit(int i) const;
         void set_bct_trit(int i, uint8_t val);
-        std::string str() const;
+        std::string to_ternary_str() const;
     };
 } // namespace termite
 

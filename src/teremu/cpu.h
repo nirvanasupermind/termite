@@ -28,6 +28,8 @@ namespace termite {
         ANDI,
         OR,
         ORI,
+        XOR,
+        XORI,
         LSH,
         LSHI,
         RSH,
@@ -47,7 +49,6 @@ namespace termite {
         RET,
         SYS
     };
-
 
     enum Regfter {
         SP = 25,
@@ -70,6 +71,7 @@ namespace termite {
         void set_sign_flag(Word& result);
         void print_state() const;
         void execute(int cycles, bool verbose = false);
+        static std::string pad(const std::string& s, int length);
     };
 } // namespace termite
 

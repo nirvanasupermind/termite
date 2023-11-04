@@ -32,12 +32,21 @@ namespace termite {
     }
 
     void CPU::print_state() const {
-        std::cout << "********* Program counter = " << registers[PC].to_int32() << '\n';
-        for (int i = 0; i < 27; i++) {
-            std::cout << "r" << i - 13 << " = " << registers[i].to_int32() << '\n';
+        std::cout << "********* pc = " << registers[PC].to_int32()  << " = %" << registers[PC].to_ternary_str() << '\n';
+        std::cout << "psr = " << psr.to_int32() << " = %" << psr.to_ternary_str() << '\n';
+        for (int i = 0; i < 27; i += 3) {
+            std::cout << "r" << CPU::pad(std::to_string(i - 13), 3) << " = " << registers[i].to_int32() << "\t\t";
+            if(i == 24) {
+                std::cout << "sp  = " << registers[i + 1].to_int32() << "\t\t";
+                std::cout << "pc  = " << registers[i + 2].to_int32() << '\n';
+            } else {
+                std::cout << "r" << CPU::pad(std::to_string(i - 12), 3) << " = " << registers[i + 1].to_int32() << "\t\t";
+                std::cout << "r" << CPU::pad(std::to_string(i - 11), 3) << " = " << registers[i + 2].to_int32() << '\n';
+            }
         }
+        std::cout << '\n';
     }
-
+    
     void CPU::execute(int cycles, bool verbose) {
         if (verbose) {
             print_state();
@@ -55,7 +64,6 @@ namespace termite {
             }
             case MOVI: {
                 int rd_idx = instr.get_trit_range(9, 11).to_int32() + 13;
-                std::cout << "YES " << rd_idx << '\n';
                 Word imm = instr.get_trit_range(0, 8);
                 registers[rd_idx] = imm;
                 break;
@@ -166,7 +174,7 @@ namespace termite {
             case SUBCI: {
                 int rd_idx = instr.get_trit_range(9, 11).to_int32() + 13;
                 int rs_idx = instr.get_trit_range(8, 6).to_int32() + 13;
-                Word imm = instr.get_trit_range(5, 0);
+                Word imm = instr.get_trit_range(0, 5);
                 Word diff;
                 uint8_t carry;
                 std::tie(diff, carry) = (registers[rs_idx] - imm).sub_with_carry(CF);
@@ -187,7 +195,7 @@ namespace termite {
             case MULI: {
                 int rd_idx = instr.get_trit_range(9, 11).to_int32() + 13;
                 int rs_idx = instr.get_trit_range(8, 6).to_int32() + 13;
-                Word imm = instr.get_trit_range(5, 0);
+                Word imm = instr.get_trit_range(0, 5);
                 Word result = registers[rs_idx] * imm;
                 registers[rd_idx] = result;
                 set_sign_flag(result);
@@ -221,7 +229,7 @@ namespace termite {
             case ANDI: {
                 int rd_idx = instr.get_trit_range(9, 11).to_int32() + 13;
                 int rs_idx = instr.get_trit_range(8, 6).to_int32() + 13;
-                Word imm = instr.get_trit_range(5, 0);
+                Word imm = instr.get_trit_range(0, 5);
                 Word result = registers[rs_idx] & imm;
                 registers[rd_idx] = result;
                 set_sign_flag(result);
@@ -239,8 +247,26 @@ namespace termite {
             case ORI: {
                 int rd_idx = instr.get_trit_range(9, 11).to_int32() + 13;
                 int rs_idx = instr.get_trit_range(8, 6).to_int32() + 13;
-                Word imm = instr.get_trit_range(5, 0);
+                Word imm = instr.get_trit_range(0, 5);
                 Word result = registers[rs_idx] | imm;
+                registers[rd_idx] = result;
+                set_sign_flag(result);
+                break;
+            }
+            case XOR: {
+                int rd_idx = instr.get_trit_range(9, 11).to_int32() + 13;
+                int rs_idx = instr.get_trit_range(8, 6).to_int32() + 13;
+                int rt_idx = instr.get_trit_range(3, 5).to_int32() + 13;
+                Word result = registers[rs_idx] ^ registers[rt_idx];
+                registers[rd_idx] = result;
+                set_sign_flag(result);
+                break;
+            }
+            case XORI: {
+                int rd_idx = instr.get_trit_range(9, 11).to_int32() + 13;
+                int rs_idx = instr.get_trit_range(8, 6).to_int32() + 13;
+                Word imm = instr.get_trit_range(0, 5);
+                Word result = registers[rs_idx] ^ imm;
                 registers[rd_idx] = result;
                 set_sign_flag(result);
                 break;
@@ -257,7 +283,7 @@ namespace termite {
             case LSHI: {
                 int rd_idx = instr.get_trit_range(9, 11).to_int32() + 13;
                 int rs_idx = instr.get_trit_range(8, 6).to_int32() + 13;
-                Word imm = instr.get_trit_range(5, 0);
+                Word imm = instr.get_trit_range(0, 5);
                 Word result = registers[rs_idx] << imm;
                 registers[rd_idx] = result;
                 set_sign_flag(result);
@@ -275,7 +301,7 @@ namespace termite {
             case RSHI: {
                 int rd_idx = instr.get_trit_range(9, 11).to_int32() + 13;
                 int rs_idx = instr.get_trit_range(8, 6).to_int32() + 13;
-                Word imm = instr.get_trit_range(5, 0);
+                Word imm = instr.get_trit_range(0, 5);
                 Word result = registers[rs_idx] >> imm;
                 registers[rd_idx] = result;
                 set_sign_flag(result);
@@ -381,14 +407,37 @@ namespace termite {
             }
             case SYS: {
                 Word imm = instr.get_trit_range(0, 11);
-                if (imm.to_int32() == 0) {
+                if (imm.to_int32() == 1) {
                     std::cout << registers[0].to_int32() << '\n';
                 }
-                else if (imm.to_int32() == 1) {
-                    std::cout << registers[0].str() << '\n';
+                else if (imm.to_int32() == 2) {
+                    std::cout << registers[0].to_ternary_str() << '\n';
+                }
+                else if (imm.to_int32() == 3) {
+                    std::wcout << registers[0].to_wchar();
+                }
+                else if (imm.to_int32() == 4) {
+                    std::cout << registers[0].to_int32() << '\n';
+                } 
+                else if (imm.to_int32() == 5) {
+                    int32_t n;
+                    std::cin >> n;
+                    registers[0] = Word::from_int32(n);
+                } 
+                else if (imm.to_int32() == 5) {
+                    std::string s;
+                    std::cin >> s;
+                    registers[0] = Word::from_ternary_str(s);
+                }     
+                else if (imm.to_int32() == 6) {
+                    wchar_t wc;
+                    std::wcin >> wc;
+                    registers[0] = Word::from_wchar(wc);
                 }
                 break;
             }
+
+
             default: {
                 throw std::string("Invalid opcode");
                 break;
@@ -398,5 +447,13 @@ namespace termite {
                 print_state();
             }
         }
+    }
+    
+    std::string CPU::pad(const std::string& s, int length) {
+        std::string result = s;
+        while(result.size() < length) {
+            result = result + " ";
+        }
+        return result;
     }
 } // namespace termite

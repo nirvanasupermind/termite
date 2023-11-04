@@ -37,16 +37,16 @@ namespace termite {
         bct = bct & ~(1 << (2 * i));
         bct = bct | (val << (2 * i));
     }
-        
+
     Word Word::get_trit_range(int start, int end) const {
         Word result;
-        for(int i = start; i <= end; i++) {
+        for (int i = start; i <= end; i++) {
             result.set_bct_trit(i, get_bct_trit(i));
         }
         result = result >> Word::from_int32(start);
         return result;
     }
-    
+
 
     Tryte Word::get_lo_tryte() const {
         return Tryte(bct & 0xffff);
@@ -110,6 +110,14 @@ namespace termite {
         return result;
     }
 
+    Word Word::operator^(const Word& other) const {
+        Word result;
+        for (int i = 0; i < TRITS_PER_WORD; i++) {
+            result.set_bct_trit(i, TRIT_XOR[get_bct_trit(i)][other.get_bct_trit(i)]);
+        }
+        return result;
+    }
+
     Word Word::operator+(const Word& other) const {
         return add_with_carry(other).first;
     }
@@ -138,23 +146,23 @@ namespace termite {
         Word result;
         for (int i = 0; i < TRITS_PER_WORD; i++) {
             Word temp = (*this) << i;
-            switch(other.get_bct_trit(i)) {
-                case 0b00:
-                    result = result - ((*this) << termite::Word::from_int32(i));
-                    break;
-                case 0b01:
-                    break;
-                case 0b10:
-                    result = result + ((*this) << termite::Word::from_int32(i));
-                    break;
-                default:
-                    break;   
+            switch (other.get_bct_trit(i)) {
+            case 0b00:
+                result = result - ((*this) << termite::Word::from_int32(i));
+                break;
+            case 0b01:
+                break;
+            case 0b10:
+                result = result + ((*this) << termite::Word::from_int32(i));
+                break;
+            default:
+                break;
             }
         }
         return result;
     }
-    
-    std::string Word::str() const {
+
+    std::string Word::to_ternary_str() const {
         std::string result = "";
         for (int i = 0; i < TRITS_PER_WORD; i++) {
             switch (get_bct_trit(i)) {
@@ -177,10 +185,14 @@ namespace termite {
 
     int32_t Word::to_int32() const {
         int32_t result = 0;
-        for(int i = 0; i < TRITS_PER_WORD; i++) {
+        for (int i = 0; i < TRITS_PER_WORD; i++) {
             result += POW3[i] * ((int)(get_bct_trit(i) - 1));
         }
         return result;
+    }
+
+    wchar_t Word::to_wchar() const {
+        return (wchar_t)(to_int32() + 3280);
     }
 
     Word Word::from_int32(int32_t n) {
@@ -202,4 +214,24 @@ namespace termite {
         return result;
     }
 
-} // namespace termite 
+
+    Word Word::from_ternary_str(const std::string& s) {
+        Word result;
+        for(int i = 0; i < s.size(); i++) {
+            if(s.at(i) == 'T' || s.at(i) == 't') {
+                result.set_bct_trit(i, 0b00);
+            } else if(s.at(i) == '0') {
+                result.set_bct_trit(i, 0b01);
+            } else if(s.at(i) == '1') {
+                result.set_bct_trit(i, 0b10);                
+            } else {
+               throw std::string("Malformed ternary string: " + s);
+            }
+        }
+        return result;
+    }
+
+    Word Word::from_wchar(wchar_t wc) {
+        return Word::from_int32((int32_t)(wc) + 3280);
+    }
+} // namespace termite

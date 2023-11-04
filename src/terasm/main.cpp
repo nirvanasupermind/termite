@@ -38,6 +38,5 @@ int main(int argc, char** argv) {
         std::cout << e << '\n';
         return 1;
     }
-
     return 0;
 }

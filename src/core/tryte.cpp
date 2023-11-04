@@ -28,7 +28,7 @@ namespace termite {
         bct = bct | (val << (2 * i));
     }
 
-    std::string Tryte::str() const {
+    std::string Tryte::to_ternary_str() const {
         std::string result = "";
         for (int i = 0; i < TRITS_PER_TRYTE; i++) {
             switch (get_bct_trit(i)) {
