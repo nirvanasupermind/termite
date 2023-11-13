@@ -17,7 +17,7 @@ int main(int argc, char** argv) {
     buffer << input.rdbuf();
     std::string text = buffer.str();
     input.close();
-
+    
     try {
         termite::Lexer lexer(text);
         std::vector<termite::Token> tokens = lexer.generate_tokens();
@@ -33,6 +33,7 @@ int main(int argc, char** argv) {
             bytes[i * 4 + 3] = assembler.code.at(i).get_trit_range(12, 15).get_bct();
         }
         fout.write((char*) &bytes, sizeof(bytes));
+        fout.close();
     }
     catch (const std::string& e) {
         std::cout << e << '\n';

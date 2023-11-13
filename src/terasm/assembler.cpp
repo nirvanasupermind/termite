@@ -35,6 +35,7 @@ namespace termite {
     void Assembler::assemble_label_instr() {
         if (current.type == TokenType::IDENTIFIER) {
             labels[current.value] = Word::from_int32((code.size() << 1) - 21523360);
+            // std::cout << current.value << ' ' << labels[current.value].to_ternary_str() << '\n';
             advance();
             if (current.type != TokenType::COLON) {
                 error();
@@ -107,6 +108,7 @@ namespace termite {
                     }
                     idx++;
                     // lshi rd,8;
+                    code.push_back(Word());
                     code[idx].set_bct_trit(15, 0b00);
                     code[idx].set_bct_trit(14, 0b10);
                     code[idx].set_bct_trit(13, 0b10);
@@ -124,6 +126,7 @@ namespace termite {
                     code[idx].set_bct_trit(1, 0b01);
                     code[idx].set_bct_trit(0, 0b00);
                     idx++;
+                    code.push_back(Word());
                     // addi rd,rd, (trits 6-1 of label_addr);
                     code[idx].set_bct_trit(15, 0b00);
                     code[idx].set_bct_trit(14, 0b00);
@@ -142,6 +145,7 @@ namespace termite {
 
                     idx++;
                     // lshi rd,1;
+                    code.push_back(Word());
                     code[idx].set_bct_trit(15, 0b00);
                     code[idx].set_bct_trit(14, 0b10);
                     code[idx].set_bct_trit(13, 0b10);
@@ -161,6 +165,7 @@ namespace termite {
                     code[idx].set_bct_trit(0, 0b10);  
                     idx++; 
                     // addi rd,rd, (trit 0 of label_addr);
+                    code.push_back(Word());
                     code[idx].set_bct_trit(15, 0b00);
                     code[idx].set_bct_trit(14, 0b00);
                     code[idx].set_bct_trit(13, 0b10);
@@ -541,7 +546,6 @@ namespace termite {
             for (int i = 11; i >= 9; i--) {
                 code[idx].set_bct_trit(i, rd.get_bct_trit(i - 9));
             }
-            advance();
         }
         else {
             error();
