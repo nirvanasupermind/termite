@@ -40,13 +40,13 @@ There are two status flags held in the program status register. The zeroth trit 
 |`T111`           |`rshi`  |Right shift immediate                 |opcode [15:12], `rd` [11:9], `rs` [8:6], `imm` [5:0]   |`rd = rs >> imm`                      |
 |`0TTT`           |`cmp`   |Compare                               |opcode [15:12], `rd` [11:9], `rs` [8:6]                |`SF = sign(rd - rs)`                  |
 |`0TT0`           |`cmpi`  |Compare immediate                     |opcode [15:12], `rd` [11:9], `imm` [8:0]               |`SF = sign(rd - imm)`                 |
-|`0TT1`           |`jmp`   |Uncoditional jump                     |opcode [15:12], `rd` [11:9]                            |`pc = rd`                             |
-|`0T0T`           |`jeq`   |Jump if equal                         |opcode [15:12], `rd` [11:9]                            |`pc = rd` if `SF == 0`                |
-|`0T00`           |`jne`   |Jump if not equal                     |opcode [15:12], `rd` [11:9]                            |`pc = rd` if `SF != 0`                |
-|`0T01`           |`jlt`   |Jump if less than                     |opcode [15:12], `rd` [11:9]                            |`pc = rd` if `SF < 0`                 |
-|`0T1T`           |`jle`   |Jump if less than or equal            |opcode [15:12], `rd` [11:9]                            |`pc = rd` if `SF <= 0`                |
-|`0T10`           |`jgt`   |Jump if greater than                  |opcode [15:12], `rd` [11:9]                            |`pc = rd` if `SF > 0`                 |
-|`0T11`           |`jge`   |Jump if greater than or equal         |opcode [15:12], `rd` [11:9]                            |`pc = rd` if `SF >= 0`                |
+|`0TT1`           |`b`     |Uncoditional branch                   |opcode [15:12], `imm` [11:0]                           |`pc = pc + imm`                       |
+|`0T0T`           |`beq`   |Branch if equal                       |opcode [15:12], `imm` [11:0]                           |`pc = pc + imm` if `SF == 0`          |
+|`0T00`           |`bne`   |Branch if not equal                   |opcode [15:12], `imm` [11:0]                           |`pc = pc + imm` if `SF != 0`          |
+|`0T01`           |`blt`   |Branch if less than                   |opcode [15:12], `imm` [11:0]                           |`pc = pc + imm` if `SF < 0`           |
+|`0T1T`           |`ble`   |Branch if less than or equal          |opcode [15:12], `imm` [11:0]                           |`pc = pc + imm` if `SF <= 0`          |
+|`0T10`           |`bgt`   |Branch if greater than                |opcode [15:12], `imm` [11:0]                           |`pc = pc + imm` if `SF > 0`           |
+|`0T11`           |`bge`   |Branch if greater than or equal       |opcode [15:12], `imm` [11:0]                           |`pc = pc + imm` if `SF >= 0`          |
 |`00TT`           |`push`  |Push to stack                         |opcode [15:12], `imm` [11:0]                           |`sp = sp - 2; mem[sp] = imm`          |
 |`00T0`           |`pop`   |Pop from stack                        |opcode [15:12], `rd` [11:9]                            |`rd = mem[sp]; sp = sp + 2`           |
 |`00T1`           |`call`  |Call subroutine                       |opcode [15:12], `imm` [11:0]                           |`sp = sp - 2; mem[sp] = pc; pc = imm;`|

@@ -35,7 +35,6 @@ namespace termite {
     void Assembler::assemble_label_instr() {
         if (current.type == TokenType::IDENTIFIER) {
             labels[current.value] = Word::from_int32((code.size() << 1) - 21523360);
-            // std::cout << current.value << ' ' << labels[current.value].to_ternary_str() << '\n';
             advance();
             if (current.type != TokenType::COLON) {
                 error();
@@ -98,104 +97,12 @@ namespace termite {
                 error();
             }
             advance();
-            if (current.type == TokenType::IDENTIFIER) {
-                // Label
-                std::string label = current.value;
-                try {
-                    Word label_addr = labels.at(label);
-                    for (int i = 15; i >= 7; i--) {
-                        code[idx].set_bct_trit(i - 8, label_addr.get_bct_trit(i));
-                    }
-                    idx++;
-                    // lshi rd,8;
-                    code.push_back(Word());
-                    code[idx].set_bct_trit(15, 0b00);
-                    code[idx].set_bct_trit(14, 0b10);
-                    code[idx].set_bct_trit(13, 0b10);
-                    code[idx].set_bct_trit(12, 0b00);
-                    for (int i = 11; i >= 9; i--) {
-                        code[idx].set_bct_trit(i, rd.get_bct_trit(i - 9));
-                    }
-                    code[idx].set_bct_trit(8, 0b01);
-                    code[idx].set_bct_trit(7, 0b01);
-                    code[idx].set_bct_trit(6, 0b01);
-                    code[idx].set_bct_trit(5, 0b01);
-                    code[idx].set_bct_trit(4, 0b01);
-                    code[idx].set_bct_trit(3, 0b01);
-                    code[idx].set_bct_trit(2, 0b10);
-                    code[idx].set_bct_trit(1, 0b01);
-                    code[idx].set_bct_trit(0, 0b00);
-                    idx++;
-                    code.push_back(Word());
-                    // addi rd,rd, (trits 6-1 of label_addr);
-                    code[idx].set_bct_trit(15, 0b00);
-                    code[idx].set_bct_trit(14, 0b00);
-                    code[idx].set_bct_trit(13, 0b10);
-                    code[idx].set_bct_trit(12, 0b00);
-                    for (int i = 11; i >= 9; i--) {
-                        code[idx].set_bct_trit(i, rd.get_bct_trit(i - 9));
-                    }
-                    for (int i = 8; i >= 6; i--) {
-                        code[idx].set_bct_trit(i, rd.get_bct_trit(i - 6));
-                    }
-
-                    for (int i = 6; i >= 1; i--) {
-                        code[idx].set_bct_trit(i - 1, label_addr.get_bct_trit(i));
-                    }
-
-                    idx++;
-                    // lshi rd,1;
-                    code.push_back(Word());
-                    code[idx].set_bct_trit(15, 0b00);
-                    code[idx].set_bct_trit(14, 0b10);
-                    code[idx].set_bct_trit(13, 0b10);
-                    code[idx].set_bct_trit(12, 0b00);
-
-                    for (int i = 11; i >= 9; i--) {
-                        code[idx].set_bct_trit(i, rd.get_bct_trit(i - 9));
-                    }
-                    code[idx].set_bct_trit(8, 0b01);
-                    code[idx].set_bct_trit(7, 0b01);
-                    code[idx].set_bct_trit(6, 0b01);
-                    code[idx].set_bct_trit(5, 0b01);
-                    code[idx].set_bct_trit(4, 0b01);
-                    code[idx].set_bct_trit(3, 0b01);
-                    code[idx].set_bct_trit(2, 0b01);
-                    code[idx].set_bct_trit(1, 0b01);
-                    code[idx].set_bct_trit(0, 0b10);  
-                    idx++; 
-                    // addi rd,rd, (trit 0 of label_addr);
-                    code.push_back(Word());
-                    code[idx].set_bct_trit(15, 0b00);
-                    code[idx].set_bct_trit(14, 0b00);
-                    code[idx].set_bct_trit(13, 0b10);
-                    code[idx].set_bct_trit(12, 0b00);
-                    for (int i = 11; i >= 9; i--) {
-                        code[idx].set_bct_trit(i, rd.get_bct_trit(i - 9));
-                    }
-                    for (int i = 8; i >= 6; i--) {
-                        code[idx].set_bct_trit(i, rd.get_bct_trit(i - 6));
-                    }
-                    code[idx].set_bct_trit(5, 0b01);      
-                    code[idx].set_bct_trit(4, 0b01);
-                    code[idx].set_bct_trit(3, 0b01);
-                    code[idx].set_bct_trit(2, 0b01);
-                    code[idx].set_bct_trit(1, 0b01);
-                    code[idx].set_bct_trit(0, label_addr.get_bct_trit(0));
-                }
-                catch (const std::exception& e) {
-                    throw std::string("Error: undefined label '" + label + "'");
-                }
+            if (current.type != TokenType::NUMBER) {
+                error();
             }
-            else {
-                // Normal number immediate
-                if (current.type != TokenType::NUMBER) {
-                    error();
-                }
-                Word imm = Word::from_int32(std::stoi(current.value));
-                for (int i = 8; i >= 0; i--) {
-                    code[idx].set_bct_trit(i, imm.get_bct_trit(i));
-                }
+            Word imm = Word::from_int32(std::stoi(current.value));
+            for (int i = 8; i >= 0; i--) {
+                code[idx].set_bct_trit(i, imm.get_bct_trit(i));
             }
         }
         else if (current.value == "movps") {
@@ -533,18 +440,32 @@ namespace termite {
                 code[idx].set_bct_trit(i, imm.get_bct_trit(i - 6));
             }
         }
-        else if (current.value == "jmp") {
+        else if (current.value == "b") {
             code[idx].set_bct_trit(15, 0b01);
             code[idx].set_bct_trit(14, 0b00);
             code[idx].set_bct_trit(13, 0b00);
             code[idx].set_bct_trit(12, 0b10);
             advance();
-            if (current.type != TokenType::REGISTER) {
-                error();
+            if (current.type == TokenType::IDENTIFIER) {
+                Word label_addr;
+                try {
+                    label_addr = labels.at(current.value);
+                } catch(const std::out_of_range &e) {
+                    throw std::string("Error: undefined label '" + current.value + "'");
+                }
+                Word relative_addr = label_addr - Word::from_int32(((idx + 1) << 1) - 21523360);
+                for (int i = 11; i >= 0; i--) {
+                    code[idx].set_bct_trit(i, relative_addr.get_bct_trit(i));
+                }
             }
-            Word rd = Word::from_int32(std::stoi(current.value.substr(1)));
-            for (int i = 11; i >= 9; i--) {
-                code[idx].set_bct_trit(i, rd.get_bct_trit(i - 9));
+            else {
+                if (current.type != TokenType::NUMBER) {
+                    error();
+                }
+                Word imm = Word::from_int32(std::stoi(current.value));
+                for (int i = 11; i >= 0; i--) {
+                    code[idx].set_bct_trit(i, imm.get_bct_trit(i));
+                }
             }
         }
         else {

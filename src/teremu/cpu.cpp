@@ -327,57 +327,57 @@ namespace termite {
                 psr.set_bct_trit(CF, carry);
                 break;
             }
-            case JMP: {
-                int rd_idx = instr.get_trit_range(9, 11).to_int32() + 13;
-                registers[PC] = registers[rd_idx];
-                cycles += (registers[PC] - registers[rd_idx]).to_int32();
+            case B: {
+                Word imm = instr.get_trit_range(0, 11);
+                registers[PC] = registers[PC] + imm;
+                cycles -= imm.to_int32();
                 break;
             }
-            case JEQ: {
-                int rd_idx = instr.get_trit_range(9, 11).to_int32() + 13;
-                if (psr.get_bct_trit(SF) == 0b01) {
-                    registers[PC] = registers[rd_idx];
-                    cycles += (registers[PC] - registers[rd_idx]).to_int32();
+            case BEQ: {
+                Word imm = instr.get_trit_range(0, 11);
+                if(psr.get_bct_trit(1) == 0b01) {
+                    registers[PC] = registers[PC] + imm;
+                    cycles -= imm.to_int32();
                 }
                 break;
             }
-            case JNE: {
-                int rd_idx = instr.get_trit_range(9, 11).to_int32() + 13;
-                if (psr.get_bct_trit(SF) != 0b01) {
-                    registers[PC] = registers[rd_idx];
-                    cycles += (registers[PC] - registers[rd_idx]).to_int32();
+            case BNE: {
+                Word imm = instr.get_trit_range(0, 11);
+                if(psr.get_bct_trit(1) != 0b01) {
+                    registers[PC] = registers[PC] + imm;
+                    cycles -= imm.to_int32();
                 }
                 break;
             }
-            case JLT: {
-                int rd_idx = instr.get_trit_range(9, 11).to_int32() + 13;
-                if (psr.get_bct_trit(SF) < 0b01) {
-                    registers[PC] = registers[rd_idx];
-                    cycles += (registers[PC] - registers[rd_idx]).to_int32();
+            case BLT: {
+                Word imm = instr.get_trit_range(0, 11);
+                if(psr.get_bct_trit(1) < 0b01) {
+                    registers[PC] = registers[PC] + imm;
+                    cycles -= imm.to_int32();
                 }
                 break;
             }
-            case JLE: {
-                int rd_idx = instr.get_trit_range(9, 11).to_int32() + 13;
-                if (psr.get_bct_trit(SF) <= 0b01) {
-                    registers[PC] = registers[rd_idx];
-                    cycles += (registers[PC] - registers[rd_idx]).to_int32();
+            case BLE: {
+                Word imm = instr.get_trit_range(0, 11);
+                if(psr.get_bct_trit(1) <= 0b01) {
+                    registers[PC] = registers[PC] + imm;
+                    cycles -= imm.to_int32();
                 }
                 break;
             }
-            case JGT: {
-                int rd_idx = instr.get_trit_range(9, 11).to_int32() + 13;
-                if (psr.get_bct_trit(SF) > 0b01) {
-                    registers[PC] = registers[rd_idx];
-                    cycles += (registers[PC] - registers[rd_idx]).to_int32();
+            case BGT: {
+                Word imm = instr.get_trit_range(0, 11);
+                if(psr.get_bct_trit(1) > 0b01) {
+                    registers[PC] = registers[PC] + imm;
+                    cycles -= imm.to_int32();
                 }
                 break;
             }
-            case JGE: {
-                int rd_idx = instr.get_trit_range(9, 11).to_int32() + 13;
-                if (psr.get_bct_trit(SF) >= 0b01) {
-                    registers[PC] = registers[rd_idx];
-                    cycles += (registers[PC] - registers[rd_idx]).to_int32();
+            case BGE: {
+                Word imm = instr.get_trit_range(0, 11);
+                if(psr.get_bct_trit(1) >= 0b01) {
+                    registers[PC] = registers[PC] + imm;
+                    cycles -= imm.to_int32();
                 }
                 break;
             }
