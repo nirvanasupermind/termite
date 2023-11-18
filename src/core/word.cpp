@@ -192,7 +192,7 @@ namespace termite {
     }
 
     wchar_t Word::to_wchar() const {
-        return (wchar_t)(to_int32() + 3280);
+        return (wchar_t)(to_int32());
     }
 
     Word Word::from_int32(int32_t n) {
@@ -232,6 +232,6 @@ namespace termite {
     }
 
     Word Word::from_wchar(wchar_t wc) {
-        return Word::from_int32((int32_t)(wc) + 3280);
+        return Word::from_int32((int32_t)(wc));
     }
 } // namespace termite

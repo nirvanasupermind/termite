@@ -34,6 +34,7 @@ namespace termite {
 
     void Assembler::assemble_label_instr() {
         if (current.type == TokenType::IDENTIFIER) {
+            std::cout << "HELLO " << ' ' << current.value << '\n';
             labels[current.value] = Word::from_int32((code.size() << 1) - 21523360);
             advance();
             if (current.type != TokenType::COLON) {
@@ -100,7 +101,13 @@ namespace termite {
             if (current.type != TokenType::NUMBER) {
                 error();
             }
-            Word imm = Word::from_int32(std::stoi(current.value));
+            Word imm;
+            if (current.value.at(0) == '%') {
+                imm = Word::from_ternary_str(current.value.substr(1));
+            }
+            else {
+                imm = Word::from_int32(std::stoi(current.value));
+            }
             for (int i = 8; i >= 0; i--) {
                 code[idx].set_bct_trit(i, imm.get_bct_trit(i));
             }
@@ -153,7 +160,13 @@ namespace termite {
             if (current.type != TokenType::NUMBER) {
                 error();
             }
-            Word imm = Word::from_int32(std::stoi(current.value));
+            Word imm;
+            if (current.value.at(0) == '%') {
+                imm = Word::from_ternary_str(current.value.substr(1));
+            }
+            else {
+                imm = Word::from_int32(std::stoi(current.value));
+            }
             for (int i = 5; i >= 0; i--) {
                 code[idx].set_bct_trit(i, imm.get_bct_trit(i));
             }
@@ -191,7 +204,13 @@ namespace termite {
             if (current.type != TokenType::NUMBER) {
                 error();
             }
-            Word imm = Word::from_int32(std::stoi(current.value));
+            Word imm;
+            if (current.value.at(0) == '%') {
+                imm = Word::from_ternary_str(current.value.substr(1));
+            }
+            else {
+                imm = Word::from_int32(std::stoi(current.value));
+            }
             for (int i = 5; i >= 0; i--) {
                 code[idx].set_bct_trit(i, imm.get_bct_trit(i));
             }
@@ -313,7 +332,13 @@ namespace termite {
             if (current.type != TokenType::NUMBER) {
                 error();
             }
-            Word imm = Word::from_int32(std::stoi(current.value));
+            Word imm;
+            if (current.value.at(0) == '%') {
+                imm = Word::from_ternary_str(current.value.substr(1));
+            }
+            else {
+                imm = Word::from_int32(std::stoi(current.value));
+            }
             for (int i = 8; i >= 0; i--) {
                 code[idx].set_bct_trit(i, imm.get_bct_trit(i));
             }
@@ -435,7 +460,13 @@ namespace termite {
             if (current.type != TokenType::NUMBER) {
                 error();
             }
-            Word imm = Word::from_int32(std::stoi(current.value));
+            Word imm;
+            if (current.value.at(0) == '%') {
+                imm = Word::from_ternary_str(current.value.substr(1));
+            }
+            else {
+                imm = Word::from_int32(std::stoi(current.value));
+            }
             for (int i = 8; i >= 0; i--) {
                 code[idx].set_bct_trit(i, imm.get_bct_trit(i - 6));
             }
@@ -445,28 +476,92 @@ namespace termite {
             code[idx].set_bct_trit(14, 0b00);
             code[idx].set_bct_trit(13, 0b00);
             code[idx].set_bct_trit(12, 0b10);
+            assemble_i_instr(idx);
+        }
+        else if (current.value == "beq") {
+            code[idx].set_bct_trit(15, 0b01);
+            code[idx].set_bct_trit(14, 0b00);
+            code[idx].set_bct_trit(13, 0b01);
+            code[idx].set_bct_trit(12, 0b00);
+            assemble_i_instr(idx);
+        }
+        else if (current.value == "bne") {
+            code[idx].set_bct_trit(15, 0b01);
+            code[idx].set_bct_trit(14, 0b00);
+            code[idx].set_bct_trit(13, 0b01);
+            code[idx].set_bct_trit(12, 0b01);
+            assemble_i_instr(idx);
+        }
+        else if (current.value == "blt") {
+            code[idx].set_bct_trit(15, 0b01);
+            code[idx].set_bct_trit(14, 0b00);
+            code[idx].set_bct_trit(13, 0b01);
+            code[idx].set_bct_trit(12, 0b10);
+            assemble_i_instr(idx);
+        }
+        else if (current.value == "ble") {
+            code[idx].set_bct_trit(15, 0b01);
+            code[idx].set_bct_trit(14, 0b00);
+            code[idx].set_bct_trit(13, 0b10);
+            code[idx].set_bct_trit(12, 0b00);
+            assemble_i_instr(idx);
+        }
+        else if (current.value == "bgt") {
+            code[idx].set_bct_trit(15, 0b01);
+            code[idx].set_bct_trit(14, 0b00);
+            code[idx].set_bct_trit(13, 0b10);
+            code[idx].set_bct_trit(12, 0b01);
+            assemble_i_instr(idx);
+        }
+        else if (current.value == "bge") {
+            code[idx].set_bct_trit(15, 0b01);
+            code[idx].set_bct_trit(14, 0b00);
+            code[idx].set_bct_trit(13, 0b10);
+            code[idx].set_bct_trit(12, 0b10);
+            assemble_i_instr(idx);
+        }
+        else if (current.value == "push") {
+            code[idx].set_bct_trit(15, 0b01);
+            code[idx].set_bct_trit(14, 0b01);
+            code[idx].set_bct_trit(13, 0b00);
+            code[idx].set_bct_trit(12, 0b00);
+            assemble_i_instr(idx);
+        }
+        else if (current.value == "pop") {
+            code[idx].set_bct_trit(15, 0b01);
+            code[idx].set_bct_trit(14, 0b01);
+            code[idx].set_bct_trit(13, 0b00);
+            code[idx].set_bct_trit(12, 0b01);
             advance();
-            if (current.type == TokenType::IDENTIFIER) {
-                Word label_addr;
-                try {
-                    label_addr = labels.at(current.value);
-                } catch(const std::out_of_range &e) {
-                    throw std::string("Error: undefined label '" + current.value + "'");
-                }
-                Word relative_addr = label_addr - Word::from_int32(((idx + 1) << 1) - 21523360);
-                for (int i = 11; i >= 0; i--) {
-                    code[idx].set_bct_trit(i, relative_addr.get_bct_trit(i));
-                }
+            if (current.type != TokenType::REGISTER) {
+                error();
             }
-            else {
-                if (current.type != TokenType::NUMBER) {
-                    error();
-                }
-                Word imm = Word::from_int32(std::stoi(current.value));
-                for (int i = 11; i >= 0; i--) {
-                    code[idx].set_bct_trit(i, imm.get_bct_trit(i));
-                }
+            Word rd = Word::from_int32(std::stoi(current.value.substr(1)));
+            for (int i = 11; i >= 9; i--) {
+                code[idx].set_bct_trit(i, rd.get_bct_trit(i - 9));
             }
+            advance();
+        }
+        else if (current.value == "call") {
+            code[idx].set_bct_trit(15, 0b01);
+            code[idx].set_bct_trit(14, 0b01);
+            code[idx].set_bct_trit(13, 0b00);
+            code[idx].set_bct_trit(12, 0b10);
+            assemble_i_instr(idx);
+        }
+        else if (current.value == "ret") {
+            code[idx].set_bct_trit(15, 0b01);
+            code[idx].set_bct_trit(14, 0b01);
+            code[idx].set_bct_trit(13, 0b01);
+            code[idx].set_bct_trit(12, 0b00);
+            advance();
+        }
+        else if (current.value == "sys") {
+            code[idx].set_bct_trit(15, 0b01);
+            code[idx].set_bct_trit(14, 0b01);
+            code[idx].set_bct_trit(13, 0b01);
+            code[idx].set_bct_trit(12, 0b01);
+            assemble_i_instr(idx);
         }
         else {
             error();
@@ -541,9 +636,46 @@ namespace termite {
         if (current.type != TokenType::NUMBER) {
             error();
         }
-        Word imm = Word::from_int32(std::stoi(current.value.substr(1)));
+        Word imm;
+        if (current.value.at(0) == '%') {
+            imm = Word::from_ternary_str(current.value.substr(1));
+        } else {
+            imm = Word::from_int32(std::stoi(current.value));
+        }
         for (int i = 5; i >= 0; i--) {
             code[idx].set_bct_trit(i, imm.get_bct_trit(i));
+        }
+    }
+
+    void Assembler::assemble_i_instr(int idx) {
+        advance();
+        if (current.type == TokenType::IDENTIFIER) {
+            Word label_addr;
+            try {
+                label_addr = labels.at(current.value);
+            }
+            catch (const std::out_of_range& e) {
+                throw std::string("Error: undefined label '" + current.value + "'");
+            }
+            Word relative_addr = label_addr - Word::from_int32(((idx + 1) << 1) - 21523360);
+            for (int i = 11; i >= 0; i--) {
+                code[idx].set_bct_trit(i, relative_addr.get_bct_trit(i));
+            }
+        }
+        else {
+            if (current.type != TokenType::NUMBER) {
+                error();
+            }
+            Word imm;
+            if (current.value.at(0) == '%') {
+                imm = Word::from_ternary_str(current.value.substr(1));
+            }
+            else {
+                imm = Word::from_int32(std::stoi(current.value));
+            }
+            for (int i = 11; i >= 0; i--) {
+                code[idx].set_bct_trit(i, imm.get_bct_trit(i));
+            }
         }
     }
 

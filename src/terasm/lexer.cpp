@@ -1,4 +1,5 @@
 #include <string>
+#include <iostream>
 #include "token.h"
 #include "lexer.h"
 
@@ -24,10 +25,15 @@ namespace termite {
             if (std::isspace(current)) {
                 advance();
             }
-            else if (current == '.' || std::isdigit(current)) {
+            else if (current == '.' || current == '-' || current == '%' || std::isdigit(current)) {
                 tokens.push_back(generate_number());
             }
-            else if (current == '_'  || current == '-' || std::isalpha(current)) {
+            else if (current == '#') {
+                while(current != '\n') {
+                    advance();
+                }
+            }
+            else if (current == '_' || std::isalpha(current)) {
                 tokens.push_back(generate_identifier());
             }
             else if (current == ':') {
@@ -47,36 +53,34 @@ namespace termite {
                 break;
             }
         }
-        
+
         // tokens.push_back(Token(TokenType::EOF_, ""));
 
         return tokens;
     }
 
     Token Lexer::generate_number() {
-        int decimal_point_count = 0;
         std::string number_str(1, current);
-        advance();
-
-        while (current && (current == '.' || std::isdigit(current))) {
-            if (current == '.') {
-                if (++decimal_point_count > 1) {
-                    break;
-                }
-            }
-
-            number_str += current;
+        if (current == '%') {
             advance();
+            while (current && (current == 'T' || current == 't' || current == '0' | current == '1')) {
+                number_str += current;
+                advance();
+            }
         }
-
-        if (number_str.at(0) == '.') {
-            number_str = '0' + number_str;
+        else {
+            advance();
+            int decimal_point_count = 0;
+            while (current && (current == '.' || std::isdigit(current))) {
+                if (current == '.') {
+                    if (++decimal_point_count > 1) {
+                        break;
+                    }
+                }
+                number_str += current;
+                advance();
+            }
         }
-
-        if (number_str.at(number_str.length() - 1) == '.') {
-            number_str += '0';
-        }
-
         return Token(TokenType::NUMBER, number_str);
     }
 
@@ -85,19 +89,22 @@ namespace termite {
         bool is_register = current == 'r';
         advance();
 
-        while (current && (current == '_'  || current == '-' || std::isalnum(current))) {
-            if(!(current == '-' || isdigit(current))) {
+        while (current && (current == '_' || current == '-' || std::isalnum(current))) {
+            if (!(current == '-' || isdigit(current))) {
                 is_register = false;
             }
             identifier_str += current;
             advance();
         }
 
+
         if (is_register) {
             return Token(TokenType::REGISTER, identifier_str);
-        } else if(std::find(KEYWORDS.begin(), KEYWORDS.end(), identifier_str) != KEYWORDS.end()) {
+        }
+        else if (std::find(KEYWORDS.begin(), KEYWORDS.end(), identifier_str) != KEYWORDS.end()) {
             return Token(TokenType::KEYWORD, identifier_str);
-        } else {
+        }
+        else {
             return Token(TokenType::IDENTIFIER, identifier_str);
         }
 

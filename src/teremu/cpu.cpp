@@ -397,7 +397,7 @@ namespace termite {
                 Word imm = instr.get_trit_range(0, 11);
                 registers[SP] = registers[SP] - 2;
                 mem.set_word(registers[SP], registers[PC]);
-                registers[PC] = imm;
+                registers[PC] = registers[PC] + imm;
                 break;
             }
             case RET: {
@@ -439,7 +439,7 @@ namespace termite {
 
 
             default: {
-                throw std::string("Invalid opcode");
+                throw std::string("Error: invalid opcode: " + instr.get_trit_range(12, 15).to_ternary_str());
                 break;
             }
             }

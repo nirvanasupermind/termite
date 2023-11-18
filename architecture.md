@@ -5,7 +5,7 @@ Note that "tryte" is used here to refer to an 8-trit data type and "word" is use
 All instructions are 16 trits or one word long, and there is a 16-trit address space of up to 3^16 (43046721) trytes of memory. Each memory address points to a tryte, and words are stored in memory as two trytes in little-endian order.
 
 ## Registers
-There are 27 general purpose 16-trit registers numbered as `r-13` to `r13`.  `r12` is also referred to as `sp`, the stack pointer, initiallized to (3^16-1)/2 - 1 (21523360) and going downwards. `r13` is also referred to as `pc`, the program counter,  starting at -(3^16-1)/2 (-21523360).  There is also the special-purpose program status register `psr` for holding status flags.
+There are 27 general purpose 16-trit registers numbered as `r-13` to `r13`.  `r12` is also referred to as `sp`, the stack pointer, initiallized to (3^16-1)/2 - 1 (21523360) and going downwards. `r13` is also referred to as `pc`, the program counter,  starting at -(3^16-1)/2 = -21523360.  There is also the special-purpose program status register `psr` for holding status flags.
 ## Flags
 There are two status flags held in the program status register. The zeroth trit is the sign flag (`SF`), which is set to the sign of the result (-1, 0, or 1) after any arithmetic, tritwise, or compare instruction. The first trit is the carry flag (`CF`) which is set to the carry after an addition, subtraction, or compare instruction.
 ## Instruction listing
@@ -49,7 +49,7 @@ There are two status flags held in the program status register. The zeroth trit 
 |`0T11`           |`bge`   |Branch if greater than or equal       |opcode [15:12], `imm` [11:0]                           |`pc = pc + imm` if `SF >= 0`          |
 |`00TT`           |`push`  |Push to stack                         |opcode [15:12], `imm` [11:0]                           |`sp = sp - 2; mem[sp] = imm`          |
 |`00T0`           |`pop`   |Pop from stack                        |opcode [15:12], `rd` [11:9]                            |`rd = mem[sp]; sp = sp + 2`           |
-|`00T1`           |`call`  |Call subroutine                       |opcode [15:12], `imm` [11:0]                           |`sp = sp - 2; mem[sp] = pc; pc = imm;`|
+|`00T1`           |`call`  |Call subroutine                       |opcode [15:12], `imm` [11:0]                           |`sp = sp - 2; mem[sp] = pc; pc = pc + imm;`|
 |`000T`           |`ret`   |Return from subroutine                |opcode [15:12]                                         |`pc = mem[sp]; sp = sp + 2`           |
 |`0000`           |`sys`   |System call                           |opcode [15:12], `imm` [11:0]                           |                                      |
 
@@ -67,4 +67,4 @@ There are two status flags held in the program status register. The zeroth trit 
 |8                |Input character into `r-13`'s high tryte |               |
 
 ## Characters
-Characters use a fixed-width encoding with each as 1 tryte. The possible values of a tryte, -3280 (ternary `TTTTTTTT`)  through 3280 (ternary `11111111`) represent the first 6561 Unicode characters. For example, -3280 is the Unicode character with a codepoint of 0, -3279 is the Unicode character with a codepoint of 1, -3278 is the Unicode character with a codepoint of 2, and so on.
+Characters use a fixed-width encoding with each as 1 tryte. The numbers 0 through 3280 (ternary `11111111`), the maximum positive value of a tryte, represent the first 3280 characters of Unicode from `U+0000` to `U+0CD0`. (This is temporary, a custom character encoding organized by powers of 3 will most likely be added in the future.)

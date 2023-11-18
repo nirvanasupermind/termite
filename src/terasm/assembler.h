@@ -21,7 +21,8 @@ namespace termite {
         void assemble_label_instr();
         void assemble_instr();
         void assemble_rrr_instr(int idx);
-        void assemble_rri_instr(int idx);        
+        void assemble_rri_instr(int idx); 
+        void assemble_i_instr(int idx);       
     };
 } // namespace termite
 
