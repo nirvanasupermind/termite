@@ -6,6 +6,7 @@
 
 #include "tryte.h"
 #include "word.h"
+#include "tables.h"
 
 namespace termite {
     const Word Word::ONE = Word::from_int32(1);
@@ -192,10 +193,6 @@ namespace termite {
         return result;
     }
 
-    wchar_t Word::to_wchar() const {
-        return (wchar_t)(to_int32());
-    }
-
     Word Word::from_int32(int32_t n) {
         if (n < 0) {
             return ~Word::from_int32(-n);
@@ -230,9 +227,5 @@ namespace termite {
             }
         }
         return result;
-    }
-
-    Word Word::from_wchar(wchar_t wc) {
-        return Word::from_int32((int32_t)(wc));
     }
 } // namespace termite

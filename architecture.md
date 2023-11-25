@@ -54,18 +54,18 @@ There are two status flags held in the program status register. The zeroth trit 
 |`0000`           |`sys`   |System call                           |opcode [15:12], `imm` [11:0]                           |                                      |
 
 ## System calls
-|Code in `imm`    |Description                              |Operands       |         
-|-----------------|-----------------------------------------|---------------|
-|0                |Exit program                             |               |
-|1                |Print `r-13` as decimal number           |`r-13`         |
-|2                |Print `r-13` as ternary number           |`r-13`         |
-|3                |Print `r-13`'s low tryte as character    |`r-13`         |
-|4                |Print `r-13`'s high tryte as character   |`r-13`         |
-|5                |Input decimal number into `r-13`         |               |
-|6                |Input ternary number into `r-13`         |               |
-|7                |Input character into `r-13`'s low tryte  |               |
-|8                |Input character into `r-13`'s high tryte |               |
-|9                |Print all                                |               |
+|Code in `imm`    |Description                                 |Operands       |         
+|-----------------|--------------------------------------------|---------------|
+|0                |Exit program                                |               |
+|1                |Print `r-13` as decimal number              |`r-13`         |
+|2                |Print `r-13` as ternary number              |`r-13`         |
+|3                |Print `r-13`'s low tryte as character       |`r-13`         |
+|4                |Print `r-13`'s high tryte as character      |`r-13`         |
+|5                |Input decimal number into `r-13`            |               |
+|6                |Input ternary number into `r-13`            |               |
+|7                |Input character into `r-13`'s low tryte     |               |
+|8                |Input character into `r-13`'s high tryte    |               |
+|9                |Print all registers (like in verbose mode)  |               |
 
 ## Characters
 Characters use a fixed-width encoding with each as 1 tryte. The numbers 0 through 3280 (ternary `11111111`), the maximum positive value of a tryte, represent the first 3280 characters of Unicode from `U+0000` to `U+0CD0`. (This is temporary, a custom character encoding organized by powers of 3 will most likely be added in the future.)

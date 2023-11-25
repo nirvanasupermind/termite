@@ -10,17 +10,6 @@
 
 namespace termite {
     const int TRITS_PER_WORD = 16;
-    const int32_t POW3[TRITS_PER_WORD] = { 1,3,9,27,81,243,729,2187,6561,19683,59049,177147,531441,1594323,4782969,14348907 };
-    // Trit gate lookup tables
-    // Note that this is using the BCT encodings of the trits (0b00,0b01, 0b10 or 0,1,2) 
-    // rather than actual values (-1,0,1)
-    const uint8_t TRIT_NOT[3] = { 2,1,0 };
-    const uint8_t TRIT_AND[3][3] = { {0,0,0},{0,1,1},{0,1,2} };
-    const uint8_t TRIT_OR[3][3] = { {0,1,2},{1,1,2},{2,2,2} };
-    const uint8_t TRIT_XOR[3][3] = { {0,1,2},{1,2,0},{2,0,1} };
-    const uint8_t TRIT_SUM[3][3][3] = { {{1,2,0},{2,0,1},{0,1,2}},{{2,0,1},{0,1,2},{1,2,0}},{{0,1,2},{1,2,0},{2,0,1}} };
-    const uint8_t TRIT_CARRY[3][3][3] = { {{0,0,1},{0,1,1},{1,1,1}},{{0,1,1},{1,1,1},{1,1,2}},{{1,1,1},{1,1,2},{1,2,2}} };
-
     class Word {
     protected:
         uint32_t bct;
@@ -53,10 +42,8 @@ namespace termite {
         std::string to_ternary_str() const;
         // I did not want to use wchar because it is platform-specific
         // But char is only 8 bits, char16_t can't be printed
-        wchar_t to_wchar() const;
         static Word from_int32(int32_t n);
         static Word from_ternary_str(const std::string& s);
-        static Word from_wchar(wchar_t wc);
     };
 
 } // namespace termite

@@ -14,7 +14,9 @@ To store ternary data on a binary computer, Termite internally uses a system kno
 ## Included executables
 These can be built using `make` (may require root permission).
 
-* `teremu`: For running Termite ternary machine code files encoded in binary-coded ternary. -v option can be added for verbose mode.
+* `teremu`: For running Termite machine code executable files. -v option can be added for verbose mode, where the values of all registers are printed after each instruction runs. File format for Termite executables: txe
+
+* `terasm`: For transpiling Termite assembly files into executable files. 
 
 ## Future ideas
 * Assembler to convert assembly files into Termite machine code files.

@@ -3,6 +3,7 @@
 #include <iostream>
 #include <algorithm>
 #include "tryte.h"
+#include "tables.h"
 
 namespace termite {
     // This is the binary-coded ternary representation of 0
@@ -28,6 +29,22 @@ namespace termite {
         bct = bct | (val << (2 * i));
     }
 
+    Tryte Tryte::operator~() const {
+        Tryte result;
+        for (int i = 0; i < TRITS_PER_TRYTE; i++) {
+            result.set_bct_trit(i, TRIT_NOT[get_bct_trit(i)]);
+        }
+        return result;
+    }
+
+    int16_t Tryte::to_int16() const {
+        int32_t result = 0;
+        for (int i = 0; i < TRITS_PER_TRYTE; i++) {
+            result += POW3[i] * ((int)(get_bct_trit(i) - 1));
+        }
+        return result;
+    }
+
     std::string Tryte::to_ternary_str() const {
         std::string result = "";
         for (int i = 0; i < TRITS_PER_TRYTE; i++) {
@@ -47,5 +64,33 @@ namespace termite {
             }
         }
         return result;
+    }
+
+    wchar_t Tryte::to_wchar() const {
+        return (wchar_t)(to_int16());
+    }
+    
+    Tryte Tryte::from_int16(int16_t n) {
+        if (n < 0) {
+            return ~Tryte::from_int16(-n);
+        }
+        Tryte result;
+        int i = 0;
+        while (n > 0) {
+            int rem = n % 3;
+            n = n / 3;
+            if (rem == 2) {
+                rem = -1;
+                n++;
+            }
+            result.set_bct_trit(i, rem + 1);
+            i++;
+        }
+        return result;
+    }
+
+
+    Tryte Tryte::from_wchar(wchar_t wc) {
+        return Tryte::from_int16((int16_t)(wc));
     }
 } // namespace termite 

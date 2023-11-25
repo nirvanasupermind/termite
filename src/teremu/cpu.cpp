@@ -29,7 +29,6 @@ namespace termite {
     void CPU::set_sign_flag(Word& result) {
         int32_t result_int32 = result.to_int32();
         psr.set_bct_trit(SF, (result_int32 < 0) ? 0b00 : ((result_int32 == 0) ? 0b01 : 0b10));
-        // std::cout << "HELLO " << result_int32 << ' ' << ((result_int32 < 0) ? 0b00 : ((result_int32 == 0) ? 0b01 : 0b10)) << ' ' << (int)psr.get_bct_trit(SF) << '\n'; 
     }
 
     void CPU::print_state() const {
@@ -415,25 +414,30 @@ namespace termite {
                     std::cout << registers[0].to_ternary_str() << '\n';
                 }
                 else if (imm.to_int32() == 3) {
-                    std::wcout << registers[0].to_wchar();
+                    std::wcout << registers[0].get_lo_tryte().to_wchar();
                 }
                 else if (imm.to_int32() == 4) {
-                    std::cout << registers[0].to_int32() << '\n';
+                    std::wcout << registers[0].get_hi_tryte().to_wchar();
                 } 
                 else if (imm.to_int32() == 5) {
                     int32_t n;
                     std::cin >> n;
                     registers[0] = Word::from_int32(n);
                 } 
-                else if (imm.to_int32() == 5) {
+                else if (imm.to_int32() == 6) {
                     std::string s;
                     std::cin >> s;
                     registers[0] = Word::from_ternary_str(s);
-                }     
-                else if (imm.to_int32() == 6) {
+                }
+                else if (imm.to_int32() == 7) {
                     wchar_t wc;
                     std::wcin >> wc;
-                    registers[0] = Word::from_wchar(wc);
+                    registers[0] = (registers[0] & Word(0x55550000)) | Word(Tryte::from_wchar(wc), Tryte());
+                }
+                else if (imm.to_int32() == 8) {
+                    wchar_t wc;
+                    std::wcin >> wc;
+                    registers[0] = (registers[0] & Word(0x00005555)) | Word(Tryte(), Tryte::from_wchar(wc));
                 }
                 else if (imm.to_int32() == 9) {
                     print_state();
