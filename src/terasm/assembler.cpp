@@ -34,7 +34,6 @@ namespace termite {
 
     void Assembler::assemble_label_instr() {
         if (current.type == TokenType::IDENTIFIER) {
-            std::cout << "HELLO " << ' ' << current.value << '\n';
             labels[current.value] = Word::from_int32((code.size() << 1) - 21523360);
             advance();
             if (current.type != TokenType::COLON) {
@@ -468,7 +467,7 @@ namespace termite {
                 imm = Word::from_int32(std::stoi(current.value));
             }
             for (int i = 8; i >= 0; i--) {
-                code[idx].set_bct_trit(i, imm.get_bct_trit(i - 6));
+                code[idx].set_bct_trit(i, imm.get_bct_trit(i));
             }
         }
         else if (current.value == "b") {
@@ -554,7 +553,6 @@ namespace termite {
             code[idx].set_bct_trit(14, 0b01);
             code[idx].set_bct_trit(13, 0b01);
             code[idx].set_bct_trit(12, 0b00);
-            advance();
         }
         else if (current.value == "sys") {
             code[idx].set_bct_trit(15, 0b01);
@@ -603,7 +601,7 @@ namespace termite {
         }
         Word rt = Word::from_int32(std::stoi(current.value.substr(1)));
         for (int i = 5; i >= 3; i--) {
-            code[idx].set_bct_trit(i, rt.get_bct_trit(i));
+            code[idx].set_bct_trit(i, rt.get_bct_trit(i - 3));
         }
     }
 

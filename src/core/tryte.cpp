@@ -24,7 +24,7 @@ namespace termite {
     }
 
     void Tryte::set_bct_trit(int i, uint8_t val) {
-        bct = bct & ~(1 << (2 * i));
+        bct = bct & ~(0b11 << (2 * i));
         bct = bct | (val << (2 * i));
     }
 

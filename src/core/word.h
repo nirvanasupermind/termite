@@ -48,7 +48,7 @@ namespace termite {
         Word operator-(const Word& other) const;
         std::pair<Word, uint8_t> sub_with_carry(const Word& other) const;
         Word operator*(const Word& other) const;
-        bool operator<(const Word& other) const;
+        // bool operator<(const Word& other) const;
         int32_t to_int32() const;
         std::string to_ternary_str() const;
         // I did not want to use wchar because it is platform-specific

@@ -29,6 +29,7 @@ namespace termite {
     void CPU::set_sign_flag(Word& result) {
         int32_t result_int32 = result.to_int32();
         psr.set_bct_trit(SF, (result_int32 < 0) ? 0b00 : ((result_int32 == 0) ? 0b01 : 0b10));
+        // std::cout << "HELLO " << result_int32 << ' ' << ((result_int32 < 0) ? 0b00 : ((result_int32 == 0) ? 0b01 : 0b10)) << ' ' << (int)psr.get_bct_trit(SF) << '\n'; 
     }
 
     void CPU::print_state() const {
@@ -173,7 +174,7 @@ namespace termite {
             }
             case SUBCI: {
                 int rd_idx = instr.get_trit_range(9, 11).to_int32() + 13;
-                int rs_idx = instr.get_trit_range(8, 6).to_int32() + 13;
+                int rs_idx = instr.get_trit_range(6, 8).to_int32() + 13;
                 Word imm = instr.get_trit_range(0, 5);
                 Word diff;
                 uint8_t carry;
@@ -185,7 +186,7 @@ namespace termite {
             }
             case MUL: {
                 int rd_idx = instr.get_trit_range(9, 11).to_int32() + 13;
-                int rs_idx = instr.get_trit_range(8, 6).to_int32() + 13;
+                int rs_idx = instr.get_trit_range(6, 8).to_int32() + 13;
                 int rt_idx = instr.get_trit_range(3, 5).to_int32() + 13;
                 Word result = registers[rs_idx] * registers[rt_idx];
                 registers[rd_idx] = result;
@@ -194,7 +195,7 @@ namespace termite {
             }
             case MULI: {
                 int rd_idx = instr.get_trit_range(9, 11).to_int32() + 13;
-                int rs_idx = instr.get_trit_range(8, 6).to_int32() + 13;
+                int rs_idx = instr.get_trit_range(6, 8).to_int32() + 13;
                 Word imm = instr.get_trit_range(0, 5);
                 Word result = registers[rs_idx] * imm;
                 registers[rd_idx] = result;
@@ -219,7 +220,7 @@ namespace termite {
             }
             case AND: {
                 int rd_idx = instr.get_trit_range(9, 11).to_int32() + 13;
-                int rs_idx = instr.get_trit_range(8, 6).to_int32() + 13;
+                int rs_idx = instr.get_trit_range(6, 8).to_int32() + 13;
                 int rt_idx = instr.get_trit_range(3, 5).to_int32() + 13;
                 Word result = registers[rs_idx] & registers[rt_idx];
                 registers[rd_idx] = result;
@@ -228,7 +229,7 @@ namespace termite {
             }
             case ANDI: {
                 int rd_idx = instr.get_trit_range(9, 11).to_int32() + 13;
-                int rs_idx = instr.get_trit_range(8, 6).to_int32() + 13;
+                int rs_idx = instr.get_trit_range(6, 8).to_int32() + 13;
                 Word imm = instr.get_trit_range(0, 5);
                 Word result = registers[rs_idx] & imm;
                 registers[rd_idx] = result;
@@ -237,7 +238,7 @@ namespace termite {
             }
             case OR: {
                 int rd_idx = instr.get_trit_range(9, 11).to_int32() + 13;
-                int rs_idx = instr.get_trit_range(8, 6).to_int32() + 13;
+                int rs_idx = instr.get_trit_range(6, 8).to_int32() + 13;
                 int rt_idx = instr.get_trit_range(3, 5).to_int32() + 13;
                 Word result = registers[rs_idx] | registers[rt_idx];
                 registers[rd_idx] = result;
@@ -246,7 +247,7 @@ namespace termite {
             }
             case ORI: {
                 int rd_idx = instr.get_trit_range(9, 11).to_int32() + 13;
-                int rs_idx = instr.get_trit_range(8, 6).to_int32() + 13;
+                int rs_idx = instr.get_trit_range(6, 8).to_int32() + 13;
                 Word imm = instr.get_trit_range(0, 5);
                 Word result = registers[rs_idx] | imm;
                 registers[rd_idx] = result;
@@ -255,7 +256,7 @@ namespace termite {
             }
             case XOR: {
                 int rd_idx = instr.get_trit_range(9, 11).to_int32() + 13;
-                int rs_idx = instr.get_trit_range(8, 6).to_int32() + 13;
+                int rs_idx = instr.get_trit_range(6, 8).to_int32() + 13;
                 int rt_idx = instr.get_trit_range(3, 5).to_int32() + 13;
                 Word result = registers[rs_idx] ^ registers[rt_idx];
                 registers[rd_idx] = result;
@@ -264,7 +265,7 @@ namespace termite {
             }
             case XORI: {
                 int rd_idx = instr.get_trit_range(9, 11).to_int32() + 13;
-                int rs_idx = instr.get_trit_range(8, 6).to_int32() + 13;
+                int rs_idx = instr.get_trit_range(6, 8).to_int32() + 13;
                 Word imm = instr.get_trit_range(0, 5);
                 Word result = registers[rs_idx] ^ imm;
                 registers[rd_idx] = result;
@@ -273,7 +274,7 @@ namespace termite {
             }
             case LSH: {
                 int rd_idx = instr.get_trit_range(9, 11).to_int32() + 13;
-                int rs_idx = instr.get_trit_range(8, 6).to_int32() + 13;
+                int rs_idx = instr.get_trit_range(6, 8).to_int32() + 13;
                 int rt_idx = instr.get_trit_range(3, 5).to_int32() + 13;
                 Word result = registers[rs_idx] << registers[rt_idx];
                 registers[rd_idx] = result;
@@ -282,7 +283,7 @@ namespace termite {
             }
             case LSHI: {
                 int rd_idx = instr.get_trit_range(9, 11).to_int32() + 13;
-                int rs_idx = instr.get_trit_range(8, 6).to_int32() + 13;
+                int rs_idx = instr.get_trit_range(6, 8).to_int32() + 13;
                 Word imm = instr.get_trit_range(0, 5);
                 Word result = registers[rs_idx] << imm;
                 registers[rd_idx] = result;
@@ -291,7 +292,7 @@ namespace termite {
             }
             case RSH: {
                 int rd_idx = instr.get_trit_range(9, 11).to_int32() + 13;
-                int rs_idx = instr.get_trit_range(8, 6).to_int32() + 13;
+                int rs_idx = instr.get_trit_range(6, 8).to_int32() + 13;
                 int rt_idx = instr.get_trit_range(3, 5).to_int32() + 13;
                 Word result = registers[rs_idx] >> registers[rt_idx];
                 registers[rd_idx] = result;
@@ -309,7 +310,7 @@ namespace termite {
             }
             case CMP: {
                 int rd_idx = instr.get_trit_range(9, 11).to_int32() + 13;
-                int rs_idx = instr.get_trit_range(8, 6).to_int32() + 13;
+                int rs_idx = instr.get_trit_range(6, 8).to_int32() + 13;
                 Word diff;
                 uint8_t carry;
                 std::tie(diff, carry) = registers[rd_idx].sub_with_carry(registers[rs_idx]);
@@ -335,7 +336,7 @@ namespace termite {
             }
             case BEQ: {
                 Word imm = instr.get_trit_range(0, 11);
-                if(psr.get_bct_trit(1) == 0b01) {
+                if(psr.get_bct_trit(SF) == 0b01) {
                     registers[PC] = registers[PC] + imm;
                     cycles -= imm.to_int32();
                 }
@@ -343,7 +344,7 @@ namespace termite {
             }
             case BNE: {
                 Word imm = instr.get_trit_range(0, 11);
-                if(psr.get_bct_trit(1) != 0b01) {
+                if(psr.get_bct_trit(SF) != 0b01) {
                     registers[PC] = registers[PC] + imm;
                     cycles -= imm.to_int32();
                 }
@@ -351,7 +352,7 @@ namespace termite {
             }
             case BLT: {
                 Word imm = instr.get_trit_range(0, 11);
-                if(psr.get_bct_trit(1) < 0b01) {
+                if(psr.get_bct_trit(SF) < 0b01) {
                     registers[PC] = registers[PC] + imm;
                     cycles -= imm.to_int32();
                 }
@@ -359,7 +360,7 @@ namespace termite {
             }
             case BLE: {
                 Word imm = instr.get_trit_range(0, 11);
-                if(psr.get_bct_trit(1) <= 0b01) {
+                if(psr.get_bct_trit(SF) <= 0b01) {
                     registers[PC] = registers[PC] + imm;
                     cycles -= imm.to_int32();
                 }
@@ -367,7 +368,7 @@ namespace termite {
             }
             case BGT: {
                 Word imm = instr.get_trit_range(0, 11);
-                if(psr.get_bct_trit(1) > 0b01) {
+                if(psr.get_bct_trit(SF) > 0b01) {
                     registers[PC] = registers[PC] + imm;
                     cycles -= imm.to_int32();
                 }
@@ -375,7 +376,7 @@ namespace termite {
             }
             case BGE: {
                 Word imm = instr.get_trit_range(0, 11);
-                if(psr.get_bct_trit(1) >= 0b01) {
+                if(psr.get_bct_trit(SF) >= 0b01) {
                     registers[PC] = registers[PC] + imm;
                     cycles -= imm.to_int32();
                 }
@@ -433,6 +434,9 @@ namespace termite {
                     wchar_t wc;
                     std::wcin >> wc;
                     registers[0] = Word::from_wchar(wc);
+                }
+                else if (imm.to_int32() == 9) {
+                    print_state();
                 }
                 break;
             }

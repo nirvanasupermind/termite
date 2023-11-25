@@ -9,20 +9,22 @@ main:
     sys 3;
     movi r-13, 111; # o
     sys 3;
+    movi r-13, 44; # ,
+    sys 3;
     movi r-13, 32; # [space]
     sys 3;
-    movi r-13, ; # w
+    movi r-13, 87; # W
     sys 3;
-    movi r-13, -3169; # o
+    movi r-13, 111; # o
     sys 3;
-    movi r-13, -3166; # r
+    movi r-13, 114; # r
     sys 3;
-    movi r-13, -3172; # l
+    movi r-13, 108; # l
     sys 3;
-    movi r-13, -3180; # d
+    movi r-13, 100; # d
     sys 3;
-    movi r-13, -3247; # !
+    movi r-13, 33; # !
     sys 3;
-    movi r-13, -3270; # [newline]
+    movi r-13, 10; # [newline]
     sys 3;
-    sys 0;
+    sys 0; # Exit program

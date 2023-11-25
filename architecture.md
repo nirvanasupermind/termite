@@ -65,6 +65,7 @@ There are two status flags held in the program status register. The zeroth trit 
 |6                |Input ternary number into `r-13`         |               |
 |7                |Input character into `r-13`'s low tryte  |               |
 |8                |Input character into `r-13`'s high tryte |               |
+|9                |Print all                                |               |
 
 ## Characters
 Characters use a fixed-width encoding with each as 1 tryte. The numbers 0 through 3280 (ternary `11111111`), the maximum positive value of a tryte, represent the first 3280 characters of Unicode from `U+0000` to `U+0CD0`. (This is temporary, a custom character encoding organized by powers of 3 will most likely be added in the future.)

@@ -8,9 +8,9 @@ fac:
     # r-13 = input, r-12 = output, r-11 = loop counter
     movi r-11, 1;
     movi r-12, 1;
-
+loop:
     mul r-12, r-12, r-11;
     addi r-11, r-11, 1;
     cmp r-11, r-13;
-    ble -8;
+    ble loop;
     ret;

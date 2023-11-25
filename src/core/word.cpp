@@ -34,8 +34,9 @@ namespace termite {
     }
 
     void Word::set_bct_trit(int i, uint8_t val) {
-        bct = bct & ~(1 << (2 * i));
+        bct = bct & ~(0b11 << (2 * i));
         bct = bct | (val << (2 * i));
+
     }
 
     Word Word::get_trit_range(int start, int end) const {
