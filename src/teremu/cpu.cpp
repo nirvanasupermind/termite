@@ -1,3 +1,4 @@
+#include <cstdlib>
 #include <vector>
 #include <iostream>
 #include <utility>
@@ -407,7 +408,9 @@ namespace termite {
             }
             case SYS: {
                 Word imm = instr.get_trit_range(0, 11);
-                if (imm.to_int32() == 1) {
+                if(imm.to_int32() == 0) {
+                    std::exit(registers[0].to_int32());
+                } else if (imm.to_int32() == 1) {
                     std::cout << registers[0].to_int32() << '\n';
                 }
                 else if (imm.to_int32() == 2) {
