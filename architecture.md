@@ -1,3 +1,11 @@
+# Ternary logic and mathematics
+The balanced ternary numeral system is a base 3 system that uses 3 digits (often called trits), -1, 0 and 1, in contrast to the more common binary system. Since it is inconvenient to write -1 as a digit, the letter 1 is used for this purpose in Termite. Each position in a balanced ternary number represents a power of 3. For example, "10T1" in balanced ternary represents 1\*3^3 + 0\*3^2  + (-1)\*3^1 + 1\*3^0, which is 25 in decimal.
+
+To store ternary data on a binary computer, Termite internally uses a system known as [binary-coded ternary](https://en.wikipedia.org/wiki/Ternary_numeral_system#Binary-coded_ternary) (BCT) where each trit is mapped to two bits. 
+
+
+# 2 Architecture
+
 Termite's instruction set architecture is a RISC architecture based entirely on balanced ternary.
 
 Note that "tryte" is used here to refer to an 8-trit data type and "word" is used to refer to a 16-trit data type. Trits in a tryte or word are indexed from least to most significant, so trit 0 is the least signifcant trit.
