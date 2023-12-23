@@ -1,12 +1,29 @@
-# Ternary logic and mathematics
-A three-valued logic uses 3 discrete states, true, false, and a third state which could be used as "unknown" or "both". Termite is fundamentally based on three-valued logic, in contrast to the vast majority of computers that are built on 2 states.
+# 1 Ternary logic and mathematics
+A ternary logic uses 3 truth values indicating true, false, and a third "unknown" or "both" state. Some ternary logic systems, such as Kleene's "strong logic of indeterminacy", can extend standard Boolean operators to encompass this third state. In Kleene logic, the logical operators are defined as follows:
 
-The balanced ternary system uses 3 digits, -1, 0 and 1, in contrast to the more common binary system. Since it is inconvenient to write -1 as a digit, the letter T is used for this purpose in Termite. Each position in a balanced ternary number represents a power of 3. For example, "10T1" in balanced ternary represents 1\*3^3 + 0\*3^2  + (-1)\*3^1 + 1\*3^0, which is 25 in decimal. The balanced ternary system can represent negative numbers without a separate minus sign; for example "T1T" is (-1)\*3^2 + 1\*3^1 + (-1)\*3^0, or -7 in decimal.
+|`~a`     |         |
+|---------|---------|
+|`false`  |`true`   |
+|`unknown`|`unknown`|
+|`true`   |`false`  |
 
-To store ternary data on a binary computer, Termite internally uses a system known as [binary-coded ternary](https://en.wikipedia.org/wiki/Ternary_numeral_system#Binary-coded_ternary) (BCT) where each trit is mapped to two bits.  
 
-# 2 Architecture
+|`a & b`  |`false`  |`unknown`|`true`   |
+|---------|---------|---------|---------|
+|`unknown`|`false`  |`unknown`|`unknown`|
+|`true`   |`false`  |`unknown`|`true`   |
 
+|`a \| b` |`false`  |`unknown`|`true`   |
+|---------|---------|---------|---------|
+|`false`  |`false`  |`unknown`|`true`   |
+|`unknown`|`unknown`|`unknown`|`true`   |
+|`true`   |`true`   |`true`   |`true`   |
+
+Analogous to how Boolean logic and binary system, a number system can be built on ternary logic. The balanced ternary system uses 3 digits, -1, 0 and 1, in contrast to the more common binary system. Typically, -1 is assigned to `false`, 0 to `unknown`, and 1 to `true`. Since it is inconvenient to write -1 as a digit, the letter T is used for this purpose in Termite. Each position in a balanced ternary number represents a power of 3. For example, "10T1" in balanced ternary represents 1\*3^3 + 0\*3^2  + (-1)\*3^1 + 1\*3^0, which is 25 in decimal. The balanced ternary system can also represent negative numbers without a separate minus sign; for example "T1T" is (-1)\*3^2 + 1\*3^1 + (-1)\*3^0, or -7 in decimal.
+
+Termite is an emulator, so it requires storage of ternary data on a binary computer. To accomplish, Termite internally uses a system known as [binary-coded ternary](https://en.wikipedia.org/wiki/Ternary_numeral_system#Binary-coded_ternary) (BCT) where each trit is mapped to two bits. Binary-coded ternary encodings vary, especially for balanced ternary, but in Termite the encoding used is to map -1 to `00`, 0 to `01` and 1 to `10`.
+
+# 2 Termite Architecture
 Termite's instruction set architecture is a RISC architecture based entirely on balanced ternary.
 
 Note that "tryte" is used here to refer to an 8-trit data type and "word" is used to refer to a 16-trit data type. Trits in a tryte or word are indexed from least to most significant, so trit 0 is the least signifcant trit.

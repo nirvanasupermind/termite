@@ -9,8 +9,12 @@ fac:
     movi r-11, 1;
     movi r-12, 1;
 loop:
-    mul r-12, r-12, r-11;
-    addi r-11, r-11, 1;
+    mul r-12, r-12, r-11; # r-12 = r-12 * r-11
+    addi r-11, r-11, 1; # r-11 = r-11 + 1
     cmp r-11, r-13;
     ble loop;
     ret;
+
+# 20 / 5 = 4
+# 20 - 5 - 5 - 5 - 5 = 0
+# 
