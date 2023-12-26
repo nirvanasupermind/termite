@@ -1,3 +1,5 @@
+# Reads a number and outputs the factorial of the number 
+
 main:
     sys 5; # Input stored into r-13
     call 6; # Currently unuspported to use the "fac" label before it is defined

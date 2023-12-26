@@ -1,3 +1,5 @@
+# Reads a number and outputs the square of the number 
+
 main:
     sys 5; # Read input
     call 6; # Currently unuspported to use the "sqr" label before it is defined

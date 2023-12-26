@@ -1,3 +1,5 @@
+# Outputs "Hello, World!"
+
 main:
     movi r-13, 72; # H
     sys 3;
