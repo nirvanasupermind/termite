@@ -9,10 +9,12 @@
 #include "tables.h"
 
 namespace termite {
-    const Word Word::ONE = Word::from_int32(1);
-    const Word Word::TWO = Word::from_int32(2);
+    // This is the binary-coded ternary representation of 1
+    const Word Word::ONE(0x55555556);
+    // BCT for 2
+    const Word Word::TWO(0x55555558);
 
-    // This is the binary-coded ternary representation of 0
+    // BCT for 0
     Word::Word()
         : bct(0x55555555) {
     }
@@ -162,6 +164,17 @@ namespace termite {
             }
         }
         return result;
+    }
+
+    std::pair<Word, Word> Word::operator/(const Word& other) const {
+        std::pair<Word, Word> result;
+        Word rem(bct);
+        Word quo;
+        while(rem.to_int32() != 0) {
+            rem = rem - *this;
+            quo = quo + Word::ONE;
+        }
+        return std::make_pair(quo, rem);
     }
 
     std::string Word::to_ternary_str() const {

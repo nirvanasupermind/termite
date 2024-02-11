@@ -1,3 +1,4 @@
+whatever:
+    sys 2;
 main:
-    sys 7;
-    sys 1;
+    sys 2;

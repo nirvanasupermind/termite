@@ -23,8 +23,6 @@ namespace termite {
         wchar_t to_wchar() const;
         static Tryte from_int16(int16_t n);
         static Tryte from_wchar(wchar_t wc);
-
-
     };
 } // namespace termite
 

@@ -22,6 +22,8 @@ namespace termite {
         SUBCI,
         MUL,
         MULI,
+        DIV,
+        DIVI,
         NOT,
         NOTI,
         AND,

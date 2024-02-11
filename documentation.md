@@ -11,9 +11,6 @@
     * [2.5 Assembly format](#25-assembly-format)
 
 
-
-
-
 # 1 Ternary mathematics and logic
 ## 1.1 Balanced ternary 
 The balanced ternary (base 3) system uses 3 digits, -1, 0 and 1, in contrast to the more common binary (base 2) system used by the vast majority of computers, and the everyday decimal (base 10) system. Typically, -1 is assigned to `false`, 0 to `unknown`, and 1 to `true`. Since it is inconvenient to write -1 as a digit, the letter T is used for this purpose in Termite. Each position in a balanced ternary number represents a power of 3. For example, `10T1` in balanced ternary represents 1\*3^3 + 0\*3^2  + (-1)\*3^1 + 1\*3^0, which is 25 in decimal. The balanced ternary system can also represent negative numbers without a separate minus sign–for example, `T1T` is (-1)\*3^2 + 1\*3^1 + (-1)\*3^0, or -7 in decimal.
@@ -49,7 +46,7 @@ There is no XOR operator in Kleene logic, but it is defined in Termite as the su
 |`unknown`|`false`  |`unknown`|`true`   |
 |`true`   |`unknown`|`true`   |`false`  |
 
-
+Note that, unlike the case with AND and OR, this operation e
 # 2 Termite architecture
 Termite's instruction set architecture is a RISC architecture based entirely on balanced ternary.
 

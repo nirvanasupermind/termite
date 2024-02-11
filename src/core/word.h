@@ -37,6 +37,7 @@ namespace termite {
         Word operator-(const Word& other) const;
         std::pair<Word, uint8_t> sub_with_carry(const Word& other) const;
         Word operator*(const Word& other) const;
+        std::pair<Word, Word> operator/(const Word& other) const;
         // bool operator<(const Word& other) const;
         int32_t to_int32() const;
         std::string to_ternary_str() const;
@@ -45,7 +46,6 @@ namespace termite {
         static Word from_int32(int32_t n);
         static Word from_ternary_str(const std::string& s);
     };
-
 } // namespace termite
 
 #endif
