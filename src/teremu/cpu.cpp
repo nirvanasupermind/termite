@@ -206,9 +206,22 @@ namespace termite {
                 int rd_idx = instr.get_trit_range(9, 11).to_int32() + 13;
                 int rs_idx = instr.get_trit_range(6, 8).to_int32() + 13;
                 int rt_idx = instr.get_trit_range(3, 5).to_int32() + 13;
-                Word result = registers[rs_idx] * registers[rt_idx];
-                registers[rd_idx] = std::tie();
-                set_sign_flag(result);
+                Word quo, rem;
+                std::tie(quo, rem)= registers[rs_idx] / registers[rt_idx];
+                registers[rd_idx] = quo;
+                registers[(rd_idx == 26 ? 0 : rd_idx + 1)] = rem;
+                set_sign_flag(quo);
+                break;
+            }
+            case DIVI: {
+                int rd_idx = instr.get_trit_range(9, 11).to_int32() + 13;
+                int rs_idx = instr.get_trit_range(6, 8).to_int32() + 13;
+                Word imm = instr.get_trit_range(0, 5);
+                Word quo, rem;
+                std::tie(quo, rem)= registers[rs_idx] / imm;
+                registers[rd_idx] = quo;
+                registers[(rd_idx == 26 ? 0 : rd_idx + 1)] = rem;
+                set_sign_flag(quo);
                 break;
             }
             case NOT: {

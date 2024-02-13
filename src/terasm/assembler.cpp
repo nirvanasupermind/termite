@@ -284,11 +284,25 @@ namespace termite {
             code[idx].set_bct_trit(12, 0b10);
             assemble_rri_instr(idx);
         }
-        else if (current.value == "not") {
+        else if (current.value == "div") {
             code[idx].set_bct_trit(15, 0b00);
             code[idx].set_bct_trit(14, 0b01);
             code[idx].set_bct_trit(13, 0b10);
             code[idx].set_bct_trit(12, 0b00);
+            assemble_rrr_instr(idx);
+        }
+        else if (current.value == "divi") {
+            code[idx].set_bct_trit(15, 0b00);
+            code[idx].set_bct_trit(14, 0b01);
+            code[idx].set_bct_trit(13, 0b10);
+            code[idx].set_bct_trit(12, 0b01);
+            assemble_rri_instr(idx);
+        }
+        else if (current.value == "not") {
+            code[idx].set_bct_trit(15, 0b00);
+            code[idx].set_bct_trit(14, 0b01);
+            code[idx].set_bct_trit(13, 0b10);
+            code[idx].set_bct_trit(12, 0b10);
             advance();
             if (current.type != TokenType::REGISTER) {
                 error();
@@ -312,9 +326,9 @@ namespace termite {
         }
         else if (current.value == "noti") {
             code[idx].set_bct_trit(15, 0b00);
-            code[idx].set_bct_trit(14, 0b01);
-            code[idx].set_bct_trit(13, 0b10);
-            code[idx].set_bct_trit(12, 0b01);
+            code[idx].set_bct_trit(14, 0b10);
+            code[idx].set_bct_trit(13, 0b00);
+            code[idx].set_bct_trit(12, 0b00);
             advance();
             if (current.type != TokenType::REGISTER) {
                 error();
@@ -344,79 +358,79 @@ namespace termite {
         }
         else if (current.value == "and") {
             code[idx].set_bct_trit(15, 0b00);
-            code[idx].set_bct_trit(14, 0b01);
-            code[idx].set_bct_trit(13, 0b10);
-            code[idx].set_bct_trit(12, 0b10);
+            code[idx].set_bct_trit(14, 0b10);
+            code[idx].set_bct_trit(13, 0b00);
+            code[idx].set_bct_trit(12, 0b01);
             assemble_rrr_instr(idx);
         }
         else if (current.value == "andi") {
             code[idx].set_bct_trit(15, 0b00);
             code[idx].set_bct_trit(14, 0b10);
             code[idx].set_bct_trit(13, 0b00);
-            code[idx].set_bct_trit(12, 0b00);
+            code[idx].set_bct_trit(12, 0b10);
             assemble_rri_instr(idx);
         }
         else if (current.value == "or") {
             code[idx].set_bct_trit(15, 0b00);
             code[idx].set_bct_trit(14, 0b10);
-            code[idx].set_bct_trit(13, 0b00);
-            code[idx].set_bct_trit(12, 0b01);
+            code[idx].set_bct_trit(13, 0b01);
+            code[idx].set_bct_trit(12, 0b00);
             assemble_rrr_instr(idx);
         }
         else if (current.value == "ori") {
             code[idx].set_bct_trit(15, 0b00);
             code[idx].set_bct_trit(14, 0b10);
-            code[idx].set_bct_trit(13, 0b00);
-            code[idx].set_bct_trit(12, 0b10);
+            code[idx].set_bct_trit(13, 0b01);
+            code[idx].set_bct_trit(12, 0b01);
             assemble_rri_instr(idx);
         }
         else if (current.value == "xor") {
             code[idx].set_bct_trit(15, 0b00);
             code[idx].set_bct_trit(14, 0b10);
             code[idx].set_bct_trit(13, 0b01);
-            code[idx].set_bct_trit(12, 0b00);
+            code[idx].set_bct_trit(12, 0b10);
             assemble_rrr_instr(idx);
         }
         else if (current.value == "xori") {
             code[idx].set_bct_trit(15, 0b00);
             code[idx].set_bct_trit(14, 0b10);
-            code[idx].set_bct_trit(13, 0b01);
+            code[idx].set_bct_trit(13, 0b10);
             code[idx].set_bct_trit(12, 0b01);
             assemble_rri_instr(idx);
         }
         else if (current.value == "lsh") {
             code[idx].set_bct_trit(15, 0b00);
             code[idx].set_bct_trit(14, 0b10);
-            code[idx].set_bct_trit(13, 0b01);
-            code[idx].set_bct_trit(12, 0b10);
+            code[idx].set_bct_trit(13, 0b10);
+            code[idx].set_bct_trit(12, 0b01);
             assemble_rrr_instr(idx);
         }
         else if (current.value == "lshi") {
             code[idx].set_bct_trit(15, 0b00);
             code[idx].set_bct_trit(14, 0b10);
             code[idx].set_bct_trit(13, 0b10);
-            code[idx].set_bct_trit(12, 0b00);
+            code[idx].set_bct_trit(12, 0b10);
             assemble_rri_instr(idx);
         }
         else if (current.value == "rsh") {
-            code[idx].set_bct_trit(15, 0b00);
-            code[idx].set_bct_trit(14, 0b10);
-            code[idx].set_bct_trit(13, 0b10);
-            code[idx].set_bct_trit(12, 0b01);
+            code[idx].set_bct_trit(15, 0b01);
+            code[idx].set_bct_trit(14, 0b00);
+            code[idx].set_bct_trit(13, 0b00);
+            code[idx].set_bct_trit(12, 0b00);
             assemble_rrr_instr(idx);
         }
         else if (current.value == "rshi") {
-            code[idx].set_bct_trit(15, 0b00);
-            code[idx].set_bct_trit(14, 0b10);
-            code[idx].set_bct_trit(13, 0b10);
-            code[idx].set_bct_trit(12, 0b10);
+            code[idx].set_bct_trit(15, 0b01);
+            code[idx].set_bct_trit(14, 0b00);
+            code[idx].set_bct_trit(13, 0b00);
+            code[idx].set_bct_trit(12, 0b01);
             assemble_rri_instr(idx);
         }
         else if (current.value == "cmp") {
             code[idx].set_bct_trit(15, 0b01);
             code[idx].set_bct_trit(14, 0b00);
             code[idx].set_bct_trit(13, 0b00);
-            code[idx].set_bct_trit(12, 0b00);
+            code[idx].set_bct_trit(12, 0b10);
             advance();
             if (current.type != TokenType::REGISTER) {
                 error();
@@ -441,8 +455,8 @@ namespace termite {
         else if (current.value == "cmpi") {
             code[idx].set_bct_trit(15, 0b01);
             code[idx].set_bct_trit(14, 0b00);
-            code[idx].set_bct_trit(13, 0b00);
-            code[idx].set_bct_trit(12, 0b01);
+            code[idx].set_bct_trit(13, 0b01);
+            code[idx].set_bct_trit(12, 0b00);
             advance();
             if (current.type != TokenType::REGISTER) {
                 error();
@@ -473,64 +487,64 @@ namespace termite {
         else if (current.value == "b") {
             code[idx].set_bct_trit(15, 0b01);
             code[idx].set_bct_trit(14, 0b00);
-            code[idx].set_bct_trit(13, 0b00);
-            code[idx].set_bct_trit(12, 0b10);
+            code[idx].set_bct_trit(13, 0b01);
+            code[idx].set_bct_trit(12, 0b01);
             assemble_i_instr(idx);
         }
         else if (current.value == "beq") {
             code[idx].set_bct_trit(15, 0b01);
             code[idx].set_bct_trit(14, 0b00);
             code[idx].set_bct_trit(13, 0b01);
-            code[idx].set_bct_trit(12, 0b00);
+            code[idx].set_bct_trit(12, 0b10);
             assemble_i_instr(idx);
         }
         else if (current.value == "bne") {
             code[idx].set_bct_trit(15, 0b01);
             code[idx].set_bct_trit(14, 0b00);
-            code[idx].set_bct_trit(13, 0b01);
-            code[idx].set_bct_trit(12, 0b01);
+            code[idx].set_bct_trit(13, 0b10);
+            code[idx].set_bct_trit(12, 0b00);
             assemble_i_instr(idx);
         }
         else if (current.value == "blt") {
             code[idx].set_bct_trit(15, 0b01);
             code[idx].set_bct_trit(14, 0b00);
-            code[idx].set_bct_trit(13, 0b01);
-            code[idx].set_bct_trit(12, 0b10);
+            code[idx].set_bct_trit(13, 0b10);
+            code[idx].set_bct_trit(12, 0b01);
             assemble_i_instr(idx);
         }
         else if (current.value == "ble") {
             code[idx].set_bct_trit(15, 0b01);
             code[idx].set_bct_trit(14, 0b00);
             code[idx].set_bct_trit(13, 0b10);
-            code[idx].set_bct_trit(12, 0b00);
+            code[idx].set_bct_trit(12, 0b10);
             assemble_i_instr(idx);
         }
         else if (current.value == "bgt") {
             code[idx].set_bct_trit(15, 0b01);
-            code[idx].set_bct_trit(14, 0b00);
-            code[idx].set_bct_trit(13, 0b10);
-            code[idx].set_bct_trit(12, 0b01);
+            code[idx].set_bct_trit(14, 0b01);
+            code[idx].set_bct_trit(13, 0b00);
+            code[idx].set_bct_trit(12, 0b00);
             assemble_i_instr(idx);
         }
         else if (current.value == "bge") {
             code[idx].set_bct_trit(15, 0b01);
-            code[idx].set_bct_trit(14, 0b00);
-            code[idx].set_bct_trit(13, 0b10);
-            code[idx].set_bct_trit(12, 0b10);
+            code[idx].set_bct_trit(14, 0b01);
+            code[idx].set_bct_trit(13, 0b00);
+            code[idx].set_bct_trit(12, 0b01);
             assemble_i_instr(idx);
         }
         else if (current.value == "push") {
             code[idx].set_bct_trit(15, 0b01);
             code[idx].set_bct_trit(14, 0b01);
             code[idx].set_bct_trit(13, 0b00);
-            code[idx].set_bct_trit(12, 0b00);
+            code[idx].set_bct_trit(12, 0b10);
             assemble_i_instr(idx);
         }
         else if (current.value == "pop") {
             code[idx].set_bct_trit(15, 0b01);
             code[idx].set_bct_trit(14, 0b01);
-            code[idx].set_bct_trit(13, 0b00);
-            code[idx].set_bct_trit(12, 0b01);
+            code[idx].set_bct_trit(13, 0b01);
+            code[idx].set_bct_trit(12, 0b00);
             advance();
             if (current.type != TokenType::REGISTER) {
                 error();
@@ -544,21 +558,21 @@ namespace termite {
         else if (current.value == "call") {
             code[idx].set_bct_trit(15, 0b01);
             code[idx].set_bct_trit(14, 0b01);
-            code[idx].set_bct_trit(13, 0b00);
-            code[idx].set_bct_trit(12, 0b10);
+            code[idx].set_bct_trit(13, 0b01);
+            code[idx].set_bct_trit(12, 0b01);
             assemble_i_instr(idx);
         }
         else if (current.value == "ret") {
             code[idx].set_bct_trit(15, 0b01);
             code[idx].set_bct_trit(14, 0b01);
             code[idx].set_bct_trit(13, 0b01);
-            code[idx].set_bct_trit(12, 0b00);
+            code[idx].set_bct_trit(12, 0b10);
         }
         else if (current.value == "sys") {
             code[idx].set_bct_trit(15, 0b01);
             code[idx].set_bct_trit(14, 0b01);
-            code[idx].set_bct_trit(13, 0b01);
-            code[idx].set_bct_trit(12, 0b01);
+            code[idx].set_bct_trit(13, 0b10);
+            code[idx].set_bct_trit(12, 0b00);
             assemble_i_instr(idx);
         }
         else {

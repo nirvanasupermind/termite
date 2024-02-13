@@ -76,32 +76,34 @@ There are two status flags held in the program status register. The zeroth trit 
 |`T00T`           |`subci` |Subtract with carry immediate         |opcode [15:12], `rd` [11:9], `rs` [8:6], `imm` [5:0]   |`rd = rs - imm - CF`                  |
 |`T000`           |`mul`   |Multiply                              |opcode [15:12], `rd` [11:9], `rs` [8:6], `rt` [5:3]    |`rd = rs * rt`                        |
 |`T001`           |`muli`  |Multiply immediate                    |opcode [15:12], `rd` [11:9], `rs` [8:6], `imm` [5:0]   |`rd = rs * imm`                       |
-|`T01T`           |`not`   |Tritwise NOT                          |opcode [15:12], `rd` [11:9], `rs` [8:6]                |`rd = ~rs`                            |
-|`T010`           |`noti`  |Tritwise NOT immediate                |opcode [15:12], `rd` [11:9], `imm` [8:0]               |`rd = ~imm`                           |
-|`T011`           |`and`   |Tritwise AND                          |opcode [15:12], `rd` [11:9], `rs` [8:6], `rt` [5:3]    |`rd = rs & rt`                        |
-|`T1TT`           |`andi`  |Tritwise AND immediate                |opcode [15:12], `rd` [11:9], `rs` [8:6], `rt` [5:3]    |`rd = rs & imm`                       |
-|`T1T0`           |`or`    |Tritwise OR                           |opcode [15:12], `rd` [11:9], `rs` [8:6], `rt` [5:3]    |`rd = rs \| rt`                       |
-|`T1T1`           |`ori`   |Tritwise OR immediate                 |opcode [15:12], `rd` [11:9], `rs` [8:6], `rt` [5:3]    |`rd = rs \| imm`                      |
-|`T10T`           |`xor`   |Tritwise XOR                          |opcode [15:12], `rd` [11:9], `rs` [8:6], `rt` [5:3]    |`rd = rs ^ rt`                        |
-|`T100`           |`xori`  |Tritwise XOR immediate                |opcode [15:12], `rd` [11:9], `rs` [8:6], `rt` [5:3]    |`rd = rs ^ imm`                       |
-|`T101`           |`lsh`   |Left shift                            |opcode [15:12], `rd` [11:9], `rs` [8:6], `rt` [5:3]    |`rd = rs << rt`                       |
-|`T11T`           |`lshi`  |Left shift immediate                  |opcode [15:12], `rd` [11:9], `rs` [8:6], `imm` [5:0]   |`rd = rs << imm`                      |
-|`T110`           |`rsh`   |Right shift                           |opcode [15:12], `rd` [11:9], `rs` [8:6], `rt` [5:3]    |`rd = rs >> rt`                       |
-|`T111`           |`rshi`  |Right shift immediate                 |opcode [15:12], `rd` [11:9], `rs` [8:6], `imm` [5:0]   |`rd = rs >> imm`                      |
-|`0TTT`           |`cmp`   |Compare                               |opcode [15:12], `rd` [11:9], `rs` [8:6]                |`SF = sign(rd - rs)`                  |
-|`0TT0`           |`cmpi`  |Compare immediate                     |opcode [15:12], `rd` [11:9], `imm` [8:0]               |`SF = sign(rd - imm)`                 |
-|`0TT1`           |`b`     |Uncoditional branch                   |opcode [15:12], `imm` [11:0]                           |`pc = pc + imm`                       |
-|`0T0T`           |`beq`   |Branch if equal                       |opcode [15:12], `imm` [11:0]                           |`pc = pc + imm` if `SF == 0`          |
-|`0T00`           |`bne`   |Branch if not equal                   |opcode [15:12], `imm` [11:0]                           |`pc = pc + imm` if `SF != 0`          |
-|`0T01`           |`blt`   |Branch if less than                   |opcode [15:12], `imm` [11:0]                           |`pc = pc + imm` if `SF < 0`           |
-|`0T1T`           |`ble`   |Branch if less than or equal          |opcode [15:12], `imm` [11:0]                           |`pc = pc + imm` if `SF <= 0`          |
-|`0T10`           |`bgt`   |Branch if greater than                |opcode [15:12], `imm` [11:0]                           |`pc = pc + imm` if `SF > 0`           |
-|`0T11`           |`bge`   |Branch if greater than or equal       |opcode [15:12], `imm` [11:0]                           |`pc = pc + imm` if `SF >= 0`          |
-|`00TT`           |`push`  |Push to stack                         |opcode [15:12], `imm` [11:0]                           |`sp = sp - 2; mem[sp] = imm`          |
-|`00T0`           |`pop`   |Pop from stack                        |opcode [15:12], `rd` [11:9]                            |`rd = mem[sp]; sp = sp + 2`           |
-|`00T1`           |`call`  |Call subroutine                       |opcode [15:12], `imm` [11:0]                           |`sp = sp - 2; mem[sp] = pc; pc = pc + imm;`|
-|`000T`           |`ret`   |Return from subroutine                |opcode [15:12]                                         |`pc = mem[sp]; sp = sp + 2`           |
-|`0000`           |`sys`   |System call                           |opcode [15:12], `imm` [11:0]                           |                                      |
+|`T01T`           |`div`   |Divide                                |opcode [15:12], `rd` [11:9], `rs` [8:6], `rt` [5:3]    |`rd = rs / rt` (adjacent register to `rd` = `rs % rt`)|
+|`T010`           |`divi`  |Divide immediate                      |opcode [15:12], `rd` [11:9], `rs` [8:6], `imm` [5:0]   |`rd = rs / imm` (adjacent register to `rd` = `rs % imm`)|
+|`T011`           |`not`   |Tritwise NOT                          |opcode [15:12], `rd` [11:9], `rs` [8:6]                |`rd = ~rs`                            |
+|`T1TT`           |`noti`  |Tritwise NOT immediate                |opcode [15:12], `rd` [11:9], `imm` [8:0]               |`rd = ~imm`                           |
+|`T1T0`           |`and`   |Tritwise AND                          |opcode [15:12], `rd` [11:9], `rs` [8:6], `rt` [5:3]    |`rd = rs & rt`                        |
+|`T1T1`           |`andi`  |Tritwise AND immediate                |opcode [15:12], `rd` [11:9], `rs` [8:6], `rt` [5:3]    |`rd = rs & imm`                       |
+|`T10T`           |`or`    |Tritwise OR                           |opcode [15:12], `rd` [11:9], `rs` [8:6], `rt` [5:3]    |`rd = rs \| rt`                       |
+|`T100`           |`ori`   |Tritwise OR immediate                 |opcode [15:12], `rd` [11:9], `rs` [8:6], `rt` [5:3]    |`rd = rs \| imm`                      |
+|`T101`           |`xor`   |Tritwise XOR                          |opcode [15:12], `rd` [11:9], `rs` [8:6], `rt` [5:3]    |`rd = rs ^ rt`                        |
+|`T11T`           |`xori`  |Tritwise XOR immediate                |opcode [15:12], `rd` [11:9], `rs` [8:6], `rt` [5:3]    |`rd = rs ^ imm`                       |
+|`T110`           |`lsh`   |Left shift                            |opcode [15:12], `rd` [11:9], `rs` [8:6], `rt` [5:3]    |`rd = rs << rt`                       |
+|`T111`           |`lshi`  |Left shift immediate                  |opcode [15:12], `rd` [11:9], `rs` [8:6], `imm` [5:0]   |`rd = rs << imm`                      |
+|`0TTT`           |`rsh`   |Right shift                           |opcode [15:12], `rd` [11:9], `rs` [8:6], `rt` [5:3]    |`rd = rs >> rt`                       |
+|`0TT0`           |`rshi`  |Right shift immediate                 |opcode [15:12], `rd` [11:9], `rs` [8:6], `imm` [5:0]   |`rd = rs >> imm`                      |
+|`0TT1`           |`cmp`   |Compare                               |opcode [15:12], `rd` [11:9], `rs` [8:6]                |`SF = sign(rd - rs)`                  |
+|`0T0T`           |`cmpi`  |Compare immediate                     |opcode [15:12], `rd` [11:9], `imm` [8:0]               |`SF = sign(rd - imm)`                 |
+|`0T00`           |`b`     |Uncoditional branch                   |opcode [15:12], `imm` [11:0]                           |`pc = pc + imm`                       |
+|`0T01`           |`beq`   |Branch if equal                       |opcode [15:12], `imm` [11:0]                           |`pc = pc + imm` if `SF == 0`          |
+|`0T1T`           |`bne`   |Branch if not equal                   |opcode [15:12], `imm` [11:0]                           |`pc = pc + imm` if `SF != 0`          |
+|`0T10`           |`blt`   |Branch if less than                   |opcode [15:12], `imm` [11:0]                           |`pc = pc + imm` if `SF < 0`           |
+|`0T11`           |`ble`   |Branch if less than or equal          |opcode [15:12], `imm` [11:0]                           |`pc = pc + imm` if `SF <= 0`          |
+|`00TT`           |`bgt`   |Branch if greater than                |opcode [15:12], `imm` [11:0]                           |`pc = pc + imm` if `SF > 0`           |
+|`00T0`           |`bge`   |Branch if greater than or equal       |opcode [15:12], `imm` [11:0]                           |`pc = pc + imm` if `SF >= 0`          |
+|`00T1`           |`push`  |Push to stack                         |opcode [15:12], `imm` [11:0]                           |`sp = sp - 2; mem[sp] = imm`          |
+|`000T`           |`pop`   |Pop from stack                        |opcode [15:12], `rd` [11:9]                            |`rd = mem[sp]; sp = sp + 2`           |
+|`0000`           |`call`  |Call subroutine                       |opcode [15:12], `imm` [11:0]                           |`sp = sp - 2; mem[sp] = pc; pc = pc + imm;`|
+|`0001`           |`ret`   |Return from subroutine                |opcode [15:12]                                         |`pc = mem[sp]; sp = sp + 2`           |
+|`001T`           |`sys`   |System call                           |opcode [15:12], `imm` [11:0]                           |                                      |
 
 ## System calls
 |Code in `imm`    |Description                                 |Operands       |         
