@@ -53,9 +53,11 @@ namespace termite {
             print_state();
         }
 
+
         while (cycles > 0) {
             Word instr = fetch_word(cycles);
             int opcode = instr.get_trit_range(12, 15).to_int32();
+            // std::cout << opcode << '\n';
             switch (opcode) {
             case MOV: {
                 int rd_idx = instr.get_trit_range(9, 11).to_int32() + 13;

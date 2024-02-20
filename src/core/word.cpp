@@ -170,8 +170,8 @@ namespace termite {
         std::pair<Word, Word> result;
         Word rem(bct);
         Word quo;
-        while(rem.to_int32() != 0) {
-            rem = rem - *this;
+        while(rem.to_int32() >= other.to_int32()) {
+            rem = rem - other;
             quo = quo + Word::ONE;
         }
         return std::make_pair(quo, rem);
