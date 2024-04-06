@@ -71,10 +71,10 @@ namespace anthill {
             int32_t addr = env->get_addr(node->val);
             movi_16trit(-11, addr);
             assembly += "ld r-13, r-11, 0;\n";
-            if (type.size() == 1) {
-                assembly += "lshi r-13, 8;\nrshi r-13, 8;\n";
-                // Trick to remove the upper 8 trits
-            }
+            // if (type.size() == 1) {
+            //     assembly += "lshi r-13, r-13, 8;\nrshi r-13, r-13, 8;\n";
+            //     // Trick to remove the upper 8 trits
+            // }
             return type;
         }
         catch (const std::string& e) {
@@ -118,8 +118,7 @@ namespace anthill {
             StaticType b_type = visit(node->node_b, env);
             assembly += "add r-13, r-12, r-13;\n";
             if(a_type.str() == "char" && b_type.str() == "char") {
-                assembly += "lshi r-13, r-13, 8;\n";
-                assembly += "rshi r-13, r-13, 8;\n";
+                assembly += "lshi r-13, r-13, 8;\nrshi r-13, r-13, 8;\n";
                 return StaticType(BasicType::CHAR);
             } else {
                 return StaticType(BasicType::INT);
@@ -131,8 +130,7 @@ namespace anthill {
             StaticType b_type = visit(node->node_b, env);
             assembly += "sub r-13, r-12, r-13;\n";
             if(a_type.str() == "char" && b_type.str() == "char") {
-                assembly += "lshi r-13, r-13, 8;\n";
-                assembly += "rshi r-13, r-13, 8;\n";
+                assembly += "lshi r-13, r-13, 8;\nrshi r-13, r-13, 8;\n";
                 return StaticType(BasicType::CHAR);
             } else {
                 return StaticType(BasicType::INT);
@@ -144,8 +142,7 @@ namespace anthill {
             StaticType b_type = visit(node->node_b, env);
             assembly += "mul r-13, r-12, r-13;\n";
             if(a_type.str() == "char" && b_type.str() == "char") {
-                assembly += "lshi r-13, r-13, 8;\n";
-                assembly += "rshi r-13, r-13, 8;\n";
+                assembly += "lshi r-13, r-13, 8;\nrshi r-13, r-13, 8;\n";
                 return StaticType(BasicType::CHAR);
             } else {
                 return StaticType(BasicType::INT);
@@ -157,8 +154,7 @@ namespace anthill {
             StaticType b_type = visit(node->node_b, env);
             assembly += "div r-13, r-12, r-13;\n";
             if(a_type.str() == "char" && b_type.str() == "char") {
-                assembly += "lshi r-13, r-13, 8;\n";
-                assembly += "rshi r-13, r-13, 8;\n";
+                assembly += "lshi r-13, r-13, 8;\nrshi r-13, r-13, 8;\n";
                 return StaticType(BasicType::CHAR);
             } else {
                 return StaticType(BasicType::INT);
@@ -170,8 +166,7 @@ namespace anthill {
             StaticType b_type = visit(node->node_b, env);
             assembly += "div r-13, r-12, r-13;\n";
             if(a_type.str() == "char" && b_type.str() == "char") {
-                assembly += "lshi r-13, r-13, 8;\n";
-                assembly += "rshi r-13, r-13, 8;\n";
+                assembly += "lshi r-13, r-13, 8;\nrshi r-13, r-13, 8;\n";
                 return StaticType(BasicType::CHAR);
             } else {
                 return StaticType(BasicType::INT);
@@ -233,7 +228,42 @@ namespace anthill {
             visit(node->node_a, env);
             assembly += "mov r-12, r-13;\n";
             visit(node->node_b, env);
-            assembly += "cmp r-12, r-13;\nbeq 4;\nmovi r-13, -1;\nmovi r-13, 1;\n";
+            assembly += "cmp r-12, r-13;\nmovi r-13, 1;\nbeq 2;\nmovi r-13, -1;\n";
+            return StaticType(BasicType::CHAR);
+        }
+        case TokenType::NE: {
+            visit(node->node_a, env);
+            assembly += "mov r-12, r-13;\n";
+            visit(node->node_b, env);
+            assembly += "cmp r-12, r-13;\nmovi r-13, 1;\nbne 2;\nmovi r-13, -1;\n";
+            return StaticType(BasicType::CHAR);
+        }
+         case TokenType::LT: {
+            visit(node->node_a, env);
+            assembly += "mov r-12, r-13;\n";
+            visit(node->node_b, env);
+            assembly += "cmp r-12, r-13;\nmovi r-13, 1;\nblt 2;\nmovi r-13, -1;\n";
+            return StaticType(BasicType::CHAR);
+        }
+        case TokenType::LE: {
+            visit(node->node_a, env);
+            assembly += "mov r-12, r-13;\n";
+            visit(node->node_b, env);
+            assembly += "cmp r-12, r-13;\nmovi r-13, 1;\nble 2;\nmovi r-13, -1;\n";
+            return StaticType(BasicType::CHAR);
+        }
+        case TokenType::GT: {
+            visit(node->node_a, env);
+            assembly += "mov r-12, r-13;\n";
+            visit(node->node_b, env);
+            assembly += "cmp r-12, r-13;\nmovi r-13, 1;\nbgt 2;\nmovi r-13, -1;\n";
+            return StaticType(BasicType::CHAR);
+        }
+        case TokenType::GE: {
+            visit(node->node_a, env);
+            assembly += "mov r-12, r-13;\n";
+            visit(node->node_b, env);
+            assembly += "cmp r-12, r-13;\nmovi r-13, 1;\nbge 2;\nmovi r-13, -1;\n";
             return StaticType(BasicType::CHAR);
         }
         default:
