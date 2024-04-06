@@ -1,0 +1,44 @@
+Types:
+Statically typed language
+
+void 
+char or int8 = 8-trit integer
+int or int16 = 16-trit integer
+[most likely removed]
+long or int32 = 32-trit integer
+fixed or fixed32 = 32-trit fixed-point with scaling factor 3^16 
+float or float32 = 32-trit floating pobnt (alternative to fixed, probably will use fixed instead since it's simpler)
+
+Pointers for any types supporting pointer-based array (except void* is unlikely to be included)
+char is used for ternary boolean, char* is used for string
+
+Features:
+Variable definition and assignments
+If statements
+For statements
+While statements
+Functions
+Pointers and pointer arithmetic
+
+Standard library features:
+
+
+Assembly register allocations:
+r-13 = First argument for operators; used for return value of any operators or to load literals/variables
+r-12 = Second argument for operators
+r-11 = General temporary
+
+Example program:
+
+int fac(int x) {
+    if(x <= 1) {
+        return 1;
+    } else {
+        return x * fac(x - 1);
+    }
+}
+
+int main() {
+    print_int(fac(5));
+    return 0;
+}
