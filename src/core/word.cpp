@@ -166,7 +166,25 @@ namespace termite {
         return result;
     }
 
-    std::pair<Word, Word> Word::operator/(const Word& other) const {
+    Word Word::operator/(const Word& other) const {
+        Word rem(bct);
+        Word quo;
+        while(rem.to_int32() >= other.to_int32()) {
+            rem = rem - other;
+            quo = quo + Word::ONE;
+        }
+        return quo;
+    }
+
+    Word Word::operator%(const Word& other) const {
+        Word rem(bct);
+        while(rem.to_int32() >= other.to_int32()) {
+            rem = rem - other;
+        }
+        return rem;
+    }
+
+    std::pair<Word, Word> Word::divmod(const Word& other) const {
         std::pair<Word, Word> result;
         Word rem(bct);
         Word quo;

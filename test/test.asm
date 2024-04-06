@@ -1,6 +1,8 @@
 main:
-    movi r-13, -78;
-    divi r-13, r-13, 20;
-    sys 1;
-    mov r-13, r-12;
-    sys 1;
+movi r-12, 6;
+movi r-13, 7;
+cmp r-12, r-13;
+movi r-13, -1;
+blt 2;
+movi r-13, 1;
+sys 1;

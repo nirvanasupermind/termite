@@ -24,6 +24,8 @@ namespace termite {
         MULI,
         DIV,
         DIVI,
+        MOD,
+        MODI,
         NOT,
         NOTI,
         AND,
@@ -52,7 +54,7 @@ namespace termite {
         SYS
     };
 
-    enum Regfter {
+    enum Register {
         SP = 25,
         PC
     };

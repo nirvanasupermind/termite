@@ -29,7 +29,7 @@ namespace termite {
                 tokens.push_back(generate_number());
             }
             else if (current == '#') {
-                while(current != '\n') {
+                while (current != '\n') {
                     advance();
                 }
             }
@@ -61,26 +61,21 @@ namespace termite {
 
     Token Lexer::generate_number() {
         std::string number_str(1, current);
-        if (current == '%') {
+        advance();
+        if (current == 'r' && number_str == "0") {
+            number_str += current;
             advance();
             while (current && (current == 'T' || current == 't' || current == '0' | current == '1')) {
                 number_str += current;
                 advance();
             }
-        }
-        else {
-            advance();
-            int decimal_point_count = 0;
-            while (current && (current == '.' || std::isdigit(current))) {
-                if (current == '.') {
-                    if (++decimal_point_count > 1) {
-                        break;
-                    }
-                }
+        } else {
+            while (current && std::isdigit(current)) {
                 number_str += current;
                 advance();
             }
         }
+
         return Token(TokenType::NUMBER, number_str);
     }
 

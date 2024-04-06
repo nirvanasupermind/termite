@@ -81,11 +81,11 @@ There are two status flags held in the program status register. The zeroth trit 
 |`T011`           |`not`   |Tritwise NOT                          |opcode [15:12], `rd` [11:9], `rs` [8:6]                |`rd = ~rs`                            |
 |`T1TT`           |`noti`  |Tritwise NOT immediate                |opcode [15:12], `rd` [11:9], `imm` [8:0]               |`rd = ~imm`                           |
 |`T1T0`           |`and`   |Tritwise AND                          |opcode [15:12], `rd` [11:9], `rs` [8:6], `rt` [5:3]    |`rd = rs & rt`                        |
-|`T1T1`           |`andi`  |Tritwise AND immediate                |opcode [15:12], `rd` [11:9], `rs` [8:6], `rt` [5:3]    |`rd = rs & imm`                       |
+|`T1T1`           |`andi`  |Tritwise AND immediate                |opcode [15:12], `rd` [11:9], `rs` [8:6], `imm` [5:0]   |`rd = rs & imm`                       |
 |`T10T`           |`or`    |Tritwise OR                           |opcode [15:12], `rd` [11:9], `rs` [8:6], `rt` [5:3]    |`rd = rs \| rt`                       |
-|`T100`           |`ori`   |Tritwise OR immediate                 |opcode [15:12], `rd` [11:9], `rs` [8:6], `rt` [5:3]    |`rd = rs \| imm`                      |
+|`T100`           |`ori`   |Tritwise OR immediate                 |opcode [15:12], `rd` [11:9], `rs` [8:6], `imm` [5:0]   |`rd = rs \| imm`                      |
 |`T101`           |`xor`   |Tritwise XOR                          |opcode [15:12], `rd` [11:9], `rs` [8:6], `rt` [5:3]    |`rd = rs ^ rt`                        |
-|`T11T`           |`xori`  |Tritwise XOR immediate                |opcode [15:12], `rd` [11:9], `rs` [8:6], `rt` [5:3]    |`rd = rs ^ imm`                       |
+|`T11T`           |`xori`  |Tritwise XOR immediate                |opcode [15:12], `rd` [11:9], `rs` [8:6], `imm` [5:0]   |`rd = rs ^ imm`                       |
 |`T110`           |`lsh`   |Left shift                            |opcode [15:12], `rd` [11:9], `rs` [8:6], `rt` [5:3]    |`rd = rs << rt`                       |
 |`T111`           |`lshi`  |Left shift immediate                  |opcode [15:12], `rd` [11:9], `rs` [8:6], `imm` [5:0]   |`rd = rs << imm`                      |
 |`0TTT`           |`rsh`   |Right shift                           |opcode [15:12], `rd` [11:9], `rs` [8:6], `rt` [5:3]    |`rd = rs >> rt`                       |
@@ -132,4 +132,4 @@ label:
     ...
 ```
 
-Instructions are separated by semicolons. All labels are followed by a colon, and comments, if present, are preceded by a pound sign. Balanced ternary numbers can be written with a `%` prefix, for example `%1T` is 2.
+Instructions are separated by semicolons. All labels are followed by a colon, and comments, if present, are preceded by a pound sign. Balanced ternary numbers can be written with a C-style prefix `0r` (derived from the R in ternary, since T is the digit for -1), for example `0r1T` is 2. Both uppercase and lowercase T for -1 are accepted.

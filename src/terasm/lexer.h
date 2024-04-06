@@ -23,6 +23,8 @@ namespace termite {
         "muli",
         "div",
         "divi",
+        "mod",
+        "modi",
         "not",
         "noti",
         "and",
