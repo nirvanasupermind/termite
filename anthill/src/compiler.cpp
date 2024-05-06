@@ -295,8 +295,17 @@ namespace anthill {
         visit(node->cond, env);
         std::string endif_label = "endif" + std::to_string(label_counter);
         label_counter++;
-        assembly += "cmpi r-13, -1;\nbne " + endif_label + ";\n";
+        assembly += "cmpi r-13, -1;\nbne ";
+        size_t old_assembly_size = assembly.size();
         visit(node->body, env);
+        size_t new_assembly_size = assembly.size();
+        int branch_count = 0;
+        for(int i = old_assembly_size; i < new_assembly_size; i++) {
+            if(assembly.at(i) == ';') {
+                branch_count++;
+            }
+        }
+        assembly = assembly.substr(0, old_assembly_size) + std::to_string(branch_count * 2) + ";\n" + assembly.substr(old_assembly_size, new_assembly_size);
         assembly += endif_label + ":\n";
         return StaticType(BasicType::VOID);
     }
@@ -315,10 +324,11 @@ namespace anthill {
     StaticType Compiler::visit_while_node(const std::shared_ptr<WhileNode>& node, const std::shared_ptr<Env>& env) {
         std::string while_label = "while" + std::to_string(label_counter);
         label_counter++;
-        assembly += while_label + ":\n";
+        assembly += "mov r-10, r-13;\n" + while_label + ":\nmov r-13, r-10;\n";
         visit(node->body, env);
+        assembly += "mov r-10, r-13;\n";
         visit(node->cond, env);
-        assembly += "\ncmpi r-13, -1;\nbne " + while_label + ";\n";
+        assembly += "cmpi r-13, -1;\nbne " + while_label + ";\nmov r-13, r-10;\n";
         return StaticType(BasicType::VOID);
     }
 
@@ -329,4 +339,5 @@ namespace anthill {
 
         return StaticType(BasicType::VOID);
     }
+
 } // namespace anthill

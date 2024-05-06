@@ -1,0 +1,13 @@
+{
+    "files.associations": {
+        "*.punylisp": "lisp",
+        "*.eris": "plaintext",
+        "*.bnf": "bnf",
+        "*.csv": "plaintext",
+        "*.trasm": "asm-intel-x86-generic",
+        "*.trexe": "plaintext",
+        "tuple": "cpp",
+        "__node_handle": "cpp",
+        "sstream": "cpp"
+    }
+}

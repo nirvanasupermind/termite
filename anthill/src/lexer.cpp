@@ -105,6 +105,7 @@ namespace anthill {
                 advance();
                 if(current == '=') {
                     tokens.push_back(Token(old_line, TokenType::LE, "<="));
+                    advance();
                 } else {
                     tokens.push_back(Token(old_line, TokenType::LT, "<"));
                 }
@@ -114,6 +115,7 @@ namespace anthill {
                 advance();
                 if(current == '=') {
                     tokens.push_back(Token(old_line, TokenType::GE, ">="));
+                    advance();
                 } else {
                     tokens.push_back(Token(old_line, TokenType::GT, ">"));
                 }

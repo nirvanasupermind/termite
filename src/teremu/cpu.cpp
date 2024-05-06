@@ -369,14 +369,14 @@ namespace termite {
             case B: {
                 Word imm = instr.get_trit_range(0, 11);
                 registers[PC] = registers[PC] + imm;
-                //cycles -= imm.to_int32();
+                cycles -= imm.to_int32();
                 break;
             }
             case BEQ: {
                 Word imm = instr.get_trit_range(0, 11);
                 if(psr.get_bct_trit(SF) == 0b01) {
                     registers[PC] = registers[PC] + imm;
-                    //cycles -= imm.to_int32();
+                    cycles -= imm.to_int32();
                 }
                 break;
             }
@@ -384,7 +384,7 @@ namespace termite {
                 Word imm = instr.get_trit_range(0, 11);
                 if(psr.get_bct_trit(SF) != 0b01) {
                     registers[PC] = registers[PC] + imm;
-                    //cycles -= imm.to_int32();
+                    cycles -= imm.to_int32();
                 }
                 break;
             }
@@ -392,7 +392,7 @@ namespace termite {
                 Word imm = instr.get_trit_range(0, 11);
                 if(psr.get_bct_trit(SF) < 0b01) {
                     registers[PC] = registers[PC] + imm;
-                    //cycles -= imm.to_int32();
+                    cycles -= imm.to_int32();
                 }
                 break;
             }
@@ -400,7 +400,7 @@ namespace termite {
                 Word imm = instr.get_trit_range(0, 11);
                 if(psr.get_bct_trit(SF) <= 0b01) {
                     registers[PC] = registers[PC] + imm;
-                    //cycles -= imm.to_int32();
+                    cycles -= imm.to_int32();
                 }
                 break;
             }
@@ -408,7 +408,7 @@ namespace termite {
                 Word imm = instr.get_trit_range(0, 11);
                 if(psr.get_bct_trit(SF) > 0b01) {
                     registers[PC] = registers[PC] + imm;
-                    //cycles -= imm.to_int32();
+                    cycles -= imm.to_int32();
                 }
                 break;
             }
@@ -416,7 +416,7 @@ namespace termite {
                 Word imm = instr.get_trit_range(0, 11);
                 if(psr.get_bct_trit(SF) >= 0b01) {
                     registers[PC] = registers[PC] + imm;
-                    //cycles -= imm.to_int32();
+                    cycles -= imm.to_int32();
                 }
                 break;
             }
@@ -485,8 +485,6 @@ namespace termite {
                 }
                 break;
             }
-
-
             default: {
                 throw std::string("Error: invalid opcode: " + instr.get_trit_range(12, 15).to_ternary_str());
                 break;
