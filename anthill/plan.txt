@@ -27,6 +27,7 @@ Assembly register allocations:
 r-13 = First argument for operators; used for return value of any operators or to load literals/variables
 r-12 = Second argument for operators
 r-11 = General temporary
+r-10 = General temporary
 
 Example program:
 

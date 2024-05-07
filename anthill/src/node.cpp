@@ -53,8 +53,8 @@ namespace anthill {
     }
 
 
-    StringNode::StringNode(int line, const std::string& value)
-        : val(value) {
+    StringNode::StringNode(int line, const std::string& val)
+        : val(val) {
         this->line = line;
     }
 
@@ -66,8 +66,8 @@ namespace anthill {
         return '"' + val + '"';
     }
 
-    IdentifierNode::IdentifierNode(int line, const std::string& value)
-        : val(value) {
+    IdentifierNode::IdentifierNode(int line, const std::string& val)
+        : val(val) {
         this->line = line;
     }
 
@@ -136,8 +136,8 @@ namespace anthill {
         return '(' + op.val + ' ' + node_a->str() + ' ' + node_b->str() + ')';
     }
 
-    VarDefNode::VarDefNode(int line, const std::shared_ptr<Node>& var_type, const std::string& name, const std::shared_ptr<Node>& value)
-        : var_type(var_type), name(name), val(value) {
+    VarDefNode::VarDefNode(int line, const std::shared_ptr<Node>& var_type, const std::string& name, const std::shared_ptr<Node>& val)
+        : var_type(var_type), name(name), val(val) {
         this->line = line;
     }
 
@@ -214,8 +214,8 @@ namespace anthill {
         return "(for " + init->str() + " " + init->str() + " " + cond->str() + " " + update->str() + " " + body->str() + ")";
     }
 
-    ReturnStmtNode::ReturnStmtNode(int line, const std::shared_ptr<Node>& value)
-        : val(value) {
+    ReturnStmtNode::ReturnStmtNode(int line, const std::shared_ptr<Node>& val)
+        : val(val) {
         this->line = line;
     }
 

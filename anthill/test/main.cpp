@@ -9,7 +9,7 @@
 #include "../src/env.h"
 
 int main() {
-    std::string str = "int x = 1; while(x < 100) { x = x * 2; } ";
+    std::string str = "int x = 5; int* y = &x; *y;";
     try {
         anthill::Lexer lexer("sample", str);
         anthill::Parser parser("sample", lexer.generate_tokens());

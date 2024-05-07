@@ -334,7 +334,7 @@ namespace anthill {
     }
 
     std::shared_ptr<Node> Parser::unary_expr() {
-        if (current.type == TokenType::PLUS || current.type == TokenType::MINUS) {
+        if (current.type == TokenType::PLUS || current.type == TokenType::MINUS || current.type == TokenType::MUL || current.type == TokenType::AND) {
             Token op = current;
             advance();
             std::shared_ptr<Node> node = unary_expr();
