@@ -72,7 +72,7 @@ namespace anthill {
         }
         advance();
         std::shared_ptr<Node> value = expr_stmt();
-        return std::shared_ptr<ReturnStmtNode>(new ReturnStmtNode(line, value));
+        return std::shared_ptr<ReturnNode>(new ReturnNode(line, value));
     }
 
     std::shared_ptr<Node> Parser::while_stmt() {
@@ -172,7 +172,7 @@ namespace anthill {
             var_or_return_type = std::shared_ptr<IdentifierNode>(new IdentifierNode(line, current.val));
             advance();
         } else {
-            var_or_return_type = static_type();
+            var_or_return_type = static_type(TokenType::EOF_);
         }
 
         if (current.type != TokenType::IDENTIFIER) {
@@ -197,7 +197,7 @@ namespace anthill {
                     advance();
                     break;
                 }
-                arg_types.push_back(static_type());
+                arg_types.push_back(static_type(TokenType::EOF_));
                 if (current.type != TokenType::IDENTIFIER) {
                     raise_error();
                 }
@@ -221,7 +221,7 @@ namespace anthill {
         }
     }
 
-    std::shared_ptr<Node> Parser::static_type() {
+    std::shared_ptr<Node> Parser::static_type(const TokenType& terminator) {
         int line = current.line;
         if (!(current.type == TokenType::KEYWORD && (current.val == "char" || current.val == "int"))) {
             raise_error();
@@ -229,7 +229,7 @@ namespace anthill {
         Token var_type = current;
         std::shared_ptr<Node> result = std::shared_ptr<IdentifierNode>(new IdentifierNode(line, var_type.val));
         advance();
-        while (current.type != TokenType::EOF_ && current.type == TokenType::MUL) {
+        while (current.type != terminator && current.type == TokenType::MUL) {
             result = std::shared_ptr<PointerTypeNode>(new PointerTypeNode(line, result));
             advance();
         }
@@ -351,17 +351,21 @@ namespace anthill {
         while (current.type == TokenType::LPAREN) {
             advance();
             std::vector<std::shared_ptr<Node> > args;
-            while (current.type != TokenType::EOF_) {
-                args.push_back(expr(TokenType::COMMA));
-                if (current.type == TokenType::COMMA) {
-                    advance();
-                }
-                else if (current.type == TokenType::RPAREN) {
-                    advance();
-                    break;
-                }
-                else {
-                    raise_error();
+            if(current.type == TokenType::RPAREN) {
+                advance();
+            } else {
+                while (current.type != TokenType::EOF_) {
+                    args.push_back(expr(TokenType::COMMA));
+                    if (current.type == TokenType::COMMA) {
+                        advance();
+                    }
+                    else if (current.type == TokenType::RPAREN) {
+                        advance();
+                        break;
+                    }
+                    else {
+                        raise_error();
+                    }
                 }
             }
 
@@ -375,6 +379,15 @@ namespace anthill {
         Token token = current;
         if (current.type == TokenType::LPAREN) {
             advance();
+            if(current.type == TokenType::KEYWORD && (current.val == "void" || current.val == "char" || current.val == "int")) {
+                std::shared_ptr<Node> cast_type = static_type(TokenType::RPAREN);
+                if(current.type != TokenType::RPAREN) {
+                    raise_error();
+                }
+                advance();
+                std::shared_ptr<Node> val = expr(TokenType::EOF_);
+                return std::shared_ptr<CastNode>(new CastNode(token.line, cast_type, val));
+            } 
             std::shared_ptr<Node> result = expr(TokenType::RPAREN);
 
             if (current.type != TokenType::RPAREN) {

@@ -15,6 +15,7 @@ namespace anthill {
         IDENTIFIER,
         POINTER_TYPE,
         CALL,
+        CAST,
         UNARY_OP,
         BINARY_OP,
         VAR_DEF,
@@ -73,6 +74,15 @@ namespace anthill {
     public:
         std::shared_ptr<Node> base_type;
         PointerTypeNode(int line, const std::shared_ptr<Node>& base_type);
+        NodeType type() const;
+        std::string str() const;
+    };
+
+    class CastNode : public Node {
+    public:
+        std::shared_ptr<Node> cast_type;
+        std::shared_ptr<Node> val;
+        CastNode(int line, const std::shared_ptr<Node>& cast_type, const std::shared_ptr<Node>& val);
         NodeType type() const;
         std::string str() const;
     };
@@ -176,10 +186,10 @@ namespace anthill {
         std::string str() const;
     };
 
-    class ReturnStmtNode : public Node {
+    class ReturnNode : public Node {
     public:
         std::shared_ptr<Node> val;
-        ReturnStmtNode(int line, const std::shared_ptr<Node>& val);
+        ReturnNode(int line, const std::shared_ptr<Node>& val);
         NodeType type() const;
         std::string str() const;
     };

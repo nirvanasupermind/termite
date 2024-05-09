@@ -29,6 +29,10 @@ r-12 = Second argument for operators
 r-11 = General temporary
 r-10 = General temporary
 
+Memory allocations:
+-21523360 - -21464312: Assembly program
+-21464311 - 21523360: Free
+
 Example program:
 
 int fac(int x) {

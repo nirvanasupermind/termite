@@ -110,6 +110,20 @@ namespace anthill {
         return result;
     }
 
+
+    CastNode::CastNode(int line, const std::shared_ptr<Node>& cast_type, const std::shared_ptr<Node>& val)
+        : cast_type(cast_type), val(val) {
+        this->line = line;
+    }
+
+    NodeType CastNode::type() const {
+        return NodeType::CAST;
+    }
+
+    std::string CastNode::str() const {
+        return "(cast " + cast_type->str() + " " + val->str() + ")";
+    }
+
     UnaryOpNode::UnaryOpNode(int line, const Token& op, const std::shared_ptr<Node>& node)
         : op(op), node(node) {
         this->line = line;
@@ -214,16 +228,16 @@ namespace anthill {
         return "(for " + init->str() + " " + init->str() + " " + cond->str() + " " + update->str() + " " + body->str() + ")";
     }
 
-    ReturnStmtNode::ReturnStmtNode(int line, const std::shared_ptr<Node>& val)
+    ReturnNode::ReturnNode(int line, const std::shared_ptr<Node>& val)
         : val(val) {
         this->line = line;
     }
 
-    NodeType ReturnStmtNode::type() const {
+    NodeType ReturnNode::type() const {
         return NodeType::RETURN;
     }
 
-    std::string ReturnStmtNode::str() const {
+    std::string ReturnNode::str() const {
         return "(return " + val->str() + ")";
     }
 

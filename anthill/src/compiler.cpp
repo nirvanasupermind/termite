@@ -24,8 +24,10 @@ namespace anthill {
             return visit_string_node(std::dynamic_pointer_cast<StringNode>(node), env);
         case NodeType::IDENTIFIER:
             return visit_identifier_node(std::dynamic_pointer_cast<IdentifierNode>(node), env);
-            // case NodeType::CALL:
-            //     return visit_call_node(std::dynamic_pointer_cast<CallNode>(node), env);
+        case NodeType::CAST:
+            return visit_cast_node(std::dynamic_pointer_cast<CastNode>(node), env);
+        case NodeType::CALL:
+            return visit_call_node(std::dynamic_pointer_cast<CallNode>(node), env);
         case NodeType::UNARY_OP:
             return visit_unary_op_node(std::dynamic_pointer_cast<UnaryOpNode>(node), env);
         case NodeType::BINARY_OP:
@@ -42,6 +44,10 @@ namespace anthill {
             return visit_while_node(std::dynamic_pointer_cast<WhileNode>(node), env);
         case NodeType::FOR:
             return visit_for_node(std::dynamic_pointer_cast<ForNode>(node), env);
+        case NodeType::FUNC_DEF:
+            return visit_func_def_node(std::dynamic_pointer_cast<FuncDefNode>(node), env);
+        case NodeType::RETURN:
+            return visit_return_node(std::dynamic_pointer_cast<ReturnNode>(node), env);
         case NodeType::STMT_LIST:
             return visit_stmt_list_node(std::dynamic_pointer_cast<StmtListNode>(node), env);
         default:
@@ -63,6 +69,22 @@ namespace anthill {
         }
         else {
             assembly += "movi r" + reg_str + ", " + std::to_string(val) + ";\n";
+        }
+    }
+
+    StaticType Compiler::parse_type(const std::shared_ptr<Node>& node) {
+        if(node->type() == NodeType::POINTER_TYPE) {
+            StaticType type = parse_type(std::dynamic_pointer_cast<PointerTypeNode>(node)->base_type);
+            return StaticType(type.basic_type, type.pointer_levels + 1);
+        } else {
+            std::string name = std::dynamic_pointer_cast<IdentifierNode>(node)->val;
+            if(name == "int") {
+                return StaticType(BasicType::INT);
+            } else if(name == "char") {
+                return StaticType(BasicType::CHAR);
+            } else {
+                throw std::string(filename + ':' + std::to_string(node->line) + ": unknown type " + name);
+            }
         }
     }
 
@@ -96,7 +118,7 @@ namespace anthill {
 
 
     StaticType Compiler::visit_string_node(const std::shared_ptr<StringNode>& node, const std::shared_ptr<Env>& env) {
-        var_addr_counter++;
+        var_addr_counter += 2;
         movi_16trit(-13, var_addr_counter);
         for (int i = 0; i < node->val.size(); i++) {
             movi_16trit(-10, var_addr_counter + i);
@@ -104,6 +126,32 @@ namespace anthill {
             assembly += "st r-11, r-10, 0;\n";
         }
         return StaticType(BasicType::CHAR, 1);
+    }
+
+
+    StaticType Compiler::visit_cast_node(const std::shared_ptr<CastNode>& node, const std::shared_ptr<Env>& env) {
+        StaticType src_type = visit(node->val, env);
+        StaticType cast_type = parse_type(node->cast_type);
+        if(src_type.str() != "char" && cast_type.str() == "char") {
+            assembly += "lshi r-13, r-13, 8;\nrshi r-13, r-13, 8;\n";
+        }
+        return cast_type;
+    }
+
+    StaticType Compiler::visit_call_node(const std::shared_ptr<CallNode>& node, const std::shared_ptr<Env>& env) {
+        if (node->func->type() != NodeType::IDENTIFIER) {
+            throw std::string(filename + ':' + std::to_string(node->line) + ": called a non-function");
+        }
+
+        assembly += "subi r12, r12, 2;\nst r13, r12, 0;\n";
+
+        std::string name = std::dynamic_pointer_cast<IdentifierNode>(node->func)->val;
+        for(int i = 0; i < node->args.size(); i++) {
+            visit(node->args.at(i), env);
+            assembly += "st r-13, r-9, " + std::to_string(i - 81) + ";\n";
+        }
+        assembly += "call _func" + name + ";\n";
+        return env->get_type("_func" + name);
     }
 
     StaticType Compiler::visit_unary_op_node(const std::shared_ptr<UnaryOpNode>& node, const std::shared_ptr<Env>& env) {
@@ -311,13 +359,18 @@ namespace anthill {
         if (env->addrs.count(node->name)) {
             throw std::string(filename + ':' + std::to_string(node->line) + ": cannot redefine variable '" + node->name + "'");
         }
-
         StaticType val_type = visit(node->val, env);
         movi_16trit(-11, var_addr_counter);
         assembly += "st r-13, r-11, 0;\n";
         env->types[node->name] = val_type;
         env->addrs[node->name] = var_addr_counter;
         var_addr_counter += val_type.size();
+        // std::cout << val_type.str() << '\n';
+        // std::cout << parse_type(node->var_type).str() << '\n';
+        StaticType parsed_var_type = parse_type(node->var_type);
+        if(!env->check_type(node->name, parsed_var_type)) {
+            throw std::string(filename + ':' + std::to_string(node->line) + ": cannot convert " + val_type.str() + " to " + parsed_var_type.str());
+        }
         return StaticType(BasicType::VOID);
     }
 
@@ -329,7 +382,7 @@ namespace anthill {
 
     StaticType Compiler::visit_if_node(const std::shared_ptr<IfNode>& node, const std::shared_ptr<Env>& env) {
         visit(node->cond, env);
-        std::string endif_label = "endif" + std::to_string(label_counter);
+        std::string endif_label = "_endif" + std::to_string(label_counter);
         label_counter++;
         assembly += "cmpi r-13, -1;\nbne ";
         size_t old_assembly_size = assembly.size();
@@ -348,7 +401,7 @@ namespace anthill {
 
     StaticType Compiler::visit_if_else_node(const std::shared_ptr<IfElseNode>& node, const std::shared_ptr<Env>& env) {
         visit(node->cond, env);
-        std::string endif_label = "endif" + std::to_string(label_counter);
+        std::string endif_label = "_endif" + std::to_string(label_counter);
         label_counter++;
         assembly += "cmpi r-13, -1;\nbne ";
         size_t old_assembly_size = assembly.size();
@@ -367,7 +420,7 @@ namespace anthill {
     }
 
     StaticType Compiler::visit_while_node(const std::shared_ptr<WhileNode>& node, const std::shared_ptr<Env>& env) {
-        std::string while_label = "while" + std::to_string(label_counter);
+        std::string while_label = "_while" + std::to_string(label_counter);
         label_counter++;
         assembly += "mov r-11, r-13;\n" + while_label + ":\nmov r-13, r-11;\n";
         visit(node->body, env);
@@ -378,7 +431,7 @@ namespace anthill {
     }
 
     StaticType Compiler::visit_for_node(const std::shared_ptr<ForNode>& node, const std::shared_ptr<Env>& env) {
-        std::string for_label = "for" + std::to_string(label_counter);
+        std::string for_label = "_for" + std::to_string(label_counter);
         label_counter++;
         visit(node->init, env);
         assembly += "mov r-11, r-13;\n" + for_label + ":\nmov r-13, r-11;\n";
@@ -387,6 +440,30 @@ namespace anthill {
         assembly += "mov r-11, r-13;\n";
         visit(node->cond, env);
         assembly += "cmpi r-13, -1;\nbne " + for_label + ";\nmov r-13, r-11;\n";
+        return StaticType(BasicType::VOID);
+    }
+
+    StaticType Compiler::visit_func_def_node(const std::shared_ptr<FuncDefNode>& node, const std::shared_ptr<Env>& env) {
+        assembly += "_func" + node->name + ":\n";
+        for(int i = 0; i < node->arg_names.size(); i++) {
+            assembly += "ld r-13, r-9, " + std::to_string(i - 81) + ";\n";
+            movi_16trit(-11, var_addr_counter);
+            assembly += "st r-13, r-11, 0;\n";
+            env->types[node->arg_names.at(i)] = parse_type(node->arg_types.at(i));
+            var_addr_counter += env->types[node->arg_names.at(i)] .size();
+            env->addrs[node->arg_names.at(i)] = var_addr_counter;
+            var_addr_counter++;
+        }
+        visit(node->body, env);
+        StaticType static_type(BasicType::INT);
+        env->types["_func" + node->name] = static_type;
+        env->addrs["_func" + node->name] = 0;
+        return StaticType(BasicType::VOID);
+    }
+
+    StaticType Compiler::visit_return_node(const std::shared_ptr<ReturnNode>& node, const std::shared_ptr<Env>& env) {
+        visit(node->val, env);
+        assembly += "ret;\n";
         return StaticType(BasicType::VOID);
     }
 

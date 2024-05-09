@@ -26,7 +26,7 @@ namespace anthill {
         std::shared_ptr<Node> if_stmt();
         std::shared_ptr<Node> block_stmt();
         std::shared_ptr<Node> var_func_def_stmt();
-        std::shared_ptr<Node> static_type();
+        std::shared_ptr<Node> static_type(const TokenType& terminator);
         std::shared_ptr<Node> expr_stmt();
         std::shared_ptr<Node> expr(const TokenType& terminator);
         std::shared_ptr<Node> assign_expr(const TokenType& terminator);

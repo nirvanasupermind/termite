@@ -3,6 +3,7 @@
 #include <iterator>
 #include <vector>
 #include <iostream>
+#include <string>
 #include "../core/word.h"
 #include "./lexer.h"
 #include "./assembler.h"
