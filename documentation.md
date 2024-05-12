@@ -76,8 +76,8 @@ There are two status flags held in the program status register. The zeroth trit 
 |`T00T`           |`subci` |Subtract with carry immediate         |opcode [15:12], `rd` [11:9], `rs` [8:6], `imm` [5:0]   |`rd = rs - imm - CF`                  |
 |`T000`           |`mul`   |Multiply                              |opcode [15:12], `rd` [11:9], `rs` [8:6], `rt` [5:3]    |`rd = rs * rt`                        |
 |`T001`           |`muli`  |Multiply immediate                    |opcode [15:12], `rd` [11:9], `rs` [8:6], `imm` [5:0]   |`rd = rs * imm`                       |
-|`T01T`           |`div`   |Divide                                |opcode [15:12], `rd` [11:9], `rs` [8:6], `rt` [5:3]    |`rd = rs / rt` (adjacent register to `rd` = `rs % rt`)|
-|`T010`           |`divi`  |Divide immediate                      |opcode [15:12], `rd` [11:9], `rs` [8:6], `imm` [5:0]   |`rd = rs / imm` (adjacent register to `rd` = `rs % imm`)|
+|`T01T`           |`div`   |Divide                                |opcode [15:12], `rd` [11:9], `rs` [8:6], `rt` [5:3]    |`rd = rs / rt`                        |
+|`T010`           |`divi`  |Divide immediate                      |opcode [15:12], `rd` [11:9], `rs` [8:6], `imm` [5:0]   |`rd = rs / imm`                       |
 |`T011`           |`not`   |Tritwise NOT                          |opcode [15:12], `rd` [11:9], `rs` [8:6]                |`rd = ~rs`                            |
 |`T1TT`           |`noti`  |Tritwise NOT immediate                |opcode [15:12], `rd` [11:9], `imm` [8:0]               |`rd = ~imm`                           |
 |`T1T0`           |`and`   |Tritwise AND                          |opcode [15:12], `rd` [11:9], `rs` [8:6], `rt` [5:3]    |`rd = rs & rt`                        |
@@ -108,7 +108,7 @@ There are two status flags held in the program status register. The zeroth trit 
 ## System calls
 |Code in `imm`    |Description                                 |Operands       |         
 |-----------------|--------------------------------------------|---------------|
-|0                |Exit program                                |               |
+|0                |Exit program with `r-13` as code            |`r-13`         |
 |1                |Print `r-13` as decimal number              |`r-13`         |
 |2                |Print `r-13` as ternary number              |`r-13`         |
 |3                |Print `r-13`'s low tryte as character       |`r-13`         |

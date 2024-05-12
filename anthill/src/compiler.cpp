@@ -78,7 +78,9 @@ namespace anthill {
             return StaticType(type.basic_type, type.pointer_levels + 1);
         } else {
             std::string name = std::dynamic_pointer_cast<IdentifierNode>(node)->val;
-            if(name == "int") {
+            if(name == "void") {
+                return StaticType(BasicType::VOID);
+            } else if(name == "int") {
                 return StaticType(BasicType::INT);
             } else if(name == "char") {
                 return StaticType(BasicType::CHAR);
@@ -143,15 +145,17 @@ namespace anthill {
             throw std::string(filename + ':' + std::to_string(node->line) + ": called a non-function");
         }
 
-        assembly += "subi r12, r12, 2;\nst r13, r12, 0;\n";
+        // assembly += "subi r12, r12, 2;\nst r13, r12, 0;\n";
+
+        assembly += "mov r-8, r13;\n";
 
         std::string name = std::dynamic_pointer_cast<IdentifierNode>(node->func)->val;
         for(int i = 0; i < node->args.size(); i++) {
             visit(node->args.at(i), env);
             assembly += "st r-13, r-9, " + std::to_string(i - 81) + ";\n";
         }
-        assembly += "call _func" + name + ";\n";
-        return env->get_type("_func" + name);
+        assembly += "b " + name + ";\n";
+        return env->get_type(name);
     }
 
     StaticType Compiler::visit_unary_op_node(const std::shared_ptr<UnaryOpNode>& node, const std::shared_ptr<Env>& env) {
@@ -444,7 +448,10 @@ namespace anthill {
     }
 
     StaticType Compiler::visit_func_def_node(const std::shared_ptr<FuncDefNode>& node, const std::shared_ptr<Env>& env) {
-        assembly += "_func" + node->name + ":\n";
+        StaticType return_type = parse_type(node->return_type);
+        env->types[node->name] = return_type;
+        env->addrs[node->name] = 0; // Dummy address (not actually used)
+        assembly += node->name + ":\n";
         for(int i = 0; i < node->arg_names.size(); i++) {
             assembly += "ld r-13, r-9, " + std::to_string(i - 81) + ";\n";
             movi_16trit(-11, var_addr_counter);
@@ -455,15 +462,13 @@ namespace anthill {
             var_addr_counter++;
         }
         visit(node->body, env);
-        StaticType static_type(BasicType::INT);
-        env->types["_func" + node->name] = static_type;
-        env->addrs["_func" + node->name] = 0;
+        // assembly += "st r-13, r-11, 0;\n";
         return StaticType(BasicType::VOID);
     }
 
     StaticType Compiler::visit_return_node(const std::shared_ptr<ReturnNode>& node, const std::shared_ptr<Env>& env) {
         visit(node->val, env);
-        assembly += "ret;\n";
+        assembly += "mov r13, r-8;\n";
         return StaticType(BasicType::VOID);
     }
 

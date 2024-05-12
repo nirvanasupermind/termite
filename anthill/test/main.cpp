@@ -26,6 +26,7 @@ int main() {
     }
     catch (const std::string& e) {
         std::cerr << e << '\n';
+        
     }
     return 0;
 } 

@@ -29,11 +29,13 @@ int main(int argc, char** argv) {
         anthill::Compiler compiler(filename);
         std::shared_ptr<anthill::Env> global_env(new anthill::Env({}, {}));
         compiler.visit(parser.parse(), global_env);
-        int main_start = compiler.assembly.find("_funcmain:");
+        std::cout << compiler.assembly << '\n';
+        int main_start = compiler.assembly.find("main:");
         int branch_disp = 0;
         for(int i = 0; i < main_start; i++) {
             if(compiler.assembly.at(i) == ';') {
-                branch_disp++;
+                // std::cout << i << ' ' << compiler.assembly.at(i - 1) << '\n';
+                branch_disp += 2;
             }
         }
         std::ofstream fout;

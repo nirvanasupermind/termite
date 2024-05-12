@@ -6,6 +6,7 @@
 #include "./mem.h"
 
 namespace termite {
+    // Not an enum class so no explicit casting to int is needing
     enum Opcode {
         MOV = -40,
         MOVI,

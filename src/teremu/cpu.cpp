@@ -16,7 +16,7 @@ namespace termite {
 
     void CPU::reset() {
         registers[PC] = Word::from_int32(-(Mem::MAX_MEM >> 1));
-        registers[SP] = Word::from_int32(Mem::MAX_MEM >> 1);
+        registers[SP] = Word::from_int32((Mem::MAX_MEM >> 1) - 1);
         mem.initialize();
     }
 
@@ -57,7 +57,6 @@ namespace termite {
         while (cycles > 0) {
             Word instr = fetch_word(cycles);
             int opcode = instr.get_trit_range(12, 15).to_int32();
-            // std::cout << opcode << '\n';
             switch (opcode) {
             case MOV: {
                 int rd_idx = instr.get_trit_range(9, 11).to_int32() + 13;
@@ -368,8 +367,10 @@ namespace termite {
             }
             case B: {
                 Word imm = instr.get_trit_range(0, 11);
+                std::cout << registers[PC].to_int32() << '\n';
                 registers[PC] = registers[PC] + imm;
-                cycles -= imm.to_int32();
+                std::cout << registers[PC].to_int32() << '\n';
+                cycles += imm.to_int32();
                 break;
             }
             case BEQ: {
@@ -437,10 +438,13 @@ namespace termite {
                 registers[SP] = registers[SP] - 2;
                 mem.set_word(registers[SP], registers[PC]);
                 registers[PC] = registers[PC] + imm;
+                cycles -= imm.to_int32();
                 break;
             }
             case RET: {
+                Word oldPC = registers[PC];
                 registers[PC] = mem.get_word(registers[SP]);
+                cycles += (registers[PC] - oldPC).to_int32();
                 registers[SP] = registers[SP] + Word::TWO;
                 break;
             }
