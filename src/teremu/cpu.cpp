@@ -54,6 +54,7 @@ namespace termite {
         }
 
 
+
         while (cycles > 0) {
             Word instr = fetch_word(cycles);
             int opcode = instr.get_trit_range(12, 15).to_int32();
@@ -367,10 +368,9 @@ namespace termite {
             }
             case B: {
                 Word imm = instr.get_trit_range(0, 11);
-                std::cout << registers[PC].to_int32() << '\n';
                 registers[PC] = registers[PC] + imm;
-                std::cout << registers[PC].to_int32() << '\n';
-                cycles += imm.to_int32();
+                // cycles += imm.to_int32();
+                std::cout << "dbg " << imm.to_int32() << '\n';
                 break;
             }
             case BEQ: {

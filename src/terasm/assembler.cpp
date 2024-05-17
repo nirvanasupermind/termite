@@ -683,7 +683,7 @@ namespace termite {
             catch (const std::out_of_range& e) {
                 throw std::string("Error: undefined label '" + current.value + "'");
             }
-            Word relative_addr = label_addr - Word::from_int32(((idx + 1) << 1) - 21523360);
+            Word relative_addr = label_addr - Word::from_int32(((idx) << 1) - 21523360);
             for (int i = 11; i >= 0; i--) {
                 code[idx].set_bct_trit(i, relative_addr.get_bct_trit(i));
             }

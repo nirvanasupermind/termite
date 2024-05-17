@@ -147,14 +147,19 @@ namespace anthill {
 
         // assembly += "subi r12, r12, 2;\nst r13, r12, 0;\n";
 
-        assembly += "mov r-8, r13;\n";
-
         std::string name = std::dynamic_pointer_cast<IdentifierNode>(node->func)->val;
         for(int i = 0; i < node->args.size(); i++) {
             visit(node->args.at(i), env);
             assembly += "st r-13, r-9, " + std::to_string(i - 81) + ";\n";
         }
-        assembly += "b " + name + ";\n";
+        int name_start = assembly.find(name + ':');
+        int branch_disp = 0;
+        for(int i = name_start; i < assembly.size(); i++) {
+            if(assembly.at(i) == ';') {
+                branch_disp += 2;
+            }
+        }
+        assembly += "mov r-8, r13;\nsubi r-8, r-8, 2;\nb -" + std::to_string(branch_disp + 6) + ";\n";
         return env->get_type(name);
     }
 
@@ -462,7 +467,6 @@ namespace anthill {
             var_addr_counter++;
         }
         visit(node->body, env);
-        // assembly += "st r-13, r-11, 0;\n";
         return StaticType(BasicType::VOID);
     }
 
