@@ -20,6 +20,7 @@ namespace anthill {
         std::shared_ptr<Node> parse();
         std::shared_ptr<Node> stmt_list(const TokenType& terminator);
         std::shared_ptr<Node> stmt();
+        std::shared_ptr<Node> print_stmt();
         std::shared_ptr<Node> return_stmt();
         std::shared_ptr<Node> for_stmt();
         std::shared_ptr<Node> while_stmt();

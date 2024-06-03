@@ -43,7 +43,9 @@ namespace anthill {
 
     std::shared_ptr<Node> Parser::stmt() {
         Token token = current;
-        if (current.type == TokenType::KEYWORD && current.val == "return") {
+        if (current.type == TokenType::KEYWORD && current.val == "print") {
+            return print_stmt();
+        } else if (current.type == TokenType::KEYWORD && current.val == "return") {
             return return_stmt();
         } else if (current.type == TokenType::KEYWORD && current.val == "for") {
             return for_stmt();
@@ -73,6 +75,16 @@ namespace anthill {
         advance();
         std::shared_ptr<Node> value = expr_stmt();
         return std::shared_ptr<ReturnNode>(new ReturnNode(line, value));
+    }
+
+    std::shared_ptr<Node> Parser::print_stmt() {
+        int line = current.line;
+        if (!(current.type == TokenType::KEYWORD && current.val == "print")) {
+            raise_error();
+        }
+        advance();
+        std::shared_ptr<Node> value = expr_stmt();
+        return std::shared_ptr<PrintNode>(new PrintNode(line, value));
     }
 
     std::shared_ptr<Node> Parser::while_stmt() {

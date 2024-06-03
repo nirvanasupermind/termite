@@ -36,6 +36,7 @@ namespace anthill {
         StaticType visit_for_node(const std::shared_ptr<ForNode>& node, const std::shared_ptr<Env>& env);
         StaticType visit_func_def_node(const std::shared_ptr<FuncDefNode>& node, const std::shared_ptr<Env>& env);
         StaticType visit_return_node(const std::shared_ptr<ReturnNode>& node, const std::shared_ptr<Env>& env);
+        StaticType visit_print_node(const std::shared_ptr<PrintNode>& node, const std::shared_ptr<Env>& env);
         StaticType visit_stmt_list_node(const std::shared_ptr<StmtListNode>& node, const std::shared_ptr<Env>& env);
         StaticType visit_node(const std::shared_ptr<BlockNode>& node, const std::shared_ptr<Env>& env);
 

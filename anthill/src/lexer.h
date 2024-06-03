@@ -14,7 +14,8 @@ namespace anthill {
         "else",
         "while",
         "for",
-        "return"
+        "return",
+        "print"
     };
     
     class Lexer {

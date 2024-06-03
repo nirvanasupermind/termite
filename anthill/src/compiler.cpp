@@ -48,6 +48,8 @@ namespace anthill {
             return visit_func_def_node(std::dynamic_pointer_cast<FuncDefNode>(node), env);
         case NodeType::RETURN:
             return visit_return_node(std::dynamic_pointer_cast<ReturnNode>(node), env);
+        case NodeType::PRINT:
+            return visit_print_node(std::dynamic_pointer_cast<PrintNode>(node), env);
         case NodeType::STMT_LIST:
             return visit_stmt_list_node(std::dynamic_pointer_cast<StmtListNode>(node), env);
         default:
@@ -99,7 +101,8 @@ namespace anthill {
         try {
             StaticType type = env->get_type(node->val);
             int32_t addr = env->get_addr(node->val);
-            movi_16trit(-11, addr);
+            movi_16trit(-11, addr - 2);
+            std::cout << node->val << ' ' << addr << '\n';
             assembly += "ld r-13, r-11, 0;\n";
             // if (type.size() == 1) {
             //     assembly += "lshi r-13, r-13, 8;\nrshi r-13, r-13, 8;\n";
@@ -150,7 +153,8 @@ namespace anthill {
         std::string name = std::dynamic_pointer_cast<IdentifierNode>(node->func)->val;
         for(int i = 0; i < node->args.size(); i++) {
             visit(node->args.at(i), env);
-            assembly += "st r-13, r-9, " + std::to_string(i - 81) + ";\n";
+            movi_16trit(-11, i - 81);
+            assembly += "st r-13, r-11, 0;\n";
         }
         int name_start = assembly.find(name + ':');
         int branch_disp = 0;
@@ -159,7 +163,7 @@ namespace anthill {
                 branch_disp += 2;
             }
         }
-        assembly += "mov r-8, r13;\nsubi r-8, r-8, 2;\nb -" + std::to_string(branch_disp + 6) + ";\n";
+        assembly += "mov r-9, r13;\nsubi r-9, r-9, " + std::to_string(2 + node->args.size() * 6) + ";\nb -" + std::to_string(branch_disp + 6) + ";\n";
         return env->get_type(name);
     }
 
@@ -458,13 +462,14 @@ namespace anthill {
         env->addrs[node->name] = 0; // Dummy address (not actually used)
         assembly += node->name + ":\n";
         for(int i = 0; i < node->arg_names.size(); i++) {
-            assembly += "ld r-13, r-9, " + std::to_string(i - 81) + ";\n";
+            movi_16trit(-11, i - 81);
+            assembly += "ld r-13, r-11, 0;\n";
             movi_16trit(-11, var_addr_counter);
             assembly += "st r-13, r-11, 0;\n";
             env->types[node->arg_names.at(i)] = parse_type(node->arg_types.at(i));
             var_addr_counter += env->types[node->arg_names.at(i)] .size();
             env->addrs[node->arg_names.at(i)] = var_addr_counter;
-            var_addr_counter++;
+            var_addr_counter += 2;
         }
         visit(node->body, env);
         return StaticType(BasicType::VOID);
@@ -472,7 +477,13 @@ namespace anthill {
 
     StaticType Compiler::visit_return_node(const std::shared_ptr<ReturnNode>& node, const std::shared_ptr<Env>& env) {
         visit(node->val, env);
-        assembly += "mov r13, r-8;\n";
+        assembly += "mov r13, r-9;\n";
+        return StaticType(BasicType::VOID);
+    }
+    
+    StaticType Compiler::visit_print_node(const std::shared_ptr<PrintNode>& node, const std::shared_ptr<Env>& env) {
+        visit(node->val, env);
+        assembly += "sys 1;\n";
         return StaticType(BasicType::VOID);
     }
 

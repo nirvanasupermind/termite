@@ -3,5 +3,6 @@ int test(int x) {
 }
 
 void main() {
-    test(5);
+    int y = test(5);
+    print y;
 }

@@ -241,6 +241,20 @@ namespace anthill {
         return "(return " + val->str() + ")";
     }
 
+    PrintNode::PrintNode(int line, const std::shared_ptr<Node>& val)
+        : val(val) {
+        this->line = line;
+    }
+
+    NodeType PrintNode::type() const {
+        return NodeType::PRINT;
+    }
+
+    std::string PrintNode::str() const {
+        return "(print " + val->str() + ")";
+    }
+
+
     FuncDefNode::FuncDefNode(int line, const std::shared_ptr<Node>& return_type, const std::string& name,
         const std::vector<std::shared_ptr<Node> >& arg_types, const std::vector<std::string >& arg_names,
         const std::shared_ptr<Node>& body)

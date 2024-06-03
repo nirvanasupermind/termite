@@ -33,8 +33,9 @@ namespace termite {
     }
 
     void CPU::print_state() const {
-        std::cout << "********* pc = " << registers[PC].to_int32()  << " = %" << registers[PC].to_ternary_str() << '\n';
+        std::cout << "********* pc = " << registers[PC].to_int32()  << " = 0r" << registers[PC].to_ternary_str() << '\n';
         std::cout << "psr = " << psr.to_int32() << " = %" << psr.to_ternary_str() << '\n';
+        std::cout << "current instruction = 0r" << mem.get_word(registers[PC]).to_ternary_str() << '\n';
         for (int i = 0; i < 27; i += 3) {
             std::cout << "r" << CPU::pad(std::to_string(i - 13), 3) << " = " << registers[i].to_int32() << "\t\t";
             if(i == 24) {

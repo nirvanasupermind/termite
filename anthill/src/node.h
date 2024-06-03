@@ -26,6 +26,7 @@ namespace anthill {
         FOR,
         FUNC_DEF,
         RETURN,
+        PRINT,
         STMT_LIST
     };
 
@@ -190,6 +191,14 @@ namespace anthill {
     public:
         std::shared_ptr<Node> val;
         ReturnNode(int line, const std::shared_ptr<Node>& val);
+        NodeType type() const;
+        std::string str() const;
+    };
+
+    class PrintNode : public Node {
+    public:
+        std::shared_ptr<Node> val;
+        PrintNode(int line, const std::shared_ptr<Node>& val);
         NodeType type() const;
         std::string str() const;
     };
