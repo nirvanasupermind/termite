@@ -1,8 +1,7 @@
 int test(int x) {
-    return x + 1;
+    return x * x;
 }
 
 void main() {
-    int y = test(5);
-    print y;
+    print test(5);
 }

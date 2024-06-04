@@ -101,8 +101,8 @@ namespace anthill {
         try {
             StaticType type = env->get_type(node->val);
             int32_t addr = env->get_addr(node->val);
-            movi_16trit(-11, addr - 2);
-            std::cout << node->val << ' ' << addr << '\n';
+            std::cout << "line 104" << node->val << ' ' << addr << '\n';
+            movi_16trit(-11, addr);
             assembly += "ld r-13, r-11, 0;\n";
             // if (type.size() == 1) {
             //     assembly += "lshi r-13, r-13, 8;\nrshi r-13, r-13, 8;\n";
@@ -163,7 +163,13 @@ namespace anthill {
                 branch_disp += 2;
             }
         }
-        assembly += "mov r-9, r13;\nsubi r-9, r-9, " + std::to_string(2 + node->args.size() * 6) + ";\nb -" + std::to_string(branch_disp + 6) + ";\n";
+        assembly += "mov r-9, r13;\n";
+        if(node->args.size() == 0) {
+            assembly += "subi r-9, r-9, 2";
+        } else {
+            assembly += "addi r-9, r-9, " + std::to_string(node->args.size() * 6 - 2) + ";\n";
+        }
+        assembly += "b -" + std::to_string(branch_disp + 6) + ";\n";
         return env->get_type(name);
     }
 
@@ -464,12 +470,12 @@ namespace anthill {
         for(int i = 0; i < node->arg_names.size(); i++) {
             movi_16trit(-11, i - 81);
             assembly += "ld r-13, r-11, 0;\n";
-            movi_16trit(-11, var_addr_counter);
-            assembly += "st r-13, r-11, 0;\n";
             env->types[node->arg_names.at(i)] = parse_type(node->arg_types.at(i));
             var_addr_counter += env->types[node->arg_names.at(i)] .size();
+            movi_16trit(-11, var_addr_counter);
+            assembly += "st r-13, r-11, 0;\n";
             env->addrs[node->arg_names.at(i)] = var_addr_counter;
-            var_addr_counter += 2;
+            std::cout << "line 478" << node->arg_names.at(i) << ' ' << var_addr_counter << '\n';
         }
         visit(node->body, env);
         return StaticType(BasicType::VOID);
