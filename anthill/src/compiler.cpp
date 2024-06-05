@@ -101,7 +101,7 @@ namespace anthill {
         try {
             StaticType type = env->get_type(node->val);
             int32_t addr = env->get_addr(node->val);
-            std::cout << "line 104" << node->val << ' ' << addr << '\n';
+            // std::cout << "line 104" << node->val << ' ' << addr << '\n';
             movi_16trit(-11, addr);
             assembly += "ld r-13, r-11, 0;\n";
             // if (type.size() == 1) {
@@ -449,14 +449,15 @@ namespace anthill {
         return StaticType(BasicType::VOID);
     }
 
+
     StaticType Compiler::visit_for_node(const std::shared_ptr<ForNode>& node, const std::shared_ptr<Env>& env) {
         std::string for_label = "_for" + std::to_string(label_counter);
         label_counter++;
         visit(node->init, env);
         assembly += "mov r-11, r-13;\n" + for_label + ":\nmov r-13, r-11;\n";
-        visit(node->update, env);
         visit(node->body, env);
         assembly += "mov r-11, r-13;\n";
+        visit(node->update, env);
         visit(node->cond, env);
         assembly += "cmpi r-13, -1;\nbne " + for_label + ";\nmov r-13, r-11;\n";
         return StaticType(BasicType::VOID);
@@ -464,20 +465,22 @@ namespace anthill {
 
     StaticType Compiler::visit_func_def_node(const std::shared_ptr<FuncDefNode>& node, const std::shared_ptr<Env>& env) {
         StaticType return_type = parse_type(node->return_type);
-        env->types[node->name] = return_type;
+        StaticType func_type = StaticType(return_type.basic_type, return_type.pointer_levels);
         env->addrs[node->name] = 0; // Dummy address (not actually used)
         assembly += node->name + ":\n";
+        std::shared_ptr<Env> func_env(new Env({}, {}, env));
         for(int i = 0; i < node->arg_names.size(); i++) {
             movi_16trit(-11, i - 81);
             assembly += "ld r-13, r-11, 0;\n";
-            env->types[node->arg_names.at(i)] = parse_type(node->arg_types.at(i));
-            var_addr_counter += env->types[node->arg_names.at(i)] .size();
+            func_env->types[node->arg_names.at(i)] = parse_type(node->arg_types.at(i));
+            func_type.func_arg_types.push_back(func_env->types[node->arg_names.at(i)]);
+            var_addr_counter += func_env->types[node->arg_names.at(i)].size();
             movi_16trit(-11, var_addr_counter);
             assembly += "st r-13, r-11, 0;\n";
             env->addrs[node->arg_names.at(i)] = var_addr_counter;
-            std::cout << "line 478" << node->arg_names.at(i) << ' ' << var_addr_counter << '\n';
         }
-        visit(node->body, env);
+        visit(node->body, func_env);
+        env->types[node->name] = func_type; // Dummy address (not actually used)
         return StaticType(BasicType::VOID);
     }
 

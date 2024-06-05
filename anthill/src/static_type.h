@@ -14,8 +14,10 @@ namespace anthill {
     public:
         BasicType basic_type;
         int pointer_levels;
+        std::vector<StaticType> func_arg_types{}; 
         StaticType();
         StaticType(BasicType basic_type, int pointer_levels = 0);
+        StaticType(BasicType basic_type, int pointer_levels, const std::vector<StaticType>& func_arg_types);
         std::string str() const;
         int8_t size() const;
     };

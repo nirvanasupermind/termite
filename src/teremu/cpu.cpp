@@ -371,7 +371,7 @@ namespace termite {
                 Word imm = instr.get_trit_range(0, 11);
                 registers[PC] = registers[PC] + imm;
                 // cycles += imm.to_int32();
-                std::cout << "dbg " << imm.to_int32() << '\n';
+                // std::cout << "dbg " << imm.to_int32() << '\n';
                 break;
             }
             case BEQ: {

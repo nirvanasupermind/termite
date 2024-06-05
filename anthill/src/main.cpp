@@ -28,22 +28,36 @@ int main(int argc, char** argv) {
         anthill::Parser parser(filename, lexer.generate_tokens());
         anthill::Compiler compiler(filename);
         std::shared_ptr<anthill::Env> global_env(new anthill::Env({}, {}));
+        global_env->types["print_int"] = anthill::StaticType(anthill::BasicType::VOID);
+        global_env->types["print_int"].func_arg_types.push_back(anthill::StaticType(anthill::BasicType::INT));
+        global_env->addrs["print_int"] = 0;
+
         compiler.visit(parser.parse(), global_env);
-        std::cout << compiler.assembly << '\n';
-        int main_start = compiler.assembly.find("main:");
+        std::string boilerplate = 
+        "print_int:"
+        "movi r-11, -81;"
+        "ld r-13, r-11, 0;"
+        "movi r-11, 2;"
+        "st r-13, r-11, 0;"
+        "movi r-11, 2;"
+        "ld r-13, r-11, 0;"
+        "sys 1;"
+        "movi r-13, 0;"
+        "mov r13, r-9;";
+
+        std::string full_assembly = boilerplate + '\n' + compiler.assembly;
+        int main_start = full_assembly.find("main:");
         int branch_disp = 0;
         for(int i = 0; i < main_start; i++) {
-            if(compiler.assembly.at(i) == ';') {
+            if(full_assembly.at(i) == ';') {
                 // std::cout << i << ' ' << compiler.assembly.at(i - 1) << '\n';
                 branch_disp += 2;
             }
         }
         std::ofstream fout;
         fout.open(std::string(argv[2]));
-        if(branch_disp != 0) {
-            fout << "b " << branch_disp << ";\n";
-        }
-        fout << compiler.assembly;
+        fout << "b " << branch_disp << ";\n";
+        fout << full_assembly;
         fout.close();
     }
     catch (const std::string& e) {
