@@ -63,8 +63,14 @@ namespace anthill {
                 advance();
             }
             else if (current == '/') {
-                tokens.push_back(Token(line, TokenType::DIV, "/"));
-                advance();
+               advance();
+                if(current != '/') {
+                    tokens.push_back(Token(line, TokenType::DIV, "/"));
+                } else {
+                    while(current != '\n') {
+                        advance();
+                    }
+                }
             }
             else if (current == '%') {
                 tokens.push_back(Token(line, TokenType::MOD, "%"));

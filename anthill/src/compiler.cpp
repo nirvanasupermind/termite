@@ -151,6 +151,20 @@ namespace anthill {
         // assembly += "subi r12, r12, 2;\nst r13, r12, 0;\n";
 
         std::string name = std::dynamic_pointer_cast<IdentifierNode>(node->func)->val;
+        if(name == "__asm__") {
+            if (node->args.at(0)->type() != NodeType::STRING) {
+                throw std::string(filename + ':' + std::to_string(node->line) + ": put a non-string in __asm__");
+            }
+
+            std::string injected_asm = std::dynamic_pointer_cast<StringNode>(node->args.at(0))->val;
+            injected_asm = injected_asm.substr(1, injected_asm.size() - 2);
+            assembly += injected_asm;
+            return StaticType(BasicType::VOID);
+        } else {
+            int expected_args = env->get_type(name).func_arg_types.size();
+        if(node->args.size() != expected_args ) {
+            throw std::string(filename + ':' + std::to_string(node->line) + ": expected " + std::to_string(expected_args) + " arguments for function '" + name + "', got " + std::to_string(node->args.size()));
+        }
         for(int i = 0; i < node->args.size(); i++) {
             visit(node->args.at(i), env);
             movi_16trit(-11, i - 81);
@@ -171,6 +185,7 @@ namespace anthill {
         }
         assembly += "b -" + std::to_string(branch_disp + 6) + ";\n";
         return env->get_type(name);
+        }
     }
 
     StaticType Compiler::visit_unary_op_node(const std::shared_ptr<UnaryOpNode>& node, const std::shared_ptr<Env>& env) {
@@ -386,10 +401,10 @@ namespace anthill {
         var_addr_counter += val_type.size();
         // std::cout << val_type.str() << '\n';
         // std::cout << parse_type(node->var_type).str() << '\n';
-        StaticType parsed_var_type = parse_type(node->var_type);
-        if(!env->check_type(node->name, parsed_var_type)) {
-            throw std::string(filename + ':' + std::to_string(node->line) + ": cannot convert " + val_type.str() + " to " + parsed_var_type.str());
-        }
+        // StaticType parsed_var_type = parse_type(node->var_type);
+        // if(!env->check_type(node->name, parsed_var_type)) {
+        //     throw std::string(filename + ':' + std::to_string(node->line) + ": cannot convert " + val_type.str() + " to " + parsed_var_type.str());
+        // }
         return StaticType(BasicType::VOID);
     }
 
@@ -481,6 +496,7 @@ namespace anthill {
         }
         visit(node->body, func_env);
         env->types[node->name] = func_type; // Dummy address (not actually used)
+        assembly += "mov r13, r-9;\n";
         return StaticType(BasicType::VOID);
     }
 
