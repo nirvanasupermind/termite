@@ -20,15 +20,13 @@ int main(int argc, char** argv) {
     }
     std::stringstream buffer;
     buffer << input.rdbuf();
-    std::string stl = R"V0G0N(
-void print_int(int c) {
-    __asm__("sys 1;");
-}
-
-void print_char(char c) {
-    __asm__("sys 3;");
-}
-)V0G0N";
+    std::string stl =
+"void print_int(int c) {"
+"    __asm__(\"sys 1;\");"
+"}"
+"void print_char(char c) {"
+"    __asm__(\"sys 3;\");"
+"}";
     std::string text = stl + buffer.str();
     input.close();
 

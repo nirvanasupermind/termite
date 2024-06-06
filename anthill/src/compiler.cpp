@@ -75,18 +75,22 @@ namespace anthill {
     }
 
     StaticType Compiler::parse_type(const std::shared_ptr<Node>& node) {
-        if(node->type() == NodeType::POINTER_TYPE) {
+        if (node->type() == NodeType::POINTER_TYPE) {
             StaticType type = parse_type(std::dynamic_pointer_cast<PointerTypeNode>(node)->base_type);
             return StaticType(type.basic_type, type.pointer_levels + 1);
-        } else {
+        }
+        else {
             std::string name = std::dynamic_pointer_cast<IdentifierNode>(node)->val;
-            if(name == "void") {
+            if (name == "void") {
                 return StaticType(BasicType::VOID);
-            } else if(name == "int") {
+            }
+            else if (name == "int") {
                 return StaticType(BasicType::INT);
-            } else if(name == "char") {
+            }
+            else if (name == "char") {
                 return StaticType(BasicType::CHAR);
-            } else {
+            }
+            else {
                 throw std::string(filename + ':' + std::to_string(node->line) + ": unknown type " + name);
             }
         }
@@ -137,7 +141,7 @@ namespace anthill {
     StaticType Compiler::visit_cast_node(const std::shared_ptr<CastNode>& node, const std::shared_ptr<Env>& env) {
         StaticType src_type = visit(node->val, env);
         StaticType cast_type = parse_type(node->cast_type);
-        if(src_type.str() != "char" && cast_type.str() == "char") {
+        if (src_type.str() != "char" && cast_type.str() == "char") {
             assembly += "lshi r-13, r-13, 8;\nrshi r-13, r-13, 8;\n";
         }
         return cast_type;
@@ -151,7 +155,7 @@ namespace anthill {
         // assembly += "subi r12, r12, 2;\nst r13, r12, 0;\n";
 
         std::string name = std::dynamic_pointer_cast<IdentifierNode>(node->func)->val;
-        if(name == "__asm__") {
+        if (name == "__asm__") {
             if (node->args.at(0)->type() != NodeType::STRING) {
                 throw std::string(filename + ':' + std::to_string(node->line) + ": put a non-string in __asm__");
             }
@@ -160,31 +164,34 @@ namespace anthill {
             injected_asm = injected_asm.substr(1, injected_asm.size() - 2);
             assembly += injected_asm;
             return StaticType(BasicType::VOID);
-        } else {
+        }
+        else {
             int expected_args = env->get_type(name).func_arg_types.size();
-        if(node->args.size() != expected_args ) {
-            throw std::string(filename + ':' + std::to_string(node->line) + ": expected " + std::to_string(expected_args) + " arguments for function '" + name + "', got " + std::to_string(node->args.size()));
-        }
-        for(int i = 0; i < node->args.size(); i++) {
-            visit(node->args.at(i), env);
-            movi_16trit(-11, i - 81);
-            assembly += "st r-13, r-11, 0;\n";
-        }
-        int name_start = assembly.find(name + ':');
-        int branch_disp = 0;
-        for(int i = name_start; i < assembly.size(); i++) {
-            if(assembly.at(i) == ';') {
-                branch_disp += 2;
+            if (node->args.size() != expected_args) {
+                throw std::string(filename + ':' + std::to_string(node->line) + ": expected " + std::to_string(expected_args)
+                    + " arguments for function '" + name + "', got " + std::to_string(node->args.size()));
             }
-        }
-        assembly += "mov r-9, r13;\n";
-        if(node->args.size() == 0) {
-            assembly += "subi r-9, r-9, 2";
-        } else {
-            assembly += "addi r-9, r-9, " + std::to_string(node->args.size() * 6 - 2) + ";\n";
-        }
-        assembly += "b -" + std::to_string(branch_disp + 6) + ";\n";
-        return env->get_type(name);
+            for (int i = 0; i < node->args.size(); i++) {
+                visit(node->args.at(i), env);
+                movi_16trit(-11, i - 81);
+                assembly += "st r-13, r-11, 0;\n";
+            }
+            int name_start = assembly.find(name + ':');
+            int branch_disp = 0;
+            for (int i = name_start; i < assembly.size(); i++) {
+                if (assembly.at(i) == ';') {
+                    branch_disp += 2;
+                }
+            }
+            assembly += "mov r-9, r13;\n";
+            if (node->args.size() == 0) {
+                assembly += "subi r-9, r-9, 2";
+            }
+            else {
+                assembly += "addi r-9, r-9, " + std::to_string(node->args.size() * 6 - 2) + ";\n";
+            }
+            assembly += "b -" + std::to_string(branch_disp + 6) + ";\n";
+            return env->get_type(name);
         }
     }
 
@@ -204,6 +211,7 @@ namespace anthill {
             // if (type.pointer_levels == 0) {
             //     throw std::string(filename + ':' + std::to_string(node->line) + ": type '" + type.str() + " is not a pointer");
             // }
+            std::cout << "E";
             assembly += "ld r-13, r-13, 0;\n";
             return StaticType(BasicType::INT);
         }
@@ -288,16 +296,30 @@ namespace anthill {
             }
         }
         case TokenType::EQ: {
-            if (node->node_a->type() != NodeType::IDENTIFIER) {
-                throw std::string(filename + ':' + std::to_string(node->line) + ": cannot assign to " + node->type_str() + " node");
+            if (node->node_a->type() == NodeType::UNARY_OP) {
+                std::shared_ptr<UnaryOpNode> unary_op_node = std::dynamic_pointer_cast<UnaryOpNode>(node->node_a);
+                if (unary_op_node->op.type != TokenType::MUL) {
+                    throw std::string(filename + ':' + std::to_string(node->line) + ": cannot assign to UNARY_OP node with operator "
+                        + unary_op_node->op.str());
+                }
+                visit(unary_op_node->node, env);
+                assembly += "mov r-12, r-13;\n";
+                visit(node->node_b, env);
+                assembly += "st r-13, r-12, 0;\n";
+                return StaticType(BasicType::VOID);
             }
-            std::string name = std::dynamic_pointer_cast<IdentifierNode>(node->node_a)->val;
-            StaticType b_type = visit(node->node_b, env);
-            env->check_type(name, b_type);
-            movi_16trit(-11, env->get_addr(name));
-            assembly += "st r-13, r-11, 0;\n";
-            env->types[name] = b_type;
-            return StaticType(BasicType::VOID);
+            else {
+                if (node->node_a->type() != NodeType::IDENTIFIER) {
+                    throw std::string(filename + ':' + std::to_string(node->line) + ": cannot assign to " + node->type_str() + " node");
+                }
+                std::string name = std::dynamic_pointer_cast<IdentifierNode>(node->node_a)->val;
+                StaticType b_type = visit(node->node_b, env);
+                // env->check_type(name, b_type);
+                movi_16trit(-11, env->get_addr(name));
+                assembly += "st r-13, r-11, 0;\n";
+                env->types[name] = b_type;
+                return StaticType(BasicType::VOID);
+            }
 
         }
         case TokenType::AND: {
@@ -484,7 +506,7 @@ namespace anthill {
         env->addrs[node->name] = 0; // Dummy address (not actually used)
         assembly += node->name + ":\n";
         std::shared_ptr<Env> func_env(new Env({}, {}, env));
-        for(int i = 0; i < node->arg_names.size(); i++) {
+        for (int i = 0; i < node->arg_names.size(); i++) {
             movi_16trit(-11, i - 81);
             assembly += "ld r-13, r-11, 0;\n";
             func_env->types[node->arg_names.at(i)] = parse_type(node->arg_types.at(i));
@@ -505,7 +527,7 @@ namespace anthill {
         assembly += "mov r13, r-9;\n";
         return StaticType(BasicType::VOID);
     }
-    
+
     StaticType Compiler::visit_print_node(const std::shared_ptr<PrintNode>& node, const std::shared_ptr<Env>& env) {
         visit(node->val, env);
         assembly += "sys 1;\n";
