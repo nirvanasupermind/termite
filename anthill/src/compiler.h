@@ -16,6 +16,7 @@ namespace anthill {
         std::string assembly;
         int32_t var_addr_counter;
         int32_t label_counter;
+        bool main_flag = false;
         Compiler(const std::string& filename);
         void movi_16trit(int8_t reg, int32_t val);
         StaticType parse_type(const std::shared_ptr<Node>& node);

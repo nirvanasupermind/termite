@@ -1,8 +1,14 @@
-void main() {
-    int* y = 1000;
-    *y = 100;
-    *(y + 4) = 7;
-    print_int(*y);
-    print_int(*(y + 4));
+int fac(int x) {
+    print_int(x);
+    int result = 1;
+    for(int i = 1; i < 10; i = i + 1) {
+        result = i * result;
+    }
+    return result;
+}
 
+
+int main() {
+    print_int(fac(4));
+    return 0;
 }

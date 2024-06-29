@@ -101,7 +101,8 @@ namespace anthill {
             else if (current == '!') {
                 advance();
                 if(current == '=') {
-                    tokens.push_back(Token(line, TokenType::NE, "=="));
+                    tokens.push_back(Token(line, TokenType::NE, "!="));
+                    advance();
                 } else {
                     throw std::string(filename + ':' + std::to_string(line) + ": illegal character '" + current + "'");
                 }

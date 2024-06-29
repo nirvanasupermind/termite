@@ -99,7 +99,7 @@ There are two status flags held in the program status register. The zeroth trit 
 |`0T11`           |`ble`   |Branch if less than or equal          |opcode [15:12], `imm` [11:0]                           |`pc = pc + imm` if `SF <= 0`          |
 |`00TT`           |`bgt`   |Branch if greater than                |opcode [15:12], `imm` [11:0]                           |`pc = pc + imm` if `SF > 0`           |
 |`00T0`           |`bge`   |Branch if greater than or equal       |opcode [15:12], `imm` [11:0]                           |`pc = pc + imm` if `SF >= 0`          |
-|`00T1`           |`push`  |Push to stack                         |opcode [15:12], `imm` [11:0]                           |`sp = sp - 2; mem[sp] = imm`          |
+|`00T1`           |`push`  |Push to stack                         |opcode [15:12], `rd` [11:9]                            |`sp = sp - 2; mem[sp] = rd`          |
 |`000T`           |`pop`   |Pop from stack                        |opcode [15:12], `rd` [11:9]                            |`rd = mem[sp]; sp = sp + 2`           |
 |`0000`           |`call`  |Call subroutine                       |opcode [15:12], `imm` [11:0]                           |`sp = sp - 2; mem[sp] = pc; pc = pc + imm;`|
 |`0001`           |`ret`   |Return from subroutine                |opcode [15:12]                                         |`pc = mem[sp]; sp = sp + 2`           |

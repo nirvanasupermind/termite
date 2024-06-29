@@ -173,24 +173,25 @@ namespace anthill {
             }
             for (int i = 0; i < node->args.size(); i++) {
                 visit(node->args.at(i), env);
-                movi_16trit(-11, i - 81);
-                assembly += "st r-13, r-11, 0;\n";
+                assembly += "mov r" + std::to_string(i - 8) + ", r-13;\n";
             }
-            int name_start = assembly.find(name + ':');
-            int branch_disp = 0;
-            for (int i = name_start; i < assembly.size(); i++) {
-                if (assembly.at(i) == ';') {
-                    branch_disp += 2;
-                }
-            }
-            assembly += "mov r-9, r13;\n";
-            if (node->args.size() == 0) {
-                assembly += "subi r-9, r-9, 2";
-            }
-            else {
-                assembly += "addi r-9, r-9, " + std::to_string(node->args.size() * 6 - 2) + ";\n";
-            }
-            assembly += "b -" + std::to_string(branch_disp + 6) + ";\n";
+            assembly += "call " + name + ";\n";
+            // int name_start = assembly.find(name + ':');
+
+            // int branch_disp = 0;
+            // for (int i = name_start; i < assembly.size(); i++) {
+            //     if (assembly.at(i) == ';') {
+            //         branch_disp += 2;
+            //     }
+            // }
+            // assembly += "mov r-9, r13;\n";
+            // if (node->args.size() == 0) {
+            //     assembly += "subi r-9, r-9, 2";
+            // }
+            // else {
+            //     assembly += "addi r-9, r-9, " + std::to_string(node->args.size() * 6 - 2) + ";\n";
+            // }
+            // assembly += "b -" + std::to_string(branch_disp + 6) + ";\n";
             return env->get_type(name);
         }
     }
@@ -211,7 +212,6 @@ namespace anthill {
             // if (type.pointer_levels == 0) {
             //     throw std::string(filename + ':' + std::to_string(node->line) + ": type '" + type.str() + " is not a pointer");
             // }
-            std::cout << "E";
             assembly += "ld r-13, r-13, 0;\n";
             return StaticType(BasicType::INT);
         }
@@ -303,9 +303,11 @@ namespace anthill {
                         + unary_op_node->op.str());
                 }
                 visit(unary_op_node->node, env);
-                assembly += "mov r-12, r-13;\n";
+                std::cout << unary_op_node->node->str() << '\n';
+                assembly += "mov r-10, r-13;\n";
                 visit(node->node_b, env);
-                assembly += "st r-13, r-12, 0;\n";
+                assembly += "st r-13, r-10, 0;\n";
+                std::cout << node->node_b->str() << '\n';
                 return StaticType(BasicType::VOID);
             }
             else {
@@ -503,12 +505,10 @@ namespace anthill {
     StaticType Compiler::visit_func_def_node(const std::shared_ptr<FuncDefNode>& node, const std::shared_ptr<Env>& env) {
         StaticType return_type = parse_type(node->return_type);
         StaticType func_type = StaticType(return_type.basic_type, return_type.pointer_levels);
-        env->addrs[node->name] = 0; // Dummy address (not actually used)
         assembly += node->name + ":\n";
         std::shared_ptr<Env> func_env(new Env({}, {}, env));
         for (int i = 0; i < node->arg_names.size(); i++) {
-            movi_16trit(-11, i - 81);
-            assembly += "ld r-13, r-11, 0;\n";
+            assembly += "mov r-13, r" + std::to_string(i - 8) + ";\n";
             func_env->types[node->arg_names.at(i)] = parse_type(node->arg_types.at(i));
             func_type.func_arg_types.push_back(func_env->types[node->arg_names.at(i)]);
             var_addr_counter += func_env->types[node->arg_names.at(i)].size();
@@ -516,15 +516,22 @@ namespace anthill {
             assembly += "st r-13, r-11, 0;\n";
             env->addrs[node->arg_names.at(i)] = var_addr_counter;
         }
-        visit(node->body, func_env);
         env->types[node->name] = func_type; // Dummy address (not actually used)
-        assembly += "mov r13, r-9;\n";
+        env->addrs[node->name] = 0; // Dummy address (not actually used)
+        main_flag = node->name == "main";
+        visit(node->body, func_env);
+        assembly += "ret;\n";
+        main_flag = false;
         return StaticType(BasicType::VOID);
     }
 
     StaticType Compiler::visit_return_node(const std::shared_ptr<ReturnNode>& node, const std::shared_ptr<Env>& env) {
         visit(node->val, env);
-        assembly += "mov r13, r-9;\n";
+        if(main_flag) {
+            assembly += "sys 0;\n";
+        } else {
+            assembly += "ret;\n";
+        }
         return StaticType(BasicType::VOID);
     }
 

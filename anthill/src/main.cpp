@@ -21,12 +21,23 @@ int main(int argc, char** argv) {
     std::stringstream buffer;
     buffer << input.rdbuf();
     std::string stl =
+"int _MALLOC_COUNTER = 1000;"
+"int _MALLOC_COUNTER_2 = 0;"
 "void print_int(int c) {"
-"    __asm__(\"sys 1;\");"
+"__asm__(\"sys 1;\");"
 "}"
 "void print_char(char c) {"
-"    __asm__(\"sys 3;\");"
+"__asm__(\"sys 3;\");"
+"}"
+"char* malloc(int size) {"
+"char* result = _MALLOC_COUNTER;"
+"_MALLOC_COUNTER = _MALLOC_COUNTER + size;"
+"return result;"
+"}"
+"void free(char* ptr) {"
+"_MALLOC_COUNTER_2 = ptr;"
 "}";
+
     std::string text = stl + buffer.str();
     input.close();
 

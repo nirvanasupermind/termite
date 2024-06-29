@@ -552,7 +552,15 @@ namespace termite {
             code[idx].set_bct_trit(14, 0b01);
             code[idx].set_bct_trit(13, 0b01);
             code[idx].set_bct_trit(12, 0b01);
-            assemble_i_instr(idx);
+            advance();
+            if (current.type != TokenType::REGISTER) {
+                error();
+            }
+            Word rd = Word::from_int32(std::stoi(current.value.substr(1)));
+            for (int i = 11; i >= 9; i--) {
+                code[idx].set_bct_trit(i, rd.get_bct_trit(i - 9));
+            }
+            advance();
         }
         else if (current.value == "pop") {
             code[idx].set_bct_trit(15, 0b01);
@@ -692,12 +700,11 @@ namespace termite {
             if (current.type != TokenType::NUMBER) {
                 error();
             }
-            Word imm;
-            if (current.value.at(0) == '0' && current.value.at(1) == 'r') {
-                imm = Word::from_ternary_str(current.value.substr(1));
-            }
-            else {
-                imm = Word::from_int32(std::stoi(current.value));
+            Word imm =  Word::from_int32(std::stoi(current.value));
+            if(current.value.size() >= 2) {
+                if(current.value.at(0) == '0' && current.value.at(1) == 'e') {
+                    imm = Word::from_ternary_str(current.value.substr(1));
+                }
             }
             for (int i = 11; i >= 0; i--) {
                 code[idx].set_bct_trit(i, imm.get_bct_trit(i));
