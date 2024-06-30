@@ -498,6 +498,8 @@ namespace termite {
             if (verbose) {
                 print_state();
             }
+
+            // for(int i = 0; i < 1e+8; i++) {}
         }
     }
     
