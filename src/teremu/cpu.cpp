@@ -363,7 +363,10 @@ namespace termite {
                 Word diff;
                 uint8_t carry;
                 std::tie(diff, carry) = registers[rd_idx].sub_with_carry(imm);
+                // std::cout << "cmpi " << registers[rd_idx].to_int32() << ' ' << imm.to_int32() << '\n';
+                // std::cout << "cmpi diff " << diff.to_int32() << '\n';
                 set_sign_flag(diff);
+                // std::cout << "cmpi " << (int)psr.get_bct_trit(SF) << '\n';
                 psr.set_bct_trit(CF, carry);
                 break;
             }
@@ -376,6 +379,7 @@ namespace termite {
             }
             case BEQ: {
                 Word imm = instr.get_trit_range(0, 11);
+                // std::cout << "beq " << imm.to_int32() << ' ' << (int)psr.get_bct_trit(SF) << '\n';
                 if(psr.get_bct_trit(SF) == 0b01) {
                     registers[PC] = registers[PC] + imm;
                     cycles -= imm.to_int32();
@@ -436,7 +440,7 @@ namespace termite {
             }
             case CALL: {
                 Word imm = instr.get_trit_range(0, 11);
-                registers[SP] = registers[SP] - 2;
+                registers[SP] = registers[SP] - Word::TWO;
                 mem.set_word(registers[SP], registers[PC]);
                 registers[PC] = registers[PC] + imm;
                 cycles -= imm.to_int32();

@@ -509,7 +509,7 @@ namespace termite {
             code[idx].set_bct_trit(15, 0b01);
             code[idx].set_bct_trit(14, 0b00);
             code[idx].set_bct_trit(13, 0b10);
-            code[idx].set_bct_trit(12, 0b10);
+            code[idx].set_bct_trit(12, 0b01);
             assemble_i_instr(idx);
         }
         else if (current.value == "bne") {

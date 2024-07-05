@@ -461,7 +461,7 @@ namespace anthill {
         visit(node->cond, env);
         std::string endif_label = "_endif" + std::to_string(label_counter);
         label_counter++;
-        assembly += "cmpi r-13, -1;\nbne ";
+        assembly += "cmpi r-13, -1;\nbeq ";
         size_t old_assembly_size = assembly.size();
         visit(node->if_body, env);
         size_t new_assembly_size = assembly.size();
@@ -520,9 +520,9 @@ namespace anthill {
             env->addrs[node->arg_names.at(i)] = var_addr_counter;
             var_addr_counter += func_env->types[node->arg_names.at(i)].size();
         }
+        main_flag = node->name == "main";
         visit(node->body, func_env);
         assembly += "ret;\n";
-        main_flag = node->name == "main";
         main_flag = false;
         return StaticType(BasicType::VOID);
     }
