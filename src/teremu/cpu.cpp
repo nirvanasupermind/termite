@@ -34,7 +34,7 @@ namespace termite {
 
     void CPU::print_state() const {
         std::cout << "********* pc = " << registers[PC].to_int32()  << " = 0e" << registers[PC].to_ternary_str() << '\n';
-        std::cout << "psr = " << psr.to_int32() << " = %" << psr.to_ternary_str() << '\n';
+        std::cout << "psr = " << psr.to_int32() << " = 0e" << psr.to_ternary_str() << '\n';
         std::cout << "current instruction = 0e" << mem.get_word(registers[PC]).to_ternary_str() << '\n';
         for (int i = 0; i < 27; i += 3) {
             std::cout << "r" << CPU::pad(std::to_string(i - 13), 3) << " = " << registers[i].to_int32() << "\t\t";
@@ -442,8 +442,8 @@ namespace termite {
                 Word imm = instr.get_trit_range(0, 11);
                 registers[SP] = registers[SP] - Word::TWO;
                 mem.set_word(registers[SP], registers[PC]);
-                registers[PC] = registers[PC] + imm;
-                cycles -= imm.to_int32();
+                registers[PC] = registers[PC] + imm - Word::from_int32(2);
+                cycles -= imm.to_int32() - 2;
                 break;
             }
             case RET: {

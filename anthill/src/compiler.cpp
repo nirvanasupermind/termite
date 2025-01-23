@@ -442,7 +442,7 @@ namespace anthill {
         visit(node->cond, env);
         std::string endif_label = "_endif" + std::to_string(label_counter);
         label_counter++;
-        assembly += "cmpi r-13, -1;\nbne ";
+        assembly += "cmpi r-13, -1;\nbeq ";
         size_t old_assembly_size = assembly.size();
         visit(node->body, env);
         size_t new_assembly_size = assembly.size();
@@ -453,7 +453,6 @@ namespace anthill {
             }
         }
         assembly = assembly.substr(0, old_assembly_size) + std::to_string(branch_count * 2) + ";\n" + assembly.substr(old_assembly_size, new_assembly_size);
-        assembly += endif_label + ":\n";
         return StaticType(BasicType::VOID);
     }
 

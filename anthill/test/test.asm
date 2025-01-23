@@ -1,12 +1,12 @@
-b 54;
-s:
+b 56;
+f:
 mov r-13, r-8;
 movi r-11, 0;
 st r-13, r-11, 0;
 movi r-11, 0;
 ld r-13, r-11, 0;
 mov r-12, r-13;
-movi r-13, 0;
+movi r-13, 1;
 cmp r-12, r-13;
 movi r-13, 1;
 beq 2;
@@ -16,22 +16,23 @@ beq 4;
 movi r-13, 1;
 ret;
 _endif0:
-movi r-13, 2;
-mov r-12, r-13;
 movi r-11, 0;
 ld r-13, r-11, 0;
 mov r-12, r-13;
 movi r-13, 1;
 sub r-13, r-12, r-13;
 mov r-8, r-13;
-call s;
+call f;
+mov r-12, r-13;
+movi r-11, 0;
+ld r-13, r-11, 0;
 mul r-13, r-12, r-13;
 ret;
 ret;
 main:
-movi r-13, 1;
+movi r-13, 5;
 mov r-8, r-13;
-call s;
+call f;
 sys 1;
 movi r-13, 0;
 sys 0;
