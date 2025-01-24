@@ -2,10 +2,10 @@ int f(int x) {
     if(x == 1) {
         return 1;
     } else {
-        return f(x - 1) * x;
+        return x * f(x - 1);
     }
 }
 int main() {
-    print(f(5));
+    print f(2);
     return 0;
 }

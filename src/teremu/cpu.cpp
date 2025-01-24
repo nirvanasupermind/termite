@@ -36,6 +36,7 @@ namespace termite {
         std::cout << "********* pc = " << registers[PC].to_int32()  << " = 0e" << registers[PC].to_ternary_str() << '\n';
         std::cout << "psr = " << psr.to_int32() << " = 0e" << psr.to_ternary_str() << '\n';
         std::cout << "current instruction = 0e" << mem.get_word(registers[PC]).to_ternary_str() << '\n';
+        std::cout << "decimal opcode for instruction = " << mem.get_word(registers[PC]).get_trit_range(12, 15).to_int32() << '\n';
         for (int i = 0; i < 27; i += 3) {
             std::cout << "r" << CPU::pad(std::to_string(i - 13), 3) << " = " << registers[i].to_int32() << "\t\t";
             if(i == 24) {

@@ -507,17 +507,20 @@ namespace anthill {
         assembly += node->name + ":\n";
         std::shared_ptr<Env> func_env(new Env({}, {}, env));
         for (int i = 0; i < node->arg_names.size(); i++) {
-            func_env->types[node->arg_names.at(i)] = parse_type(node->arg_types.at(i));
             func_type.func_arg_types.push_back(func_env->types[node->arg_names.at(i)]);
         }
         env->types[node->name] = func_type;
         env->addrs[node->name] = 0; // Dummy address (not actually used)
         for (int i = 0; i < node->arg_names.size(); i++) {
-            assembly += "mov r-13, r" + std::to_string(i - 8) + ";\n";
+            std::string name = node->arg_names.at(i);
+            if (env->addrs.count(name)) {
+                throw std::string(filename + ':' + std::to_string(node->line) + ": cannot redefine variable '" + name + "'");
+            }
             movi_16trit(-11, var_addr_counter);
-            assembly += "st r-13, r-11, 0;\n";
-            env->addrs[node->arg_names.at(i)] = var_addr_counter;
-            var_addr_counter += func_env->types[node->arg_names.at(i)].size();
+            assembly += "st r" + std::to_string(i - 8) + ", r-11, 0;\n";
+            env->types[name] = func_type.func_arg_types.at(i);
+            env->addrs[name] = var_addr_counter;
+            var_addr_counter += func_type.func_arg_types.at(i).size();
         }
         main_flag = node->name == "main";
         visit(node->body, func_env);

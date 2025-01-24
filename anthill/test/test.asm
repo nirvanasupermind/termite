@@ -1,8 +1,7 @@
-b 56;
+b 54;
 f:
-mov r-13, r-8;
 movi r-11, 0;
-st r-13, r-11, 0;
+st r-8, r-11, 0;
 movi r-11, 0;
 ld r-13, r-11, 0;
 mov r-12, r-13;
@@ -19,18 +18,18 @@ _endif0:
 movi r-11, 0;
 ld r-13, r-11, 0;
 mov r-12, r-13;
+movi r-11, 0;
+ld r-13, r-11, 0;
+mov r-12, r-13;
 movi r-13, 1;
 sub r-13, r-12, r-13;
 mov r-8, r-13;
 call f;
-mov r-12, r-13;
-movi r-11, 0;
-ld r-13, r-11, 0;
 mul r-13, r-12, r-13;
 ret;
 ret;
 main:
-movi r-13, 5;
+movi r-13, 2;
 mov r-8, r-13;
 call f;
 sys 1;
