@@ -10,9 +10,10 @@
 namespace anthill {
     class Func {
     public:
-        StaticType type;
+        StaticType return_type;
+        std::vector<StaticType> arg_types;
         int32_t var_counter = 0;
-        Func(const StaticType& type);
+        Func(const StaticType& return_type, const std::vector<StaticType>& arg_types);
     };
 } // namespace anthill
 
