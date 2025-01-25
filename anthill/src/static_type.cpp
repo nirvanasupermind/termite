@@ -11,10 +11,10 @@ namespace anthill {
 
     }
 
-    StaticType::StaticType(BasicType basic_type, int pointer_levels, const std::vector<StaticType>& func_arg_types)
-        : basic_type(basic_type), pointer_levels(pointer_levels), func_arg_types(func_arg_types) {
+    // StaticType::StaticType(BasicType basic_type, int pointer_levels, const std::vector<StaticType>& func_arg_types)
+    //     : basic_type(basic_type), pointer_levels(pointer_levels), func_arg_types(func_arg_types) {
 
-    }
+    // }
     
     std::string StaticType::str() const {
         std::string result;
@@ -36,13 +36,13 @@ namespace anthill {
             result += "*";
         }
 
-        if(func_arg_types.size() > 0) {
-            result += "(";
-            for(int i = 0; i < func_arg_types.size(); i++) {
-                result += func_arg_types.at(i).str() + ", ";
-            }
-            result = result.substr(0, result.size() - 2) + ")";
-        }
+        // if(func_arg_types.size() > 0) {
+        //     result += "(";
+        //     for(int i = 0; i < func_arg_types.size(); i++) {
+        //         result += func_arg_types.at(i).str() + ", ";
+        //     }
+        //     result = result.substr(0, result.size() - 2) + ")";
+        // }
 
         return result;
     }

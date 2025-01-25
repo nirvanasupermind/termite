@@ -1,5 +1,5 @@
-#ifndef FUNCTION_H
-#define FUNCTION_H
+#ifndef FUNC_H
+#define FUNC_H
 
 #include <cinttypes>
 #include <string>
@@ -8,12 +8,12 @@
 #include "static_type.h"
 
 namespace anthill {
-    class Function {
+    class Func {
     public:
         StaticType type;
         int32_t var_counter = 0;
-        Function(const StaticType& type);
+        Func(const StaticType& type);
     };
 } // namespace anthill
 
-#endif 
+#endif
