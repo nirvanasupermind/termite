@@ -467,7 +467,7 @@ namespace anthill {
         Func func(return_type, arg_types);
         assembly += "push r-9;\n";
         assembly += "mov r-9, r12;\n";
-        assembly += "sub r12, 81;\n";
+        assembly += "subi r12, r12, 81;\n";
         std::shared_ptr<Env> func_env = std::make_shared<Env>(env, std::make_shared<Func>(func));
 
         for (int i = 0; i < node->arg_names.size(); i++) {
@@ -480,7 +480,7 @@ namespace anthill {
             func.var_counter += val_type.size();
         }
 
-        assembly += "add r12, 81;\n";
+        assembly += "addi r12, r12, 81;\n";
         assembly += "pop r-9;\n";
         assembly += "ret;\n";
         return StaticType(BasicType::VOID);

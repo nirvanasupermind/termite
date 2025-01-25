@@ -560,7 +560,7 @@ namespace termite {
             for (int i = 11; i >= 9; i--) {
                 code[idx].set_bct_trit(i, rd.get_bct_trit(i - 9));
             }
-            advance();
+            // advance();
         }
         else if (current.value == "pop") {
             code[idx].set_bct_trit(15, 0b01);
@@ -575,7 +575,7 @@ namespace termite {
             for (int i = 11; i >= 9; i--) {
                 code[idx].set_bct_trit(i, rd.get_bct_trit(i - 9));
             }
-            advance();
+            // advance();
         }
         else if (current.value == "call") {
             code[idx].set_bct_trit(15, 0b01);
