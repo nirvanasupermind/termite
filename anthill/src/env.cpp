@@ -8,15 +8,11 @@
 
 namespace anthill {
     Env::Env()
-        : types({}), addrs({}), parent({})  {
+        : types({}), offsets({}), parent(std::shared_ptr<Env>()), func(std::shared_ptr<Function>())  {
     }
-
-    Env::Env(const std::map<std::string, StaticType>& types, const std::map<std::string, int32_t>& addrs, const std::shared_ptr<Env>& parent)
-        : types(types), addrs(addrs), parent(parent)  {
-    }
-
+    
     bool Env::has(const std::string& name) {
-        if (addrs.count(name)) {
+        if (types.count(name)) {
             return true;
         }
         else if (parent != nullptr) {
@@ -41,12 +37,12 @@ namespace anthill {
         }
     }
 
-    int32_t Env::get_addr(const std::string& name) {
-        if (addrs.count(name)) {
-            return addrs.at(name);
+    int32_t Env::get_offset(const std::string& name) {
+        if (offsets.count(name)) {
+            return offsets.at(name);
         }
         else if (parent != nullptr) {
-            return parent->get_addr(name);
+            return parent->get_offset(name);
         }
         else {
             // Giving a proper error with line number can be handled by the compiler code in try-catches

@@ -46,7 +46,7 @@ int main(int argc, char** argv) {
         anthill::Lexer lexer(filename, text);
         anthill::Parser parser(filename, lexer.generate_tokens());
         anthill::Compiler compiler(filename);
-        std::shared_ptr<anthill::Env> global_env(new anthill::Env({}, {}));
+        std::shared_ptr<anthill::Env> global_env(new anthill::Env());
         compiler.visit(parser.parse(), global_env);
         std::string full_assembly = compiler.assembly;
         int main_start = full_assembly.find("main:");

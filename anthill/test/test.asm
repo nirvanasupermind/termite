@@ -1,38 +1,12 @@
-b 54;
-f:
-movi r-11, 0;
-st r-8, r-11, 0;
-movi r-11, 0;
-ld r-13, r-11, 0;
-mov r-12, r-13;
-movi r-13, 1;
-cmp r-12, r-13;
-movi r-13, 1;
-beq 2;
-movi r-13, -1;
-cmpi r-13, -1;
-beq 4;
-movi r-13, 1;
-ret;
-_endif0:
-movi r-11, 0;
-ld r-13, r-11, 0;
-mov r-12, r-13;
-movi r-11, 0;
-ld r-13, r-11, 0;
-mov r-12, r-13;
-movi r-13, 1;
-sub r-13, r-12, r-13;
-mov r-8, r-13;
-call f;
-mul r-13, r-12, r-13;
-ret;
-ret;
+b 0;
 main:
-movi r-13, 2;
-mov r-8, r-13;
-call f;
+push r-9;
+mov r-9, r12;
+sub r-9, 81;
+movi r-13, 200;
 sys 1;
 movi r-13, 0;
 sys 0;
+mov r12, r-9;
+pop r-9;
 ret;

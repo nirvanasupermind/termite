@@ -104,10 +104,9 @@ namespace anthill {
     StaticType Compiler::visit_identifier_node(const std::shared_ptr<IdentifierNode>& node, const std::shared_ptr<Env>& env) {
         try {
             StaticType type = env->get_type(node->val);
-            int32_t addr = env->get_addr(node->val);
+            int32_t offset = env->get_offset(node->val);
             // std::cout << "line 104" << node->val << ' ' << addr << '\n';
-            movi_16trit(-11, addr);
-            assembly += "ld r-13, r-11, 0;\n";
+            assembly += "ld r-13, r-9, " + std::to_string(-offset) + ";\n";
             // if (type.size() == 1) {
             //     assembly += "lshi r-13, r-13, 8;\nrshi r-13, r-13, 8;\n";
             //     // Trick to remove the upper 8 trits
@@ -220,7 +219,8 @@ namespace anthill {
                 throw std::string(filename + ':' + std::to_string(node->line) + ": cannot assign to " + node->type_str() + " node");
             }
             std::string name = std::dynamic_pointer_cast<IdentifierNode>(node->node)->val;
-            movi_16trit(-13, env->get_addr(name));
+            assembly += "sub r-13, r-9, " + std::to_string(env->get_offset(name)) + ";\n";
+            // movi_16trit(-13, env->get_addr(name));
             return StaticType(env->get_type(name).basic_type, env->get_type(name).pointer_levels + 1);
         }
         default:
@@ -317,8 +317,7 @@ namespace anthill {
                 std::string name = std::dynamic_pointer_cast<IdentifierNode>(node->node_a)->val;
                 StaticType b_type = visit(node->node_b, env);
                 // env->check_type(name, b_type);
-                movi_16trit(-11, env->get_addr(name));
-                assembly += "st r-13, r-11, 0;\n";
+                assembly += "st r-13, r-9, " + std::to_string(env->get_offset(name)) + ";\n";
                 env->types[name] = b_type;
                 return StaticType(BasicType::VOID);
             }
@@ -414,15 +413,13 @@ namespace anthill {
     }
 
     StaticType Compiler::visit_var_def_node(const std::shared_ptr<VarDefNode>& node, const std::shared_ptr<Env>& env) {
-        if (env->addrs.count(node->name)) {
+        if (env->types.count(node->name)) {
             throw std::string(filename + ':' + std::to_string(node->line) + ": cannot redefine variable '" + node->name + "'");
         }
         StaticType val_type = visit(node->val, env);
-        movi_16trit(-11, var_addr_counter);
-        assembly += "st r-13, r-11, 0;\n";
+        assembly += "st r-13, r-9, -" + std::to_string(env->func->var_counter) + ";\n";
         env->types[node->name] = val_type;
-        env->addrs[node->name] = var_addr_counter;
-        var_addr_counter += val_type.size();
+        env->func->var_counter += val_type.size();
         // std::cout << val_type.str() << '\n';
         // std::cout << parse_type(node->var_type).str() << '\n';
         // StaticType parsed_var_type = parse_type(node->var_type);
@@ -433,7 +430,8 @@ namespace anthill {
     }
 
     StaticType Compiler::visit_block_node(const std::shared_ptr<BlockNode>& node, const std::shared_ptr<Env>& env) {
-        std::shared_ptr<Env> block_env(new Env({}, {}, env));
+        std::shared_ptr<Env> block_env(new Env());
+        block_env->parent = env;
         visit(node->stmt_list, block_env);
         return StaticType(BasicType::VOID);
     }
@@ -505,25 +503,32 @@ namespace anthill {
         StaticType return_type = parse_type(node->return_type);
         StaticType func_type = StaticType(return_type.basic_type, return_type.pointer_levels);
         assembly += node->name + ":\n";
-        std::shared_ptr<Env> func_env(new Env({}, {}, env));
+        std::shared_ptr<Env> func_env(new Env());
         for (int i = 0; i < node->arg_names.size(); i++) {
             func_type.func_arg_types.push_back(func_env->types[node->arg_names.at(i)]);
         }
-        env->types[node->name] = func_type;
-        env->addrs[node->name] = 0; // Dummy address (not actually used)
+        func_env->types[node->name] = func_type;
+        std::shared_ptr<Function> func(new Function(func_type));
+        func_env->func = func;
+        func_env->parent = env;
+        assembly += "push r-9;\n";
+        assembly += "mov r-9, r12;\n";
+        assembly += "sub r-9, 81;\n";
         for (int i = 0; i < node->arg_names.size(); i++) {
             std::string name = node->arg_names.at(i);
-            if (env->addrs.count(name)) {
+            if (env->types.count(name)) {
                 throw std::string(filename + ':' + std::to_string(node->line) + ": cannot redefine variable '" + name + "'");
             }
-            movi_16trit(-11, var_addr_counter);
-            assembly += "st r" + std::to_string(i - 8) + ", r-11, 0;\n";
-            env->types[name] = func_type.func_arg_types.at(i);
-            env->addrs[name] = var_addr_counter;
-            var_addr_counter += func_type.func_arg_types.at(i).size();
+            StaticType val_type = func_type.func_arg_types.at(i);
+            assembly += "st r-" + std::to_string(i - 8) + ", r-9, -" + std::to_string(func->var_counter) + ";\n";
+            func_env->types[node->name] = val_type;
+            func_env->offsets[node->name] = func->var_counter;
+            func->var_counter += val_type.size();
         }
         main_flag = node->name == "main";
         visit(node->body, func_env);
+        assembly += "mov r12, r-9;\n";
+        assembly += "pop r-9;\n";
         assembly += "ret;\n";
         main_flag = false;
         return StaticType(BasicType::VOID);
