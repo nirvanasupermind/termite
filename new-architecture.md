@@ -36,6 +36,7 @@ There are 3 addressing modes supported. The addressing mode takes up 1 trit in t
 
 # Instruction set
 Note: In the "Action" column, `[n]` refers to the value located at address n
+
 Note 2: Logical/shift operations do not work the same way as normal, because they operate on ternary and three-valued logic. a << b = a * 3^b instead of a * 2^b
 
 |Opcode (nonary)|Mnemonic|Description                       |Operands                              |Action                              |
