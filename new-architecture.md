@@ -44,9 +44,8 @@ Note 2: Logical/shift operations do not work the same way as normal, because the
 |`DD`           |`mov`   |Move                              |`dest` (reg/idx), `src `(imm/reg/idx) |`dest = src`                        |
 |`DC`           |`push`  |Push word onto stack              |`src` (imm/reg/idx)                   |`sp = sp - 2; [sp] = src`           |
 |`DB`           |`pop`   |Pop word off stack and store it   |`dest` (reg/idx)                      |`dest = [sp]; sp = sp + 2`          |
-|`DA`           |`xchg`  |Exchange values of two operands   |`dest` (reg/idx), `src` (reg/idx)     |`dest = src; src = dest`            |
-|`D0`           |`and`   |Trit-wise logical AND             |`dest` (reg/idx), `src` (imm/reg/idx) |`dest = dest & src`                 |
-|`D1`           |`or`    |Trit-wise logical OR              |`dest` (reg/idx), `src` (imm/reg/idx) |`dest = dest \| src`                |
-|`D2`           |`xor`   |Trit-wise logical XOR             |`dest` (reg/idx), `src` (reg/idx)     |`dest = dest ^ src`                 |
-|`D3`           |`shl`   |Shift left                        |`dest` (reg/idx), `src` (reg/idx)     |`dest = dest << src`                |
-|`D4`           |`shr`   |Shift right                       |`dest` (reg/idx), `src` (reg/idx)     |`dest = dest >> src`                |
+|`DA`           |`and`   |Trit-wise logical AND             |`dest` (reg/idx), `src` (imm/reg/idx) |`dest = dest & src`                 |
+|`D0`           |`or`    |Trit-wise logical OR              |`dest` (reg/idx), `src` (imm/reg/idx) |`dest = dest \| src`                |
+|`D1`           |`xor`   |Trit-wise logical XOR             |`dest` (reg/idx), `src` (reg/idx)     |`dest = dest ^ src`                 |
+|`D2`           |`shl`   |Shift left                        |`dest` (reg/idx), `src` (reg/idx)     |`dest = dest << src`                |
+|`D3`           |`shr`   |Shift right                       |`dest` (reg/idx), `src` (reg/idx)     |`dest = dest >> src`                |
