@@ -23,7 +23,17 @@ The smallest unit of memory is 8 trits, which is referred to as a "tryte". Each 
 There is a 16-trit address system which allows access to 3^16 (43,046,721) trytes of memory.
 
 # CPU registers
+There are 9 general-purpose registers internally numbered -4 to 4:
 `AX`, `BX`, `CX`, `SP`, `BP`, `DI`, `SI`, `DX`, `IP`
+
+## Flags register
+
+There is also the special `flags` register for holding CPU flags which is 16 trits wide and has the following flags:
+
+* Trit 0 = CF (Carry flag):  Set if there is a leftover carry/borrow which there isn't room for after an addition, subtraction, or compare instruction.
+* Trit 1 = SF (Sign flag): Set to -1 if the result of an operation is negative, 0 if it is 0, and 1 if it is positive.
+
+The other trits are currently unused. The `flags` register can only be get/set through the `pushf`and `popf` instructions.
 
 # Addressing modes
 There are 3 addressing modes supported. The addressing mode takes up 1 trit in the instruction format.
@@ -68,4 +78,19 @@ Note 2: Logical/shift operations do not work the same way as normal, because the
 |`B2`           |`jge`   |Jump if greater than or equal     |`dest` (imm)                          |`ip = dest` if `SF >= 0`            |
 |`B3`           |`jeq`   |Jump if equal                     |`dest` (imm)                          |`ip = dest` if `SF == 0`            |
 |`B4`           |`jne`   |Jump if not equal                 |`dest` (imm)                          |`ip = dest` if `SF != 0`            |
-|`AD`           |`int`   |Software interrupt                |`code` (1-tryte imm)                  |OS call with interrupt code `code` (currently this is just simulated by an if-statement)|
+|`AD`           |`int`   |Software interrupt                |`vec` (1-tryte imm)                  |Call the interrupt handler with interrupt vector `vec` (currently this is just simulated by an if-statement in the emulator)|
+
+# Interrupts
+There is only one interrupt vector which can be accessed by calling `int 0` and leads to the main API (this is analogous to `int 21h` for DOS API on x86). The following subfunctions are provided by `int 0` depending on the value of `ax`:
+|`ax` (nonary)  |Description                       |Operands|
+|---------------|----------------------------------|--------|
+|`DD`           |Exit program with `dx` as code            |`dx`         |
+|`DC`           |Print `dx` as decimal number              |`dx`         |
+|`DB`           |Print `dx` as ternary number              |`dx`         |
+|`DA`           |Print `dx`'s low tryte as character       |`dx`         |
+|`D0`           |Print `dx`'s high tryte as character      |`dx`         |
+|`D1`           |Input decimal number into `dx`            |No operands               |
+|`D2`           |Input ternary number into `dx`            |No operands               |
+|`D3`           |Input character into `dx`'s low tryte     |No operands               |
+|`D4`           |Input character into `dx`'s high tryte    |No operands               |
+|`CD`           |Print all registers (like in verbose mode)  |No operands               |
