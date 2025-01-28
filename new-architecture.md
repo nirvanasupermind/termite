@@ -23,7 +23,7 @@ The smallest unit of memory is 8 trits, which is referred to as a "tryte". Each 
 There is a 16-trit address system which allows access to 3^16 (43,046,721) trytes of memory.
 
 # CPU registers
-`AX`, `BX`, `CX`, `DX,` `DI`, `SI`, `BP`, `SP`, `FLAGS`
+`AX`, `BX`, `CX`, `SP`, `BP`, `DI`, `SI`, `DX`, `IP`
 
 # Addressing modes
 There are 3 addressing modes supported. The addressing mode takes up 1 trit in the instruction format.
@@ -32,7 +32,7 @@ There are 3 addressing modes supported. The addressing mode takes up 1 trit in t
 |----|-------------------|-----------|-----------|
 |`A` |Immediate          |`1`        |The operand is the next word of the instruction|
 |`0` |Register           |`ax`       |The operand is in the register|
-|`1` |Indexed            |`1[ax]`    |The operand's address is the value of the register plus the next word of the instruction|
+|`1` |Indexed            |`1[ax]`    |The operand's address is the value of the register  plus the next word of the instruction|
 
 # Instruction set
 Note: In the "Action" column, `[n]` refers to the value located at address n
@@ -44,8 +44,28 @@ Note 2: Logical/shift operations do not work the same way as normal, because the
 |`DD`           |`mov`   |Move                              |`dest` (reg/idx), `src `(imm/reg/idx) |`dest = src`                        |
 |`DC`           |`push`  |Push word onto stack              |`src` (imm/reg/idx)                   |`sp = sp - 2; [sp] = src`           |
 |`DB`           |`pop`   |Pop word off stack and store it   |`dest` (reg/idx)                      |`dest = [sp]; sp = sp + 2`          |
-|`DA`           |`and`   |Trit-wise logical AND             |`dest` (reg/idx), `src` (imm/reg/idx) |`dest = dest & src`                 |
-|`D0`           |`or`    |Trit-wise logical OR              |`dest` (reg/idx), `src` (imm/reg/idx) |`dest = dest \| src`                |
-|`D1`           |`xor`   |Trit-wise logical XOR             |`dest` (reg/idx), `src` (reg/idx)     |`dest = dest ^ src`                 |
-|`D2`           |`shl`   |Shift left                        |`dest` (reg/idx), `src` (reg/idx)     |`dest = dest << src`                |
-|`D3`           |`shr`   |Shift right                       |`dest` (reg/idx), `src` (reg/idx)     |`dest = dest >> src`                |
+|`DA`           |`pushf` |Push flag register onto stack     |No operands                           |`sp = sp - 2; [sp] = flags`         |
+|`D0`           |`popf`  |Pop the stack top to flag register|No operands                           |`flags = [sp]; sp = sp + 2`         |
+|`D1`           |`and`   |Trit-wise logical AND             |`dest` (reg/idx), `src` (imm/reg/idx) |`dest = dest & src`                 |
+|`D2`           |`or`    |Trit-wise logical OR              |`dest` (reg/idx), `src` (imm/reg/idx) |`dest = dest \| src`                |
+|`D3`           |`xor`   |Trit-wise logical XOR             |`dest` (reg/idx), `src` (reg/idx)     |`dest = dest ^ src`                 |
+|`D4`           |`shl`   |Shift left                        |`dest` (reg/idx), `src` (imm/reg/idx) |`dest = dest << src`                |
+|`CD`           |`shr`   |Shift right                       |`dest` (reg/idx), `src` (imm/reg/idx) |`dest = dest >> src`                |
+|`CC`           |`add`   |Add                               |`dest` (reg/idx), `src` (imm/reg/idx) |`dest = dest + src`                 |
+|`CB`           |`adc`   |Add with carry                    |`dest` (reg/idx), `src` (imm/reg/idx) |`dest = dest + src + CF`            |
+|`CA`           |`sub`   |Subtract                          |`dest` (reg/idx), `src` (imm/reg/idx) |`dest = dest + src`                 |
+|`C0`           |`sbb`   |Subtract with borrow              |`dest` (reg/idx), `src` (imm/reg/idx) |`dest = dest - src - CF`            |
+|`C1`           |`mul`   |Multiply                          |`src` (reg/idx)                       |`(dx ax) = ax * src` (`dx` stores high word of the 2-word result, `ax` stores low word)|
+|`C2`           |`div`   |Divide                            |`src` (reg/idx)                       |`ax = ax / src; dx = ax % src`      |
+|`C3`           |`neg`   |Negate/trit-wise logical NOT      |`src` (reg/idx)                       |`src = -src`                        |
+|`C4`           |`cmp`   |Compare                           |`dest` (reg/idx), `src` (imm/reg/idx) |`set-flags(dest - src)`             |
+|`BD`           |`call`  |Call procedure                    |`src` (imm)                           |`sp = sp - 2; [sp] = ip; [pc] = ip;`|
+|`BC`           |`ret`   |Return from procedure             |No operands                           |`ip = [sp]; sp = sp + 2`            |
+|`BB`           |`jmp`   |Unconditional jump                |`dest` (imm)                          |`ip = dest`                         |
+|`BA`           |`jl`    |Jump if less than                 |`dest` (imm)                          |`ip = dest` if `SF < 0`             |
+|`B0`           |`jle`   |Jump if less than or equal        |`dest` (imm)                          |`ip = dest` if `SF <= 0`            |
+|`B1`           |`jg`    |Jump if greater than              |`dest` (imm)                          |`ip = dest` if `SF > 0`             |
+|`B2`           |`jge`   |Jump if greater than or equal     |`dest` (imm)                          |`ip = dest` if `SF >= 0`            |
+|`B3`           |`jeq`   |Jump if equal                     |`dest` (imm)                          |`ip = dest` if `SF == 0`            |
+|`B4`           |`jne`   |Jump if not equal                 |`dest` (imm)                          |`ip = dest` if `SF != 0`            |
+|`AD`           |`int`   |Software interrupt                |`code` (1-tryte imm)                  |OS call with code `code` (currently this is just simulated by an if-statement)|
