@@ -24,14 +24,23 @@ There is a 16-trit address system which allows access to 3^16 (43,046,721) tryte
 
 # CPU registers
 There are 9 general-purpose registers internally numbered -4 to 4.
+
 -4: Accumulator (`AX`)
+
 -3: Base register (`BX`)
+
 -2: Counter register (`CX`)
+
 -1: Stack pointer register (`SP`)
+
 0: Stack base pointer register (`BP`)
+
 1: Destination index register (`DI`)
+
 2: Source index register (`SI`)
+
 3: Data register (`DX`)
+
 4: Instruction pointer (`IP`) (unlike in x86, it is a GPR here)
 
 
