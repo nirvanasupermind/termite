@@ -23,8 +23,17 @@ The smallest unit of memory is 8 trits, which is referred to as a "tryte". Each 
 There is a 16-trit address system which allows access to 3^16 (43,046,721) trytes of memory.
 
 # CPU registers
-There are 9 general-purpose registers internally numbered -4 to 4:
-`AX`, `BX`, `CX`, `SP`, `BP`, `DI`, `SI`, `DX`, `IP`
+There are 9 general-purpose registers internally numbered -4 to 4.
+-4: Accumulator (`AX`)
+-3: Base register (`BX`)
+-2: Counter register (`CX`)
+-1: Stack pointer register (`SP`)
+0: Stack base pointer register (`BP`)
+1: Destination index register (`DI`)
+2: Source index register (`SI`)
+3: Data register (`DX`)
+4: Instruction pointer (`IP`) (unlike in x86, it is a GPR here)
+
 
 ## Flags register
 
@@ -94,3 +103,4 @@ There is only one interrupt vector which can be accessed by calling `int 0` and 
 |`D3`           |Input character into `dx`'s low tryte     |No operands               |
 |`D4`           |Input character into `dx`'s high tryte    |No operands               |
 |`CD`           |Print all registers (like in verbose mode)  |No operands               |
+
