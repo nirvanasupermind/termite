@@ -68,4 +68,4 @@ Note 2: Logical/shift operations do not work the same way as normal, because the
 |`B2`           |`jge`   |Jump if greater than or equal     |`dest` (imm)                          |`ip = dest` if `SF >= 0`            |
 |`B3`           |`jeq`   |Jump if equal                     |`dest` (imm)                          |`ip = dest` if `SF == 0`            |
 |`B4`           |`jne`   |Jump if not equal                 |`dest` (imm)                          |`ip = dest` if `SF != 0`            |
-|`AD`           |`int`   |Software interrupt                |`code` (1-tryte imm)                  |OS call with code `code` (currently this is just simulated by an if-statement)|
+|`AD`           |`int`   |Software interrupt                |`code` (1-tryte imm)                  |OS call with interrupt code `code` (currently this is just simulated by an if-statement)|
