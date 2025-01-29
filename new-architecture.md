@@ -62,6 +62,36 @@ There are 3 addressing modes supported. The addressing mode takes up 1 trit in t
 |`0` |Register           |`ax`       |The operand is in the register|
 |`1` |Indexed            |`1[ax]`    |The operand's address is the value of the register  plus the next word of the instruction|
 
+<table>
+  <tr>
+    <td>15</td>
+    <td>14</td>
+    <td>13</td>
+    <td>12</td>
+    <td>11</td>
+    <td>10</td>
+    <td>9</td>
+    <td>8</td>
+    <td>7</td>
+    <td>6</td>
+    <td>5</td>
+    <td>4</td>
+    <td>3</td>
+    <td>2</td>
+    <td>1</td>
+    <td>0</td>
+  </tr>
+  <tr>
+    <td colspan="4">opcode (4)</td>
+  </tr>
+<tr>
+    <td colspan="3">operand1 (3)</td>
+</tr>
+<tr>
+    <td colspan="3">operand2 (3)</td>
+</tr>
+</table>
+
 # Instruction set
 Note: In the "Action" column, `[n]` refers to the value located at address n
 
@@ -96,20 +126,155 @@ Note 2: Logical/shift operations do not work the same way as normal, because the
 |`B2`           |`jge`   |Jump if greater than or equal     |`dest` (imm)                          |`ip = dest` if `SF >= 0`            |
 |`B3`           |`jeq`   |Jump if equal                     |`dest` (imm)                          |`ip = dest` if `SF == 0`            |
 |`B4`           |`jne`   |Jump if not equal                 |`dest` (imm)                          |`ip = dest` if `SF != 0`            |
-|`AD`           |`int`   |Software interrupt                |`vec` (1-tryte imm)                  |Call the interrupt handler with interrupt vector `vec` (currently this is just simulated by an if-statement in the emulator)|
+|`AD`           |`int`   |Software interrupt                |`vec` (12-trit imm)                   |Call the interrupt handler with interrupt vector `vec` (currently this is just simulated by an if-statement in the emulator)|
+
+# Instruction format
+This does not include that if there is 1 immediate/index operand, an extra word is added for it, and if there are 2 of them 2 extra words are added.
+
+0-operand instructions:
+
+<table>
+  <tr>
+    <td>15</td>
+    <td>14</td>
+    <td>13</td>
+    <td>12</td>
+    <td>11</td>
+    <td>10</td>
+    <td>9</td>
+    <td>8</td>
+    <td>7</td>
+    <td>6</td>
+    <td>5</td>
+    <td>4</td>
+    <td>3</td>
+    <td>2</td>
+    <td>1</td>
+    <td>0</td>
+  </tr>
+  <tr>
+    <td colspan="4">opcode (4)</td>
+    <td colspan="12">unused (12)</td>
+  </tr>
+</table>
+
+1-operand instructions (except `int`):
+
+<table>
+  <tr>
+    <td>15</td>
+    <td>14</td>
+    <td>13</td>
+    <td>12</td>
+    <td>11</td>
+    <td>10</td>
+    <td>9</td>
+    <td>8</td>
+    <td>7</td>
+    <td>6</td>
+    <td>5</td>
+    <td>4</td>
+    <td>3</td>
+    <td>2</td>
+    <td>1</td>
+    <td>0</td>
+  </tr>
+  <tr>
+    <td colspan="4">opcode (4)</td>
+  </tr>
+<tr>
+    <td colspan="3">operand (3)</td>
+</tr>
+<tr>
+    <td colspan="9">unused (9)</td>
+</tr>
+</table>
+
+
+
+1-operand instructions (`int` only):
+
+<table>
+  <tr>
+    <td>15</td>
+    <td>14</td>
+    <td>13</td>
+    <td>12</td>
+    <td>11</td>
+    <td>10</td>
+    <td>9</td>
+    <td>8</td>
+    <td>7</td>
+    <td>6</td>
+    <td>5</td>
+    <td>4</td>
+    <td>3</td>
+    <td>2</td>
+    <td>1</td>
+    <td>0</td>
+  </tr>
+  <tr>
+    <td colspan="4">opcode (4)</td>
+  </tr>
+<tr>
+    <td colspan="12">operand (12)</td>
+</tr>
+</table>
+
+
+2-operand instructions:
+
+<table>
+  <tr>
+    <td>15</td>
+    <td>14</td>
+    <td>13</td>
+    <td>12</td>
+    <td>11</td>
+    <td>10</td>
+    <td>9</td>
+    <td>8</td>
+    <td>7</td>
+    <td>6</td>
+    <td>5</td>
+    <td>4</td>
+    <td>3</td>
+    <td>2</td>
+    <td>1</td>
+    <td>0</td>
+  </tr>
+  <tr>
+    <td colspan="4">opcode (4)</td>
+  </tr>
+<tr>
+    <td colspan="3">operand1 (3)</td>
+</tr>
+<tr>
+    <td colspan="3">operand2 (3)</td>
+</tr>
+<tr>
+    <td colspan="6">unused (6)</td>
+</tr>
+</table>
+
+
+
+
 
 # Interrupts
 There is only one interrupt vector which can be accessed by calling `int 0` and leads to the main API (this is analogous to `int 21h` for DOS API on x86). The following subfunctions are provided by `int 0` depending on the value of `ax`:
-|`ax` (nonary)  |Description                       |Operands|
-|---------------|----------------------------------|--------|
-|`DD`           |Exit program with `dx` as code            |`dx`         |
-|`DC`           |Print `dx` as decimal number              |`dx`         |
-|`DB`           |Print `dx` as ternary number              |`dx`         |
-|`DA`           |Print `dx`'s low tryte as character       |`dx`         |
-|`D0`           |Print `dx`'s high tryte as character      |`dx`         |
+|`ax` (nonary)  |Description                               |Operands                   |
+|---------------|------------------------------------------|---------------------------|
+|`DD`           |Exit program with `dx` as code            |`dx`                      |
+|`DC`           |Print `dx` as decimal number              |`dx`                      |
+|`DB`           |Print `dx` as ternary number              |`dx`                      |
+|`DA`           |Print `dx`'s low tryte as character       |`dx`                      |
+|`D0`           |Print `dx`'s high tryte as character      |`dx`                      |
 |`D1`           |Input decimal number into `dx`            |No operands               |
 |`D2`           |Input ternary number into `dx`            |No operands               |
 |`D3`           |Input character into `dx`'s low tryte     |No operands               |
 |`D4`           |Input character into `dx`'s high tryte    |No operands               |
-|`CD`           |Print all registers (like in verbose mode)  |No operands               |
+|`CD`           |Print all registers (like in verbose mode)|No operands               |
+
+
 
