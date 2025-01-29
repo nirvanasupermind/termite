@@ -62,33 +62,16 @@ There are 3 addressing modes supported. The addressing mode takes up 1 trit in t
 |`0` |Register           |`ax`       |The operand is in the register|
 |`1` |Indexed            |`1[ax]`    |The operand's address is the value of the register  plus the next word of the instruction|
 
+The encoding of the addressing mode is as follows:
 <table>
   <tr>
-    <td>15</td>
-    <td>14</td>
-    <td>13</td>
-    <td>12</td>
-    <td>11</td>
-    <td>10</td>
-    <td>9</td>
-    <td>8</td>
-    <td>7</td>
-    <td>6</td>
-    <td>5</td>
-    <td>4</td>
-    <td>3</td>
     <td>2</td>
     <td>1</td>
     <td>0</td>
   </tr>
   <tr>
-    <td colspan="4">opcode (4)</td>
-  </tr>
-<tr>
-    <td colspan="3">operand1 (3)</td>
-</tr>
-<tr>
-    <td colspan="3">operand2 (3)</td>
+    <td colspan="1">mode (1)</td>
+    <td colspan="2">register (2)</td>
 </tr>
 </table>
 
