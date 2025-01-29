@@ -126,7 +126,7 @@ Note 2: Logical/shift operations do not work the same way as normal, because the
 |`B2`           |`jge`   |Jump if greater than or equal     |`dest` (imm)                          |`ip = dest` if `SF >= 0`            |
 |`B3`           |`jeq`   |Jump if equal                     |`dest` (imm)                          |`ip = dest` if `SF == 0`            |
 |`B4`           |`jne`   |Jump if not equal                 |`dest` (imm)                          |`ip = dest` if `SF != 0`            |
-|`AD`           |`int`   |Software interrupt                |`vec` (12-trit imm)                   |Call the interrupt handler with interrupt vector `vec` (currently this is just simulated by an if-statement in the emulator)|
+|`AD`           |`int`   |Software interrupt                |`vec` (imm)                           |Call the interrupt handler with interrupt vector `vec` (currently this is just simulated by an if-statement in the emulator)|
 
 # Instruction format
 This does not include that if there is 1 immediate/index operand, an extra word is added for it, and if there are 2 of them 2 extra words are added.
@@ -158,7 +158,7 @@ This does not include that if there is 1 immediate/index operand, an extra word 
   </tr>
 </table>
 
-1-operand instructions (except `int`):
+1-operand instructions:
 
 <table>
   <tr>
@@ -183,35 +183,6 @@ This does not include that if there is 1 immediate/index operand, an extra word 
     <td colspan="4">opcode (4)</td>
     <td colspan="3">operand (3)</td>
     <td colspan="9">unused (9)</td>
-</tr>
-</table>
-
-
-
-1-operand instructions (`int` only):
-
-<table>
-  <tr>
-    <td>15</td>
-    <td>14</td>
-    <td>13</td>
-    <td>12</td>
-    <td>11</td>
-    <td>10</td>
-    <td>9</td>
-    <td>8</td>
-    <td>7</td>
-    <td>6</td>
-    <td>5</td>
-    <td>4</td>
-    <td>3</td>
-    <td>2</td>
-    <td>1</td>
-    <td>0</td>
-  </tr>
-  <tr>
-    <td colspan="4">opcode (4)</td>
-    <td colspan="12">operand (12)</td>
 </tr>
 </table>
 
