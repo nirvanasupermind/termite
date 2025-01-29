@@ -181,11 +181,7 @@ This does not include that if there is 1 immediate/index operand, an extra word 
   </tr>
   <tr>
     <td colspan="4">opcode (4)</td>
-  </tr>
-<tr>
     <td colspan="3">operand (3)</td>
-</tr>
-<tr>
     <td colspan="9">unused (9)</td>
 </tr>
 </table>
@@ -215,8 +211,6 @@ This does not include that if there is 1 immediate/index operand, an extra word 
   </tr>
   <tr>
     <td colspan="4">opcode (4)</td>
-  </tr>
-<tr>
     <td colspan="12">operand (12)</td>
 </tr>
 </table>
@@ -245,14 +239,8 @@ This does not include that if there is 1 immediate/index operand, an extra word 
   </tr>
   <tr>
     <td colspan="4">opcode (4)</td>
-  </tr>
-<tr>
     <td colspan="3">operand1 (3)</td>
-</tr>
-<tr>
     <td colspan="3">operand2 (3)</td>
-</tr>
-<tr>
     <td colspan="6">unused (6)</td>
 </tr>
 </table>
