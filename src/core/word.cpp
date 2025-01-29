@@ -198,23 +198,19 @@ namespace termite {
     std::string Word::to_ternary_str() const {
         std::string result = "";
         for (int i = 0; i < TRITS_PER_WORD; i++) {
-            switch (get_bct_trit(i)) {
-            case 0b00:
-                result = std::string("T") + result;
-                break;
-            case 0b01:
-                result = std::string("0") + result;
-                break;
-            case 0b10:
-                result = std::string("1") + result;
-                break;
-            default:
-                result = std::string("?") + result;
-                break;
-            }
+            result = TRIT_TO_TERNARY_CH[get_bct_trit(i)] + result;
         }
         return result;
     }
+
+    std::string Word::to_nonary_str() const {
+        std::string result = "";
+        for (int i = 0; i < TRITS_PER_WORD; i += 2) {
+            result = TRITS_TO_NONARY_CH[get_bct_trit(i)][get_bct_trit(i + 1)] + result;
+        }
+        return result;
+    }
+
 
     int32_t Word::to_int32() const {
         int32_t result = 0;

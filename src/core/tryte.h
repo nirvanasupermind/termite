@@ -20,6 +20,7 @@ namespace termite {
         Tryte operator~() const;
         int16_t to_int16() const;
         std::string to_ternary_str() const;
+        std::string to_nonary_str() const;
         wchar_t to_wchar() const;
         static Tryte from_int16(int16_t n);
         static Tryte from_wchar(wchar_t wc);

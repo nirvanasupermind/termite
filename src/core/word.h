@@ -48,6 +48,7 @@ namespace termite {
         // bool operator>=(const Word& other) const;
         int32_t to_int32() const;
         std::string to_ternary_str() const;
+        std::string to_nonary_str() const;
         static Word from_int32(int32_t n);
         static Word from_ternary_str(const std::string& s);
     };

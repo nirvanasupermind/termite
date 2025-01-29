@@ -210,13 +210,14 @@ There is only one interrupt vector which can be accessed by calling `int 0` and 
 |`DD`           |Exit program with `dx` as code            |`dx`                      |
 |`DC`           |Print `dx` as decimal number              |`dx`                      |
 |`DB`           |Print `dx` as ternary number              |`dx`                      |
-|`DA`           |Print `dx`'s low tryte as character       |`dx`                      |
-|`D0`           |Print `dx`'s high tryte as character      |`dx`                      |
-|`D1`           |Input decimal number into `dx`            |No operands               |
-|`D2`           |Input ternary number into `dx`            |No operands               |
-|`D3`           |Input character into `dx`'s low tryte     |No operands               |
-|`D4`           |Input character into `dx`'s high tryte    |No operands               |
-|`CD`           |Print all registers (like in verbose mode)|No operands               |
-
+|`DA`           |Print `dx` as nonary number               |`dx`                      |
+|`D0`           |Print `dx`'s low tryte as character       |`dx`                      |
+|`D1`           |Print `dx`'s high tryte as character      |`dx`                      |
+|`D2`           |Input decimal number into `dx`            |No operands               |
+|`D3`           |Input ternary number into `dx`            |No operands               |
+|`D4`           |Input nonary number into `dx`            |No operands               |
+|`CD`           |Input character into `dx`'s low tryte     |No operands               |
+|`CB`           |Input character into `dx`'s high tryte    |No operands               |
+|`CA`           |Print all registers (like in verbose mode)|No operands               |
 
 
