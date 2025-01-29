@@ -14,6 +14,7 @@ namespace termite {
     protected:
         uint32_t bct;
     public:
+        static const Word ZERO;
         static const Word ONE;
         static const Word TWO;
         Word();
@@ -40,12 +41,12 @@ namespace termite {
         Word operator/(const Word& other) const;
         Word operator%(const Word& other) const;
         std::pair<Word, Word> divmod(const Word& other) const;
-        // bool operator==(const Word& other) const;
-        // bool operator!=(const Word& other) const;
-        // bool operator<(const Word& other) const;
-        // bool operator<=(const Word& other) const;
-        // bool operator>(const Word& other) const;
-        // bool operator>=(const Word& other) const;
+        bool operator==(const Word& other) const;
+        bool operator!=(const Word& other) const;
+        bool operator<(const Word& other) const;
+        bool operator<=(const Word& other) const;
+        bool operator>(const Word& other) const;
+        bool operator>=(const Word& other) const;
         int32_t to_int32() const;
         std::string to_ternary_str() const;
         std::string to_nonary_str() const;

@@ -9,12 +9,14 @@
 #include "tables.h"
 
 namespace termite {
-    // This is the binary-coded ternary representation of 1
+    // This is the binary-coded ternary representation of 0
+    const Word Word::ZERO(0x55555555);
+    // BCT of 1
     const Word Word::ONE(0x55555556);
-    // BCT for 2
+    // BCT of 2
     const Word Word::TWO(0x55555558);
 
-    // BCT for 0
+    // BCT of 0
     Word::Word()
         : bct(0x55555555) {
     }
@@ -195,6 +197,34 @@ namespace termite {
         return std::make_pair(quo, rem);
     }
 
+
+    bool Word::operator==(const Word& other) const {
+        return bct == other.bct;
+    }
+
+
+    bool Word::operator!=(const Word& other) const {
+        return bct != other.bct;
+    }
+
+
+    bool Word::operator>(const Word& other) const {
+        // Luckily, comparing the BCT encodings works for comparison
+        return bct > other.bct;
+    }
+
+    bool Word::operator>=(const Word& other) const {
+        return bct >= other.bct;
+    }
+
+    bool Word::operator<(const Word& other) const {
+        return bct < other.bct;
+    }
+
+    bool Word::operator<=(const Word& other) const {
+        return bct <= other.bct;
+    }
+
     std::string Word::to_ternary_str() const {
         std::string result = "";
         for (int i = 0; i < TRITS_PER_WORD; i++) {
@@ -210,7 +240,6 @@ namespace termite {
         }
         return result;
     }
-
 
     int32_t Word::to_int32() const {
         int32_t result = 0;
@@ -239,11 +268,10 @@ namespace termite {
         return result;
     }
 
-
     Word Word::from_ternary_str(const std::string& s) {
         Word result;
         for(int i = 0; i < s.size(); i++) {
-            if(s.at(i) == 'T' || s.at(i) == 't') {
+            if(s.at(i) == 'A' || s.at(i) == 'a') {
                 result.set_bct_trit(i, 0b00);
             } else if(s.at(i) == '0') {
                 result.set_bct_trit(i, 0b01);

@@ -1,84 +1,32 @@
-#ifndef CPU_H
-#define CPU_H
-
-#include "../core/tryte.h"
-#include "../core/word.h"
-#include "./mem.h"
+#include "word.h"
 
 namespace termite {
-    // Not an enum class so no explicit casting to int is needing
-    enum Opcode {
-        MOV = -40,
-        MOVI,
-        MOVPS,
-        LD,
-        ST,
-        ADD,
-        ADDI,
-        ADDC,
-        ADDCI,
-        SUB,
-        SUBI,
-        SUBC,
-        SUBCI,
-        MUL,
-        MULI,
-        DIV,
-        DIVI,
-        MOD,
-        MODI,
-        NOT,
-        NOTI,
-        AND,
-        ANDI,
-        OR,
-        ORI,
-        XOR,
-        XORI,
-        LSH,
-        LSHI,
-        RSH,
-        RSHI,
-        CMP,
-        CMPI,
-        B,
-        BEQ,
-        BNE,
-        BLT,
-        BLE,
-        BGT,
-        BGE,
-        PUSH,
-        POP,
-        CALL,
-        RET,
-        SYS
-    };
-
-    enum Register {
-        SP = 25,
-        PC
-    };
-
-    enum Flag {
-        SF,
-        CF
+    class Mem {
+    public:
+        static constexpr uint32_t MAX_MEM = 43046721;
+        Tryte data[MAX_MEM];
+        void initialize();
+        // Read 1 tryte with uint32_t address
+        Tryte get_tryte(uint32_t addr) const;
+        // Read 1 tryte with ternry word address
+        Tryte get_tryte(const Word& addr) const;
+        Word get_word(const Word& addr) const;
+        Tryte set_tryte(const Word& addr) const;
+        void set_word(const Word& addr, const Word& val);
     };
 
     class CPU {
     public:
-        Mem mem;
-        Word registers[27];
-        Word psr;
-        CPU();
-        void reset();
-        Word fetch_word(int& cycles);
-        void set_sign_flag(Word& result);
-        void print_state() const;
-        void execute(int cycles, bool verbose = false);
-        static std::string pad(const std::string& s, int length);
+        Word regs[9];
+        Word flags;
+
+        // opcodes
+        static constexpr int32_t INS_MOV = -40;
+
+        void reset(Mem& memory);
+        Tryte fetch_tryte(Word& cycles, Mem& memory);
+        Word fetch_word(Word& cycles, Mem& memory);
+        Word get_addr_mode(Word& cycles, Mem& memory, uint8_t mode, const Word& reg);
+        void execute(Word& cycles, Mem& memory);
     };
-} // namespace termite
-
-
-#endif
+}
