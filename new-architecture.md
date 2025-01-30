@@ -85,11 +85,11 @@ Note 2: Logical/shift operations do not work the same way as normal, because the
 |`DD`           |`mov`   |Move                              |`dest` (reg/idx), `src `(imm/reg/idx) |`dest = src`                        |
 |`DC`           |`push`  |Push word onto stack              |`src` (imm/reg/idx)                   |`sp = sp - 2; [sp] = src`           |
 |`DB`           |`pop`   |Pop word off stack and store it   |`dest` (reg/idx)                      |`dest = [sp]; sp = sp + 2`          |
-|`DA`           |`pushf` |Push flag register onto stack     |No operands                           |`sp = sp - 2; [sp] = flags`         |
+|`DA`           |`pushf` |Push flag register on-to stack     |No operands                           |`sp = sp - 2; [sp] = flags`         |
 |`D0`           |`popf`  |Pop the stack top to flag register|No operands                           |`flags = [sp]; sp = sp + 2`         |
 |`D1`           |`and`   |Trit-wise logical AND             |`dest` (reg/idx), `src` (imm/reg/idx) |`dest = dest & src`                 |
 |`D2`           |`or`    |Trit-wise logical OR              |`dest` (reg/idx), `src` (imm/reg/idx) |`dest = dest \| src`                |
-|`D3`           |`xor`   |Trit-wise logical XOR             |`dest` (reg/idx), `src` (reg/idx)     |`dest = dest ^ src`                 |
+|`D3`           |`xor`   |Trit-wise logical XOR             |`dest` (reg/idx), `src` (imm/reg/idx) |`dest = dest ^ src`                 |
 |`D4`           |`shl`   |Shift left                        |`dest` (reg/idx), `src` (imm/reg/idx) |`dest = dest << src`                |
 |`CD`           |`shr`   |Shift right                       |`dest` (reg/idx), `src` (imm/reg/idx) |`dest = dest >> src`                |
 |`CC`           |`add`   |Add                               |`dest` (reg/idx), `src` (imm/reg/idx) |`dest = dest + src`                 |
@@ -100,7 +100,7 @@ Note 2: Logical/shift operations do not work the same way as normal, because the
 |`C2`           |`div`   |Divide                            |`src` (reg/idx)                       |`ax = ax / src; dx = ax % src`      |
 |`C3`           |`neg`   |Negate/trit-wise logical NOT      |`src` (reg/idx)                       |`src = -src`                        |
 |`C4`           |`cmp`   |Compare                           |`dest` (reg/idx), `src` (imm/reg/idx) |`set-flags(dest - src)`             |
-|`BD`           |`call`  |Call procedure                    |`src` (imm)                           |`sp = sp - 2; [sp] = ip; [pc] = ip;`|
+|`BD`           |`call`  |Call procedure                    |`dest` (imm)                          |`sp = sp - 2; [sp] = ip; ip = dest;`|
 |`BC`           |`ret`   |Return from procedure             |No operands                           |`ip = [sp]; sp = sp + 2`            |
 |`BB`           |`jmp`   |Unconditional jump                |`dest` (imm)                          |`ip = dest`                         |
 |`BA`           |`jl`    |Jump if less than                 |`dest` (imm)                          |`ip = dest` if `SF < 0`             |
