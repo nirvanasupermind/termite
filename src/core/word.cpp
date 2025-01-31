@@ -62,7 +62,7 @@ namespace termite {
         return Tryte(bct >> 16);
     }
 
-    Word Word::operator~() const {
+    Word Word::operator-() const {
         Word result;
         for (int i = 0; i < TRITS_PER_WORD; i++) {
             result.set_bct_trit(i, TRIT_NOT[get_bct_trit(i)]);
@@ -167,6 +167,31 @@ namespace termite {
         }
         return result;
     }
+
+
+    std::pair<Word, Word> Word::mul32(const Word& other) const {
+        Word low, high;
+
+        for (int i = 0; i < TRITS_PER_WORD; i++) {
+            Word shifted = (*this) << Word::from_int32(i);
+
+            switch (other.get_bct_trit(i)) {
+            case 0b00: // -1 in balanced ternary
+                std::tie(low, high) = low.sub_with_carry(shifted);
+                break;
+            case 0b01: //  0 in balanced ternary (no effect)
+                break;
+            case 0b10: //  1 in balanced ternary
+                std::tie(low, high) = low.add_with_carry(shifted);
+                break;
+            default:
+                break;
+            }
+        }
+
+        return std::make_pair(low, high);
+    }
+
 
     Word Word::operator/(const Word& other) const {
         Word rem(bct);

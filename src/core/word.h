@@ -27,7 +27,7 @@ namespace termite {
         Tryte get_lo_tryte() const;
         Tryte get_hi_tryte() const;
         // NOT is also same as negation
-        Word operator~() const;
+        Word operator-() const;
         Word operator&(const Word& other) const;
         Word operator|(const Word& other) const;
         Word operator^(const Word& other) const;
@@ -38,6 +38,8 @@ namespace termite {
         Word operator-(const Word& other) const;
         std::pair<Word, uint8_t> sub_with_carry(const Word& other) const;
         Word operator*(const Word& other) const;
+        // This returns a 32-trit result unlike operator*
+        std::pair<Word, Word> mul32(const Word& other) const;
         Word operator/(const Word& other) const;
         Word operator%(const Word& other) const;
         std::pair<Word, Word> divmod(const Word& other) const;

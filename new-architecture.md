@@ -85,7 +85,7 @@ Note 2: Logical/shift operations do not work the same way as normal, because the
 |`DD`           |`mov`   |Move                              |`dest` (reg/idx), `src `(imm/reg/idx) |`dest = src`                        |
 |`DC`           |`push`  |Push word onto stack              |`src` (imm/reg/idx)                   |`sp = sp - 2; [sp] = src`           |
 |`DB`           |`pop`   |Pop word off stack and store it   |`dest` (reg/idx)                      |`dest = [sp]; sp = sp + 2`          |
-|`DA`           |`pushf` |Push flag register on-to stack     |No operands                           |`sp = sp - 2; [sp] = flags`         |
+|`DA`           |`pushf` |Push flag register on-to stack     |No operands                          |`sp = sp - 2; [sp] = flags`         |
 |`D0`           |`popf`  |Pop the stack top to flag register|No operands                           |`flags = [sp]; sp = sp + 2`         |
 |`D1`           |`and`   |Trit-wise logical AND             |`dest` (reg/idx), `src` (imm/reg/idx) |`dest = dest & src`                 |
 |`D2`           |`or`    |Trit-wise logical OR              |`dest` (reg/idx), `src` (imm/reg/idx) |`dest = dest \| src`                |
@@ -112,7 +112,7 @@ Note 2: Logical/shift operations do not work the same way as normal, because the
 |`AD`           |`int`   |Software interrupt                |`vec` (imm)                           |Call the interrupt handler with interrupt vector `vec` (currently this is just simulated by an if-statement in the emulator)|
 
 # Instruction format
-This does not include that if there is 1 immediate/index operand, an extra word is added for it, and if there are 2 of them 2 extra words are added.
+All instructions have 2 words. The first word is the main part of the instruction, while the second word contains the data for any immediate constant which is required (if one of the operands is in the).
 
 0-operand instructions:
 
@@ -202,11 +202,10 @@ This does not include that if there is 1 immediate/index operand, an extra word 
 
 
 
-
 # Interrupts
 There is only one interrupt vector which can be accessed by calling `int 0` and leads to the main API (this is analogous to `int 21h` for DOS API on x86). The following subfunctions are provided by `int 0` depending on the value of `ax`:
-|`ax` (nonary)  |Description                               |Operands                   |
-|---------------|------------------------------------------|---------------------------|
+|`ax` (nonary)  |Description                               |Operands                  |
+|---------------|------------------------------------------|--------------------------|
 |`DD`           |Exit program with `dx` as code            |`dx`                      |
 |`DC`           |Print `dx` as decimal number              |`dx`                      |
 |`DB`           |Print `dx` as ternary number              |`dx`                      |
@@ -215,9 +214,7 @@ There is only one interrupt vector which can be accessed by calling `int 0` and 
 |`D1`           |Print `dx`'s high tryte as character      |`dx`                      |
 |`D2`           |Input decimal number into `dx`            |No operands               |
 |`D3`           |Input ternary number into `dx`            |No operands               |
-|`D4`           |Input nonary number into `dx`            |No operands               |
+|`D4`           |Input nonary number into `dx`             |No operands               |
 |`CD`           |Input character into `dx`'s low tryte     |No operands               |
 |`CB`           |Input character into `dx`'s high tryte    |No operands               |
 |`CA`           |Print all registers (like in verbose mode)|No operands               |
-
-
