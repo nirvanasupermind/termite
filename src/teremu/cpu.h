@@ -1,3 +1,6 @@
+#include <iostream>
+#include <string>
+#include <utility>
 #include "word.h"
 
 namespace termite {
@@ -48,7 +51,18 @@ namespace termite {
         static constexpr int32_t INS_DIV = -25;
         static constexpr int32_t INS_NEG = -24;
         static constexpr int32_t INS_CMP = -23;
-        
+        static constexpr int32_t INS_CALL = -22;
+        static constexpr int32_t INS_RET = -21;
+        static constexpr int32_t INS_JMP = -20;
+        static constexpr int32_t INS_JL = -19;
+        static constexpr int32_t INS_JLE = -18;
+        static constexpr int32_t INS_JG = -17;
+        static constexpr int32_t INS_JGE = -16;
+        static constexpr int32_t INS_JE = -15;
+        static constexpr int32_t INS_JNE = -14;
+        static constexpr int32_t INS_JC = -13;
+        static constexpr int32_t INS_JNC = -12;
+        static constexpr int32_t INS_INT = -11;
         void reset(Mem& memory);
         void set_sign_flag(Word& cycles, Mem& memory, const Word& result);
         Tryte fetch_tryte(Word& cycles, Mem& memory);

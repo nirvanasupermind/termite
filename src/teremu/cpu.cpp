@@ -1,3 +1,6 @@
+#include <iostream>
+#include <string>
+#include <utility>
 #include "word.h"
 #include "cpu.h"
 
@@ -354,6 +357,83 @@ namespace termite {
                 flags.set_bct_trit(0, result.second.get_bct());
                 break;
             }
+            case INS_CALL: {
+                regs[REG_SP] = regs[REG_SP] - Word::TWO;
+                memory.set_word(regs[REG_SP], regs[REG_IP]);
+                regs[REG_IP] = imm;
+                break;
+            }
+            case INS_RET: {
+                regs[REG_IP] = memory.get_word(regs[REG_SP]);
+                regs[REG_SP] = regs[REG_SP] + 2;
+                break;
+            }
+            case INS_JMP: {
+                regs[REG_IP] = imm;
+                break;
+            }
+            case INS_JL: {
+                if(flags.get_bct_trit(1) < 0) {
+                    regs[REG_IP] = imm;
+                }
+                break;
+            }
+            case INS_JLE: {
+                if(flags.get_bct_trit(1) <= 0) {
+                    regs[REG_IP] = imm;
+                }
+                break;
+            }
+            case INS_JG: {
+                if(flags.get_bct_trit(1) > 0) {
+                    regs[REG_IP] = imm;
+                }
+                break;
+            }
+            case INS_JGE: {
+                if(flags.get_bct_trit(1) >= 0) {
+                    regs[REG_IP] = imm;
+                }
+                break;
+            }
+            case INS_JE: {
+                if(flags.get_bct_trit(1) == 0) {
+                    regs[REG_IP] = imm;
+                }
+                break;
+            }
+            case INS_JNE: {
+                if(flags.get_bct_trit(1) != 0) {
+                    regs[REG_IP] = imm;
+                }
+                break;
+            }
+            case INS_JC: {
+                if(flags.get_bct_trit(1) == 1) {
+                    regs[REG_IP] = imm;
+                }
+                break;
+            }
+            case INS_JNC: {
+                if(flags.get_bct_trit(1) != 1) {
+                    regs[REG_IP] = imm;
+                }
+                break;
+            }
+            case INS_INT: {
+                if(imm == 0) {
+                    if(regs[REG_AX] == -40) {
+                        std::exit(regs[REG_DX].to_int32());
+                    } else if(regs[REG_AX] = -39) {
+                        std::cout << regs[REG_DX].to_int32();
+                    } else if(regs[REG_AX] = -38) {
+                        std::cout << regs[REG_DX].to_ternary_str();
+                    } else if(regs[REG_AX] = -37) {
+                        std::cout << regs[REG_DX].to_nonary_str();
+                    }
+                }
+                break;
+            }  
             }
 
         }

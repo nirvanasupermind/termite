@@ -107,12 +107,14 @@ Note 2: Logical/shift operations do not work the same way as normal, because the
 |`B0`           |`jle`   |Jump if less than or equal        |`dest` (imm)                          |`ip = dest` if `SF <= 0`            |
 |`B1`           |`jg`    |Jump if greater than              |`dest` (imm)                          |`ip = dest` if `SF > 0`             |
 |`B2`           |`jge`   |Jump if greater than or equal     |`dest` (imm)                          |`ip = dest` if `SF >= 0`            |
-|`B3`           |`jeq`   |Jump if equal                     |`dest` (imm)                          |`ip = dest` if `SF == 0`            |
+|`B3`           |`je`    |Jump if equal                     |`dest` (imm)                          |`ip = dest` if `SF == 0`            |
 |`B4`           |`jne`   |Jump if not equal                 |`dest` (imm)                          |`ip = dest` if `SF != 0`            |
-|`AD`           |`int`   |Software interrupt                |`vec` (imm)                           |Call the interrupt handler with interrupt vector `vec` (currently this is just simulated by an if-statement in the emulator)|
+|`AD`           |`jc`    |Jump if carry                     |`dest` (imm)                          |`ip = dest` if `CF == 1`            |
+|`AC`           |`jnc`   |Jump if not carry                 |`dest` (imm)                          |`ip = dest` if `CF != 1`            |
+|`AB`           |`int`   |Software interrupt                |`vec` (imm)                           |Call the interrupt handler with interrupt vector `vec` (currently this is just simulated by an if-statement in the emulator)|
 
 # Instruction format
-All instructions have 2 words. The first word is the main part of the instruction, while the second word contains the data for any immediate constant which is required (if one of the operands is in the).
+All instructions have 3 words. The first word is the main part of the instruction, while the other two words contains the data for any immediate constants needed. This shows the format for the first word.
 
 0-operand instructions:
 
