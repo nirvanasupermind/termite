@@ -54,6 +54,7 @@ namespace termite {
         std::string to_nonary_str() const;
         static Word from_int32(int32_t n);
         static Word from_ternary_str(const std::string& s);
+        static Word from_nonary_str(const std::string& s);
     };
 } // namespace termite
 

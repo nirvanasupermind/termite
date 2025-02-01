@@ -1,20 +1,22 @@
 #include <iostream>
 #include <string>
 #include <utility>
-#include "word.h"
+#include <cstdint>
+#include "../core/tryte.h"
+#include "../core/word.h"
 
 namespace termite {
     class Mem {
     public:
         static constexpr uint32_t MAX_MEM = 43046721;
-        Tryte data[MAX_MEM];
+        std::vector<Tryte> data;
         void initialize();
         // Read 1 tryte with uint32_t address
         Tryte get_tryte(uint32_t addr) const;
         // Read 1 tryte with ternry word address
         Tryte get_tryte(const Word& addr) const;
         Word get_word(const Word& addr) const;
-        Tryte set_tryte(const Word& addr) const;
+        void set_tryte(const Word& addr, const Tryte& val);
         void set_word(const Word& addr, const Word& val);
     };
 
@@ -23,15 +25,15 @@ namespace termite {
         Word regs[9];
         Word flags;
         // register indices
-        static constexpr int32_t REG_AX = -4;
-        static constexpr int32_t REG_BX = -3;
-        static constexpr int32_t REG_CX = -2;
-        static constexpr int32_t REG_SP = -1;
-        static constexpr int32_t REG_BP = 0;
-        static constexpr int32_t REG_DI = 1;
-        static constexpr int32_t REG_SI = 2;
-        static constexpr int32_t REG_DX = 3;
-        static constexpr int32_t REG_IP = 4;
+        static constexpr int32_t REG_AX = 0;
+        static constexpr int32_t REG_BX = 1;
+        static constexpr int32_t REG_CX = 2;
+        static constexpr int32_t REG_SP = 3;
+        static constexpr int32_t REG_BP = 4;
+        static constexpr int32_t REG_DI = 5;
+        static constexpr int32_t REG_SI = 6;
+        static constexpr int32_t REG_DX = 7;
+        static constexpr int32_t REG_IP = 8;
         // opcodes
         static constexpr int32_t INS_MOV = -40;
         static constexpr int32_t INS_PUSH = -39;

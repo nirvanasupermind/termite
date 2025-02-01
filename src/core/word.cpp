@@ -141,11 +141,11 @@ namespace termite {
     }
 
     Word Word::operator-(const Word& other) const {
-        return operator+(~other);
+        return operator+(-other);
     }
 
     std::pair<Word, uint8_t> Word::sub_with_carry(const Word& other) const {
-        return add_with_carry(~other);
+        return add_with_carry(-other);
     }
 
     Word Word::operator*(const Word& other) const {
@@ -276,7 +276,7 @@ namespace termite {
 
     Word Word::from_int32(int32_t n) {
         if (n < 0) {
-            return ~Word::from_int32(-n);
+            return -Word::from_int32(-n);
         }
         Word result;
         int i = 0;
@@ -304,6 +304,43 @@ namespace termite {
                 result.set_bct_trit(i, 0b10);                
             } else {
                throw std::string("Malformed ternary string: " + s);
+            }
+        }
+        return result;
+    }
+
+    Word Word::from_nonary_str(const std::string& s) {
+        Word result;
+        for(int i = 0; i < s.size(); i++) {
+            if(s.at(i) == 'D') {
+                result.set_bct_trit(2 * i, 0b00);
+                result.set_bct_trit(2 * i + 1, 0b00);
+            } else if(s.at(i) == 'C') {
+                result.set_bct_trit(2 * i, 0b00);
+                result.set_bct_trit(2 * i + 1, 0b01);
+            } else if(s.at(i) == 'B') {
+                result.set_bct_trit(2 * i, 0b00);
+                result.set_bct_trit(2 * i + 1, 0b10);
+            } else if(s.at(i) == 'A') {
+                result.set_bct_trit(2 * i, 0b01);
+                result.set_bct_trit(2 * i + 1, 0b00);
+            } else if(s.at(i) == '0') {
+                result.set_bct_trit(2 * i, 0b01);
+                result.set_bct_trit(2 * i + 1, 0b01);
+            } else if(s.at(i) == '1') {
+                result.set_bct_trit(2 * i, 0b01);
+                result.set_bct_trit(2 * i + 1, 0b10);
+            } else if(s.at(i) == '2') {
+                result.set_bct_trit(2 * i, 0b10);
+                result.set_bct_trit(2 * i + 1, 0b00);
+            } else if(s.at(i) == '3') {
+                result.set_bct_trit(2 * i, 0b10);
+                result.set_bct_trit(2 * i + 1, 0b01);
+            } else if(s.at(i) == '4') {
+                result.set_bct_trit(2 * i, 0b10);
+                result.set_bct_trit(2 * i + 1, 0b10);
+            } else {
+               throw std::string("Malformed nonary string: " + s);
             }
         }
         return result;

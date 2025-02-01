@@ -117,7 +117,6 @@ Note 2: Logical/shift operations do not work the same way as normal, because the
 All instructions have 3 words. The first word is the main part of the instruction, while the other two words contains the data for any immediate constants needed. This shows the format for the first word.
 
 0-operand instructions:
-
 <table>
   <tr>
     <td>15</td>

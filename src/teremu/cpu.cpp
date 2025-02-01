@@ -1,13 +1,23 @@
 #include <iostream>
 #include <string>
 #include <utility>
-#include "word.h"
+#include <cstdint>
+#include <vector>
+#include "../core/tryte.h"
+#include "../core/word.h"
 #include "cpu.h"
 
 namespace termite {
     void Mem::initialize() {
-        for (uint32_t i = 0; i < MAX_MEM; i++) {
-            data[i] = 0;
+        if (data.size() == 0) {
+            for (uint32_t i = 0; i < MAX_MEM; i++) {
+                data.push_back(0);
+            }
+        }
+        else {
+            for (uint32_t i = 0; i < MAX_MEM; i++) {
+                data[i] = 0;
+            }
         }
     }
 
@@ -19,13 +29,21 @@ namespace termite {
         return data[addr.to_int32() + 21523360];
     }
 
+    void Mem::set_tryte(const Word& addr, const Tryte& val) {
+        data[addr.to_int32() + 21523360] = val;
+    }
+
     Word Mem::get_word(const Word& addr) const {
         return Word(get_tryte(addr), get_tryte(addr + Word::ONE));
     }
 
     void Mem::set_word(const Word& addr, const Word& val) {
+        std::cout << addr.to_int32() + 21523360 << '\n';
+        std::cout << val.get_lo_tryte().to_nonary_str() << '\n';
         data[addr.to_int32() + 21523360] = val.get_lo_tryte();
+        std::cout << "!" << '\n';
         data[addr.to_int32() + 21523361] = val.get_hi_tryte();
+        std::cout << "!" << '\n';
     }
 
     void CPU::reset(Mem& memory) {
@@ -373,67 +391,70 @@ namespace termite {
                 break;
             }
             case INS_JL: {
-                if(flags.get_bct_trit(1) < 0) {
+                if (flags.get_bct_trit(1) < 0) {
                     regs[REG_IP] = imm;
                 }
                 break;
             }
             case INS_JLE: {
-                if(flags.get_bct_trit(1) <= 0) {
+                if (flags.get_bct_trit(1) <= 0) {
                     regs[REG_IP] = imm;
                 }
                 break;
             }
             case INS_JG: {
-                if(flags.get_bct_trit(1) > 0) {
+                if (flags.get_bct_trit(1) > 0) {
                     regs[REG_IP] = imm;
                 }
                 break;
             }
             case INS_JGE: {
-                if(flags.get_bct_trit(1) >= 0) {
+                if (flags.get_bct_trit(1) >= 0) {
                     regs[REG_IP] = imm;
                 }
                 break;
             }
             case INS_JE: {
-                if(flags.get_bct_trit(1) == 0) {
+                if (flags.get_bct_trit(1) == 0) {
                     regs[REG_IP] = imm;
                 }
                 break;
             }
             case INS_JNE: {
-                if(flags.get_bct_trit(1) != 0) {
+                if (flags.get_bct_trit(1) != 0) {
                     regs[REG_IP] = imm;
                 }
                 break;
             }
             case INS_JC: {
-                if(flags.get_bct_trit(1) == 1) {
+                if (flags.get_bct_trit(1) == 1) {
                     regs[REG_IP] = imm;
                 }
                 break;
             }
             case INS_JNC: {
-                if(flags.get_bct_trit(1) != 1) {
+                if (flags.get_bct_trit(1) != 1) {
                     regs[REG_IP] = imm;
                 }
                 break;
             }
             case INS_INT: {
-                if(imm == 0) {
-                    if(regs[REG_AX] == -40) {
+                if (imm == 0) {
+                    if (regs[REG_AX] == -40) {
                         std::exit(regs[REG_DX].to_int32());
-                    } else if(regs[REG_AX] = -39) {
+                    }
+                    else if (regs[REG_AX] == -39) {
                         std::cout << regs[REG_DX].to_int32();
-                    } else if(regs[REG_AX] = -38) {
+                    }
+                    else if (regs[REG_AX] == -38) {
                         std::cout << regs[REG_DX].to_ternary_str();
-                    } else if(regs[REG_AX] = -37) {
+                    }
+                    else if (regs[REG_AX] == -37) {
                         std::cout << regs[REG_DX].to_nonary_str();
                     }
                 }
                 break;
-            }  
+            }
             }
 
         }
