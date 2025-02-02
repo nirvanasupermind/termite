@@ -33,7 +33,6 @@ int main(int argc, char** argv) {
                 for (int j = 0; j < 16; j++) {
                     word += text.at(i + j);
                 }
-                // std::cout << (i >> 4) - 21523360 << ' ' << termite::Word::from_ternary_str(word).to_ternary_str() << '\n';
                 memory.set_word(termite::Word::from_int32((i >> 3) - 21523360), termite::Word::from_ternary_str(word));
                 // std::cout << memory.get_word(i >> 3).to_nonary_str() << '\n';
             }

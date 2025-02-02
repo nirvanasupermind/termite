@@ -105,11 +105,17 @@ namespace termite {
             Word opcode = ins.get_trit_range(12, 15);
             switch (opcode.to_int32()) {
             case INS_MOV: {
+                // std::cout << "mov" << "\n";
                 uint8_t dest_mode = ins.get_bct_trit(11);
                 Word dest_reg = ins.get_trit_range(9, 10);
 
                 uint8_t src_mode = ins.get_bct_trit(8);
                 Word src_reg = ins.get_trit_range(6, 7);
+
+                // std::cout << dest_reg.to_int32() << "\n";
+
+                // std::cout << imm2.to_int32() << "\n";
+
                 if (dest_mode == 1) {
                     regs[dest_reg.to_int32() + 4] = get_addr_mode(cycles, memory, src_mode, src_reg, imm2);
                 }
@@ -447,21 +453,18 @@ namespace termite {
                 break;
             }
             case INS_INT: {
-                std::cout << "E" << '\n';
-                if (imm == 0) {
+                if (imm == Word::ZERO) {
+                    std::cout << "made it to int" << '\n';
+                        std::cout << regs[REG_AX].to_int32() << "AX" << '\n';
+                    if (regs[REG_AX] == -40) {
+                        std::exit(regs[REG_DX].to_int32());
+                    }
+                    else if (regs[REG_AX] == -39) {
                         std::cout << regs[REG_DX].to_int32();
-                    // if (regs[REG_AX] == -40) {
-                    //     std::exit(regs[REG_DX].to_int32());
-                    // }
-                    // else if (regs[REG_AX] == -39) {
-                    //     std::cout << regs[REG_DX].to_int32();
-                    // }
-                    // else if (regs[REG_AX] == -38) {
-                    //     std::cout << regs[REG_DX].to_ternary_str();
-                    // }
-                    // else if (regs[REG_AX] == -37) {
-                    //     std::cout << regs[REG_DX].to_nonary_str();
-                    // }
+                    }
+                    else if (regs[REG_AX] == -38) {
+                        std::cout << regs[REG_DX].to_ternary_str();
+                    }
                 }
                 break;
             }
