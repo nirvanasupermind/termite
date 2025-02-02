@@ -261,7 +261,7 @@ namespace termite {
     std::string Word::to_nonary_str() const {
         std::string result = "";
         for (int i = 0; i < TRITS_PER_WORD; i += 2) {
-            result = TRITS_TO_NONARY_CH[get_bct_trit(i)][get_bct_trit(i + 1)] + result;
+            result = TRITS_TO_NONARY_CH[get_bct_trit(i + 1)][get_bct_trit(i)] + result;
         }
         return result;
     }
@@ -295,13 +295,14 @@ namespace termite {
 
     Word Word::from_ternary_str(const std::string& s) {
         Word result;
-        for(int i = 0; i < s.size(); i++) {
+        for(int i = s.size() - 1; i >= 0; i--) {
+            int j = (s.size() - 1) - i;
             if(s.at(i) == 'A' || s.at(i) == 'a') {
-                result.set_bct_trit(i, 0b00);
+                result.set_bct_trit(j, 0b00);
             } else if(s.at(i) == '0') {
-                result.set_bct_trit(i, 0b01);
+                result.set_bct_trit(j, 0b01);
             } else if(s.at(i) == '1') {
-                result.set_bct_trit(i, 0b10);                
+                result.set_bct_trit(j, 0b10);                
             } else {
                throw std::string("Malformed ternary string: " + s);
             }
@@ -311,37 +312,68 @@ namespace termite {
 
     Word Word::from_nonary_str(const std::string& s) {
         Word result;
-        for(int i = 0; i < s.size(); i++) {
+        for(int i = s.size() - 1; i >= 0; i--) {
+            int j = (s.size() - 1) - i;
             if(s.at(i) == 'D') {
-                result.set_bct_trit(2 * i, 0b00);
-                result.set_bct_trit(2 * i + 1, 0b00);
+                result.set_bct_trit(2 * j + 1, 0b00);
+                result.set_bct_trit(2 * j, 0b00);
             } else if(s.at(i) == 'C') {
-                result.set_bct_trit(2 * i, 0b00);
-                result.set_bct_trit(2 * i + 1, 0b01);
+                result.set_bct_trit(2 * j + 1, 0b00);
+                result.set_bct_trit(2 * j , 0b01);
             } else if(s.at(i) == 'B') {
-                result.set_bct_trit(2 * i, 0b00);
-                result.set_bct_trit(2 * i + 1, 0b10);
+                result.set_bct_trit(2 * j + 1, 0b00);
+                result.set_bct_trit(2 * j, 0b10);
             } else if(s.at(i) == 'A') {
-                result.set_bct_trit(2 * i, 0b01);
-                result.set_bct_trit(2 * i + 1, 0b00);
+                result.set_bct_trit(2 * j + 1, 0b01);
+                result.set_bct_trit(2 * j, 0b00);
             } else if(s.at(i) == '0') {
-                result.set_bct_trit(2 * i, 0b01);
-                result.set_bct_trit(2 * i + 1, 0b01);
+                result.set_bct_trit(2 * j + 1, 0b01);
+                result.set_bct_trit(2 * j, 0b01);
             } else if(s.at(i) == '1') {
-                result.set_bct_trit(2 * i, 0b01);
-                result.set_bct_trit(2 * i + 1, 0b10);
+                result.set_bct_trit(2 * j + 1, 0b01);
+                result.set_bct_trit(2 * j, 0b10);
             } else if(s.at(i) == '2') {
-                result.set_bct_trit(2 * i, 0b10);
-                result.set_bct_trit(2 * i + 1, 0b00);
+                result.set_bct_trit(2 * j + 1, 0b10);
+                result.set_bct_trit(2 * j, 0b00);
             } else if(s.at(i) == '3') {
-                result.set_bct_trit(2 * i, 0b10);
-                result.set_bct_trit(2 * i + 1, 0b01);
+                result.set_bct_trit(2 * j + 1, 0b10);
+                result.set_bct_trit(2 * j, 0b01);
             } else if(s.at(i) == '4') {
-                result.set_bct_trit(2 * i, 0b10);
-                result.set_bct_trit(2 * i + 1, 0b10);
+                result.set_bct_trit(2 * j + 1, 0b10);
+                result.set_bct_trit(2 * j, 0b10);
             } else {
                throw std::string("Malformed nonary string: " + s);
             }
+            // if(s.at(i) == 'D') {
+            //     result.set_bct_trit(2 * j, 0b00);
+            //     result.set_bct_trit(2 * j + 1, 0b00);
+            // } else if(s.at(i) == 'C') {
+            //     result.set_bct_trit(2 * j, 0b00);
+            //     result.set_bct_trit(2 * j + 1, 0b01);
+            // } else if(s.at(i) == 'B') {
+            //     result.set_bct_trit(2 * j, 0b00);
+            //     result.set_bct_trit(2 * j + 1, 0b10);
+            // } else if(s.at(i) == 'A') {
+            //     result.set_bct_trit(2 * j, 0b01);
+            //     result.set_bct_trit(2 * j + 1, 0b00);
+            // } else if(s.at(i) == '0') {
+            //     result.set_bct_trit(2 * j, 0b01);
+            //     result.set_bct_trit(2 * j + 1, 0b01);
+            // } else if(s.at(i) == '1') {
+            //     result.set_bct_trit(2 * j, 0b01);
+            //     result.set_bct_trit(2 * j + 1, 0b10);
+            // } else if(s.at(i) == '2') {
+            //     result.set_bct_trit(2 * j, 0b10);
+            //     result.set_bct_trit(2 * j + 1, 0b00);
+            // } else if(s.at(i) == '3') {
+            //     result.set_bct_trit(2 * j, 0b10);
+            //     result.set_bct_trit(2 * j + 1, 0b01);
+            // } else if(s.at(i) == '4') {
+            //     result.set_bct_trit(2 * j, 0b10);
+            //     result.set_bct_trit(2 * j + 1, 0b10);
+            // } else {
+            //    throw std::string("Malformed nonary string: " + s);
+            // }
         }
         return result;
     }

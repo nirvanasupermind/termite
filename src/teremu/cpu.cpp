@@ -38,12 +38,8 @@ namespace termite {
     }
 
     void Mem::set_word(const Word& addr, const Word& val) {
-        std::cout << addr.to_int32() + 21523360 << '\n';
-        std::cout << val.get_lo_tryte().to_nonary_str() << '\n';
         data[addr.to_int32() + 21523360] = val.get_lo_tryte();
-        std::cout << "!" << '\n';
         data[addr.to_int32() + 21523361] = val.get_hi_tryte();
-        std::cout << "!" << '\n';
     }
 
     void CPU::reset(Mem& memory) {
@@ -57,8 +53,10 @@ namespace termite {
 
     Tryte CPU::fetch_tryte(Word& cycles, Mem& memory) {
         Tryte data = memory.get_tryte(regs[REG_IP]);
+        std::cout << regs[REG_IP].to_nonary_str() << ' ' << data.to_nonary_str() << '\n';
         regs[REG_IP] = regs[REG_IP] + Word::ONE;
         cycles = cycles - Word::ONE;
+        return data;
     }
 
     Word CPU::fetch_word(Word& cycles, Mem& memory) {
@@ -95,6 +93,7 @@ namespace termite {
             Word imm = fetch_word(cycles, memory);
             Word imm2 = fetch_word(cycles, memory);
             Word opcode = ins.get_trit_range(12, 15);
+            std::cout << ins.to_nonary_str() << '\n';
             switch (opcode.to_int32()) {
             case INS_MOV: {
                 uint8_t dest_mode = ins.get_bct_trit(11);
@@ -440,18 +439,19 @@ namespace termite {
             }
             case INS_INT: {
                 if (imm == 0) {
-                    if (regs[REG_AX] == -40) {
-                        std::exit(regs[REG_DX].to_int32());
-                    }
-                    else if (regs[REG_AX] == -39) {
                         std::cout << regs[REG_DX].to_int32();
-                    }
-                    else if (regs[REG_AX] == -38) {
-                        std::cout << regs[REG_DX].to_ternary_str();
-                    }
-                    else if (regs[REG_AX] == -37) {
-                        std::cout << regs[REG_DX].to_nonary_str();
-                    }
+                    // if (regs[REG_AX] == -40) {
+                    //     std::exit(regs[REG_DX].to_int32());
+                    // }
+                    // else if (regs[REG_AX] == -39) {
+                    //     std::cout << regs[REG_DX].to_int32();
+                    // }
+                    // else if (regs[REG_AX] == -38) {
+                    //     std::cout << regs[REG_DX].to_ternary_str();
+                    // }
+                    // else if (regs[REG_AX] == -37) {
+                    //     std::cout << regs[REG_DX].to_nonary_str();
+                    // }
                 }
                 break;
             }

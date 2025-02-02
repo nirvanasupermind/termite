@@ -7,6 +7,7 @@ namespace termite {
 
     const char TRIT_TO_TERNARY_CH[3] = { 'A', '0', '1'};
     const char TRITS_TO_NONARY_CH[3][3] = { {'D','C','B'}, {'A', '0', '1'}, {'2', '3', '4'}};
+    // const char TWO_TRIT_COMBOS[2][9] = {{'A', 'A'}, {'A', '0'}, {'A', '1'}, {'0', 'A'}, {} };
 
     // Trit gate lookup tables
     // Note that this is using the BCT encodings of the trits (0b00,0b01,0b10 or 0,1,2) 

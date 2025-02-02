@@ -11,6 +11,8 @@
 
 int main(int argc, char** argv) {
     termite::Mem memory;
+    termite::CPU cpu;
+    cpu.reset(memory);
 
     if (std::string(argv[2]) == "-t") {
         std::string file_path = argv[1];
@@ -31,14 +33,13 @@ int main(int argc, char** argv) {
                 for (int j = 0; j < 8; j++) {
                     word += text.at(i + j);
                 }
-                // std::cout << termite::Word::from_int32(i >> 3) -.to_nonary_str() << '\n';
+                // std::cout << text << ' ' << word << '\n';
+                // std::cout << termite::Word::from_nonary_str(word).to_nonary_str() << '\n';
+
                 memory.set_word(termite::Word::from_int32((i >> 3) - 21523360), termite::Word::from_nonary_str(word));
                 // std::cout << memory.get_word(i >> 3).to_nonary_str() << '\n';
             }
-            std::cout << (text.size() >> 2) << '\n';
             termite::Word cycles = termite::Word::from_int32(text.size() >> 2);
-            std::cout << cycles.to_int32() << '\n';
-            termite::CPU cpu;
             cpu.execute(cycles, memory);
         }
         catch (const std::string& e) {
