@@ -49,13 +49,12 @@ namespace termite {
         bool operator<=(const Word& other) const;
         bool operator>(const Word& other) const;
         bool operator>=(const Word& other) const;
-        // bool operator<(const Word& other) const;
         int32_t to_int32() const;
         std::string to_ternary_str() const;
-        // I did not want to use wchar because it is platform-specific
-        // But char is only 8 bits, char16_t can't be printed
+        std::string to_nonary_str() const;
         static Word from_int32(int32_t n);
         static Word from_ternary_str(const std::string& s);
+        static Word from_nonary_str(const std::string& s);
     };
 } // namespace termite
 

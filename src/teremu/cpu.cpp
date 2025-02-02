@@ -39,6 +39,7 @@ namespace termite {
 
     void Mem::set_word(const Word& addr, const Word& val) {
         data[addr.to_int32() + 21523360] = val.get_lo_tryte();
+                        // std::cout << "mem " << addr.to_int32() << ' ' << val.to_ternary_str()  << ' ' << val.get_lo_tryte().to_ternary_str() << '\n';
         data[addr.to_int32() + 21523361] = val.get_hi_tryte();
     }
 
@@ -53,14 +54,23 @@ namespace termite {
 
     Tryte CPU::fetch_tryte(Word& cycles, Mem& memory) {
         Tryte data = memory.get_tryte(regs[REG_IP]);
-        std::cout << regs[REG_IP].to_nonary_str() << ' ' << data.to_nonary_str() << '\n';
+        // std::cout << regs[REG_IP].to_nonary_str() << ' ' << data.to_nonary_str() << '\n';
         regs[REG_IP] = regs[REG_IP] + Word::ONE;
         cycles = cycles - Word::ONE;
         return data;
     }
 
     Word CPU::fetch_word(Word& cycles, Mem& memory) {
-        return Word(fetch_tryte(cycles, memory), fetch_tryte(cycles, memory));
+        Word data = memory.get_word(regs[REG_IP]);
+        // std::cout << "in cpu.cpp " << regs[REG_IP].to_int32() << ' ' << data.to_ternary_str() << '\n';
+        regs[REG_IP] = regs[REG_IP] + Word::TWO;
+        cycles = cycles - Word::TWO;
+        return data;
+        // Tryte lo_tryte = fetch_tryte(cycles, memory);
+        // Tryte hi_tryte = fetch_tryte(cycles, memory);
+        // std::cout << "! " << lo_tryte.to_ternary_str() << '\n';
+        // std::cout << "!! " << hi_tryte.to_ternary_str() << '\n';
+        // return Word(lo_tryte, hi_tryte);
     }
 
     Word CPU::get_addr_mode(Word& cycles, Mem& memory, uint8_t mode, const Word& reg, const Word& imm) {
@@ -93,7 +103,6 @@ namespace termite {
             Word imm = fetch_word(cycles, memory);
             Word imm2 = fetch_word(cycles, memory);
             Word opcode = ins.get_trit_range(12, 15);
-            std::cout << ins.to_nonary_str() << '\n';
             switch (opcode.to_int32()) {
             case INS_MOV: {
                 uint8_t dest_mode = ins.get_bct_trit(11);
@@ -438,6 +447,7 @@ namespace termite {
                 break;
             }
             case INS_INT: {
+                std::cout << "E" << '\n';
                 if (imm == 0) {
                         std::cout << regs[REG_DX].to_int32();
                     // if (regs[REG_AX] == -40) {

@@ -28,18 +28,16 @@ int main(int argc, char** argv) {
         std::string text = buffer.str();
 
         try {
-            for (int i = 0; i < text.size(); i += 8) {
+            for (int i = 0; i < text.size(); i += 16) {
                 std::string word;
-                for (int j = 0; j < 8; j++) {
+                for (int j = 0; j < 16; j++) {
                     word += text.at(i + j);
                 }
-                // std::cout << text << ' ' << word << '\n';
-                // std::cout << termite::Word::from_nonary_str(word).to_nonary_str() << '\n';
-
-                memory.set_word(termite::Word::from_int32((i >> 3) - 21523360), termite::Word::from_nonary_str(word));
+                // std::cout << (i >> 4) - 21523360 << ' ' << termite::Word::from_ternary_str(word).to_ternary_str() << '\n';
+                memory.set_word(termite::Word::from_int32((i >> 3) - 21523360), termite::Word::from_ternary_str(word));
                 // std::cout << memory.get_word(i >> 3).to_nonary_str() << '\n';
             }
-            termite::Word cycles = termite::Word::from_int32(text.size() >> 2);
+            termite::Word cycles = termite::Word::from_int32(text.size() >> 3);
             cpu.execute(cycles, memory);
         }
         catch (const std::string& e) {
