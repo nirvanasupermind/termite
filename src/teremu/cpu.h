@@ -69,7 +69,7 @@ namespace termite {
         void set_sign_flag(Word& cycles, Mem& memory, const Word& result);
         Tryte fetch_tryte(Word& cycles, Mem& memory);
         Word fetch_word(Word& cycles, Mem& memory);
-        Word get_addr_mode(Word& cycles, Mem& memory, uint8_t mode, const Word& reg, const Word& imm);
+        Word get_addr_mode(Word& cycles, Mem& memory, const Word& mode, const Word& reg, const Word& imm);
         void execute(Word& cycles, Mem& memory);
     };
 }

@@ -54,23 +54,25 @@ There is also the special `flags` register for holding CPU flags which is 16 tri
 The other trits are currently unused. The `flags` register can only be get/set through the `pushf`and `popf` instructions.
 
 # Addressing modes
-There are 3 addressing modes supported. The addressing mode takes up 1 trit in the instruction format.
+There are 4 addressing modes supported. The addressing mode takes up 2 trits in the instruction format.
 
 |Trit|Addressing mode    |Example    |Description|
 |----|-------------------|-----------|-----------|
-|`A` |Immediate          |`1`        |The operand is the next word of the instruction|
-|`0` |Register           |`ax`       |The operand is in the register|
-|`1` |Indexed            |`1[ax]`    |The operand's address is the value of the register  plus the next word of the instruction|
+|`D` |Immediate          |`1`        |The operand is a supplied constant|
+|`C` |Register           |`ax`       |The operand is in the register|
+|`B` |Displacement       |`[1]`      |The operand's address is a supplied constant|
+|`A` |Indexed            |`[ax+1]`   |The operand's address is the value of the register plus a supplied constant|
 
 The encoding of the addressing mode is as follows:
 <table>
   <tr>
+    <td32</td>
     <td>2</td>
     <td>1</td>
     <td>0</td>
   </tr>
   <tr>
-    <td colspan="1">mode (1)</td>
+    <td colspan="2">mode (2)</td>
     <td colspan="2">register (2)</td>
 </tr>
 </table>
@@ -114,8 +116,7 @@ Note 2: Logical/shift operations do not work the same way as normal, because the
 |`AB`           |`int`   |Software interrupt                |`vec` (imm)                           |Call the interrupt handler with interrupt vector `vec` (currently this is just simulated by an if-statement in the emulator)|
 
 # Instruction format
-All instructions have 3 words. The first word is the main part of the instruction, while the other two words contains the data for any immediate constants needed. This shows the format for the first word.
-
+All instructions are 3 words in length. The first word is the main part of the instruction, the other 2 words are used to store single-word constants. In 1-operand instructions, any single-word constant which is required for the operand (if it is in immediate, displacement or indexed addressing mode) will be stored in the second word. In 2-operand instructions, any single-word constant which is required for the first operand will be stored in the second word, and single-word. Some instructions will not require all of the 3 words, in that case the unused words are padded with 0s. Padding out every instruction to 3 words is wasteful, but it makes the CPU much easier to implement by making all the instructions a fixed width, and memory is not much of a concern for this emulator currently so it is like this for now.
 0-operand instructions:
 <table>
   <tr>
@@ -165,8 +166,8 @@ All instructions have 3 words. The first word is the main part of the instructio
   </tr>
   <tr>
     <td colspan="4">opcode (4)</td>
-    <td colspan="3">operand (3)</td>
-    <td colspan="9">unused (9)</td>
+    <td colspan="4">operand (4)</td>
+    <td colspan="8">unused (8)</td>
 </tr>
 </table>
 
@@ -194,9 +195,9 @@ All instructions have 3 words. The first word is the main part of the instructio
   </tr>
   <tr>
     <td colspan="4">opcode (4)</td>
-    <td colspan="3">operand1 (3)</td>
-    <td colspan="3">operand2 (3)</td>
-    <td colspan="6">unused (6)</td>
+    <td colspan="4">operand1 (4)</td>
+    <td colspan="4">operand2 (4)</td>
+    <td colspan="4">unused (4)</td>
 </tr>
 </table>
 

@@ -65,12 +65,15 @@ namespace termite {
         return data;
     }
 
-    Word CPU::get_addr_mode(Word& cycles, Mem& memory, uint8_t mode, const Word& reg, const Word& imm) {
-        if (mode == 0) {
+    Word CPU::get_addr_mode(Word& cycles, Mem& memory, const Word& mode, const Word& reg, const Word& imm) {
+        if (mode.to_int32() == -4) {
             return imm;
         }
-        else if (mode == 1) {
+        else if (mode.to_int32() == -3) {
             return regs[reg.to_int32() + 4];
+        }
+        else if (mode.to_int32() == -2) {
+            return memory.get_word(imm);
         }
         else {
             return memory.get_word(regs[reg.to_int32() + 4] + imm);
@@ -97,15 +100,18 @@ namespace termite {
             Word opcode = ins.get_trit_range(12, 15);
             switch (opcode.to_int32()) {
             case INS_MOV: {
-                uint8_t dest_mode = ins.get_bct_trit(11);
-                Word dest_reg = ins.get_trit_range(9, 10);
+                Word dest_mode = ins.get_trit_range(10, 11);
+                Word dest_reg = ins.get_trit_range(8, 9);
 
-                uint8_t src_mode = ins.get_bct_trit(8);
-                Word src_reg = ins.get_trit_range(6, 7);
+                Word src_mode = ins.get_trit_range(6, 7);
+                Word src_reg = ins.get_trit_range(4, 5);
 
 
-                if (dest_mode == 1) {
+                if (dest_mode.to_int32() == -3) {
                     regs[dest_reg.to_int32() + 4] = get_addr_mode(cycles, memory, src_mode, src_reg, imm2);
+                }
+                else if(dest_mode.to_int32() == -2) {
+                    memory.set_word(imm, get_addr_mode(cycles, memory, src_mode, src_reg, imm2));
                 }
                 else {
                     Word addr = regs[dest_reg.to_int32() + 4] + imm;
@@ -114,26 +120,28 @@ namespace termite {
                 break;
             }
             case INS_PUSH: {
-                uint8_t src_mode = ins.get_bct_trit(11);
-                Word src_reg = ins.get_trit_range(9, 10);
+                Word src_mode = ins.get_trit_range(10, 11);
+                Word src_reg = ins.get_trit_range(8, 9);
 
                 regs[REG_SP] = regs[REG_SP] - Word::TWO;
                 memory.set_word(regs[REG_SP], get_addr_mode(cycles, memory, src_mode, src_reg, imm));
                 break;
             }
             case INS_POP: {
-                uint8_t dest_mode = ins.get_bct_trit(11);
-                Word dest_reg = ins.get_trit_range(9, 10);
+                Word dest_mode = ins.get_trit_range(10, 11);
+                Word dest_reg = ins.get_trit_range(8, 9);
 
-                if (dest_mode == 1) {
+                if (dest_mode.to_int32() == -3) {
                     regs[dest_reg.to_int32() + 4] = regs[REG_SP];
-                    regs[REG_SP] = regs[REG_SP] + Word::TWO;
+                }
+                else if(dest_mode.to_int32() == -2) {
+                    memory.set_word(imm, regs[REG_SP]);
                 }
                 else {
                     Word addr = regs[dest_reg.to_int32() + 4] + imm;
                     memory.set_word(addr, regs[REG_SP]);
-                    regs[REG_SP] = regs[REG_SP] + Word::TWO;
                 }
+                regs[REG_SP] = regs[REG_SP] + Word::TWO;
             }
             case INS_PUSHF: {
                 regs[REG_SP] = regs[REG_SP] - Word::TWO;
@@ -146,15 +154,19 @@ namespace termite {
                 break;
             }
             case INS_AND: {
-                uint8_t dest_mode = ins.get_bct_trit(11);
-                Word dest_reg = ins.get_trit_range(9, 10);
+                Word dest_mode = ins.get_trit_range(10, 11);
+                Word dest_reg = ins.get_trit_range(8, 9);
 
-                uint8_t src_mode = ins.get_bct_trit(8);
-                Word src_reg = ins.get_trit_range(6, 7);
+                Word src_mode = ins.get_trit_range(6, 7);
+                Word src_reg = ins.get_trit_range(4, 5);
                 Word result;
-                if (dest_mode == 1) {
+                if (dest_mode.to_int32() == -3) {
                     result = regs[dest_reg.to_int32() + 4] & get_addr_mode(cycles, memory, src_mode, src_reg, imm2);
                     regs[dest_reg.to_int32() + 4] = result;
+                }
+                else if (dest_mode.to_int32() == -2) {
+                    result = memory.get_word(imm) & get_addr_mode(cycles, memory, src_mode, src_reg, imm2);
+                    memory.set_word(imm, result);
                 }
                 else {
                     Word addr = regs[dest_reg.to_int32() + 4] + imm;
@@ -165,15 +177,19 @@ namespace termite {
                 break;
             }
             case INS_OR: {
-                uint8_t dest_mode = ins.get_bct_trit(11);
-                Word dest_reg = ins.get_trit_range(9, 10);
+                Word dest_mode = ins.get_trit_range(10, 11);
+                Word dest_reg = ins.get_trit_range(8, 9);
 
-                uint8_t src_mode = ins.get_bct_trit(8);
-                Word src_reg = ins.get_trit_range(6, 7);
+                Word src_mode = ins.get_trit_range(6, 7);
+                Word src_reg = ins.get_trit_range(4, 5);
                 Word result;
-                if (dest_mode == 1) {
+                if (dest_mode.to_int32() == -3) {
                     result = regs[dest_reg.to_int32() + 4] | get_addr_mode(cycles, memory, src_mode, src_reg, imm2);
                     regs[dest_reg.to_int32() + 4] = result;
+                }
+                                else if (dest_mode.to_int32() == -2) {
+                    result = memory.get_word(imm) | get_addr_mode(cycles, memory, src_mode, src_reg, imm2);
+                    memory.set_word(imm, result);
                 }
                 else {
                     Word addr = regs[dest_reg.to_int32() + 4] + imm;
@@ -184,15 +200,19 @@ namespace termite {
                 break;
             }
             case INS_XOR: {
-                uint8_t dest_mode = ins.get_bct_trit(11);
-                Word dest_reg = ins.get_trit_range(9, 10);
+                Word dest_mode = ins.get_trit_range(10, 11);
+                Word dest_reg = ins.get_trit_range(8, 9);
 
-                uint8_t src_mode = ins.get_bct_trit(8);
-                Word src_reg = ins.get_trit_range(6, 7);
+                Word src_mode = ins.get_trit_range(6, 7);
+                Word src_reg = ins.get_trit_range(4, 5);
                 Word result;
-                if (dest_mode == 1) {
+                if (dest_mode.to_int32() == -3) {
                     result = regs[dest_reg.to_int32() + 4] ^ get_addr_mode(cycles, memory, src_mode, src_reg, imm2);
                     regs[dest_reg.to_int32() + 4] = result;
+                }
+                                else if (dest_mode.to_int32() == -2) {
+                    result = memory.get_word(imm) ^ get_addr_mode(cycles, memory, src_mode, src_reg, imm2);
+                    memory.set_word(imm, result);
                 }
                 else {
                     Word addr = regs[dest_reg.to_int32() + 4] + imm;
@@ -203,15 +223,19 @@ namespace termite {
                 break;
             }
             case INS_SHL: {
-                uint8_t dest_mode = ins.get_bct_trit(11);
-                Word dest_reg = ins.get_trit_range(9, 10);
+                Word dest_mode = ins.get_trit_range(10, 11);
+                Word dest_reg = ins.get_trit_range(8, 9);
 
-                uint8_t src_mode = ins.get_bct_trit(8);
-                Word src_reg = ins.get_trit_range(6, 7);
+                Word src_mode = ins.get_trit_range(6, 7);
+                Word src_reg = ins.get_trit_range(4, 5);
                 Word result;
-                if (dest_mode == 1) {
+                if (dest_mode.to_int32() == -3) {
                     result = regs[dest_reg.to_int32() + 4] << get_addr_mode(cycles, memory, src_mode, src_reg, imm2);
                     regs[dest_reg.to_int32() + 4] = result;
+                }
+                                else if (dest_mode.to_int32() == -2) {
+                    result = memory.get_word(imm) << get_addr_mode(cycles, memory, src_mode, src_reg, imm2);
+                    memory.set_word(imm, result);
                 }
                 else {
                     Word addr = regs[dest_reg.to_int32() + 4] + imm;
@@ -222,15 +246,19 @@ namespace termite {
                 break;
             }
             case INS_SHR: {
-                uint8_t dest_mode = ins.get_bct_trit(11);
-                Word dest_reg = ins.get_trit_range(9, 10);
+                Word dest_mode = ins.get_trit_range(10, 11);
+                Word dest_reg = ins.get_trit_range(8, 9);
 
-                uint8_t src_mode = ins.get_bct_trit(8);
-                Word src_reg = ins.get_trit_range(6, 7);
+                Word src_mode = ins.get_trit_range(6, 7);
+                Word src_reg = ins.get_trit_range(4, 5);
                 Word result;
-                if (dest_mode == 1) {
+                if (dest_mode.to_int32() == -3) {
                     result = regs[dest_reg.to_int32() + 4] >> get_addr_mode(cycles, memory, src_mode, src_reg, imm2);
                     regs[dest_reg.to_int32() + 4] = result;
+                }
+                                else if (dest_mode.to_int32() == -2) {
+                    result = memory.get_word(imm) >> get_addr_mode(cycles, memory, src_mode, src_reg, imm2);
+                    memory.set_word(imm, result);
                 }
                 else {
                     Word addr = regs[dest_reg.to_int32() + 4] + imm;
@@ -241,16 +269,20 @@ namespace termite {
                 break;
             }
             case INS_ADD: {
-                uint8_t dest_mode = ins.get_bct_trit(11);
-                Word dest_reg = ins.get_trit_range(9, 10);
+                Word dest_mode = ins.get_trit_range(10, 11);
+                Word dest_reg = ins.get_trit_range(8, 9);
 
-                uint8_t src_mode = ins.get_bct_trit(8);
-                Word src_reg = ins.get_trit_range(6, 7);
+                Word src_mode = ins.get_trit_range(6, 7);
+                Word src_reg = ins.get_trit_range(4, 5);
 
                 std::pair<Word, Word> result;
-                if (dest_mode == 1) {
+                if (dest_mode.to_int32() == -3) {
                     result = regs[dest_reg.to_int32() + 4].add_with_carry(get_addr_mode(cycles, memory, src_mode, src_reg, imm2));
                     regs[dest_reg.to_int32() + 4] = result.first;
+                }
+                                                else if (dest_mode.to_int32() == -2) {
+                    result = memory.get_word(imm).add_with_carry(get_addr_mode(cycles, memory, src_mode, src_reg, imm2));
+                    memory.set_word(imm, result.first);
                 }
                 else {
                     Word addr = regs[dest_reg.to_int32() + 4] + imm;
@@ -262,16 +294,20 @@ namespace termite {
                 break;
             }
             case INS_ADC: {
-                uint8_t dest_mode = ins.get_bct_trit(11);
-                Word dest_reg = ins.get_trit_range(9, 10);
+                Word dest_mode = ins.get_trit_range(10, 11);
+                Word dest_reg = ins.get_trit_range(8, 9);
 
-                uint8_t src_mode = ins.get_bct_trit(8);
-                Word src_reg = ins.get_trit_range(6, 7);
+                Word src_mode = ins.get_trit_range(6, 7);
+                Word src_reg = ins.get_trit_range(4, 5);
 
                 std::pair<Word, Word> result;
-                if (dest_mode == 1) {
+                if (dest_mode.to_int32() == -3) {
                     result = regs[dest_reg.to_int32() + 4].add_with_carry(get_addr_mode(cycles, memory, src_mode, src_reg, imm2));
                     regs[dest_reg.to_int32() + 4] = result.first + Word(flags.get_bct_trit(0));;
+                }
+                else if(dest_mode.to_int32() == -2) {
+                    result = memory.get_word(imm).add_with_carry(get_addr_mode(cycles, memory, src_mode, src_reg, imm2));
+                    memory.set_word(imm, result.first + Word(flags.get_bct_trit(0)));
                 }
                 else {
                     Word addr = regs[dest_reg.to_int32() + 4] + imm;
@@ -283,17 +319,21 @@ namespace termite {
                 break;
             }
             case INS_SUB: {
-                uint8_t dest_mode = ins.get_bct_trit(11);
-                Word dest_reg = ins.get_trit_range(9, 10);
+                Word dest_mode = ins.get_trit_range(10, 11);
+                Word dest_reg = ins.get_trit_range(8, 9);
 
-                uint8_t src_mode = ins.get_bct_trit(8);
-                Word src_reg = ins.get_trit_range(6, 7);
+                Word src_mode = ins.get_trit_range(6, 7);
+                Word src_reg = ins.get_trit_range(4, 5);
 
                 std::pair<Word, Word> result;
-                if (dest_mode == 1) {
+                if (dest_mode.to_int32() == -3) {
                     result = regs[dest_reg.to_int32() + 4].sub_with_carry(get_addr_mode(cycles, memory, src_mode, src_reg, imm2));
                     regs[dest_reg.to_int32() + 4] = result.first;
-                }
+                }              
+                else if(dest_mode.to_int32() == -2) {
+                    result = memory.get_word(imm).sub_with_carry(get_addr_mode(cycles, memory, src_mode, src_reg, imm2));
+                    memory.set_word(imm, result.first);
+                } 
                 else {
                     Word addr = regs[dest_reg.to_int32() + 4] + imm;
                     result = memory.get_word(addr).sub_with_carry(get_addr_mode(cycles, memory, src_mode, src_reg, imm2));
@@ -304,17 +344,21 @@ namespace termite {
                 break;
             }
             case INS_SBB: {
-                uint8_t dest_mode = ins.get_bct_trit(11);
-                Word dest_reg = ins.get_trit_range(9, 10);
+                Word dest_mode = ins.get_trit_range(10, 11);
+                Word dest_reg = ins.get_trit_range(8, 9);
 
-                uint8_t src_mode = ins.get_bct_trit(8);
-                Word src_reg = ins.get_trit_range(6, 7);
+                Word src_mode = ins.get_trit_range(6, 7);
+                Word src_reg = ins.get_trit_range(4, 5);
 
                 std::pair<Word, Word> result;
-                if (dest_mode == 1) {
+                if (dest_mode.to_int32() == -3) {
                     result = regs[dest_reg.to_int32() + 4].sub_with_carry(get_addr_mode(cycles, memory, src_mode, src_reg, imm2));
                     regs[dest_reg.to_int32() + 4] = result.first - Word(flags.get_bct_trit(0));;
                 }
+                                else if(dest_mode.to_int32() == -2) {
+                    result = memory.get_word(imm).sub_with_carry(get_addr_mode(cycles, memory, src_mode, src_reg, imm2));
+                    memory.set_word(imm, result.first - Word(flags.get_bct_trit(0)));
+                } 
                 else {
                     Word addr = regs[dest_reg.to_int32() + 4] + imm;
                     result = memory.get_word(addr).sub_with_carry(get_addr_mode(cycles, memory, src_mode, src_reg, imm2));
@@ -325,8 +369,8 @@ namespace termite {
                 break;
             }
             case INS_MUL: {
-                uint8_t src_mode = ins.get_bct_trit(8);
-                Word src_reg = ins.get_trit_range(6, 7);
+                Word src_mode = ins.get_trit_range(6, 7);
+                Word src_reg = ins.get_trit_range(4, 5);
                 std::pair<Word, Word> result = regs[REG_AX].mul32(get_addr_mode(cycles, memory, src_mode, src_reg, imm));
                 regs[REG_AX] = result.first;
                 regs[REG_DX] = result.second;
@@ -334,8 +378,8 @@ namespace termite {
                 break;
             }
             case INS_DIV: {
-                uint8_t src_mode = ins.get_bct_trit(8);
-                Word src_reg = ins.get_trit_range(6, 7);
+                Word src_mode = ins.get_trit_range(6, 7);
+                Word src_reg = ins.get_trit_range(4, 5);
                 std::pair<Word, Word> result = regs[0].divmod(get_addr_mode(cycles, memory, src_mode, src_reg, imm));
                 regs[REG_AX] = result.first;
                 regs[REG_DX] = result.second;
@@ -344,14 +388,15 @@ namespace termite {
                 break;
             }
             case INS_NEG: {
-                uint8_t src_mode = ins.get_bct_trit(11);
-                Word src_reg = ins.get_trit_range(9, 10);
+                Word src_mode = ins.get_trit_range(10, 11);
+                Word src_reg = ins.get_trit_range(8, 9);
 
                 Word result = -get_addr_mode(cycles, memory, src_mode, src_reg, imm);
-                if (src_mode == 1) {
+                if (src_mode.to_int32() == -3) {
                     regs[src_reg.to_int32() + 4] = result;
-                }
-                else {
+                } else if(src_mode.to_int32() == -2) {
+                    memory.set_word(imm, -regs[src_reg.to_int32() + 4]);                    
+                } else {
                     Word addr = regs[src_reg.to_int32() + 4] + imm;
                     memory.set_word(addr, -result);
                 }
@@ -359,17 +404,18 @@ namespace termite {
                 break;
             }
             case INS_CMP: {
-                uint8_t dest_mode = ins.get_bct_trit(11);
-                Word dest_reg = ins.get_trit_range(9, 10);
+                Word dest_mode = ins.get_trit_range(10, 11);
+                Word dest_reg = ins.get_trit_range(8, 9);
 
-                uint8_t src_mode = ins.get_bct_trit(8);
-                Word src_reg = ins.get_trit_range(6, 7);
+                Word src_mode = ins.get_trit_range(6, 7);
+                Word src_reg = ins.get_trit_range(4, 5);
 
                 std::pair<Word, Word> result;
-                if (dest_mode == 1) {
+                if (dest_mode.to_int32() == -3) {
                     result = regs[dest_reg.to_int32() + 4].sub_with_carry(get_addr_mode(cycles, memory, src_mode, src_reg, imm2));
-                }
-                else {
+                } else if(src_mode.to_int32() == -2) {
+                    result = memory.get_word(imm).sub_with_carry(get_addr_mode(cycles, memory, src_mode, src_reg, imm2));                 
+                } else {
                     Word addr = regs[dest_reg.to_int32() + 4] + imm;
                     result = memory.get_word(addr).sub_with_carry(get_addr_mode(cycles, memory, src_mode, src_reg, imm2));
                 }
