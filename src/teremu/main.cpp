@@ -3,6 +3,7 @@
 #include <vector>
 #include <iostream>
 #include <sstream>
+#include <algorithm>
 
 #include "../core/tryte.h"
 #include "../core/word.h"
@@ -26,17 +27,18 @@ int main(int argc, char** argv) {
         std::stringstream buffer;
         buffer << file.rdbuf();
         std::string text = buffer.str();
+       text.erase(std::remove(text.begin(), text.end(), ' '), text.end());
 
         try {
-            for (int i = 0; i < text.size(); i += 16) {
+            for (int i = 0; i < text.size(); i += 8) {
                 std::string word;
-                for (int j = 0; j < 16; j++) {
+                for (int j = 0; j < 8; j++) {
                     word += text.at(i + j);
                 }
-                memory.set_word(termite::Word::from_int32((i >> 3) - 21523360), termite::Word::from_ternary_str(word));
+                memory.set_word(termite::Word::from_int32((i >> 2) - 21523360), termite::Word::from_nonary_str(word));
                 // std::cout << memory.get_word(i >> 3).to_nonary_str() << '\n';
             }
-            termite::Word cycles = termite::Word::from_int32(text.size() >> 3);
+            termite::Word cycles = termite::Word::from_int32(text.size() >> 2);
             cpu.execute(cycles, memory);
         }
         catch (const std::string& e) {
