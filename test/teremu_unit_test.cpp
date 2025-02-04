@@ -29,7 +29,7 @@ int main(int argc, char** argv) {
             std::cout << "test " + tests[i][0] + " passed";
             num_passed++;
         } else {
-            std::cout << "test " + tests[i][0] + " FAILED";
+            std::cout << "test " + tests[i][0] + " failed";
         }
         std::cout << " with DX = " << cpu.regs[7].to_int32() << '\n';
         } catch(const std::string& e) {
