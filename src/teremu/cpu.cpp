@@ -300,19 +300,21 @@ namespace termite {
                 Word src_mode = ins.get_trit_range(6, 7);
                 Word src_reg = ins.get_trit_range(4, 5);
 
+                Word carry = Word::from_int32(flags.get_bct_trit(0) - 1);
+
                 std::pair<Word, Word> result;
                 if (dest_mode.to_int32() == -3) {
                     result = regs[dest_reg.to_int32() + 4].add_with_carry(get_addr_mode(cycles, memory, src_mode, src_reg, imm2));
-                    regs[dest_reg.to_int32() + 4] = result.first + Word(flags.get_bct_trit(0));;
+                    regs[dest_reg.to_int32() + 4] = result.first + carry;
                 }
                 else if (dest_mode.to_int32() == -2) {
                     result = memory.get_word(imm).add_with_carry(get_addr_mode(cycles, memory, src_mode, src_reg, imm2));
-                    memory.set_word(imm, result.first + Word(flags.get_bct_trit(0)));
+                    memory.set_word(imm, result.first + carry);
                 }
                 else {
                     Word addr = regs[dest_reg.to_int32() + 4] + imm;
                     result = memory.get_word(addr).add_with_carry(get_addr_mode(cycles, memory, src_mode, src_reg, imm2));
-                    memory.set_word(addr, result.first + Word(flags.get_bct_trit(0)));
+                    memory.set_word(addr, result.first + carry);
                 }
                 set_sign_flag(cycles, memory, result.first);
                 flags.set_bct_trit(0, result.second.get_bct());
@@ -350,19 +352,21 @@ namespace termite {
                 Word src_mode = ins.get_trit_range(6, 7);
                 Word src_reg = ins.get_trit_range(4, 5);
 
+                Word carry = Word::from_int32(flags.get_bct_trit(0) - 1);
+
                 std::pair<Word, Word> result;
                 if (dest_mode.to_int32() == -3) {
                     result = regs[dest_reg.to_int32() + 4].sub_with_carry(get_addr_mode(cycles, memory, src_mode, src_reg, imm2));
-                    regs[dest_reg.to_int32() + 4] = result.first - Word(flags.get_bct_trit(0));;
+                    regs[dest_reg.to_int32() + 4] = result.first - carry;
                 }
                 else if (dest_mode.to_int32() == -2) {
                     result = memory.get_word(imm).sub_with_carry(get_addr_mode(cycles, memory, src_mode, src_reg, imm2));
-                    memory.set_word(imm, result.first - Word(flags.get_bct_trit(0)));
+                    memory.set_word(imm, result.first - carry);
                 }
                 else {
                     Word addr = regs[dest_reg.to_int32() + 4] + imm;
                     result = memory.get_word(addr).sub_with_carry(get_addr_mode(cycles, memory, src_mode, src_reg, imm2));
-                    memory.set_word(addr, result.first - Word(flags.get_bct_trit(0)));
+                    memory.set_word(addr, result.first - carry);
                 }
                 set_sign_flag(cycles, memory, result.first);
                 flags.set_bct_trit(0, result.second.get_bct());
