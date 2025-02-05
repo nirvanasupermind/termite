@@ -3,6 +3,7 @@
 #include <iostream>
 #include <algorithm>
 #include <utility>
+#include <cmath>
 
 #include "tryte.h"
 #include "word.h"
@@ -151,15 +152,15 @@ namespace termite {
     Word Word::operator*(const Word& other) const {
         Word result;
         for (int i = 0; i < TRITS_PER_WORD; i++) {
-            Word temp = (*this) << i;
+            Word temp = (*this) << Word::from_int32(i);
             switch (other.get_bct_trit(i)) {
             case 0b00:
-                result = result - ((*this) << termite::Word::from_int32(i));
+                result = result - temp;
                 break;
             case 0b01:
                 break;
             case 0b10:
-                result = result + ((*this) << termite::Word::from_int32(i));
+                result = result + temp;
                 break;
             default:
                 break;
@@ -168,29 +169,71 @@ namespace termite {
         return result;
     }
 
-
-    std::pair<Word, Word> Word::mul32(const Word& other) const {
-        Word low, high;
-
+std::pair<Word, Word> Word::mul32(const Word& other) const {
+        Word low;
+        Word high;
+        int turningPoint = std::floor(std::log(std::abs(to_int32())));
         for (int i = 0; i < TRITS_PER_WORD; i++) {
-            Word shifted = (*this) << Word::from_int32(i);
-
+            if(i >= turningPoint) {
+            Word temp = (*this) << Word::from_int32(i - turningPoint);
             switch (other.get_bct_trit(i)) {
-            case 0b00: // -1 in balanced ternary
-                std::tie(low, high) = low.sub_with_carry(shifted);
+            case 0b00:
+                high = high - temp;
                 break;
-            case 0b01: //  0 in balanced ternary (no effect)
+            case 0b01:
                 break;
-            case 0b10: //  1 in balanced ternary
-                std::tie(low, high) = low.add_with_carry(shifted);
+            case 0b10:
+                high = high + temp;
                 break;
             default:
                 break;
             }
+                        } else {
+            Word temp = (*this) << Word::from_int32(i);
+            switch (other.get_bct_trit(i)) {
+            case 0b00:
+                low = low - temp;
+                break;
+            case 0b01:
+                break;
+            case 0b10:
+                low = low + temp;
+                break;
+            default:
+                break;
+            }
+                        }
         }
-
         return std::make_pair(low, high);
-    }
+}
+
+
+    // std::pair<Word, Word> Word::mul32(const Word& other) const {
+    //     Word low, high;
+
+    //     for (int i = 0; i < TRITS_PER_WORD; i++) {
+    //         Word shifted = (*this) << Word::from_int32(i);
+
+    //         std::cout << i << ' ' << (int)other.get_bct_trit(i) << ' ' << low.to_int32() << ' ' << (int)low.add_with_carry(shifted).second << '\n';
+
+    //         // std::cout << shifted.to_int32() << '\n';
+    //         switch (other.get_bct_trit(i)) {
+    //         case 0b00: // -1 in balanced ternary
+    //             std::tie(low, high) = low.sub_with_carry(shifted);
+    //             break;
+    //         case 0b01: //  0 in balanced ternary (no effect)
+    //             break;
+    //         case 0b10: //  1 in balanced ternary
+    //             std::tie(low, high) = low.add_with_carry(shifted);
+    //             break;
+    //         default:
+    //             break;
+    //         }
+    //     }
+    //         // std::cout << low.to_int32() << ' ' << high.to_int32() << '\n';
+
+    //     return std::make_pair(low, high);
+    // }
 
 
     Word Word::operator/(const Word& other) const {
