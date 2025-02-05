@@ -31,7 +31,9 @@ namespace termite {
         Word operator|(const Word& other) const;
         Word operator^(const Word& other) const;
         Word operator<<(const Word& other) const;
+        Word shl_int8(int8_t other) const;
         Word operator>>(const Word& other) const;
+        Word shr_int8(int8_t other) const;
         Word operator+(const Word& other) const;
         std::pair<Word, uint8_t> add_with_carry(const Word& other) const;
         Word operator-(const Word& other) const;

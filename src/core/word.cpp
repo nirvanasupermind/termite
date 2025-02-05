@@ -86,11 +86,39 @@ namespace termite {
         return result;
     }
 
+    Word Word::shl_int8(int8_t other) const {
+        Word result;
+        for (int i = 0; i < TRITS_PER_WORD; i++) {
+            int temp = i - other;
+            if (temp < 0 || temp >= TRITS_PER_WORD) {
+                continue;
+            }
+            else {
+                result.set_bct_trit(i, get_bct_trit(temp));
+            }
+        }
+        return result;
+    }
+
     Word Word::operator>>(const Word& other) const {
         int32_t other_int32 = other.to_int32();
         Word result;
         for (int i = 0; i < TRITS_PER_WORD; i++) {
             int temp = i + other_int32;
+            if (temp < 0 || temp >= TRITS_PER_WORD) {
+                continue;
+            }
+            else {
+                result.set_bct_trit(i, get_bct_trit(temp));
+            }
+        }
+        return result;
+    }
+
+    Word Word::shr_int8(int8_t other) const {
+        Word result;
+        for (int i = 0; i < TRITS_PER_WORD; i++) {
+            int temp = i + other;
             if (temp < 0 || temp >= TRITS_PER_WORD) {
                 continue;
             }
@@ -152,7 +180,7 @@ namespace termite {
     Word Word::operator*(const Word& other) const {
         Word result;
         for (int i = 0; i < TRITS_PER_WORD; i++) {
-            Word temp = (*this) << Word::from_int32(i);
+            Word temp = shl_int8(i);
             switch (other.get_bct_trit(i)) {
             case 0b00:
                 result = result - temp;
@@ -169,43 +197,47 @@ namespace termite {
         return result;
     }
 
-std::pair<Word, Word> Word::mul32(const Word& other) const {
-        Word low;
-        Word high;
-        int turningPoint = std::floor(std::log(std::abs(to_int32())));
-        for (int i = 0; i < TRITS_PER_WORD; i++) {
-            if(i >= turningPoint) {
-            Word temp = (*this) << Word::from_int32(i - turningPoint);
-            switch (other.get_bct_trit(i)) {
-            case 0b00:
-                high = high - temp;
-                break;
-            case 0b01:
-                break;
-            case 0b10:
-                high = high + temp;
-                break;
-            default:
-                break;
-            }
-                        } else {
-            Word temp = (*this) << Word::from_int32(i);
-            switch (other.get_bct_trit(i)) {
-            case 0b00:
-                low = low - temp;
-                break;
-            case 0b01:
-                break;
-            case 0b10:
-                low = low + temp;
-                break;
-            default:
-                break;
-            }
-                        }
-        }
-        return std::make_pair(low, high);
-}
+    std::pair<Word, Word> Word::mul32(const Word& other) const {
+    Tryte a = get_lo_tryte();
+    Tryte b = get_hi_tryte();
+    Tryte c = other.get_lo_tryte();
+    Tryte d = other.get_hi_tryte();
+    Word t1 = Word(a, Tryte()) * Word(c, Tryte()); 
+    Word t2 = (Word(a, Tryte()) * Word(d, Tryte())).shl_int8(8);
+    Word t3 = (Word(b, Tryte()) * Word(c, Tryte())).shl_int8(8);
+    Word t4 = Word(b, Tryte()) * Word(d, Tryte());
+    std::cout << "!, " << b.to_int16() << '\n';
+    std::cout << "!, " << other.to_int32() << '\n';
+    std::cout << t4.to_int32() << '\n';
+    return {t1 + t2 + t3, t4};
+    }
+
+// std::pair<Word, Word> Word::mul32(const Word& other) const {
+//         // Extract 8-bit parts of each 16-bit operand
+//     Tryte a_lo = get_lo_tryte();
+//     Tryte a_hi = get_hi_tryte();
+//     Tryte b_lo = other.get_lo_tryte();
+//     Tryte b_hi = other.get_hi_tryte();
+
+//     // Perform 8-bit multiplications
+//     Word p0 = Word(a_lo, Tryte()) * Word(b_lo, Tryte()); // Low * Low
+//     Word p1 = Word(a_lo, Tryte()) * Word(b_hi, Tryte()); // Low * High
+//     Word p2 = Word(a_hi, Tryte()) * Word(b_lo, Tryte()); // High * Low
+//     Word p3 = Word(a_hi, Tryte()) * Word(b_hi, Tryte()); // High * High
+
+//     // Add mid products, shifting appropriately
+//     Word mid_sum = p2.shl_int8(8) + p3.shl_int8(8);
+//     Word carry = (mid_sum >> 16) & 0xFFFF; // Carry overflow from mid_sum
+
+//     low += (mid_sum & 0xFFFF); // Add lower part of mid_sum to low part
+//     if (low > 0xFFFF) { // Check for overflow
+//         low &= 0xFFFF;
+//         carry += 1; // Carry to high part
+//     }
+
+//     high += carry; // Add carry from mid sum
+//     return {high & 0xFFFF, low & 0xFFFF};
+// }
 
 
     // std::pair<Word, Word> Word::mul32(const Word& other) const {
