@@ -102,7 +102,7 @@ Note 2: Logical/shift operations do not work the same way as normal, because the
 |`C2`           |`div`   |Divide                            |`src` (reg/idx)                       |`ax = ax / src; dx = ax % src`      |
 |`C3`           |`neg`   |Negate/trit-wise logical NOT      |`src` (reg/idx)                       |`src = -src`                        |
 |`C4`           |`cmp`   |Compare                           |`dest` (reg/idx), `src` (imm/reg/idx) |`set-flags(dest - src)`             |
-|`BD`           |`call`  |Call procedure                    |`dest` (imm)                          |`sp = sp - 2; [sp] = ip; ip = dest;`|
+|`BD`           |`call`  |Call procedure                    |`dest` (imm)                          |`sp = sp - 2; [sp] = ip; ip = dest;`|=
 |`BC`           |`ret`   |Return from procedure             |No operands                           |`ip = [sp]; sp = sp + 2`            |
 |`BB`           |`jmp`   |Unconditional jump                |`dest` (imm)                          |`ip = dest`                         |
 |`BA`           |`jl`    |Jump if less than                 |`dest` (imm)                          |`ip = dest` if `SF < 0`             |

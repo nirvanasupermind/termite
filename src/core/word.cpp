@@ -173,22 +173,22 @@ namespace termite {
         return operator+(-other);
     }
 
-    std::pair<Word, uint8_t> Word::sub_with_carry(const Word& other) const {
+    std::pair<Word, uint8_t> Word::sub_with_borrow(const Word& other) const {
         return add_with_carry(-other);
     }
 
     Word Word::operator*(const Word& other) const {
         Word result;
         for (int i = 0; i < TRITS_PER_WORD; i++) {
-            Word temp = shl_int8(i);
+            Word shifted = shl_int8(i);
             switch (other.get_bct_trit(i)) {
             case 0b00:
-                result = result - temp;
+                result = result - shifted;
                 break;
             case 0b01:
                 break;
             case 0b10:
-                result = result + temp;
+                result = result + shifted;
                 break;
             default:
                 break;
@@ -198,19 +198,50 @@ namespace termite {
     }
 
     std::pair<Word, Word> Word::mul32(const Word& other) const {
-    Tryte a = get_lo_tryte();
-    Tryte b = get_hi_tryte();
-    Tryte c = other.get_lo_tryte();
-    Tryte d = other.get_hi_tryte();
-    Word t1 = Word(a, Tryte()) * Word(c, Tryte()); 
-    Word t2 = (Word(a, Tryte()) * Word(d, Tryte())).shl_int8(8);
-    Word t3 = (Word(b, Tryte()) * Word(c, Tryte())).shl_int8(8);
-    Word t4 = Word(b, Tryte()) * Word(d, Tryte());
-    std::cout << "!, " << b.to_int16() << '\n';
-    std::cout << "!, " << other.to_int32() << '\n';
-    std::cout << t4.to_int32() << '\n';
-    return {t1 + t2 + t3, t4};
+        Word low, high;
+
+        for (int i = 0; i < TRITS_PER_WORD; i++) {
+            Word shifted = (*this) << Word::from_int32(i);
+
+            switch (other.get_bct_trit(i)) {
+            case 0b00: {
+                // -1 in balanced ternary 
+                std::pair<Word, uint8_t> sbb_result = low.sub_with_borrow(shifted);                
+                low = sbb_result.first;
+                high = Word::from_int32(sbb_result.second - 1);
+                break;
+            }
+            case 0b01: //  0 in balanced ternary (no effect)
+                break;
+            case 0b10: {
+                // 1 in balanced ternary 
+                std::pair<Word, uint8_t> adc_result = low.add_with_carry(shifted);                
+                low = adc_result.first;
+                high = Word::from_int32(adc_result.second + 1);
+                break;
+            }
+            default:
+                break;
+            }
+        }
+
+        return std::make_pair(low, high);
     }
+
+    // std::pair<Word, Word> Word::mul32(const Word& other) const {
+    // Tryte a = get_lo_tryte();
+    // Tryte b = get_hi_tryte();
+    // Tryte c = other.get_lo_tryte();
+    // Tryte d = other.get_hi_tryte();
+    // Word t1 = Word(a, Tryte()) * Word(c, Tryte()); 
+    // Word t2 = (Word(a, Tryte()) * Word(d, Tryte())).shl_int8(8);
+    // Word t3 = (Word(b, Tryte()) * Word(c, Tryte())).shl_int8(8);
+    // Word t4 = Word(b, Tryte()) * Word(d, Tryte());
+    // std::cout << "!, " << b.to_int16() << '\n';
+    // std::cout << "!, " << other.to_int32() << '\n';
+    // std::cout << t4.to_int32() << '\n';
+    // return {t1 + t2 + t3, t4};
+    // }
 
 // std::pair<Word, Word> Word::mul32(const Word& other) const {
 //         // Extract 8-bit parts of each 16-bit operand

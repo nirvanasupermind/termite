@@ -329,16 +329,16 @@ namespace termite {
 
                 std::pair<Word, Word> result;
                 if (dest_mode.to_int32() == -3) {
-                    result = regs[dest_reg.to_int32() + 4].sub_with_carry(get_addr_mode(cycles, memory, src_mode, src_reg, imm2));
+                    result = regs[dest_reg.to_int32() + 4].sub_with_borrow(get_addr_mode(cycles, memory, src_mode, src_reg, imm2));
                     regs[dest_reg.to_int32() + 4] = result.first;
                 }
                 else if (dest_mode.to_int32() == -2) {
-                    result = memory.get_word(imm).sub_with_carry(get_addr_mode(cycles, memory, src_mode, src_reg, imm2));
+                    result = memory.get_word(imm).sub_with_borrow(get_addr_mode(cycles, memory, src_mode, src_reg, imm2));
                     memory.set_word(imm, result.first);
                 }
                 else {
                     Word addr = regs[dest_reg.to_int32() + 4] + imm;
-                    result = memory.get_word(addr).sub_with_carry(get_addr_mode(cycles, memory, src_mode, src_reg, imm2));
+                    result = memory.get_word(addr).sub_with_borrow(get_addr_mode(cycles, memory, src_mode, src_reg, imm2));
                     memory.set_word(addr, result.first);
                 }
                 set_sign_flag(cycles, memory, result.first);
@@ -356,16 +356,16 @@ namespace termite {
 
                 std::pair<Word, Word> result;
                 if (dest_mode.to_int32() == -3) {
-                    result = regs[dest_reg.to_int32() + 4].sub_with_carry(get_addr_mode(cycles, memory, src_mode, src_reg, imm2));
+                    result = regs[dest_reg.to_int32() + 4].sub_with_borrow(get_addr_mode(cycles, memory, src_mode, src_reg, imm2));
                     regs[dest_reg.to_int32() + 4] = result.first - carry;
                 }
                 else if (dest_mode.to_int32() == -2) {
-                    result = memory.get_word(imm).sub_with_carry(get_addr_mode(cycles, memory, src_mode, src_reg, imm2));
+                    result = memory.get_word(imm).sub_with_borrow(get_addr_mode(cycles, memory, src_mode, src_reg, imm2));
                     memory.set_word(imm, result.first - carry);
                 }
                 else {
                     Word addr = regs[dest_reg.to_int32() + 4] + imm;
-                    result = memory.get_word(addr).sub_with_carry(get_addr_mode(cycles, memory, src_mode, src_reg, imm2));
+                    result = memory.get_word(addr).sub_with_borrow(get_addr_mode(cycles, memory, src_mode, src_reg, imm2));
                     memory.set_word(addr, result.first - carry);
                 }
                 set_sign_flag(cycles, memory, result.first);
@@ -373,8 +373,8 @@ namespace termite {
                 break;
             }
             case INS_MUL: {
-                Word src_mode = ins.get_trit_range(6, 7);
-                Word src_reg = ins.get_trit_range(4, 5);
+                Word src_mode = ins.get_trit_range(10, 11);
+                Word src_reg = ins.get_trit_range(8, 9);
                 std::pair<Word, Word> result = regs[REG_AX].mul32(get_addr_mode(cycles, memory, src_mode, src_reg, imm));
                 regs[REG_AX] = result.first;
                 regs[REG_DX] = result.second;
@@ -382,8 +382,8 @@ namespace termite {
                 break;
             }
             case INS_DIV: {
-                Word src_mode = ins.get_trit_range(6, 7);
-                Word src_reg = ins.get_trit_range(4, 5);
+                Word src_mode = ins.get_trit_range(10, 11);
+                Word src_reg = ins.get_trit_range(8, 9);
                 std::pair<Word, Word> result = regs[0].divmod(get_addr_mode(cycles, memory, src_mode, src_reg, imm));
                 regs[REG_AX] = result.first;
                 regs[REG_DX] = result.second;
@@ -418,14 +418,14 @@ namespace termite {
 
                 std::pair<Word, Word> result;
                 if (dest_mode.to_int32() == -3) {
-                    result = regs[dest_reg.to_int32() + 4].sub_with_carry(get_addr_mode(cycles, memory, src_mode, src_reg, imm2));
+                    result = regs[dest_reg.to_int32() + 4].sub_with_borrow(get_addr_mode(cycles, memory, src_mode, src_reg, imm2));
                 }
                 else if (src_mode.to_int32() == -2) {
-                    result = memory.get_word(imm).sub_with_carry(get_addr_mode(cycles, memory, src_mode, src_reg, imm2));
+                    result = memory.get_word(imm).sub_with_borrow(get_addr_mode(cycles, memory, src_mode, src_reg, imm2));
                 }
                 else {
                     Word addr = regs[dest_reg.to_int32() + 4] + imm;
-                    result = memory.get_word(addr).sub_with_carry(get_addr_mode(cycles, memory, src_mode, src_reg, imm2));
+                    result = memory.get_word(addr).sub_with_borrow(get_addr_mode(cycles, memory, src_mode, src_reg, imm2));
                 }
                 set_sign_flag(cycles, memory, result.first);
                 flags.set_bct_trit(0, result.second.get_bct());
