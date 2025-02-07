@@ -1,0 +1,15 @@
+-39, 5
+DC, 1D
+AAA0, 01AA
+
+  AAA0
+& 01AA
+  AAAA
+
+  AAA0
+| 01AA
+  01A0
+
+  AAA0
+^ 01AA
+  01A0
