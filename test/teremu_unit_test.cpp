@@ -15,7 +15,7 @@ int main(int argc, char** argv) {
     termite::Mem memory;
     termite::CPU cpu;
     std::cout << "*** TEREMU UNIT TEST" << '\n';
-    std::vector<std::vector<std::string> > tests {
+    std::vector<std::vector<std::string> > tests{
         // push_imm_pop_to_reg
         {"DCD0 0000 0000 001A 0000 0000 DBC3 0000 0000 0000 0000 0000", "8", "push_imm_pop_to_reg"},
         // and_regs
@@ -57,34 +57,47 @@ int main(int argc, char** argv) {
         // shl_reg_imm
         {"DDC3 D000 0000 0000 0000 00DC D4C3 D000 0000 0000 0000 001D", "-9477", "shl_reg_imm"},
         // shr_reg_imm
-        {"DDC3 D000 0000 0000 0000 00DC CDC3 D000 0000 0000 0000 001D", "0", "shr_reg_imm"},    
+        {"DDC3 D000 0000 0000 0000 00DC CDC3 D000 0000 0000 0000 001D", "0", "shr_reg_imm"},
         // add_reg_imm
-        {"DDC3 D000 0000 0000 0000 00DC CCC3 D000 0000 0000 0000 001D", "-34", "shr_reg_imm"},    
+        {"DDC3 D000 0000 0000 0000 00DC CCC3 D000 0000 0000 0000 001D", "-34", "add_reg_imm"},
         // adc_reg_imm
-        {"DDC3 D000 0000 0000 4444 4444 DDC2 D000 0000 0000 0000 0001 CCC3 C200 0000 0000 0000 0000 DDC3 D000 0000 0000 0000 00DC CCC3 D000 0000 0000 0000 001D", "-33", "adc_reg_imm"},
+        {"DDC3 D000 0000 0000 4444 4444 DDC2 D000 0000 0000 0000 0001 CCC3 C200 0000 0000 0000 0000 DDC3 D000 0000 0000 0000 00DC CBC3 D000 0000 0000 0000 001D", "-33", "adc_reg_imm"},
+        // sub_reg_imm
+        {"DDC3 D000 0000 0000 0000 00DC CAC3 D000 0000 0000 0000 001D", "-44", "sub_reg_imm"},
+        // sbb_reg_imm
+        {"DDC3 D000 0000 0000 4444 4444 DDC2 D000 0000 0000 0000 0001 CCC3 C200 0000 0000 0000 0000 DDC3 D000 0000 0000 0000 00DC C0C3 D000 0000 0000 0000 001D", "-45", "sbb_reg_imm"},
+        // mul_reg_imm_lo
+        {"DDCD D000 0000 0000 4444 4444 C1D0 0000 0000 001D 0000 0000 DDC3 CD00 0000 0000 0000 0000", "21523358", "mul_reg_imm_lo"},
+        // mul_reg_imm_hi
+        {"DDCD D000 0000 0000 4444 4444 C1D0 0000 0000 001D 0000 0000", "2", "mul_reg_imm_hi"},
         // call_ret
-        {"BD00 0000 0000 0000 DDDD DDDA DDCD D000 0000 0000 0000 00DD AB00 0000 0000 0000 0000 0000 DDC3 D000 0000 0000 0000 001A DDC2 D000 0000 0000 0000 001B D1C3 C200 0000 0000 0000 0000 BC00 0000 0000 0000 0000 0000", "5", "call_ret"},      
+        {"BDD0 0000 0000 0000 DDDD DDBD DDCD D000 0000 0000 0000 00DD ABD0 0000 0000 0000 0000 0000 DDC3 D000 0000 0000 0000 001A BC00 0000 0000 0000 0000 0000", "5", "call_ret"},
+        // jmp_to_exit
+        {"BBD0 0000 0000 0000 DDDD DDCA DDC3 D000 0000 0000 0000 0004", "0", "jmp_to_exit"}
     };
 
     int num_passed = 0;
-    for(int i = 0; i < tests.size(); i++) {
+    for (int i = 0; i < tests.size(); i++) {
         try {
-        cpu.exec_text(tests[i][0], memory);
-        if(cpu.regs[7].to_int32() == std::stoi(tests[i][1])) {
-            std::cout << "test " + tests[i][2] + " passed";
-            num_passed++;
-        } else {
-            std::cout << "test " + tests[i][2] + " failed";
+            cpu.exec_text(tests[i][0], memory);
+            if (cpu.regs[7].to_int32() == std::stoi(tests[i][1])) {
+                std::cout << "test " + tests[i][2] + " passed";
+                num_passed++;
+            }
+            else {
+                std::cout << "test " + tests[i][2] + " failed";
+            }
+            std::cout << " with DX = " << cpu.regs[7].to_int32() << '\n';
         }
-        std::cout << " with DX = " << cpu.regs[7].to_int32() << '\n';
-        } catch(const std::string& e) {
+        catch (const std::string& e) {
             std::cerr << e << '\n';
             return 1;
         }
     }
-    if(num_passed == tests.size()) {
+    if (num_passed == tests.size()) {
         std::cout << "*** ALL TESTS PASSED" << '\n';
-    } else {
+    }
+    else {
         std::cout << "*** " << num_passed << '/' << tests.size() << " TESTS PASSED" << '\n';
     }
     return 0;

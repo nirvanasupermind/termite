@@ -43,8 +43,8 @@ namespace termite {
     }
 
     void CPU::reset(Mem& memory) {
-        for (int i = 0; i < 7; i++) {
-            regs[i] = 0;
+        for (int i = 0; i < 9; i++) {
+            regs[i] = Word::from_int32(0);
         }
         regs[REG_SP] = Word::from_int32(21523360);
         regs[REG_IP] = Word::from_int32(-21523360);
