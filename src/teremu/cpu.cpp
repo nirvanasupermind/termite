@@ -92,8 +92,26 @@ namespace termite {
         }
     }
 
-    void CPU::execute(Word& cycles, Mem& memory) {
+    void CPU::print_state() {
+        std::cout << "*** ip = " << regs[REG_IP].to_int32() << '\n';
+        std::cout << "ax = " << regs[REG_AX].to_int32() << '\n';
+        std::cout << "bx = " << regs[REG_BX].to_int32() << '\n';
+        std::cout << "cx = " << regs[REG_CX].to_int32() << '\n';
+        std::cout << "sp = " << regs[REG_SP].to_int32() << '\n';
+        std::cout << "bp = " << regs[REG_BP].to_int32() << '\n';
+        std::cout << "di = " << regs[REG_DI].to_int32() << '\n';
+        std::cout << "si = " << regs[REG_SI].to_int32() << '\n';
+        std::cout << "dx = " << regs[REG_DX].to_int32() << '\n';
+        std::cout << "ip = " << regs[REG_IP].to_int32() << '\n';
+        std::cout << "flags = " << flags.to_ternary_str() << '\n';
+    }
+
+    void CPU::execute(Word& cycles, Mem& memory, bool verbose) {
         while (cycles > Word::ZERO) {
+            if(verbose) {
+                print_state();
+            }
+            
             Word ins = fetch_word(cycles, memory);
             Word imm = fetch_word(cycles, memory);
             Word imm2 = fetch_word(cycles, memory);
@@ -510,11 +528,12 @@ namespace termite {
                 break;
             }
             }
-
         }
+
+    
     }
 
-    void CPU::exec_text(std::string& text, Mem& memory) {
+    void CPU::exec_text(std::string& text, Mem& memory, bool verbose) {
        text.erase(std::remove(text.begin(), text.end(), ' '), text.end());
         reset(memory);
 
@@ -527,7 +546,7 @@ namespace termite {
             // std::cout << memory.get_word(i >> 3).to_nonary_str() << '\n';
         }
         termite::Word cycles = termite::Word::from_int32(text.size() >> 2);
-        execute(cycles, memory);
+        execute(cycles, memory, verbose);
     }
     
 }

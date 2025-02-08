@@ -15,7 +15,9 @@ int main(int argc, char** argv) {
     termite::CPU cpu;
     cpu.reset(memory);
 
-    if (std::string(argv[2]) == "-t") {
+    bool verbose = std::string(argv[2]) == "-v" || (argc == 4 && std::string(argv[3]) == "-v");
+
+    if (std::string(argv[2]) == "-t" || (argc == 3 && std::string(argv[3]) == "-t")) {
         std::string file_path = argv[1];
         std::ifstream file(file_path);
 
@@ -29,7 +31,7 @@ int main(int argc, char** argv) {
         std::string text = buffer.str();
 
         try {
-            cpu.exec_text(text, memory);
+            cpu.exec_text(text, memory, verbose);
         }
         catch (const std::string& e) {
             std::cerr << e << '\n';

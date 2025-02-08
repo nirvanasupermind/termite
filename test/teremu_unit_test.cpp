@@ -71,9 +71,9 @@ int main(int argc, char** argv) {
         // mul_reg_imm_hi
         {"DDCD D000 0000 0000 4444 4444 C1D0 0000 0000 001D 0000 0000", "2", "mul_reg_imm_hi"},
         // call_ret
-        {"BDD0 0000 0000 0000 DDDD DDBD DDCD D000 0000 0000 0000 00DD ABD0 0000 0000 0000 0000 0000 DDC3 D000 0000 0000 0000 001A BC00 0000 0000 0000 0000 0000", "5", "call_ret"},
+        {"BDD0 0000 DDDD DDBD 0000 0000 DDCD D000 0000 0000 0000 00DD ABD0 0000 0000 0000 0000 0000 DDC3 D000 0000 0000 0000 001A BC00 0000 0000 0000 0000 0000", "8", "call_ret"},
         // jmp_to_exit
-        {"BBD0 0000 0000 0000 DDDD DDCA DDC3 D000 0000 0000 0000 0004", "0", "jmp_to_exit"}
+        {"BBD0 0000 DDDD DDCA 0000 0000 DDC3 D000 0000 0000 0000 0004", "0", "jmp_to_exit"}
     };
 
     int num_passed = 0;
@@ -90,7 +90,7 @@ int main(int argc, char** argv) {
             std::cout << " with DX = " << cpu.regs[7].to_int32() << '\n';
         }
         catch (const std::string& e) {
-            std::cerr << e << '\n';
+            std::cerr << "error: " << e << '\n';
             return 1;
         }
     }

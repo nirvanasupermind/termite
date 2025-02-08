@@ -70,8 +70,9 @@ namespace termite {
         Tryte fetch_tryte(Word& cycles, Mem& memory);
         Word fetch_word(Word& cycles, Mem& memory);
         Word get_addr_mode(Word& cycles, Mem& memory, const Word& mode, const Word& reg, const Word& imm);
-        void execute(Word& cycles, Mem& memory);
-        void exec_text(std::string& text, Mem& memory);
+        void print_state();
+        void execute(Word& cycles, Mem& memory, bool verbose = false);
+        void exec_text(std::string& text, Mem& memory, bool verbose = false);
     };
 
 }
