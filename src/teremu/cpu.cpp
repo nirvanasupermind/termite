@@ -11,12 +11,12 @@ namespace termite {
     void Mem::initialize() {
         if (data.size() == 0) {
             for (uint32_t i = 0; i < MAX_MEM; i++) {
-                data.push_back(0);
+                data.push_back(Tryte());
             }
         }
         else {
             for (uint32_t i = 0; i < MAX_MEM; i++) {
-                data[i] = 0;
+                data[i] = Tryte();
             }
         }
     }

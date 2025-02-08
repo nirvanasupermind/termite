@@ -70,8 +70,8 @@ int main(int argc, char** argv) {
         {"DDCD D000 0000 0000 4444 4444 C1D0 0000 0000 001D 0000 0000 DDC3 CD00 0000 0000 0000 0000", "21523358", "mul_reg_imm_lo"},
         // mul_reg_imm_hi
         {"DDCD D000 0000 0000 4444 4444 C1D0 0000 0000 001D 0000 0000", "2", "mul_reg_imm_hi"},
-        // call_ret
-        {"BDD0 0000 DDDD DDBD 0000 0000 DDCD D000 0000 0000 0000 00DD ABD0 0000 0000 0000 0000 0000 DDC3 D000 0000 0000 0000 001A BC00 0000 0000 0000 0000 0000", "8", "call_ret"},
+         // and_disp_imm
+        {"DBB0 D000 0000 0000 0000 03A4 D1B0 D000 0000 0000 0000 ACB4 DDC3 B000 0000 0000 0000 0000", "-1004", "and_disp_imm"},
         // jmp_to_exit
         {"BBD0 0000 DDDD DDCA 0000 0000 DDC3 D000 0000 0000 0000 0004", "0", "jmp_to_exit"}
     };
