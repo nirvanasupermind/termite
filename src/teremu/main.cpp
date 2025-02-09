@@ -17,7 +17,7 @@ int main(int argc, char** argv) {
 
     bool verbose = std::string(argv[2]) == "-v" || (argc == 4 && std::string(argv[3]) == "-v");
 
-    if (std::string(argv[2]) == "-t" || (argc == 3 && std::string(argv[3]) == "-t")) {
+    if (std::string(argv[2]) == "-t" || (argc == 4 && std::string(argv[3]) == "-t")) {
         std::string file_path = argv[1];
         std::ifstream file(file_path);
 

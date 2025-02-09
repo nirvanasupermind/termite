@@ -59,6 +59,7 @@ namespace termite {
     }
 
     Word CPU::fetch_word(Word& cycles, Mem& memory) {
+        // std::cout << "! " << regs[REG_IP].to_nonary_str() << '\n';
         Word data = memory.get_word(regs[REG_IP]);
         regs[REG_IP] = regs[REG_IP] + Word::TWO;
         cycles = cycles - Word::TWO;
@@ -461,53 +462,67 @@ namespace termite {
                 break;
             }
             case INS_JMP: {
+                cycles = cycles + (regs[REG_IP] - imm);
                 regs[REG_IP] = imm;
                 break;
             }
             case INS_JL: {
-                if (flags.get_bct_trit(1) < 0) {
+                if (flags.get_bct_trit(1) < 1) {
+                    cycles = cycles + (regs[REG_IP] - imm);
                     regs[REG_IP] = imm;
                 }
                 break;
             }
             case INS_JLE: {
-                if (flags.get_bct_trit(1) <= 0) {
+                cycles = cycles - (regs[REG_IP] - imm);
+                if (flags.get_bct_trit(1) <= 1) {
+                    cycles = cycles + (regs[REG_IP] - imm);
                     regs[REG_IP] = imm;
                 }
                 break;
             }
             case INS_JG: {
-                if (flags.get_bct_trit(1) > 0) {
+                cycles = cycles - (regs[REG_IP] - imm);
+                if (flags.get_bct_trit(1) > 1) {
+                    cycles = cycles + (regs[REG_IP] - imm);
                     regs[REG_IP] = imm;
                 }
                 break;
             }
             case INS_JGE: {
-                if (flags.get_bct_trit(1) >= 0) {
+                cycles = cycles - (regs[REG_IP] - imm);
+                if (flags.get_bct_trit(1) >= 1) {
+                    cycles = cycles + (regs[REG_IP] - imm);
                     regs[REG_IP] = imm;
                 }
                 break;
             }
             case INS_JE: {
-                if (flags.get_bct_trit(1) == 0) {
+                cycles = cycles - (regs[REG_IP] - imm);
+                if (flags.get_bct_trit(1) == 1) {
+                    cycles = cycles + (regs[REG_IP] - imm);
                     regs[REG_IP] = imm;
                 }
                 break;
             }
             case INS_JNE: {
-                if (flags.get_bct_trit(1) != 0) {
+                cycles = cycles - (regs[REG_IP] - imm);
+                if (flags.get_bct_trit(1) != 1) {
+                    cycles = cycles + (regs[REG_IP] - imm);
                     regs[REG_IP] = imm;
                 }
                 break;
             }
             case INS_JC: {
-                if (flags.get_bct_trit(1) == 1) {
+                if (flags.get_bct_trit(1) != 0) {
+                    cycles = cycles + (regs[REG_IP] - imm);
                     regs[REG_IP] = imm;
                 }
                 break;
             }
             case INS_JNC: {
-                if (flags.get_bct_trit(1) != 1) {
+                if (flags.get_bct_trit(1) == 0) {
+                    cycles = cycles + (regs[REG_IP] - imm);
                     regs[REG_IP] = imm;
                 }
                 break;

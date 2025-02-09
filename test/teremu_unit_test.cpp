@@ -97,7 +97,35 @@ int main(int argc, char** argv) {
         // div_reg_disp_rem
         {"DDCD D000 0000 0000 4444 4443 DDB0 D000 0000 0000 0000 001C C2B0 0000 0000 0000 0000 0000", "3", "div_reg_disp_rem"},        
         // jmp_to_exit
-        {"BBD0 0000 DDDD DDCA 0000 0000 DDC3 D000 0000 0000 0000 0004", "0", "jmp_to_exit"}
+        {"BBD0 0000 DDDD DDCA 0000 0000 DDC3 D000 0000 0000 0000 0004", "0", "jmp_to_exit"},
+        // jl_to_exit_true
+        {"DDC3 D000 0000 0000 0000 0002 C4C3 D000 0000 0000 0000 0003 BAD0 0000 DDDD DDB2 0000 0000 DDC3 D000 0000 0000 0000 0004", "2", "jl_to_exit_true"},
+        // jl_to_exit_false
+        {"DDC3 D000 0000 0000 0000 0002 C4C3 D000 0000 0000 0000 0001 BAD0 0000 DDDD DDB2 0000 0000 DDC3 D000 0000 0000 0000 0004", "4", "jl_to_exit_false"},
+        // jle_to_exit_true1
+        {"DDC3 D000 0000 0000 0000 0002 C4C3 D000 0000 0000 0000 0002 B0D0 0000 DDDD DDB2 0000 0000 DDC3 D000 0000 0000 0000 0004", "2", "jle_to_exit_true1"},
+        // jle_to_exit_true2
+        {"DDC3 D000 0000 0000 0000 0002 C4C3 D000 0000 0000 0000 0003 B0D0 0000 DDDD DDB2 0000 0000 DDC3 D000 0000 0000 0000 0004", "2", "jle_to_exit_true2"},
+        // jle_to_exit_false
+        {"DDC3 D000 0000 0000 0000 0002 C4C3 D000 0000 0000 0000 0001 B0D0 0000 DDDD DDB2 0000 0000 DDC3 D000 0000 0000 0000 0004", "4", "jle_to_exit_false"},
+        // jg_to_exit_true
+        {"DDC3 D000 0000 0000 0000 0002 C4C3 D000 0000 0000 0000 0001 B1D0 0000 DDDD DDB2 0000 0000 DDC3 D000 0000 0000 0000 0004", "2", "jg_to_exit_true"},
+        // jg_to_exit_false
+        {"DDC3 D000 0000 0000 0000 0002 C4C3 D000 0000 0000 0000 0003 B1D0 0000 DDDD DDB2 0000 0000 DDC3 D000 0000 0000 0000 0004", "4", "jg_to_exit_false"},
+        // jge_to_exit_true1
+        {"DDC3 D000 0000 0000 0000 0002 C4C3 D000 0000 0000 0000 0002 B2D0 0000 DDDD DDB2 0000 0000 DDC3 D000 0000 0000 0000 0004", "2", "jge_to_exit_true1"},
+        // jge_to_exit_true2
+        {"DDC3 D000 0000 0000 0000 0002 C4C3 D000 0000 0000 0000 0001 B2D0 0000 DDDD DDB2 0000 0000 DDC3 D000 0000 0000 0000 0004", "2", "jge_to_exit_true2"},
+        // jge_to_exit_false
+        {"DDC3 D000 0000 0000 0000 0002 C4C3 D000 0000 0000 0000 0003 B2D0 0000 DDDD DDB2 0000 0000 DDC3 D000 0000 0000 0000 0004", "4", "jge_to_exit_false"},
+        // je_to_exit_true
+        {"DDC3 D000 0000 0000 0000 0002 C4C3 D000 0000 0000 0000 0002 B2D0 0000 DDDD DDB2 0000 0000 DDC3 D000 0000 0000 0000 0004", "2", "je_to_exit_true"},   
+        // je_to_exit_false
+        {"DDC3 D000 0000 0000 0000 0002 C4C3 D000 0000 0000 0000 0003 B2D0 0000 DDDD DDB2 0000 0000 DDC3 D000 0000 0000 0000 0004", "4", "je_to_exit_false"},
+        // jne_to_exit_true
+        {"DDC3 D000 0000 0000 0000 0002 C4C3 D000 0000 0000 0000 0003 B3D0 0000 DDDD DDB2 0000 0000 DDC3 D000 0000 0000 0000 0004", "2", "jne_to_exit_true"},   
+        // jne_to_exit_false
+        {"DDC3 D000 0000 0000 0000 0002 C4C3 D000 0000 0000 0000 0002 B4D0 0000 DDDD DDB2 0000 0000 DDC3 D000 0000 0000 0000 0004", "4", "jne_to_exit_false"}
     };
 
     int num_passed = 0;

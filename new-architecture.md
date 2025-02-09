@@ -111,8 +111,8 @@ Note 2: Logical/shift operations do not work the same way as normal, because the
 |`B2`           |`jge`   |Jump if greater than or equal     |`dest` (imm)                          |`ip = dest` if `SF >= 0`            |
 |`B3`           |`je`    |Jump if equal                     |`dest` (imm)                          |`ip = dest` if `SF == 0`            |
 |`B4`           |`jne`   |Jump if not equal                 |`dest` (imm)                          |`ip = dest` if `SF != 0`            |
-|`AD`           |`jc`    |Jump if carry                     |`dest` (imm)                          |`ip = dest` if `CF == 1`            |
-|`AC`           |`jnc`   |Jump if not carry                 |`dest` (imm)                          |`ip = dest` if `CF != 1`            |
+|`AD`           |`jc`    |Jump if carry                     |`dest` (imm)                          |`ip = dest` if `CF != 0`            |
+|`AC`           |`jnc`   |Jump if not carry                 |`dest` (imm)                          |`ip = dest` if `CF == 0`            |
 |`AB`           |`int`   |Software interrupt                |`vec` (imm)                           |Call the interrupt handler with interrupt vector `vec` (currently this is just simulated by an if-statement in the emulator)|
 
 # Instruction format
