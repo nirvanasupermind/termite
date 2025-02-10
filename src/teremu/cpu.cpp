@@ -48,6 +48,7 @@ namespace termite {
         }
         regs[REG_SP] = Word::from_int32(21523360);
         regs[REG_IP] = Word::from_int32(-21523360);
+        flags = Word::from_int32(0);
         memory.initialize();
     }
 
@@ -514,14 +515,14 @@ namespace termite {
                 break;
             }
             case INS_JC: {
-                if (flags.get_bct_trit(1) != 0) {
+                if (flags.get_bct_trit(0) != 1) {
                     cycles = cycles + (regs[REG_IP] - imm);
                     regs[REG_IP] = imm;
                 }
                 break;
             }
             case INS_JNC: {
-                if (flags.get_bct_trit(1) == 0) {
+                if (flags.get_bct_trit(0) == 1) {
                     cycles = cycles + (regs[REG_IP] - imm);
                     regs[REG_IP] = imm;
                 }
