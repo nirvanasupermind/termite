@@ -1,3 +1,12 @@
+[X] reg,imm
+[X] reg,reg
+[ ] reg,disp 
+[ ] reg,idx
+[ ] disp,imm
+[X] disp,disp
+[ ] disp,idx
+[ ] idx,imm
+
 -39, 5
 DC, 1D
 AAA0, 01AA
@@ -45,3 +54,20 @@ AAA0, 01AA
   010100A
 ^ 100AAAA
   000100A = 26
+
+reg,disp example:
+926, 430
+124A, 1D3B
+11A110A, 1AA10A1
+
+  11A110A
+& 1AA10A1
+  1AA10AA = 428 
+  
+  11A110A
+| 1AA10A1
+  11A1101 = 928
+    
+  11A110A
+^ 1AA10A1
+  A1AA001 = -593
