@@ -1,6 +1,6 @@
 [X] reg,imm
 [X] reg,reg
-[ ] reg,disp 
+[X] reg,disp 
 [ ] reg,idx
 [ ] disp,imm
 [X] disp,disp
