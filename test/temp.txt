@@ -2,7 +2,7 @@
 [X] reg,reg
 [X] reg,disp 
 [ ] reg,idx
-[ ] disp,imm
+[X] disp,imm
 [X] disp,disp
 [ ] disp,idx
 [ ] idx,imm
@@ -71,3 +71,38 @@ reg,disp example:
   11A110A
 ^ 1AA10A1
   A1AA001 = -593
+
+
+reg,idx example:
+-993, -375
+ACBC, A433
+AA0A1A0, A111010
+
+  AA0A1A0
+& A111010
+  AA0A0A0 = -1002 
+
+  AA0A1A0
+| A111010
+  A111110 = -366
+
+  AA0A1A0
+^ A111010
+  A101010 = -456
+
+disp,idx example:
+-408, 27
+A40C, 0030
+A1100A0, 0001000
+
+  A1100A0
+& 0001000
+  A0000A0 = -732
+
+  A1100A0
+| 0001000
+  A111000 = -378
+  
+  A1100A0
+^ 0001000
+  0000000 = 0
