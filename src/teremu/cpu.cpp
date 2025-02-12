@@ -539,6 +539,53 @@ namespace termite {
                     else if (code == -38) {
                         std::cout << regs[REG_DX].to_ternary_str();
                     }
+                    else if (code == -37) {
+                        std::cout << regs[REG_DX].to_nonary_str();
+                    }
+                    else if (code == -36) {
+                        std::cout << (char)(regs[REG_DX].get_lo_tryte().to_int16());
+                    }
+                    else if (code == -35) {
+                        std::cout << (char)(regs[REG_DX].get_hi_tryte().to_int16());
+                    }
+                    else if (code == -34) {
+                        print_state();
+                    }
+                    else if (code == -33) {
+                        std::string in;
+                        std::cin >> in;
+                        regs[REG_DX] = Word::from_int32(std::stoi(in));
+                    }
+                    else if (code == -32) {
+                        std::string in;
+                        std::cin >> in;
+                        regs[REG_DX] = Word::from_ternary_str(in);
+                    }
+                    else if (code == -31) {
+                        std::string in;
+                        std::cin >> in;
+                        regs[REG_DX] = Word::from_nonary_str(in);
+                    }
+                    else if (code == -30) {
+                        char in;
+                        std::cin >> in;
+                        regs[REG_DX] = Word::from_int32(Tryte::from_int16(in).get_bct() + ((regs[REG_DX].get_hi_tryte().get_bct()) << 16));
+                    }
+                    else if (code == -29) {
+                        char in;
+                        std::cin >> in;
+                        regs[REG_DX] = Word::from_int32(regs[REG_DX].get_lo_tryte().get_bct() + ((Tryte::from_int16(in).get_bct()) << 16));
+                    }
+                    else if (code == -28) {
+                        auto now = std::chrono::system_clock::now();
+                        auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch());
+                        long long shifted_count = ms.count() + 21523360;
+                        long long lo = shifted_count % 43046721;
+                        long long hi = shifted_count / 43046721;
+                        lo -= 21523360;
+                        regs[REG_AX] = Word::from_int32(lo);
+                        regs[REG_DX] = Word::from_int32(hi);
+                    }
                 }
                 break;
             }

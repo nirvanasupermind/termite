@@ -214,9 +214,10 @@ There is only one interrupt vector which can be accessed by calling `int 0` and 
 |`DA`           |Print `dx` as nonary number               |`dx`                      |
 |`D0`           |Print `dx`'s low tryte as character       |`dx`                      |
 |`D1`           |Print `dx`'s high tryte as character      |`dx`                      |
-|`D2`           |Input decimal number into `dx`            |No operands               |
-|`D3`           |Input ternary number into `dx`            |No operands               |
-|`D4`           |Input nonary number into `dx`             |No operands               |
-|`CD`           |Input character into `dx`'s low tryte     |No operands               |
+|`D2`           |Print all registers (like in verbose mode)|No operands               |
+|`D3`           |Input decimal number into `dx`            |No operands               |
+|`D4`           |Input ternary number into `dx`            |No operands               |
+|`CD`           |Input nonary number into `dx`             |No operands               |
+|`CC`           |Input character into `dx`'s low tryte     |No operands               |
 |`CB`           |Input character into `dx`'s high tryte    |No operands               |
-|`CA`           |Print all registers (like in verbose mode)|No operands               |
+|`CA`           |Get current 2-word Unix timestamp in milliseconds (low word stored in `ax`, high word stored in `dx`)|No operands               |
