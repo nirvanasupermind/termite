@@ -1,10 +1,10 @@
 [X] reg,imm
 [X] reg,reg
 [X] reg,disp 
-[ ] reg,idx
+[X] reg,idx
 [X] disp,imm
 [X] disp,disp
-[ ] disp,idx
+[X] disp,idx
 [ ] idx,imm
 
 -39, 5
@@ -101,8 +101,25 @@ A1100A0, 0001000
 
   A1100A0
 | 0001000
-  A111000 = -378
+  0111000 = 351
   
   A1100A0
 ^ 0001000
   0000000 = 0
+
+idx,imm example:
+-28, -83
+0CA, A0B
+0A0A1, A00A1
+
+  0A0A1
+& A00A1
+  AA0A1 = -110
+
+  0A0A1
+| A00A1
+  000A1 = -2
+
+  0A0A1
+^ A00A1
+  00000 = 0
