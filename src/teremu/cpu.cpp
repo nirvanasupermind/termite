@@ -176,7 +176,6 @@ namespace termite {
             case INS_AND: {
                 Word dest_mode = ins.get_trit_range(10, 11);
                 Word dest_reg = ins.get_trit_range(8, 9);
-
                 Word src_mode = ins.get_trit_range(6, 7);
                 Word src_reg = ins.get_trit_range(4, 5);
                 Word result;
