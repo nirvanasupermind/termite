@@ -8,7 +8,7 @@ namespace termite {
         NUMBER,
         IDENTIFIER,
         INSTR_NAME,
-        REGISTER,
+        REG_NAME,
         COLON,
         COMMA,
         LSQUARE,

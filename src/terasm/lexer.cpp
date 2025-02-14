@@ -22,14 +22,14 @@ namespace termite {
         std::vector<Token> tokens;
 
         while (current) {
-            if (std::isspace(current)) {
+            if (current == ' ' || current == '\r' || current == '\t') {
                 advance();
             }
             else if (current == '.' || current == '-' || std::isdigit(current)) {
                 tokens.push_back(generate_number());
             }
             else if (current == ';') {
-                while(current != '\n') {
+                while(current && current != '\n') {
                     advance();
                 }
             }
@@ -75,7 +75,6 @@ namespace termite {
     Token Lexer::generate_number() {
         std::string number_str(1, current);
         if (current == '0') {
-            number_str += current;
             advance();
 
             if(current == 't') {
@@ -120,7 +119,7 @@ namespace termite {
             return Token(TokenType::INSTR_NAME, identifier_str);
         }
         else if(std::find(REG_NAMES.begin(), REG_NAMES.end(), identifier_str) != REG_NAMES.end()) {
-            return Token(TokenType::REGISTER, identifier_str);   
+            return Token(TokenType::REG_NAME, identifier_str);   
         }
         else {
             return Token(TokenType::IDENTIFIER, identifier_str);

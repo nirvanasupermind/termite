@@ -5,7 +5,6 @@
 #include "token.h"
 
 namespace termite {
-    const std::string WHITESPACE = " \t";
     const std::vector<std::string> INSTR_NAMES = {
         "mov",
         "push",
@@ -43,6 +42,7 @@ namespace termite {
         "bx",
         "cx",
         "sp",
+        "bp",
         "di",
         "si",
         "dx",

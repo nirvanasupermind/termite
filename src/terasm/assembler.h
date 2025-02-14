@@ -8,7 +8,7 @@
 #include "../core/word.h"
 
 namespace termite {
-    const std::map<std::string, int> NUM_OPERANDS {
+    const std::map<std::string, int> NUM_OPERANDS_TABLE {
         {"mov", 2},
         {"push", 1},
         {"pop", 1},
@@ -54,7 +54,7 @@ namespace termite {
         void assemble_program();
         void assemble_label_instr();
         void assemble_instr();
-        std::pair<Word, Word> assemble_operand(const std::string& operand_str);
+        std::vector<Word> assemble_operand();
         void assemble_zero_operand_instr(int32_t opcode);
         void assemble_one_operand_instr(int32_t opcode);
         void assemble_two_operand_instr(int32_t opcode);
