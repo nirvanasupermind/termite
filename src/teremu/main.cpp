@@ -16,10 +16,12 @@ int main(int argc, char** argv) {
     cpu.reset(memory);
 
     bool verbose = false;
-    if(argc == 4) {
-        verbose = std::string(argv[2]) == "-t" || std::string(argv[3]) == "-t";
+    if(argc == 3) {
+        verbose = std::string(argv[2]) == "-v";
+    } else if(argc == 4) {
+        verbose = std::string(argv[2]) == "-v" || std::string(argv[3]) == "-v";
     }
-    
+
     bool text = false;
     if(argc == 3) {
         text = std::string(argv[2]) == "-t";
