@@ -33,9 +33,22 @@ namespace termite {
         }
     }
 
+
+    void Assembler::label_pass() {
+        int32_t addr = -21523360; 
+        for(int i = 0; i < tokens.size(); i++) {
+            Token tok = tokens.at(i);
+            if(tok.type == TokenType::INSTR_NAME) {
+                addr += 6;
+            } else if(tokens.at(i - 1).type == TokenType::IDENTIFIER && tok.type == TokenType::COLON) {
+                labels[tokens.at(i - 1).value] = Word::from_int32(addr);
+            }           
+        }
+    }
+
     void Assembler::assemble_label_instr() {
         if (current.type == TokenType::IDENTIFIER) {
-            labels[current.value] = Word::from_int32((code.size() << 1) - 21523360);
+            // labels[current.value] = Word::from_int32((code.size() << 1) c
             advance();
             if (current.type != TokenType::COLON) {
                 error();
@@ -47,6 +60,9 @@ namespace termite {
     }
 
     void Assembler::assemble_instr() {
+        if (current.type == TokenType::NEWLINE) {
+            advance();
+        }
         if (current.type != TokenType::INSTR_NAME) {
             error();
         }
@@ -131,6 +147,9 @@ namespace termite {
                     error();
                 }
             }
+        } else if(current.type == TokenType::IDENTIFIER) {
+            addr_mode = Word::from_int32(-2);
+            imm = labels.at(current.value);
         } else {
             error();
         }

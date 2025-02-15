@@ -49,6 +49,7 @@ namespace termite {
         std::map<std::string, Word> labels{};
         Assembler(const std::vector<Token>& tokens);
         // uint8_t int_to_bct(int val) const;
+        void label_pass();
         void error() const;
         void advance();
         void assemble_program();

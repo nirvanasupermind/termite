@@ -56,7 +56,7 @@ namespace termite {
     std::string Tryte::to_nonary_str() const {
         std::string result = "";
         for (int i = 0; i < TRITS_PER_TRYTE; i += 2) {
-            result = TRITS_TO_NONARY_CH[get_bct_trit(i)][get_bct_trit(i) + 1] + result;
+            result = TRITS_TO_NONARY_CH[get_bct_trit(i + 1)][get_bct_trit(i)] + result;
         }
         return result;
     }

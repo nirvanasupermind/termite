@@ -18,6 +18,7 @@ namespace termite {
         "shr",
         "add",
         "adc",
+        "sub",
         "sbb",
         "mul",
         "div",
