@@ -28,11 +28,13 @@ namespace termite {
             else if (current == '.' || current == '-' || std::isdigit(current)) {
                 tokens.push_back(generate_number());
             }
-            else if (current == ';') {
-                while(current && current != '\n') {
-                    advance();
-                }
-            }
+            // else if (current == ';') {
+            //     while(current != '\n') {
+            //         advance();
+            //     }
+            //     tokens.push_back(Token(TokenType::NEWLINE, "\n"));
+            //     advance();
+            // }
             else if (current == '_' || std::isalpha(current)) {
                 tokens.push_back(generate_identifier());
             }

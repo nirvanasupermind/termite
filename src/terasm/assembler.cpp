@@ -47,6 +47,10 @@ namespace termite {
     }
 
     void Assembler::assemble_label_instr() {
+        while (current.type == TokenType::NEWLINE) {
+            advance();
+        }
+
         if (current.type == TokenType::IDENTIFIER) {
             // labels[current.value] = Word::from_int32((code.size() << 1) c
             advance();
@@ -60,9 +64,6 @@ namespace termite {
     }
 
     void Assembler::assemble_instr() {
-        if (current.type == TokenType::NEWLINE) {
-            advance();
-        }
         if (current.type != TokenType::INSTR_NAME) {
             error();
         }
