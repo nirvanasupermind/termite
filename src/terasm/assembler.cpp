@@ -70,7 +70,11 @@ namespace termite {
 
         std::string instr_name = current.value;
 
+        std::cout << instr_name << '\n';
+
         advance();
+
+        std::cout << NUM_OPERANDS_TABLE.at(instr_name) << '\n';
 
         auto it = find(INSTR_NAMES.begin(), INSTR_NAMES.end(), instr_name);
         int32_t opcode = it - INSTR_NAMES.begin() - 40;
@@ -82,6 +86,7 @@ namespace termite {
         } else {
             assemble_two_operand_instr(opcode);
         }
+
         advance();
         // std::cout << (int)current.type << '\n';
         if(!(current.type == TokenType::EOF_ || current.type == TokenType::NEWLINE)) {
