@@ -23,7 +23,7 @@ The smallest unit of memory is 8 trits, which is referred to as a "tryte". Each 
 There is a 16-trit address system which allows access to 3^16 (43,046,721) trytes of memory.
 
 # CPU registers
-There are 9 general-purpose registers internally numbered -4 to 4.
+There are 9 general-purpose registers internally numbered -4 to 4. Unlike in x86, the names for registers and instructions are case-sensitive (must be all-lowercase).
 
 -4: Accumulator (`ax`)
 
@@ -66,7 +66,7 @@ There are 4 addressing modes supported. The addressing mode takes up 2 trits in 
 The encoding of the addressing mode is as follows:
 <table>
   <tr>
-    <td32</td>
+    <td>3</td>
     <td>2</td>
     <td>1</td>
     <td>0</td>

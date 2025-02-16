@@ -1,1 +1,3 @@
-mov [1], [bx+1]
+test: mov [3], [di+2]
+ret
+call test
