@@ -58,10 +58,10 @@ There are 4 addressing modes supported. The addressing mode takes up 2 trits in 
 
 |Trit|Addressing mode    |Example    |Description|
 |----|-------------------|-----------|-----------|
-|`D` |Immediate          |`1`        |The operand is a supplied constant|
-|`C` |Register           |`ax`       |The operand is in the register|
-|`B` |Displacement       |`[1]`      |The operand's address is a supplied constant|
-|`A` |Indexed            |`[ax+1]`   |The operand's address is the value of the register plus a supplied constant|
+|`D` |Immediate          |`$1`       |The operand is a supplied constant|
+|`C` |Register           |`%ax`      |The operand is in the register|
+|`B` |Displacement       |`1`        |The operand's address is a supplied constant|
+|`A` |Indexed            |`1(%ax)`   |The operand's address is the value of the register plus a supplied constant|
 
 The encoding of the addressing mode is as follows:
 <table>
@@ -89,19 +89,19 @@ Note 2: Logical/shift operations do not work the same way as normal, because the
 |`DB`           |`pop`   |Pop word off stack and store it   |`dest` (reg/idx)                      |`dest = [sp]; sp = sp + 2`          |
 |`DA`           |`pushf` |Push flag register on-to stack     |No operands                          |`sp = sp - 2; [sp] = flags`         |
 |`D0`           |`popf`  |Pop the stack top to flag register|No operands                           |`flags = [sp]; sp = sp + 2`         |
-|`D1`           |`and`   |Trit-wise logical AND             |`dest` (reg/idx), `src` (imm/reg/idx) |`dest = dest & src`                 |
-|`D2`           |`or`    |Trit-wise logical OR              |`dest` (reg/idx), `src` (imm/reg/idx) |`dest = dest \| src`                |
-|`D3`           |`xor`   |Trit-wise logical XOR             |`dest` (reg/idx), `src` (imm/reg/idx) |`dest = dest ^ src`                 |
-|`D4`           |`shl`   |Shift left                        |`dest` (reg/idx), `src` (imm/reg/idx) |`dest = dest << src`                |
-|`CD`           |`shr`   |Shift right                       |`dest` (reg/idx), `src` (imm/reg/idx) |`dest = dest >> src`                |
-|`CC`           |`add`   |Add                               |`dest` (reg/idx), `src` (imm/reg/idx) |`dest = dest + src`                 |
-|`CB`           |`adc`   |Add with carry                    |`dest` (reg/idx), `src` (imm/reg/idx) |`dest = dest + src + CF`            |
-|`CA`           |`sub`   |Subtract                          |`dest` (reg/idx), `src` (imm/reg/idx) |`dest = dest + src`                 |
-|`C0`           |`sbb`   |Subtract with borrow              |`dest` (reg/idx), `src` (imm/reg/idx) |`dest = dest - src - CF`            |
+|`D1`           |`and`   |Trit-wise logical AND             |`src` (imm/reg/idx), `dest` (reg/idx)|`dest = dest & src`                 |
+|`D2`           |`or`    |Trit-wise logical OR              |`src` (imm/reg/idx), `dest` (reg/idx)|`dest = dest \| src`                |
+|`D3`           |`xor`   |Trit-wise logical XOR             |`src` (imm/reg/idx), `dest` (reg/idx)|`dest = dest ^ src`                 |
+|`D4`           |`shl`   |Shift left                        |`src` (imm/reg/idx), `dest` (reg/idx)|`dest = dest << src`                |
+|`CD`           |`shr`   |Shift right                       |`src` (imm/reg/idx), `dest` (reg/idx)|`dest = dest >> src`                |
+|`CC`           |`add`   |Add                               |`src` (imm/reg/idx), `dest` (reg/idx)|`dest = dest + src`                 |
+|`CB`           |`adc`   |Add with carry                    |`src` (imm/reg/idx), `dest` (reg/idx)|`dest = dest + src + CF`            |
+|`CA`           |`sub`   |Subtract                          |`src` (imm/reg/idx), `dest` (reg/idx)|`dest = dest + src`                 |
+|`C0`           |`sbb`   |Subtract with borrow              |`src` (imm/reg/idx), `dest` (reg/idx)|`dest = dest - src - CF`            |
 |`C1`           |`mul`   |Multiply                          |`src` (reg/idx)                       |`(dx ax) = ax * src` (`dx` stores high word of the 2-word result, `ax` stores low word)|
 |`C2`           |`div`   |Divide                            |`src` (reg/idx)                       |`ax = ax / src; dx = ax % src`      |
 |`C3`           |`neg`   |Negate/trit-wise logical NOT      |`src` (reg/idx)                       |`src = -src`                        |
-|`C4`           |`cmp`   |Compare                           |`dest` (reg/idx), `src` (imm/reg/idx) |`set-flags(dest - src)`             |
+|`C4`           |`cmp`   |Compare                           |`src` (imm/reg/idx), `dest` (reg/idx)|`set-flags(dest - src)`             |
 |`BD`           |`call`  |Call procedure                    |`dest` (imm)                          |`sp = sp - 2; [sp] = ip; ip = dest;`|=
 |`BC`           |`ret`   |Return from procedure             |No operands                           |`ip = [sp]; sp = sp + 2`            |
 |`BB`           |`jmp`   |Unconditional jump                |`dest` (imm)                          |`ip = dest`                         |

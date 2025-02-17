@@ -11,11 +11,13 @@ namespace termite {
         REG_NAME,
         COLON,
         COMMA,
-        LSQUARE,
-        RSQUARE,
+        LPAREN,
+        RPAREN,
         PLUS,
+        DOLLAR,
+        PERCENT,
         NEWLINE,
-        EOF_  
+        EOF_
     };
 
     class Token {

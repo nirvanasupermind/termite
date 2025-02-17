@@ -101,7 +101,11 @@ namespace termite {
         Word reg = Word::ZERO;
         Word imm = Word::ZERO;
 
-        if (current.type == TokenType::NUMBER) {
+        if (current.type == TokenType::DOLLAR) {
+            advance();
+            if(current.type != TokenType::NUMBER) {
+                error();
+            }
             addr_mode = Word::from_int32(-4);
             if (current.value[0] == '0' && current.value[1] == 't') {
                 imm = Word::from_ternary_str(current.value.substr(2));
@@ -117,58 +121,93 @@ namespace termite {
             addr_mode = Word::from_int32(-4);
             imm = labels.at(current.value);
         }
-        else if (current.type == TokenType::REG_NAME) {
+        else if (current.type == TokenType::PERCENT) {
+            advance();
+            if(current.type != TokenType::REG_NAME) {
+                error();
+            }
             addr_mode = Word::from_int32(-3);
 
             auto it = find(REG_NAMES.begin(), REG_NAMES.end(), current.value);
             reg = Word::from_int32(it - REG_NAMES.begin() - 4);
         }
-        else if (current.type == TokenType::LSQUARE) {
-            advance();
-            if (current.type == TokenType::NUMBER) {
-                addr_mode = Word::from_int32(-2);
-                if (current.value[0] == '0' && current.value[1] == 't') {
-                    imm = Word::from_ternary_str(current.value.substr(2));
-                }
-                else if (current.value[0] == '0' && current.value[1] == 'n') {
-                    imm = Word::from_nonary_str(current.value.substr(2));
-                }
-                else {
-                    imm = Word::from_int32(std::stoi(current.value));
-                }
+        else if(current.type == TokenType::NUMBER) {
+            addr_mode = Word::from_int32(-2);
+            if (current.value[0] == '0' && current.value[1] == 't') {
+                imm = Word::from_ternary_str(current.value.substr(2));
+            }
+            else if (current.value[0] == '0' && current.value[1] == 'n') {
+                imm = Word::from_nonary_str(current.value.substr(2));
+            }
+            else {
+                imm = Word::from_int32(std::stoi(current.value));
+            }
+
+            if(tokens[pos].type == TokenType::LPAREN) {
                 advance();
-                if (current.type != TokenType::RSQUARE) {
+                advance();
+                if(current.type != TokenType::PERCENT) {
                     error();
                 }
-            }
-            else if (current.type == TokenType::REG_NAME) {
+                advance();
+                if(current.type != TokenType::REG_NAME) {
+                    error();
+                }
                 addr_mode = Word::from_int32(-1);
-
                 auto it = find(REG_NAMES.begin(), REG_NAMES.end(), current.value);
                 reg = Word::from_int32(it - REG_NAMES.begin() - 4);
                 advance();
-                if (current.type != TokenType::PLUS) {
+                if(current.type != TokenType::RPAREN) {
                     error();
-                }
-                advance();
-                if (current.type != TokenType::NUMBER) {
-                    error();
-                }
-                if (current.value[0] == '0' && current.value[1] == 't') {
-                    imm = Word::from_ternary_str(current.value.substr(2));
-                }
-                else if (current.value[0] == '0' && current.value[1] == 'n') {
-                    imm = Word::from_nonary_str(current.value.substr(2));
-                }
-                else {
-                    imm = Word::from_int32(std::stoi(current.value));
-                }
-                advance();
-                if (current.type != TokenType::RSQUARE) {
-                    error();
-                }
+                }  
             }
         }
+        // else if (current.type == TokenType::LSQUARE) {
+        //     advance();
+        //     if (current.type == TokenType::NUMBER) {
+        //         addr_mode = Word::from_int32(-2);
+        //         if (current.value[0] == '0' && current.value[1] == 't') {
+        //             imm = Word::from_ternary_str(current.value.substr(2));
+        //         }
+        //         else if (current.value[0] == '0' && current.value[1] == 'n') {
+        //             imm = Word::from_nonary_str(current.value.substr(2));
+        //         }
+        //         else {
+        //             imm = Word::from_int32(std::stoi(current.value));
+        //         }
+        //         advance();
+        //         if (current.type != TokenType::RSQUARE) {
+        //             error();
+        //         }
+        //     }
+        //     else if (current.type == TokenType::REG_NAME) {
+        //         addr_mode = Word::from_int32(-1);
+
+        //         auto it = find(REG_NAMES.begin(), REG_NAMES.end(), current.value);
+        //         reg = Word::from_int32(it - REG_NAMES.begin() - 4);
+        //         advance();
+        //         if (current.type != TokenType::PLUS) {
+        //             error();
+        //         }
+        //         advance();
+        //         if (current.type != TokenType::NUMBER) {
+        //             error();
+        //         }
+        //         if (current.value[0] == '0' && current.value[1] == 't') {
+        //             imm = Word::from_ternary_str(current.value.substr(2));
+        //         }
+        //         else if (current.value[0] == '0' && current.value[1] == 'n') {
+        //             imm = Word::from_nonary_str(current.value.substr(2));
+        //         }
+        //         else {
+        //             imm = Word::from_int32(std::stoi(current.value));
+        //         }
+        //         advance();
+        //         if (current.type != TokenType::RSQUARE) {
+        //             error();
+        //         }
+        //     }
+        // }
         else {
             error();
         }
@@ -202,15 +241,14 @@ namespace termite {
         std::vector<Word> operand2 = assemble_operand();
 
         code.push_back(Word(((Word::from_int32(opcode).get_bct() & 0xff) << 24)
-            + ((operand1[0].get_bct() & 0xf) << 20)
-            + ((operand1[1].get_bct() & 0xf) << 16)
-            + ((operand2[0].get_bct() & 0xf) << 12)
-            + ((operand2[1].get_bct() & 0xf) << 8)
+            + ((operand2[0].get_bct() & 0xf) << 20)
+            + ((operand2[1].get_bct() & 0xf) << 16)
+            + ((operand1[0].get_bct() & 0xf) << 12)
+            + ((operand1[1].get_bct() & 0xf) << 8)
             + 0x55));
-        code.push_back(operand1[2]);
         code.push_back(operand2[2]);
+        code.push_back(operand1[2]);
     }
-
 
 
 } // namespace termite

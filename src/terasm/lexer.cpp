@@ -46,16 +46,24 @@ namespace termite {
                 tokens.push_back(Token(TokenType::COMMA, ","));
                 advance();
             }
-            else if (current == '[') {
-                tokens.push_back(Token(TokenType::LSQUARE, "["));
+            else if (current == '(') {
+                tokens.push_back(Token(TokenType::LPAREN, "("));
                 advance();
             }
-            else if (current == ']') {
-                tokens.push_back(Token(TokenType::RSQUARE, "]"));
+            else if (current == ')') {
+                tokens.push_back(Token(TokenType::RPAREN, ")"));
                 advance();
             }
             else if (current == '+') {
                 tokens.push_back(Token(TokenType::PLUS, "+"));
+                advance();
+            }
+            else if (current == '$') {
+                tokens.push_back(Token(TokenType::DOLLAR, "$"));
+                advance();
+            }
+            else if (current == '%') {
+                tokens.push_back(Token(TokenType::PERCENT, "%"));
                 advance();
             }
             else if (current == '\n') {
