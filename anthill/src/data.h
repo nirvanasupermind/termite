@@ -62,3 +62,12 @@ _extern int LIaddr[MAXLOCINIT];
 _extern int LIval[MAXLOCINIT];
 _extern int Nli;
 
+_extern char *Files[MAXFILES];
+_extern int Nf;
+
+_extern int O_verbose;
+_extern int O_componly;
+_extern int O_asmonly;
+_extern int O_testonly;
+_extern char *O_outfile;
+_extern int O_debug;
