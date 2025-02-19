@@ -262,10 +262,6 @@ namespace anthill {
             str += "SWITCH";
             break;
         }
-        case TokenType::TILDE: {
-            str += "TILDE";
-            break;
-        }
         case TokenType::VOID: {
             str += "VOID";
             break;
