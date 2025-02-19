@@ -87,6 +87,16 @@ namespace anthill {
                     tokens.push_back(Token(old_line, TokenType::ASSIGN, "="));
                 }
             }
+            else if (current == '!') {
+                int old_line = line;
+                advance();
+                if(current == '=') {
+                    tokens.push_back(Token(old_line, TokenType::NOTEQ, "!="));
+                    advance();
+                }  else {
+                    tokens.push_back(Token(old_line, TokenType::NOT, "!"));
+                }
+            }
         }
     }
 }
