@@ -9,9 +9,9 @@
 // #include "../src/env.h"
 
 int main() {
-    std::string str = "1+2*3;";
+    std::string str = "1+2*3; \"abc\";'a';?@";
     try {
-        anthill::Lexer lexer(str);
+        anthill::Lexer lexer("temp", str);
         std::vector<anthill::Token> tokens = lexer.generate_tokens();
         for(int i = 0; i < tokens.size(); i++) {
             std::cout << tokens.at(i).to_str() << '\n';

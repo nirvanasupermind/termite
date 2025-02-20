@@ -142,6 +142,10 @@ namespace anthill {
             str += "CHAR";
             break;
         }
+        case TokenType::CHARLIT: {
+            str += "CHARLIT";
+            break;
+        }
         case TokenType::COLON: {
             str += "COLON";
             break;

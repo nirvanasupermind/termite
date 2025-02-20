@@ -2,10 +2,11 @@
 #include <iostream>
 #include "token.h"
 #include "lexer.h"
+#include "error.h"
 
 namespace anthill {
-    Lexer::Lexer(const std::string& text)
-        : text(text), line(0), pos(0), current(0) {
+    Lexer::Lexer(const std::string& file, const std::string& text)
+        : file(file), text(text), line(1), pos(0), current(0) {
         advance();
     }
 
@@ -241,6 +242,22 @@ namespace anthill {
             else if (isdigit(current)) {
                 tokens.push_back(generate_number());
                 advance();
+            } 
+            else if (current == '\'') {
+                advance();
+                char ch = generate_ch();
+                advance();
+                if(current != '\'') {
+                    error(file, line, std::string("expected closing apostrophe in character literal, got '") + current + "'");
+                }
+                advance();        
+            }
+            else if (current == '\"') {
+                tokens.push_back(generate_str());
+                advance();
+            }
+            else {
+                error(file, line, std::string("illegal character '") + current + "'");
             }
         }
 
@@ -346,5 +363,35 @@ namespace anthill {
         return Token(line, TokenType::INTLIT, number_str);
     }
 
+    char Lexer::generate_ch() {
+        if ('\\' == current) {
+            advance();
+        switch (current) {
+        case 'a': return '\a';
+        case 'b': return '\b';
+        case 'f': return '\f';
+        case 'n': return '\n';
+        case 'r': return '\r';
+        case 't': return '\t';
+        case 'v': return '\v';
+        case '\\': return '\\';
+        case '"': return '"' | 256;
+        case '\'': return '\'';
+        }
+    } else {
+        return current;
+        }
+    }
 
+    Token Lexer::generate_str() {
+        advance();
+        std::string str;
+        while (current != '"') {
+            char x = generate_ch();     
+            str += x;
+            advance();
+        }
+        advance();
+        return Token(line, TokenType::STRLIT, str);
+    }
 }
