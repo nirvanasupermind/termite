@@ -21,6 +21,6 @@ namespace anthill {
         char generate_ch();
         Token generate_str();    
     };
-} // namespace termite
+}
 
 #endif

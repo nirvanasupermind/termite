@@ -250,6 +250,7 @@ namespace anthill {
                 if(current != '\'') {
                     error(file, line, std::string("expected closing apostrophe in character literal, got '") + current + "'");
                 }
+                tokens.push_back(Token(line, TokenType::CHARLIT, std::string(1, ch)));
                 advance();        
             }
             else if (current == '\"') {
@@ -258,8 +259,11 @@ namespace anthill {
             }
             else {
                 error(file, line, std::string("illegal character '") + current + "'");
+                advance();
             }
         }
+        tokens.push_back(Token(line, TokenType::XEOF, "<eof>"));
+
 
         return tokens;
     }

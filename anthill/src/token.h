@@ -24,9 +24,10 @@ namespace anthill {
         int line;
         TokenType type;
         std::string val;
+        Token();
         Token(int line, TokenType type, const std::string& val);
         std::string to_str() const;
     };
-} // namespace termite
+}
 
 #endif

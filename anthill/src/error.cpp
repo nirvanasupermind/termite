@@ -4,7 +4,7 @@
 
 namespace anthill {
     void cleanup() {
-
+        
     }
 
     void error(const std::string& file, int line, const std::string& msg) {

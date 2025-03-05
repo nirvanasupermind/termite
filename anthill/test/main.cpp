@@ -3,19 +3,21 @@
 #include <vector>
 #include "../src/token.h"
 #include "../src/lexer.h"
+#include "../src/node.h"
+#include "../src/parser.h"
+
 // #include "../src/node.h"
 // #include "../src/parser.h"
 // #include "../src/compiler.h"
 // #include "../src/env.h"
 
 int main() {
-    std::string str = "1+2*3; \"abc\";'a';?@";
+    std::string str = ">";
     try {
         anthill::Lexer lexer("temp", str);
         std::vector<anthill::Token> tokens = lexer.generate_tokens();
-        for(int i = 0; i < tokens.size(); i++) {
-            std::cout << tokens.at(i).to_str() << '\n';
-        }
+        anthill::Parser parser("temp", tokens);
+        std::cout << parser.parse()->to_str() << '\n';
      
      
         // anthill::Parser parser("sample", lexer.generate_tokens());

@@ -2,6 +2,12 @@
 #include "token.h"
 
 namespace anthill {
+    Token::Token()
+        : line(0), type(TokenType::XEOF), val("") {
+
+    }
+
+
     Token::Token(int line, TokenType type, const std::string& val)
         : line(line), type(type), val(val) {
 
