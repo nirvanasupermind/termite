@@ -12,7 +12,7 @@
 // #include "../src/env.h"
 
 int main() {
-    std::string str = ">";
+    std::string str = "1+2*3";
     try {
         anthill::Lexer lexer("temp", str);
         std::vector<anthill::Token> tokens = lexer.generate_tokens();
