@@ -30,7 +30,7 @@ namespace anthill {
     }
 
     std::shared_ptr<Node> Parser::parse() {
-        std::shared_ptr<Node> result = expr();
+        std::shared_ptr<Node> result = stmt_list();
         if(current.type != TokenType::XEOF) {
             syntax_error();
         }
@@ -58,11 +58,21 @@ namespace anthill {
         }
     }
 
-    std::shared_ptr<Node> Parser::unary_op_expr() {
+    std::shared_ptr<Node> Parser::postfix_expr() {
+        std::shared_ptr<Node> expr = basic_expr();
+        if (current.type == TokenType::INCR || current.type == TokenType::DECR) {
+            return std::make_shared<PostfixNode>(PostfixNode(expr->line, expr, current));
+        } else {
+            return expr;
+        }
+    }
+    
+
+    std::shared_ptr<Node> Parser::prefix_expr() {
         Token tok = current;
-        if (tok.type == TokenType::PLUS || tok.type == TokenType::MINUS) {
+        if (tok.type == TokenType::PLUS || tok.type == TokenType::MINUS || tok.type == TokenType::NOT || tok.type == TokenType::AMPER || tok.type == TokenType::STAR) {
             advance();
-            return std::make_shared<UnaryOpNode>(UnaryOpNode(tok.line, tok, basic_expr()));
+            return std::make_shared<PrefixNode>(PrefixNode(tok.line, tok, basic_expr()));
         } else {
             return basic_expr();
         }
@@ -80,7 +90,7 @@ namespace anthill {
     }
 
     std::shared_ptr<Node> Parser::term() {
-        return bin_op_expr([this]() { return unary_op_expr(); }, { TokenType::STAR, TokenType::SLASH, TokenType::MOD });
+        return bin_op_expr([this]() { return prefix_expr(); }, { TokenType::STAR, TokenType::SLASH, TokenType::MOD });
     }
             
     std::shared_ptr<Node> Parser::factor() {
@@ -91,7 +101,54 @@ namespace anthill {
         return bin_op_expr([this]() { return factor(); }, { TokenType::LSHIFT, TokenType::RSHIFT });
     }
 
+    std::shared_ptr<Node> Parser::cmp_expr() {
+        return bin_op_expr([this]() { return shift_expr(); }, { TokenType::LESS, TokenType::LTEQ, TokenType::GREATER, TokenType::GTEQ });
+    }
+
+    std::shared_ptr<Node> Parser::eq_expr() {
+        return bin_op_expr([this]() { return cmp_expr(); }, { TokenType::EQUAL, TokenType::NOTEQ });
+    }
+
+    std::shared_ptr<Node> Parser::and_expr() {
+        return bin_op_expr([this]() { return eq_expr(); }, { TokenType::AMPER });
+    }
+
+    std::shared_ptr<Node> Parser::xor_expr() {
+        return bin_op_expr([this]() { return and_expr(); }, { TokenType::CARET });
+    }
+
+    std::shared_ptr<Node> Parser::or_expr() {
+        return bin_op_expr([this]() { return xor_expr(); }, { TokenType::PIPE });
+    }
+
+    std::shared_ptr<Node> Parser::logand_expr() {
+        return bin_op_expr([this]() { return or_expr(); }, { TokenType::LOGAND });
+    }
+
+    std::shared_ptr<Node> Parser::logor_expr() {
+        return bin_op_expr([this]() { return logand_expr(); }, { TokenType::LOGOR });
+    }
+
     std::shared_ptr<Node> Parser::expr() {
-        return shift_expr();
+        return logor_expr();
+    }
+
+    std::shared_ptr<Node> Parser::expr_stmt() {
+        std::shared_ptr<Node> result = expr();
+        eat(TokenType::SEMI);
+        return result;
+    }
+
+    std::shared_ptr<Node> Parser::stmt() {
+        return expr_stmt();
+    }
+
+    std::shared_ptr<Node> Parser::stmt_list() {
+        int line = current.line;
+        std::vector<std::shared_ptr<Node> > stmts;
+        while(current.type != TokenType::XEOF) {
+            stmts.push_back(stmt());
+        }
+        return std::make_shared<StmtListNode>(line, stmts);
     }
 }

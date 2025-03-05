@@ -20,7 +20,7 @@ namespace anthill {
 
     IntNode::IntNode(int line, const Token& tok)
         : tok(tok) {
-            this->line = line;
+        this->line = line;
 
     }
 
@@ -33,26 +33,35 @@ namespace anthill {
         return NodeType::INT;
     }
 
-
-    UnaryOpNode::UnaryOpNode(int line, const Token& op_tok, const std::shared_ptr<Node>& node)
-        : op_tok(op_tok), node(node) {
-            this->line = line;
+    PostfixNode::PostfixNode(int line, const std::shared_ptr<Node>& node, const Token& op_tok)
+        : node(node), op_tok(op_tok) {
+        this->line = line;
     }
 
-    std::string UnaryOpNode::to_str() const {
+    std::string PostfixNode::to_str() const {
         return "(" + op_tok.to_str() + "," + node->to_str() + ")";
     }
 
-
-    NodeType UnaryOpNode::get_type() const {
-        return NodeType::UNARY_OP;
+    NodeType PostfixNode::get_type() const {
+        return NodeType::POSTFIX;
+    }
+    
+    PrefixNode::PrefixNode(int line, const Token& op_tok, const std::shared_ptr<Node>& node)
+        : op_tok(op_tok), node(node) {
+        this->line = line;
     }
 
+    std::string PrefixNode::to_str() const {
+        return "(" + node->to_str() + "," + op_tok.to_str() + ")";
+    }
+
+    NodeType PrefixNode::get_type() const {
+        return NodeType::PREFIX;
+    }
 
     BinOpNode::BinOpNode(int line, const std::shared_ptr<Node>& left_node, const Token& op_tok, const std::shared_ptr<Node>& right_node)
         : left_node(left_node), op_tok(op_tok), right_node(right_node) {
-            this->line = line;
-
+        this->line = line;
     }
 
     std::string BinOpNode::to_str() const {
@@ -62,4 +71,28 @@ namespace anthill {
     NodeType BinOpNode::get_type() const {
         return NodeType::BIN_OP;
     }
+
+
+    StmtListNode::StmtListNode(int line, const std::vector<std::shared_ptr<Node> >& stmts)
+        : stmts(stmts) {
+        this->line = line;
+    }
+
+    std::string StmtListNode::to_str() const {
+        std::string result = "(";
+        for(int i = 0; i < stmts.size(); i++) {
+            result = result + stmts.at(i)->to_str();
+            if(i == stmts.size() - 1) {
+                result = result + ")";
+            } else {
+                result = result + ",";
+            }
+        }
+        return result;
+    }
+
+    NodeType StmtListNode::get_type() const {
+        return NodeType::STMT_LIST;
+    }
+
 }

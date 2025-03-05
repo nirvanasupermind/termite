@@ -10,8 +10,10 @@ namespace anthill {
     enum class NodeType {
         CHAR,
         INT,
-        UNARY_OP,
-        BIN_OP
+        POSTFIX,
+        PREFIX,
+        BIN_OP,
+        STMT_LIST
     };
     class Node {
     public:
@@ -36,11 +38,21 @@ namespace anthill {
         NodeType get_type() const;
     };
 
-    class UnaryOpNode: public Node {
+
+    class PostfixNode: public Node {
+        public:
+            std::shared_ptr<Node> node;
+            Token op_tok;
+            PostfixNode(int line, const std::shared_ptr<Node>& node, const Token& op_tok);
+            std::string to_str() const;
+            NodeType get_type() const;
+        };
+
+    class PrefixNode: public Node {
         public:
             Token op_tok;
             std::shared_ptr<Node> node;
-            UnaryOpNode(int line, const Token& tok, const std::shared_ptr<Node>& node);
+            PrefixNode(int line, const Token& top_ok, const std::shared_ptr<Node>& node);
             std::string to_str() const;
             NodeType get_type() const;
         };
@@ -54,7 +66,15 @@ namespace anthill {
     std::string to_str() const;
     NodeType get_type() const;    
 };
-        
+     
+class StmtListNode: public Node {
+    public:
+    std::vector<std::shared_ptr<Node> > stmts;
+    StmtListNode(int line, const std::vector<std::shared_ptr<Node> >& stmts);
+    std::string to_str() const;
+    NodeType get_type() const;    
+};
+     
 }
 
 #endif
