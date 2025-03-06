@@ -1,0 +1,7 @@
+<basic-expr> ::= INTLIT | CHARLIT | LPAREN <expr> RPAREN
+<postfix-expr> ::= <basic-expr> | <postfix-expr> (INC | DEC)
+<prefix-expr> ::= <postfix-expr> | (PLUS | MINUS | NOT | AMPER | STAR) <prefix-expr>
+<term> ::= <prefix-expr> | <term> (STAR | SLASH | MOD) <prefix-expr>
+<factor> ::= <term> | <factor> (PLUS | MINUS) <term>
+<shift-expr> ::= <factor> | <shift-expr> (LSHIFT | RSHIFT) <factor>
+<shift-expr> ::= <factor> | <shift-expr> (LSHIFT | RSHIFT) <factor>

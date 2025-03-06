@@ -34,6 +34,7 @@ namespace anthill {
         std::shared_ptr<Node> or_expr();
         std::shared_ptr<Node> logand_expr();
         std::shared_ptr<Node> logor_expr();
+        std::shared_ptr<Node> assign_expr();
         std::shared_ptr<Node> expr();
         std::shared_ptr<Node> expr_stmt();
         std::shared_ptr<Node> stmt();

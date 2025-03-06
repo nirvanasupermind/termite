@@ -33,6 +33,35 @@ namespace anthill {
         return NodeType::INT;
     }
 
+    StrNode::StrNode(int line, const Token& tok)
+        : tok(tok) {
+        this->line = line;
+
+    }
+
+    std::string StrNode::to_str() const {
+        return tok.to_str();
+    }
+
+
+    NodeType StrNode::get_type() const {
+        return NodeType::STR;
+    }
+
+    IdentNode::IdentNode(int line, const Token& tok)
+        : tok(tok) {
+        this->line = line;
+    }
+
+    std::string IdentNode::to_str() const {
+        return tok.to_str();
+    }
+
+
+    NodeType IdentNode::get_type() const {
+        return NodeType::IDENT;
+    }
+
     PostfixNode::PostfixNode(int line, const std::shared_ptr<Node>& node, const Token& op_tok)
         : node(node), op_tok(op_tok) {
         this->line = line;
@@ -45,7 +74,7 @@ namespace anthill {
     NodeType PostfixNode::get_type() const {
         return NodeType::POSTFIX;
     }
-    
+
     PrefixNode::PrefixNode(int line, const Token& op_tok, const std::shared_ptr<Node>& node)
         : op_tok(op_tok), node(node) {
         this->line = line;
@@ -73,6 +102,19 @@ namespace anthill {
     }
 
 
+    // AssignNode::AssignNode(int line, const std::shared_ptr<Node>& left_node, const Token& op_tok, const std::shared_ptr<Node>& right_node)
+    //     : left_node(left_node), op_tok(op_tok), right_node(right_node) {
+    //     this->line = line;
+    // }
+
+    // std::string AssignNode::to_str() const {
+    //     return "(" + left_node->to_str() + "," + op_tok.to_str() + "," + right_node->to_str() + ")";
+    // }
+
+    // NodeType AssignNode::get_type() const {
+    //     return NodeType::ASSIGN;
+    // }
+
     StmtListNode::StmtListNode(int line, const std::vector<std::shared_ptr<Node> >& stmts)
         : stmts(stmts) {
         this->line = line;
@@ -80,11 +122,12 @@ namespace anthill {
 
     std::string StmtListNode::to_str() const {
         std::string result = "(";
-        for(int i = 0; i < stmts.size(); i++) {
+        for (int i = 0; i < stmts.size(); i++) {
             result = result + stmts.at(i)->to_str();
-            if(i == stmts.size() - 1) {
+            if (i == stmts.size() - 1) {
                 result = result + ")";
-            } else {
+            }
+            else {
                 result = result + ",";
             }
         }

@@ -31,7 +31,7 @@ namespace anthill {
 
     std::shared_ptr<Node> Parser::parse() {
         std::shared_ptr<Node> result = stmt_list();
-        if(current.type != TokenType::XEOF) {
+        if (current.type != TokenType::XEOF) {
             syntax_error();
         }
         return result;
@@ -47,11 +47,19 @@ namespace anthill {
             advance();
             return std::make_shared<CharNode>(CharNode(tok.line, tok));
         }
+        else if (tok.type == TokenType::STRLIT) {
+            advance();
+            return std::make_shared<StrNode>(StrNode(tok.line, tok));
+        }
+        else if (tok.type == TokenType::IDENT) {
+            advance();
+            return std::make_shared<IdentNode>(IdentNode(tok.line, tok));
+        }
         else if (tok.type == TokenType::LPAREN) {
             advance();
             std::shared_ptr<Node> result = expr();
             eat(TokenType::RPAREN);
-            return result;  
+            return result;
         }
         else {
             syntax_error();
@@ -62,22 +70,23 @@ namespace anthill {
         std::shared_ptr<Node> expr = basic_expr();
         if (current.type == TokenType::INCR || current.type == TokenType::DECR) {
             return std::make_shared<PostfixNode>(PostfixNode(expr->line, expr, current));
-        } else {
+        }
+        else {
             return expr;
         }
     }
-    
 
     std::shared_ptr<Node> Parser::prefix_expr() {
         Token tok = current;
         if (tok.type == TokenType::PLUS || tok.type == TokenType::MINUS || tok.type == TokenType::NOT || tok.type == TokenType::AMPER || tok.type == TokenType::STAR) {
             advance();
             return std::make_shared<PrefixNode>(PrefixNode(tok.line, tok, basic_expr()));
-        } else {
+        }
+        else {
             return basic_expr();
         }
     }
-    
+
     std::shared_ptr<Node> Parser::bin_op_expr(const std::function<std::shared_ptr<Node>() >& func, const std::vector<TokenType>& types) {
         std::shared_ptr<Node> left = func();
         while (std::find(types.begin(), types.end(), current.type) != types.end() && current.type != TokenType::XEOF) {
@@ -92,7 +101,7 @@ namespace anthill {
     std::shared_ptr<Node> Parser::term() {
         return bin_op_expr([this]() { return prefix_expr(); }, { TokenType::STAR, TokenType::SLASH, TokenType::MOD });
     }
-            
+
     std::shared_ptr<Node> Parser::factor() {
         return bin_op_expr([this]() { return term(); }, { TokenType::PLUS, TokenType::MINUS });
     }
@@ -129,8 +138,41 @@ namespace anthill {
         return bin_op_expr([this]() { return logand_expr(); }, { TokenType::LOGOR });
     }
 
+    std::shared_ptr<Node> Parser::assign_expr() {
+        return bin_op_expr([this]() { return logor_expr(); }, { TokenType::ASSIGN
+            , TokenType::ASAND
+            , TokenType::ASXOR
+            , TokenType::ASLSHIFT
+            , TokenType::ASMINUS
+            , TokenType::ASMOD
+            ,TokenType::ASOR
+            ,TokenType::ASPLUS
+            ,TokenType::ASRSHIFT
+            ,TokenType::ASDIV
+           ,TokenType::ASMUL });
+
+        // std::shared_ptr<Node> left = logor_expr();
+        // if (current.type == TokenType::ASSIGN
+        //     || current.type == TokenType::ASAND
+        //     || current.type == TokenType::ASXOR
+        //     || current.type == TokenType::ASLSHIFT
+        //     || current.type == TokenType::ASMINUS
+        //     || current.type == TokenType::ASMOD
+        //     || current.type == TokenType::ASOR
+        //     || current.type == TokenType::ASPLUS
+        //     || current.type == TokenType::ASRSHIFT
+        //     || current.type == TokenType::ASDIV
+        //     || current.type == TokenType::ASMUL) {
+        //     Token op_tok = current;
+        //     advance();
+        //     std::shared_ptr<Node> right = assign_expr();
+        //     left = std::make_shared<AssignNode>(AssignNode(left->line, left, op_tok, right));
+        // }
+        // return left;
+    }
+
     std::shared_ptr<Node> Parser::expr() {
-        return logor_expr();
+        return assign_expr();
     }
 
     std::shared_ptr<Node> Parser::expr_stmt() {
@@ -139,6 +181,7 @@ namespace anthill {
         return result;
     }
 
+
     std::shared_ptr<Node> Parser::stmt() {
         return expr_stmt();
     }
@@ -146,7 +189,7 @@ namespace anthill {
     std::shared_ptr<Node> Parser::stmt_list() {
         int line = current.line;
         std::vector<std::shared_ptr<Node> > stmts;
-        while(current.type != TokenType::XEOF) {
+        while (current.type != TokenType::XEOF) {
             stmts.push_back(stmt());
         }
         return std::make_shared<StmtListNode>(line, stmts);
