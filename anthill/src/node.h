@@ -15,7 +15,9 @@ namespace anthill {
         POSTFIX,
         PREFIX,
         BIN_OP,
-        // ASSIGN,
+        ASSIGN,
+        TYPE,
+        VAR_DEF,
         STMT_LIST
     };
     class Node {
@@ -88,16 +90,35 @@ namespace anthill {
         NodeType get_type() const;
     };
 
+    class AssignNode : public Node {
+    public:
+        std::shared_ptr<Node> left_node;
+        Token op_tok;
+        std::shared_ptr<Node> right_node;
+        AssignNode(int line, const std::shared_ptr<Node>& left_node, const Token& op_tok, const std::shared_ptr<Node>& right_node);
+        std::string to_str() const;
+        NodeType get_type() const;
+    };
 
-    // class AssignNode : public Node {
-    // public:
-    //     std::shared_ptr<Node> left_node;
-    //     Token op_tok;
-    //     std::shared_ptr<Node> right_node;
-    //     AssignNode(int line, const std::shared_ptr<Node>& left_node, const Token& op_tok, const std::shared_ptr<Node>& right_node);
-    //     std::string to_str() const;
-    //     NodeType get_type() const;
-    // };
+
+    class TypeNode : public Node {
+        public:
+            Token base_type;
+            int num_pointers;
+            TypeNode(int line, const Token& base_type, int num_pointers);
+            std::string to_str() const;
+            NodeType get_type() const;
+        };
+
+    class VarDefNode : public Node {
+    public:
+        std::shared_ptr<Node> type;
+        Token name;
+        std::shared_ptr<Node> val;
+        VarDefNode(int line, const std::shared_ptr<Node>& type, const Token& name, const std::shared_ptr<Node>& val);
+        std::string to_str() const;
+        NodeType get_type() const;
+    };
 
     class StmtListNode : public Node {
     public:

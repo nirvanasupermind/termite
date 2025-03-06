@@ -102,18 +102,45 @@ namespace anthill {
     }
 
 
-    // AssignNode::AssignNode(int line, const std::shared_ptr<Node>& left_node, const Token& op_tok, const std::shared_ptr<Node>& right_node)
-    //     : left_node(left_node), op_tok(op_tok), right_node(right_node) {
-    //     this->line = line;
-    // }
+    AssignNode::AssignNode(int line, const std::shared_ptr<Node>& left_node, const Token& op_tok, const std::shared_ptr<Node>& right_node)
+        : left_node(left_node), op_tok(op_tok), right_node(right_node) {
+        this->line = line;
+    }
 
-    // std::string AssignNode::to_str() const {
-    //     return "(" + left_node->to_str() + "," + op_tok.to_str() + "," + right_node->to_str() + ")";
-    // }
+    std::string AssignNode::to_str() const {
+        return "(" + left_node->to_str() + "," + op_tok.to_str() + "," + right_node->to_str() + ")";
+    }
 
-    // NodeType AssignNode::get_type() const {
-    //     return NodeType::ASSIGN;
-    // }
+    NodeType AssignNode::get_type() const {
+        return NodeType::ASSIGN;
+    }
+
+
+    TypeNode::TypeNode(int line, const Token& base_type, int num_pointers)
+        : base_type(base_type), num_pointers(num_pointers) {
+        this->line = line;
+    }
+
+    std::string TypeNode::to_str() const {
+        return "(" + base_type.to_str() + "," + std::to_string(num_pointers) + ")";
+    }
+
+    NodeType TypeNode::get_type() const {
+        return NodeType::TYPE;
+    }
+
+    VarDefNode::VarDefNode(int line, const std::shared_ptr<Node>& type, const Token& name, const std::shared_ptr<Node>& val)
+        : type(type), name(name), val(val) {
+        this->line = line;
+    }
+
+    std::string VarDefNode::to_str() const {
+        return "(" + type->to_str() + "," + name.to_str() + "," + val->to_str() + ")";
+    }
+
+    NodeType VarDefNode::get_type() const {
+        return NodeType::VAR_DEF;
+    }
 
     StmtListNode::StmtListNode(int line, const std::vector<std::shared_ptr<Node> >& stmts)
         : stmts(stmts) {

@@ -18,7 +18,7 @@ namespace anthill {
         Parser(const std::string& file, const std::vector<Token>& tokens);
         void advance();
         void syntax_error();
-        void eat(const TokenType& type);
+        Token eat(const TokenType& type);
         std::shared_ptr<Node> parse();      
         std::shared_ptr<Node> basic_expr();      
         std::shared_ptr<Node> postfix_expr();
@@ -37,6 +37,8 @@ namespace anthill {
         std::shared_ptr<Node> assign_expr();
         std::shared_ptr<Node> expr();
         std::shared_ptr<Node> expr_stmt();
+        std::shared_ptr<Node> type();
+        std::shared_ptr<Node> var_def_stmt();
         std::shared_ptr<Node> stmt();
         std::shared_ptr<Node> stmt_list();
 

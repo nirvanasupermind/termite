@@ -22,11 +22,13 @@ namespace anthill {
         error(file, current.line, std::string("invalid syntax near '") + current.val + "'");
     }
 
-    void Parser::eat(const TokenType& type) {
+    Token Parser::eat(const TokenType& type) {
+        Token result = current;
         if (current.type != type) {
             syntax_error();
         }
         advance();
+        return result;
     }
 
     std::shared_ptr<Node> Parser::parse() {
@@ -139,36 +141,36 @@ namespace anthill {
     }
 
     std::shared_ptr<Node> Parser::assign_expr() {
-        return bin_op_expr([this]() { return logor_expr(); }, { TokenType::ASSIGN
-            , TokenType::ASAND
-            , TokenType::ASXOR
-            , TokenType::ASLSHIFT
-            , TokenType::ASMINUS
-            , TokenType::ASMOD
-            ,TokenType::ASOR
-            ,TokenType::ASPLUS
-            ,TokenType::ASRSHIFT
-            ,TokenType::ASDIV
-           ,TokenType::ASMUL });
+        // return bin_op_expr([this]() { return logor_expr(); }, { TokenType::ASSIGN
+        //     , TokenType::ASAND
+        //     , TokenType::ASXOR
+        //     , TokenType::ASLSHIFT
+        //     , TokenType::ASMINUS
+        //     , TokenType::ASMOD
+        //     ,TokenType::ASOR
+        //     ,TokenType::ASPLUS
+        //     ,TokenType::ASRSHIFT
+        //     ,TokenType::ASDIV
+        //    ,TokenType::ASMUL });
 
-        // std::shared_ptr<Node> left = logor_expr();
-        // if (current.type == TokenType::ASSIGN
-        //     || current.type == TokenType::ASAND
-        //     || current.type == TokenType::ASXOR
-        //     || current.type == TokenType::ASLSHIFT
-        //     || current.type == TokenType::ASMINUS
-        //     || current.type == TokenType::ASMOD
-        //     || current.type == TokenType::ASOR
-        //     || current.type == TokenType::ASPLUS
-        //     || current.type == TokenType::ASRSHIFT
-        //     || current.type == TokenType::ASDIV
-        //     || current.type == TokenType::ASMUL) {
-        //     Token op_tok = current;
-        //     advance();
-        //     std::shared_ptr<Node> right = assign_expr();
-        //     left = std::make_shared<AssignNode>(AssignNode(left->line, left, op_tok, right));
-        // }
-        // return left;
+        std::shared_ptr<Node> left = logor_expr();
+        if (current.type == TokenType::ASSIGN
+            || current.type == TokenType::ASAND
+            || current.type == TokenType::ASXOR
+            || current.type == TokenType::ASLSHIFT
+            || current.type == TokenType::ASMINUS
+            || current.type == TokenType::ASMOD
+            || current.type == TokenType::ASOR
+            || current.type == TokenType::ASPLUS
+            || current.type == TokenType::ASRSHIFT
+            || current.type == TokenType::ASDIV
+            || current.type == TokenType::ASMUL) {
+            Token op_tok = current;
+            advance();
+            std::shared_ptr<Node> right = assign_expr();
+            left = std::make_shared<AssignNode>(AssignNode(left->line, left, op_tok, right));
+        }
+        return left;
     }
 
     std::shared_ptr<Node> Parser::expr() {
@@ -181,9 +183,32 @@ namespace anthill {
         return result;
     }
 
+    std::shared_ptr<Node> Parser::type() {
+        int line = current.line;
+        Token base_type = current;
+        int num_pointers = 0;
+        advance();
+        while(current.type == TokenType::STAR) {
+            num_pointers++;
+            advance();
+        }
+        return std::make_shared<TypeNode>(line, base_type, num_pointers);
+    }
+
+    std::shared_ptr<Node> Parser::var_def_stmt() {
+        std::shared_ptr<Node> my_type = type();
+        Token name = eat(TokenType::IDENT);
+        eat(TokenType::ASSIGN);
+        std::shared_ptr<Node> val = expr_stmt();
+        return std::make_shared<VarDefNode>(my_type->line, my_type, name, val);
+    }
 
     std::shared_ptr<Node> Parser::stmt() {
-        return expr_stmt();
+        if(current.type == TokenType::INT || current.type == TokenType::CHAR) {
+            return var_def_stmt();
+        } else {
+            return expr_stmt();
+        }
     }
 
     std::shared_ptr<Node> Parser::stmt_list() {

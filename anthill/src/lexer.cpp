@@ -237,7 +237,6 @@ namespace anthill {
             }
             else if (current == '_' || std::isalpha(current)) {
                 tokens.push_back(generate_identifier());
-                advance();
             }
             else if (isdigit(current)) {
                 tokens.push_back(generate_number());
@@ -328,6 +327,12 @@ namespace anthill {
         }
         else if (identifier_str == "while") {
             type = TokenType::WHILE;
+        }
+        else if (identifier_str == "int") {
+            type = TokenType::INT;
+        }
+        else if (identifier_str == "char") {
+            type = TokenType::CHAR;
         }
         return Token(line, type, identifier_str);
     }
