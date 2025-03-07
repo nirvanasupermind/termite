@@ -189,13 +189,46 @@ namespace anthill {
         return NodeType::WHILE;
     }
 
-    EnumNode::EnumNode(int line, const std::vector<Token>& items)
-        : items(items) {
+
+
+    ForNode::ForNode(int line, const std::shared_ptr<Node>& init, const std::shared_ptr<Node>& cond, const std::shared_ptr<Node>& update, const std::shared_ptr<Node>& body)
+    : init(init), cond(cond), update(update), body(body) {
+    this->line = line;
+}
+
+std::string ForNode::to_str() const {
+    return "(" + init->to_str() + "," + cond->to_str() + "," + update->to_str() + "," + body->to_str() + ")";
+}
+
+NodeType ForNode::get_type() const {
+    return NodeType::FOR;
+}
+
+ReturnNode::ReturnNode(int line, const std::shared_ptr<Node>& body)
+: body(body) {
+this->line = line;
+}
+
+std::string ReturnNode::to_str() const {
+return "(" + body->to_str() + ")";
+}
+
+NodeType ReturnNode::get_type() const {
+return NodeType::RETURN;
+}
+
+    EnumNode::EnumNode(int line, const Token& name, const std::vector<Token>& items)
+        : name(name), items(items) {
         this->line = line;
     }
 
     std::string EnumNode::to_str() const {
         std::string result = "(";
+        result = result + name.val;
+        if (items.size()) {
+            result = result + ",";
+        }
+
         for (int i = 0; i < items.size(); i++) {
             result = result + items.at(i).to_str();
             if (i == items.size() - 1) {

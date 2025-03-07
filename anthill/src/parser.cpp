@@ -39,7 +39,7 @@ namespace anthill {
         return result;
     }
 
-    std::shared_ptr<Node> Parser::basic_expr() {
+    std::shared_ptr<Node> Parser::basic_expr(const TokenType& terminator) {
         Token tok = current;
         if (tok.type == TokenType::INTLIT) {
             advance();
@@ -59,7 +59,7 @@ namespace anthill {
         }
         else if (tok.type == TokenType::LPAREN) {
             advance();
-            std::shared_ptr<Node> result = expr();
+            std::shared_ptr<Node> result = expr(terminator);
             eat(TokenType::RPAREN);
             return result;
         }
@@ -68,80 +68,79 @@ namespace anthill {
         }
     }
 
-    std::shared_ptr<Node> Parser::postfix_expr() {
-        std::shared_ptr<Node> expr = basic_expr();
-        if (current.type == TokenType::INCR || current.type == TokenType::DECR) {
-            return std::make_shared<PostfixNode>(PostfixNode(expr->line, expr, current));
+    std::shared_ptr<Node> Parser::postfix_expr(const TokenType& terminator) {
+        std::shared_ptr<Node> my_expr = basic_expr(terminator);
+        while ((current.type == TokenType::INCR || current.type == TokenType::DECR) && current.type != terminator) {
+            my_expr = std::make_shared<PostfixNode>(PostfixNode(my_expr->line, my_expr, current));
+            advance();
         }
-        else {
-            return expr;
-        }
+        return my_expr;
     }
 
-    std::shared_ptr<Node> Parser::prefix_expr() {
+    std::shared_ptr<Node> Parser::prefix_expr(const TokenType& terminator) {
         Token tok = current;
         if (tok.type == TokenType::PLUS || tok.type == TokenType::MINUS || tok.type == TokenType::NOT || tok.type == TokenType::AMPER || tok.type == TokenType::STAR) {
             advance();
-            return std::make_shared<PrefixNode>(PrefixNode(tok.line, tok, basic_expr()));
+            return std::make_shared<PrefixNode>(PrefixNode(tok.line, tok, postfix_expr(terminator)));
         }
         else {
-            return basic_expr();
+            return postfix_expr(terminator);
         }
     }
 
-    std::shared_ptr<Node> Parser::bin_op_expr(const std::function<std::shared_ptr<Node>() >& func, const std::vector<TokenType>& types) {
-        std::shared_ptr<Node> left = func();
-        while (std::find(types.begin(), types.end(), current.type) != types.end() && current.type != TokenType::XEOF) {
+    std::shared_ptr<Node> Parser::bin_op_expr(const std::function<std::shared_ptr<Node>(const TokenType&) >& func, const std::vector<TokenType>& types, const TokenType& terminator) {
+        std::shared_ptr<Node> left = func(terminator);
+        while (std::find(types.begin(), types.end(), current.type) != types.end() && current.type != terminator) {
             Token op_tok = current;
             advance();
-            std::shared_ptr<Node> right = func();
+            std::shared_ptr<Node> right = func(terminator);
             left = std::make_shared<BinOpNode>(BinOpNode(left->line, left, op_tok, right));
         }
         return left;
     }
 
-    std::shared_ptr<Node> Parser::term() {
-        return bin_op_expr([this]() { return prefix_expr(); }, { TokenType::STAR, TokenType::SLASH, TokenType::MOD });
+    std::shared_ptr<Node> Parser::term(const TokenType& terminator) {
+        return bin_op_expr([this](const TokenType& terminator) { return prefix_expr(terminator); }, { TokenType::STAR, TokenType::SLASH, TokenType::MOD });
     }
 
-    std::shared_ptr<Node> Parser::factor() {
-        return bin_op_expr([this]() { return term(); }, { TokenType::PLUS, TokenType::MINUS });
+    std::shared_ptr<Node> Parser::factor(const TokenType& terminator) {
+        return bin_op_expr([this](const TokenType& terminator) { return term(terminator); }, { TokenType::PLUS, TokenType::MINUS });
     }
 
-    std::shared_ptr<Node> Parser::shift_expr() {
-        return bin_op_expr([this]() { return factor(); }, { TokenType::LSHIFT, TokenType::RSHIFT });
+    std::shared_ptr<Node> Parser::shift_expr(const TokenType& terminator) {
+        return bin_op_expr([this](const TokenType& terminator) { return factor(terminator); }, { TokenType::LSHIFT, TokenType::RSHIFT });
     }
 
-    std::shared_ptr<Node> Parser::cmp_expr() {
-        return bin_op_expr([this]() { return shift_expr(); }, { TokenType::LESS, TokenType::LTEQ, TokenType::GREATER, TokenType::GTEQ });
+    std::shared_ptr<Node> Parser::cmp_expr(const TokenType& terminator) {
+        return bin_op_expr([this](const TokenType& terminator) { return shift_expr(terminator); }, { TokenType::LESS, TokenType::LTEQ, TokenType::GREATER, TokenType::GTEQ });
     }
 
-    std::shared_ptr<Node> Parser::eq_expr() {
-        return bin_op_expr([this]() { return cmp_expr(); }, { TokenType::EQUAL, TokenType::NOTEQ });
+    std::shared_ptr<Node> Parser::eq_expr(const TokenType& terminator) {
+        return bin_op_expr([this](const TokenType& terminator) { return cmp_expr(terminator); }, { TokenType::EQUAL, TokenType::NOTEQ });
     }
 
-    std::shared_ptr<Node> Parser::and_expr() {
-        return bin_op_expr([this]() { return eq_expr(); }, { TokenType::AMPER });
+    std::shared_ptr<Node> Parser::and_expr(const TokenType& terminator) {
+        return bin_op_expr([this](const TokenType& terminator) { return eq_expr(terminator); }, { TokenType::AMPER });
     }
 
-    std::shared_ptr<Node> Parser::xor_expr() {
-        return bin_op_expr([this]() { return and_expr(); }, { TokenType::CARET });
+    std::shared_ptr<Node> Parser::xor_expr(const TokenType& terminator) {
+        return bin_op_expr([this](const TokenType& terminator) { return and_expr(terminator); }, { TokenType::CARET });
     }
 
-    std::shared_ptr<Node> Parser::or_expr() {
-        return bin_op_expr([this]() { return xor_expr(); }, { TokenType::PIPE });
+    std::shared_ptr<Node> Parser::or_expr(const TokenType& terminator) {
+        return bin_op_expr([this](const TokenType& terminator) { return xor_expr(terminator); }, { TokenType::PIPE });
     }
 
-    std::shared_ptr<Node> Parser::logand_expr() {
-        return bin_op_expr([this]() { return or_expr(); }, { TokenType::LOGAND });
+    std::shared_ptr<Node> Parser::logand_expr(const TokenType& terminator) {
+        return bin_op_expr([this](const TokenType& terminator) { return or_expr(terminator); }, { TokenType::LOGAND });
     }
 
-    std::shared_ptr<Node> Parser::logor_expr() {
-        return bin_op_expr([this]() { return logand_expr(); }, { TokenType::LOGOR });
+    std::shared_ptr<Node> Parser::logor_expr(const TokenType& terminator) {
+        return bin_op_expr([this](const TokenType& terminator) { return logand_expr(terminator); }, { TokenType::LOGOR });
     }
 
-    std::shared_ptr<Node> Parser::assign_expr() {
-        // return bin_op_expr([this]() { return logor_expr(); }, { TokenType::ASSIGN
+    std::shared_ptr<Node> Parser::assign_expr(const TokenType& terminator) {
+        // return bin_op_expr([this](const TokenType& terminator) { return logor_expr(terminator); }, { TokenType::ASSIGN
         //     , TokenType::ASAND
         //     , TokenType::ASXOR
         //     , TokenType::ASLSHIFT
@@ -153,7 +152,7 @@ namespace anthill {
         //     ,TokenType::ASDIV
         //    ,TokenType::ASMUL });
 
-        std::shared_ptr<Node> left = logor_expr();
+        std::shared_ptr<Node> left = logor_expr(terminator);
         if (current.type == TokenType::ASSIGN
             || current.type == TokenType::ASAND
             || current.type == TokenType::ASXOR
@@ -167,23 +166,23 @@ namespace anthill {
             || current.type == TokenType::ASMUL) {
             Token op_tok = current;
             advance();
-            std::shared_ptr<Node> right = assign_expr();
+            std::shared_ptr<Node> right = assign_expr(terminator);
             left = std::make_shared<AssignNode>(AssignNode(left->line, left, op_tok, right));
         }
         return left;
     }
 
-    std::shared_ptr<Node> Parser::expr() {
-        return assign_expr();
+    std::shared_ptr<Node> Parser::expr(const TokenType& terminator) {
+        return assign_expr(terminator);
     }
 
-    std::shared_ptr<Node> Parser::expr_stmt() {
-        std::shared_ptr<Node> result = expr();
+    std::shared_ptr<Node> Parser::expr_stmt(const TokenType& terminator) {
+        std::shared_ptr<Node> result = expr(terminator);
         eat(TokenType::SEMI);
         return result;
     }
 
-    std::shared_ptr<Node> Parser::type() {
+    std::shared_ptr<Node> Parser::type(const TokenType& terminator) {
         int line = current.line;
         Token base_type = current;
         int num_pointers = 0;
@@ -195,57 +194,76 @@ namespace anthill {
         return std::make_shared<TypeNode>(TypeNode(line, base_type, num_pointers));
     }
 
-    std::shared_ptr<Node> Parser::var_def_stmt() {
-        std::shared_ptr<Node> my_type = type();
+    std::shared_ptr<Node> Parser::var_def_stmt(const TokenType& terminator) {
+        std::shared_ptr<Node> my_type = type(terminator);
         Token name = eat(TokenType::IDENT);
         eat(TokenType::ASSIGN);
-        std::shared_ptr<Node> val = expr_stmt();
+        std::shared_ptr<Node> val = expr_stmt(terminator);
         return std::make_shared<VarDefNode>(VarDefNode(my_type->line, my_type, name, val));
     }
 
-    std::shared_ptr<Node> Parser::block_stmt() {
+    std::shared_ptr<Node> Parser::block_stmt(const TokenType& terminator) {
         int line = current.line;
         eat(TokenType::LBRACE);
-        std::shared_ptr<Node> my_stmt_list = stmt_list();
+        std::shared_ptr<Node> my_stmt_list = stmt_list(TokenType::RBRACE);
         eat(TokenType::RBRACE);
         return std::make_shared<BlockNode>(BlockNode(line, my_stmt_list));
     }
 
-
     
-    std::shared_ptr<Node> Parser::if_stmt() {
+    std::shared_ptr<Node> Parser::if_stmt(const TokenType& terminator) {
         int line = current.line;
         advance();
         eat(TokenType::LPAREN);
-        std::shared_ptr<Node> cond = expr();
+        std::shared_ptr<Node> cond = expr(terminator);
         eat(TokenType::RPAREN);
-        std::shared_ptr<Node> body = block_stmt();
+        std::shared_ptr<Node> body = block_stmt(terminator);
         std::shared_ptr<Node> else_body;
         if(current.type == TokenType::ELSE) {
             advance();
-            else_body = block_stmt();
+            else_body = block_stmt(terminator);
         }
         return std::make_shared<IfNode>(IfNode(line, cond, body, else_body));
     }
 
 
         
-    std::shared_ptr<Node> Parser::while_stmt() {
+    std::shared_ptr<Node> Parser::while_stmt(const TokenType& terminator) {
         int line = current.line;
         advance();
         eat(TokenType::LPAREN);
-        std::shared_ptr<Node> cond = expr();
+        std::shared_ptr<Node> cond = expr(terminator);
         eat(TokenType::RPAREN);
-        std::shared_ptr<Node> body = block_stmt();
+        std::shared_ptr<Node> body = block_stmt(terminator);
         return std::make_shared<WhileNode>(WhileNode(line, cond, body));
     }
 
-    std::shared_ptr<Node> Parser::enum_stmt() {
+    std::shared_ptr<Node> Parser::for_stmt(const TokenType& terminator) {
         int line = current.line;
         advance();
+        eat(TokenType::LPAREN);
+        std::shared_ptr<Node> init = stmt(terminator);
+        std::shared_ptr<Node> cond = expr_stmt(terminator);
+        std::shared_ptr<Node> update = expr(terminator);
+        eat(TokenType::RPAREN);
+        std::shared_ptr<Node> body = block_stmt(terminator);
+        return std::make_shared<ForNode>(ForNode(line, init, cond, update, body));
+    }
+
+    std::shared_ptr<Node> Parser::return_stmt(const TokenType& terminator) {
+        int line = current.line;
+        advance();
+        std::shared_ptr<Node> body = expr_stmt(terminator);
+        return std::make_shared<ReturnNode>(ReturnNode(line, body));
+    }
+
+    std::shared_ptr<Node> Parser::enum_stmt(const TokenType& terminator) {
+        int line = current.line;
+        advance();
+        Token name = eat(TokenType::IDENT);
         eat(TokenType::LBRACE);
         std::vector<Token> items;
-        while(current.type != TokenType::XEOF) {
+        while(current.type != terminator) {
             items.push_back(eat(TokenType::IDENT));
             if(current.type == TokenType::RBRACE) {
                 advance();
@@ -255,29 +273,33 @@ namespace anthill {
                 eat(TokenType::COMMA);
             }
         }
-        return std::make_shared<EnumNode>(EnumNode(line, items));
+        return std::make_shared<EnumNode>(EnumNode(line, name, items));
     }
     
-    std::shared_ptr<Node> Parser::stmt() {
+    std::shared_ptr<Node> Parser::stmt(const TokenType& terminator) {
         if(current.type == TokenType::INT || current.type == TokenType::CHAR) {
-            return var_def_stmt();
+            return var_def_stmt(terminator);
         } else if(current.type == TokenType::LBRACE) {
-            return block_stmt();
+            return block_stmt(terminator);
         } else if(current.type == TokenType::IF) {
-            return if_stmt();
+            return if_stmt(terminator);
         }  else if(current.type == TokenType::WHILE) {
-            return while_stmt();
+            return while_stmt(terminator);
+        } else if(current.type == TokenType::FOR) {
+            return for_stmt(terminator);
         } else if(current.type == TokenType::ENUM) {
-            return enum_stmt();
+            return enum_stmt(terminator);
+        } else if(current.type == TokenType::RETURN) {
+            return return_stmt(terminator);
         } else {
-            return expr_stmt();
+            return expr_stmt(terminator);
         }
     }
 
-    std::shared_ptr<Node> Parser::stmt_list() {
+    std::shared_ptr<Node> Parser::stmt_list(const TokenType& terminator) {
         int line = current.line;
         std::vector<std::shared_ptr<Node> > stmts;
-        while (current.type != TokenType::XEOF) {
+        while (current.type != terminator) {
             stmts.push_back(stmt());
         }
         return std::make_shared<StmtListNode>(line, stmts);

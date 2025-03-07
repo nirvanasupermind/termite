@@ -21,6 +21,8 @@ namespace anthill {
         BLOCK,
         IF,
         WHILE,
+        FOR,
+        RETURN,
         ENUM,
         STMT_LIST
     };
@@ -155,10 +157,31 @@ namespace anthill {
     };
 
 
+    class ForNode : public Node {
+        public:
+        std::shared_ptr<Node> init;
+        std::shared_ptr<Node> cond;
+        std::shared_ptr<Node> update;
+        std::shared_ptr<Node> body;
+            ForNode(int line, const std::shared_ptr<Node>& init, const std::shared_ptr<Node>& cond, const std::shared_ptr<Node>& update, const std::shared_ptr<Node>& body);
+            std::string to_str() const;
+            NodeType get_type() const;
+        };
+    
+
+    class ReturnNode : public Node {
+        public:
+        std::shared_ptr<Node> body;
+            ReturnNode(int line, const std::shared_ptr<Node>& body);
+            std::string to_str() const;
+            NodeType get_type() const;
+        };
+
     class EnumNode : public Node {
     public:
+        Token name;
         std::vector<Token> items;
-        EnumNode(int line, const std::vector<Token>& items);
+        EnumNode(int line, const Token& name, const std::vector<Token>& items);
         std::string to_str() const;
         NodeType get_type() const;
     };
