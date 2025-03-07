@@ -39,6 +39,10 @@ namespace anthill {
         std::shared_ptr<Node> expr_stmt();
         std::shared_ptr<Node> type();
         std::shared_ptr<Node> var_def_stmt();
+        std::shared_ptr<Node> block_stmt();
+        std::shared_ptr<Node> if_stmt();
+        std::shared_ptr<Node> while_stmt();
+        std::shared_ptr<Node> enum_stmt();
         std::shared_ptr<Node> stmt();
         std::shared_ptr<Node> stmt_list();
 

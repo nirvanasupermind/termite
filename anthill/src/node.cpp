@@ -142,6 +142,77 @@ namespace anthill {
         return NodeType::VAR_DEF;
     }
 
+    BlockNode::BlockNode(int line, const std::shared_ptr<Node>& stmt_list)
+        : stmt_list(stmt_list) {
+        this->line = line;
+    }
+
+    std::string BlockNode::to_str() const {
+        return stmt_list->to_str();
+    }
+
+    NodeType BlockNode::get_type() const {
+        return NodeType::BLOCK;
+    }
+
+
+    IfNode::IfNode(int line, const std::shared_ptr<Node>& cond, const std::shared_ptr<Node>& body, const std::shared_ptr<Node>& else_body)
+        : cond(cond), body(body), else_body(else_body) {
+        this->line = line;
+    }
+
+    std::string IfNode::to_str() const {
+        if (else_body) {
+            return "(" + cond->to_str() + "," + body->to_str() + "," + else_body->to_str() + ")";
+        }
+        else {
+            return "(" + cond->to_str() + "," + body->to_str() + ")";
+        }
+    }
+
+    NodeType IfNode::get_type() const {
+        return NodeType::IF;
+    }
+
+
+
+    WhileNode::WhileNode(int line, const std::shared_ptr<Node>& cond, const std::shared_ptr<Node>& body)
+        : cond(cond), body(body) {
+        this->line = line;
+    }
+
+    std::string WhileNode::to_str() const {
+        return "(" + cond->to_str() + "," + body->to_str() + ")";
+    }
+
+    NodeType WhileNode::get_type() const {
+        return NodeType::WHILE;
+    }
+
+    EnumNode::EnumNode(int line, const std::vector<Token>& items)
+        : items(items) {
+        this->line = line;
+    }
+
+    std::string EnumNode::to_str() const {
+        std::string result = "(";
+        for (int i = 0; i < items.size(); i++) {
+            result = result + items.at(i).to_str();
+            if (i == items.size() - 1) {
+                result = result + ")";
+            }
+            else {
+                result = result + ",";
+            }
+        }
+        return result;
+    }
+
+    NodeType EnumNode::get_type() const {
+        return NodeType::ENUM;
+    }
+
+
     StmtListNode::StmtListNode(int line, const std::vector<std::shared_ptr<Node> >& stmts)
         : stmts(stmts) {
         this->line = line;

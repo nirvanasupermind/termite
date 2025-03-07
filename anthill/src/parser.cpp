@@ -192,7 +192,7 @@ namespace anthill {
             num_pointers++;
             advance();
         }
-        return std::make_shared<TypeNode>(line, base_type, num_pointers);
+        return std::make_shared<TypeNode>(TypeNode(line, base_type, num_pointers));
     }
 
     std::shared_ptr<Node> Parser::var_def_stmt() {
@@ -200,12 +200,75 @@ namespace anthill {
         Token name = eat(TokenType::IDENT);
         eat(TokenType::ASSIGN);
         std::shared_ptr<Node> val = expr_stmt();
-        return std::make_shared<VarDefNode>(my_type->line, my_type, name, val);
+        return std::make_shared<VarDefNode>(VarDefNode(my_type->line, my_type, name, val));
     }
 
+    std::shared_ptr<Node> Parser::block_stmt() {
+        int line = current.line;
+        eat(TokenType::LBRACE);
+        std::shared_ptr<Node> my_stmt_list = stmt_list();
+        eat(TokenType::RBRACE);
+        return std::make_shared<BlockNode>(BlockNode(line, my_stmt_list));
+    }
+
+
+    
+    std::shared_ptr<Node> Parser::if_stmt() {
+        int line = current.line;
+        advance();
+        eat(TokenType::LPAREN);
+        std::shared_ptr<Node> cond = expr();
+        eat(TokenType::RPAREN);
+        std::shared_ptr<Node> body = block_stmt();
+        std::shared_ptr<Node> else_body;
+        if(current.type == TokenType::ELSE) {
+            advance();
+            else_body = block_stmt();
+        }
+        return std::make_shared<IfNode>(IfNode(line, cond, body, else_body));
+    }
+
+
+        
+    std::shared_ptr<Node> Parser::while_stmt() {
+        int line = current.line;
+        advance();
+        eat(TokenType::LPAREN);
+        std::shared_ptr<Node> cond = expr();
+        eat(TokenType::RPAREN);
+        std::shared_ptr<Node> body = block_stmt();
+        return std::make_shared<WhileNode>(WhileNode(line, cond, body));
+    }
+
+    std::shared_ptr<Node> Parser::enum_stmt() {
+        int line = current.line;
+        advance();
+        eat(TokenType::LBRACE);
+        std::vector<Token> items;
+        while(current.type != TokenType::XEOF) {
+            items.push_back(eat(TokenType::IDENT));
+            if(current.type == TokenType::RBRACE) {
+                advance();
+                eat(TokenType::SEMI);
+                break;
+            } else {
+                eat(TokenType::COMMA);
+            }
+        }
+        return std::make_shared<EnumNode>(EnumNode(line, items));
+    }
+    
     std::shared_ptr<Node> Parser::stmt() {
         if(current.type == TokenType::INT || current.type == TokenType::CHAR) {
             return var_def_stmt();
+        } else if(current.type == TokenType::LBRACE) {
+            return block_stmt();
+        } else if(current.type == TokenType::IF) {
+            return if_stmt();
+        }  else if(current.type == TokenType::WHILE) {
+            return while_stmt();
+        } else if(current.type == TokenType::ENUM) {
+            return enum_stmt();
         } else {
             return expr_stmt();
         }

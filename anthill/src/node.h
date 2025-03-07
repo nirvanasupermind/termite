@@ -18,6 +18,10 @@ namespace anthill {
         ASSIGN,
         TYPE,
         VAR_DEF,
+        BLOCK,
+        IF,
+        WHILE,
+        ENUM,
         STMT_LIST
     };
     class Node {
@@ -102,13 +106,13 @@ namespace anthill {
 
 
     class TypeNode : public Node {
-        public:
-            Token base_type;
-            int num_pointers;
-            TypeNode(int line, const Token& base_type, int num_pointers);
-            std::string to_str() const;
-            NodeType get_type() const;
-        };
+    public:
+        Token base_type;
+        int num_pointers;
+        TypeNode(int line, const Token& base_type, int num_pointers);
+        std::string to_str() const;
+        NodeType get_type() const;
+    };
 
     class VarDefNode : public Node {
     public:
@@ -116,6 +120,45 @@ namespace anthill {
         Token name;
         std::shared_ptr<Node> val;
         VarDefNode(int line, const std::shared_ptr<Node>& type, const Token& name, const std::shared_ptr<Node>& val);
+        std::string to_str() const;
+        NodeType get_type() const;
+    };
+
+
+    class BlockNode : public Node {
+    public:
+        std::shared_ptr<Node> stmt_list;
+        BlockNode(int line, const std::shared_ptr<Node>& stmt_list);
+        std::string to_str() const;
+        NodeType get_type() const;
+    };
+
+
+    class IfNode : public Node {
+    public:
+        std::shared_ptr<Node> cond;
+        std::shared_ptr<Node> body;
+        std::shared_ptr<Node> else_body;
+        IfNode(int line, const std::shared_ptr<Node>& cond, const std::shared_ptr<Node>& body, const std::shared_ptr<Node>& else_body);
+        std::string to_str() const;
+        NodeType get_type() const;
+    };
+
+
+    class WhileNode : public Node {
+    public:
+        std::shared_ptr<Node> cond;
+        std::shared_ptr<Node> body;
+        WhileNode(int line, const std::shared_ptr<Node>& cond, const std::shared_ptr<Node>& body);
+        std::string to_str() const;
+        NodeType get_type() const;
+    };
+
+
+    class EnumNode : public Node {
+    public:
+        std::vector<Token> items;
+        EnumNode(int line, const std::vector<Token>& items);
         std::string to_str() const;
         NodeType get_type() const;
     };
