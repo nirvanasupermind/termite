@@ -62,6 +62,36 @@ namespace anthill {
         return NodeType::IDENT;
     }
 
+
+    CallNode::CallNode(int line, const std::shared_ptr<Node>& callee, const std::vector<std::shared_ptr<Node> >& args)
+        : callee(callee), args(args) {
+        this->line = line;
+    }
+
+    std::string CallNode::to_str() const {
+        std::string result = "(";
+        result = result + callee->to_str();
+        if (args.size()) {
+            result = result + ",";
+        }
+
+        for (int i = 0; i < args.size(); i++) {
+            result = result + args.at(i)->to_str();
+            if (i == args.size() - 1) {
+                result = result + ")";
+            }
+            else {
+                result = result + ",";
+            }
+        }
+        return result;
+    }
+
+    NodeType CallNode::get_type() const {
+        return NodeType::CALL;
+    }
+
+
     PostfixNode::PostfixNode(int line, const std::shared_ptr<Node>& node, const Token& op_tok)
         : node(node), op_tok(op_tok) {
         this->line = line;
@@ -202,6 +232,28 @@ std::string ForNode::to_str() const {
 
 NodeType ForNode::get_type() const {
     return NodeType::FOR;
+}
+
+FuncDefNode::FuncDefNode(int line, const std::shared_ptr<Node>& return_type, const Token& name, const std::vector<std::shared_ptr<Node> >& arg_types, const std::vector<Token>& arg_names, const std::shared_ptr<Node>& body)
+: return_type(return_type), name(name), arg_types(arg_types), arg_names(arg_names), body(body) {
+this->line = line;
+}
+
+std::string FuncDefNode::to_str() const {
+    std::string result = "(" + return_type->to_str() + "," + name.to_str();
+    for(int i = 0; i < arg_types.size(); i++) {
+        result = result + "," + arg_types.at(i)->to_str();
+    }
+    for(int i = 0; i < arg_names.size(); i++) {
+        result = result + "," + arg_names.at(i).to_str();
+    }
+
+    result = result + "," + body->to_str();
+    return result;
+}
+
+NodeType FuncDefNode::get_type() const {
+return NodeType::FUNC_DEF;
 }
 
 ReturnNode::ReturnNode(int line, const std::shared_ptr<Node>& body)

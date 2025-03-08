@@ -12,12 +12,14 @@ namespace anthill {
         INT,
         STR,
         IDENT,
+        CALL,
         POSTFIX,
         PREFIX,
         BIN_OP,
         ASSIGN,
         TYPE,
         VAR_DEF,
+        FUNC_DEF,
         BLOCK,
         IF,
         WHILE,
@@ -68,6 +70,18 @@ namespace anthill {
         NodeType get_type() const;
     };
 
+
+    class CallNode : public Node {
+    public:
+        std::shared_ptr<Node> callee;
+        std::vector<std::shared_ptr<Node> > args;
+        CallNode(int line, const std::shared_ptr<Node>& callee, const std::vector<std::shared_ptr<Node> >& args);
+        std::string to_str() const;
+        NodeType get_type() const;
+    };
+
+
+
     class PostfixNode : public Node {
     public:
         std::shared_ptr<Node> node;
@@ -106,7 +120,6 @@ namespace anthill {
         NodeType get_type() const;
     };
 
-
     class TypeNode : public Node {
     public:
         Token base_type;
@@ -115,6 +128,7 @@ namespace anthill {
         std::string to_str() const;
         NodeType get_type() const;
     };
+
 
     class VarDefNode : public Node {
     public:
@@ -158,24 +172,36 @@ namespace anthill {
 
 
     class ForNode : public Node {
-        public:
+    public:
         std::shared_ptr<Node> init;
         std::shared_ptr<Node> cond;
         std::shared_ptr<Node> update;
         std::shared_ptr<Node> body;
-            ForNode(int line, const std::shared_ptr<Node>& init, const std::shared_ptr<Node>& cond, const std::shared_ptr<Node>& update, const std::shared_ptr<Node>& body);
-            std::string to_str() const;
-            NodeType get_type() const;
-        };
-    
+        ForNode(int line, const std::shared_ptr<Node>& init, const std::shared_ptr<Node>& cond, const std::shared_ptr<Node>& update, const std::shared_ptr<Node>& body);
+        std::string to_str() const;
+        NodeType get_type() const;
+    };
+
+    class FuncDefNode : public Node {
+    public:
+    std::shared_ptr<Node> return_type;
+    Token name;
+        std::vector<std::shared_ptr<Node> > arg_types;
+        std::vector<Token> arg_names;
+        std::shared_ptr<Node> body;
+        Token op_tok;
+        FuncDefNode(int line, const std::shared_ptr<Node>& return_type, const Token& name, const std::vector<std::shared_ptr<Node> >& arg_types, const std::vector<Token>& arg_names, const std::shared_ptr<Node>& body);
+        std::string to_str() const;
+        NodeType get_type() const;
+    };
 
     class ReturnNode : public Node {
-        public:
+    public:
         std::shared_ptr<Node> body;
-            ReturnNode(int line, const std::shared_ptr<Node>& body);
-            std::string to_str() const;
-            NodeType get_type() const;
-        };
+        ReturnNode(int line, const std::shared_ptr<Node>& body);
+        std::string to_str() const;
+        NodeType get_type() const;
+    };
 
     class EnumNode : public Node {
     public:

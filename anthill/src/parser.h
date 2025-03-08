@@ -20,9 +20,10 @@ namespace anthill {
         void syntax_error();
         Token eat(const TokenType& type);
         std::shared_ptr<Node> parse();      
-        std::shared_ptr<Node> basic_expr(const TokenType& terminator = TokenType::XEOF);;      
-        std::shared_ptr<Node> postfix_expr(const TokenType& terminator = TokenType::XEOF);;
-        std::shared_ptr<Node> prefix_expr(const TokenType& terminator = TokenType::XEOF);;      
+        std::shared_ptr<Node> basic_expr(const TokenType& terminator = TokenType::XEOF);      
+        std::shared_ptr<Node> call_expr(const TokenType& terminator = TokenType::XEOF);
+        std::shared_ptr<Node> postfix_expr(const TokenType& terminator = TokenType::XEOF);
+        std::shared_ptr<Node> prefix_expr(const TokenType& terminator = TokenType::XEOF);      
         std::shared_ptr<Node> bin_op_expr(const std::function<std::shared_ptr<Node>(const TokenType&) >& func, const std::vector<TokenType>& types, const TokenType& terminator = TokenType::XEOF);
         std::shared_ptr<Node> term(const TokenType& terminator = TokenType::XEOF);
         std::shared_ptr<Node> factor(const TokenType& terminator = TokenType::XEOF);
@@ -38,7 +39,7 @@ namespace anthill {
         std::shared_ptr<Node> expr(const TokenType& terminator = TokenType::XEOF);
         std::shared_ptr<Node> expr_stmt(const TokenType& terminator = TokenType::XEOF);
         std::shared_ptr<Node> type(const TokenType& terminator = TokenType::XEOF);
-        std::shared_ptr<Node> var_def_stmt(const TokenType& terminator = TokenType::XEOF);
+        std::shared_ptr<Node> var_or_func_def_stmt(const TokenType& terminator = TokenType::XEOF);
         std::shared_ptr<Node> block_stmt(const TokenType& terminator = TokenType::XEOF);
         std::shared_ptr<Node> if_stmt(const TokenType& terminator = TokenType::XEOF);
         std::shared_ptr<Node> while_stmt(const TokenType& terminator = TokenType::XEOF);

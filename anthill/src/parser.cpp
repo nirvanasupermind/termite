@@ -68,13 +68,36 @@ namespace anthill {
         }
     }
 
+    std::shared_ptr<Node> Parser::call_expr(const TokenType& terminator) {
+        std::shared_ptr<Node> result = basic_expr(terminator);
+        while (current.type == TokenType::LPAREN && current.type != terminator) {
+            advance();
+            std::vector<std::shared_ptr<Node> > args;
+            if(current.type == TokenType::RPAREN) {
+                advance();
+            } else {
+            while (current.type != TokenType::RPAREN) {
+                args.push_back(expr());
+            if(current.type == TokenType::RPAREN) {
+                advance();
+                break;
+            } else {
+                eat(TokenType::COMMA);
+            }   
+            }
+            }
+            result = std::make_shared<CallNode>(CallNode(result->line, result, args));
+        }
+        return result;
+    }
+
     std::shared_ptr<Node> Parser::postfix_expr(const TokenType& terminator) {
-        std::shared_ptr<Node> my_expr = basic_expr(terminator);
+        std::shared_ptr<Node> result = call_expr(terminator);
         while ((current.type == TokenType::INCR || current.type == TokenType::DECR) && current.type != terminator) {
-            my_expr = std::make_shared<PostfixNode>(PostfixNode(my_expr->line, my_expr, current));
+            result = std::make_shared<PostfixNode>(PostfixNode(result->line, result, current));
             advance();
         }
-        return my_expr;
+        return result;
     }
 
     std::shared_ptr<Node> Parser::prefix_expr(const TokenType& terminator) {
@@ -194,12 +217,36 @@ namespace anthill {
         return std::make_shared<TypeNode>(TypeNode(line, base_type, num_pointers));
     }
 
-    std::shared_ptr<Node> Parser::var_def_stmt(const TokenType& terminator) {
+    std::shared_ptr<Node> Parser::var_or_func_def_stmt(const TokenType& terminator) {
         std::shared_ptr<Node> my_type = type(terminator);
         Token name = eat(TokenType::IDENT);
+        if(current.type == TokenType::LPAREN) {
+            std::vector<std::shared_ptr<Node> > arg_types;
+            std::vector<Token> arg_names;
+            advance();
+            if(current.type == TokenType::RPAREN) {
+                advance();
+            } else {
+            while(current.type == TokenType::INT || current.type == TokenType::CHAR || current.type == TokenType::VOID) {
+                arg_types.push_back(type());
+                arg_names.push_back(eat(TokenType::IDENT));
+
+                if(current.type == TokenType::RPAREN) {
+                    advance();
+                    break;
+                } else {
+                eat(TokenType::COMMA);
+                }
+               
+            }
+            }
+            std::shared_ptr<Node> body = block_stmt();
+            return std::make_shared<FuncDefNode>(FuncDefNode(my_type->line, my_type, name, arg_types, arg_names, body));
+        } else {
         eat(TokenType::ASSIGN);
         std::shared_ptr<Node> val = expr_stmt(terminator);
         return std::make_shared<VarDefNode>(VarDefNode(my_type->line, my_type, name, val));
+        }
     }
 
     std::shared_ptr<Node> Parser::block_stmt(const TokenType& terminator) {
@@ -277,8 +324,8 @@ namespace anthill {
     }
     
     std::shared_ptr<Node> Parser::stmt(const TokenType& terminator) {
-        if(current.type == TokenType::INT || current.type == TokenType::CHAR) {
-            return var_def_stmt(terminator);
+        if(current.type == TokenType::INT || current.type == TokenType::CHAR || current.type == TokenType::VOID) {
+            return var_or_func_def_stmt(terminator);
         } else if(current.type == TokenType::LBRACE) {
             return block_stmt(terminator);
         } else if(current.type == TokenType::IF) {
