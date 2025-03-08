@@ -1,0 +1,48 @@
+#include <string>
+#include <memory>
+#include <map>
+
+#include "token.h"
+#include "type.h"
+#include "symbol_table.h"
+
+namespace anthill {
+    SymbolTable::SymbolTable(const std::shared_ptr<SymbolTable>& parent)
+        : parent(parent), record({}) {
+
+    }
+
+    bool SymbolTable::has(const std::string& name) {
+        if(record.count(name)) {
+            return true;
+        } else if(parent) {
+            return parent->has(name);
+        } else {
+            return false;
+        }
+    }
+
+    Type SymbolTable::get(const std::string& name) {
+        if(record.count(name)) {
+            return record.at(name);
+        } else if(parent) {
+            return parent->get(name);
+        } else {
+            throw std::string("cannot find variable '" + name + "'");
+        }
+    }
+
+    void SymbolTable::def(const std::string& name, const Type& type) {
+        record[name] = type;
+    }   
+
+    void SymbolTable::set(const std::string& name, const Type& type) {
+            if(parent->has(name)) {
+                parent->set(name, type);
+            } else {
+        record[name] = type;
+            }
+    }    
+
+    
+}

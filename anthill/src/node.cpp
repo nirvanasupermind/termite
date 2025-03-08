@@ -222,52 +222,79 @@ namespace anthill {
 
 
     ForNode::ForNode(int line, const std::shared_ptr<Node>& init, const std::shared_ptr<Node>& cond, const std::shared_ptr<Node>& update, const std::shared_ptr<Node>& body)
-    : init(init), cond(cond), update(update), body(body) {
-    this->line = line;
-}
-
-std::string ForNode::to_str() const {
-    return "(" + init->to_str() + "," + cond->to_str() + "," + update->to_str() + "," + body->to_str() + ")";
-}
-
-NodeType ForNode::get_type() const {
-    return NodeType::FOR;
-}
-
-FuncDefNode::FuncDefNode(int line, const std::shared_ptr<Node>& return_type, const Token& name, const std::vector<std::shared_ptr<Node> >& arg_types, const std::vector<Token>& arg_names, const std::shared_ptr<Node>& body)
-: return_type(return_type), name(name), arg_types(arg_types), arg_names(arg_names), body(body) {
-this->line = line;
-}
-
-std::string FuncDefNode::to_str() const {
-    std::string result = "(" + return_type->to_str() + "," + name.to_str();
-    for(int i = 0; i < arg_types.size(); i++) {
-        result = result + "," + arg_types.at(i)->to_str();
-    }
-    for(int i = 0; i < arg_names.size(); i++) {
-        result = result + "," + arg_names.at(i).to_str();
+        : init(init), cond(cond), update(update), body(body) {
+        this->line = line;
     }
 
-    result = result + "," + body->to_str();
-    return result;
-}
+    std::string ForNode::to_str() const {
+        return "(" + init->to_str() + "," + cond->to_str() + "," + update->to_str() + "," + body->to_str() + ")";
+    }
 
-NodeType FuncDefNode::get_type() const {
-return NodeType::FUNC_DEF;
-}
+    NodeType ForNode::get_type() const {
+        return NodeType::FOR;
+    }
 
-ReturnNode::ReturnNode(int line, const std::shared_ptr<Node>& body)
-: body(body) {
-this->line = line;
-}
 
-std::string ReturnNode::to_str() const {
-return "(" + body->to_str() + ")";
-}
 
-NodeType ReturnNode::get_type() const {
-return NodeType::RETURN;
-}
+    ContinueNode::ContinueNode(int line) {
+        this->line = line;
+    }
+
+    std::string ContinueNode::to_str() const {
+        return "continue";
+    }
+
+    NodeType ContinueNode::get_type() const {
+        return NodeType::CONTINUE;
+    }
+
+
+    BreakNode::BreakNode(int line) {
+        this->line = line;
+    }
+
+    std::string BreakNode::to_str() const {
+        return "break";
+    }
+
+    NodeType BreakNode::get_type() const {
+        return NodeType::BREAK;
+    }
+
+    FuncDefNode::FuncDefNode(int line, const std::shared_ptr<Node>& return_type, const Token& name, const std::vector<std::shared_ptr<Node> >& arg_types, const std::vector<Token>& arg_names, const std::shared_ptr<Node>& body)
+        : return_type(return_type), name(name), arg_types(arg_types), arg_names(arg_names), body(body) {
+        this->line = line;
+    }
+
+    std::string FuncDefNode::to_str() const {
+        std::string result = "(" + return_type->to_str() + "," + name.to_str();
+        for (int i = 0; i < arg_types.size(); i++) {
+            result = result + "," + arg_types.at(i)->to_str();
+        }
+        for (int i = 0; i < arg_names.size(); i++) {
+            result = result + "," + arg_names.at(i).to_str();
+        }
+
+        result = result + "," + body->to_str();
+        return result;
+    }
+
+    NodeType FuncDefNode::get_type() const {
+        return NodeType::FUNC_DEF;
+    }
+
+    ReturnNode::ReturnNode(int line, const std::shared_ptr<Node>& body)
+        : body(body) {
+        this->line = line;
+    }
+
+    std::string ReturnNode::to_str() const {
+        return "(" + body->to_str() + ")";
+    }
+
+    NodeType ReturnNode::get_type() const {
+        return NodeType::RETURN;
+    }
 
     EnumNode::EnumNode(int line, const Token& name, const std::vector<Token>& items)
         : name(name), items(items) {

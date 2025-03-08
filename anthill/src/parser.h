@@ -7,6 +7,7 @@
 #include <functional>
 #include "token.h"
 #include "node.h"
+#include "symbol_table.h"
 
 namespace anthill {
     class Parser {
@@ -15,6 +16,7 @@ namespace anthill {
     std::vector<Token> tokens{};
     int pos;
     Token current;
+    SymbolTable global_symbol_table;
         Parser(const std::string& file, const std::vector<Token>& tokens);
         void advance();
         void syntax_error();
@@ -44,6 +46,8 @@ namespace anthill {
         std::shared_ptr<Node> if_stmt(const TokenType& terminator = TokenType::XEOF);
         std::shared_ptr<Node> while_stmt(const TokenType& terminator = TokenType::XEOF);
         std::shared_ptr<Node> for_stmt(const TokenType& terminator = TokenType::XEOF);
+        std::shared_ptr<Node> continue_stmt(const TokenType& terminator = TokenType::XEOF);
+        std::shared_ptr<Node> break_stmt(const TokenType& terminator = TokenType::XEOF);
         std::shared_ptr<Node> return_stmt(const TokenType& terminator = TokenType::XEOF);
         std::shared_ptr<Node> enum_stmt(const TokenType& terminator = TokenType::XEOF);
         std::shared_ptr<Node> stmt(const TokenType& terminator = TokenType::XEOF);

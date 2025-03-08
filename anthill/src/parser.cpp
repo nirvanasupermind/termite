@@ -297,6 +297,21 @@ namespace anthill {
         return std::make_shared<ForNode>(ForNode(line, init, cond, update, body));
     }
 
+    std::shared_ptr<Node> Parser::continue_stmt(const TokenType& terminator) {
+        int line = current.line;
+        advance();
+        eat(TokenType::SEMI);
+        return std::make_shared<ContinueNode>(ContinueNode(line));
+    }
+    
+
+    std::shared_ptr<Node> Parser::break_stmt(const TokenType& terminator) {
+        int line = current.line;
+        advance();
+        eat(TokenType::SEMI);
+        return std::make_shared<BreakNode>(BreakNode(line));
+    }
+    
     std::shared_ptr<Node> Parser::return_stmt(const TokenType& terminator) {
         int line = current.line;
         advance();
@@ -334,10 +349,14 @@ namespace anthill {
             return while_stmt(terminator);
         } else if(current.type == TokenType::FOR) {
             return for_stmt(terminator);
-        } else if(current.type == TokenType::ENUM) {
-            return enum_stmt(terminator);
+        } else if(current.type == TokenType::CONTINUE) {
+            return continue_stmt(terminator);
+        } else if(current.type == TokenType::BREAK) {
+            return break_stmt(terminator);
         } else if(current.type == TokenType::RETURN) {
             return return_stmt(terminator);
+        } else if(current.type == TokenType::ENUM) {
+            return enum_stmt(terminator);
         } else {
             return expr_stmt(terminator);
         }

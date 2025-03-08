@@ -24,6 +24,8 @@ namespace anthill {
         IF,
         WHILE,
         FOR,
+        CONTINUE,
+        BREAK,
         RETURN,
         ENUM,
         STMT_LIST
@@ -130,6 +132,7 @@ namespace anthill {
     };
 
 
+
     class VarDefNode : public Node {
     public:
         std::shared_ptr<Node> type;
@@ -170,7 +173,6 @@ namespace anthill {
         NodeType get_type() const;
     };
 
-
     class ForNode : public Node {
     public:
         std::shared_ptr<Node> init;
@@ -182,10 +184,25 @@ namespace anthill {
         NodeType get_type() const;
     };
 
+
+    class ContinueNode : public Node {
+    public:
+        ContinueNode(int line);
+        std::string to_str() const;
+        NodeType get_type() const;
+    };
+
+    class BreakNode : public Node {
+    public:
+        BreakNode(int line);
+        std::string to_str() const;
+        NodeType get_type() const;
+    };
+
     class FuncDefNode : public Node {
     public:
-    std::shared_ptr<Node> return_type;
-    Token name;
+        std::shared_ptr<Node> return_type;
+        Token name;
         std::vector<std::shared_ptr<Node> > arg_types;
         std::vector<Token> arg_names;
         std::shared_ptr<Node> body;
