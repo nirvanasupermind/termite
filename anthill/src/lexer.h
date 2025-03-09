@@ -7,8 +7,8 @@
 namespace anthill {
     class Lexer {
     public:
-        std::string file{};
-        std::string text{};
+        std::string file;
+        std::string text;
         int line;
         int pos;
         char current;

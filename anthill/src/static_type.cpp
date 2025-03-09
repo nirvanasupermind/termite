@@ -2,14 +2,14 @@
 #include <memory>
 #include <map>
 
-#include "type.h"
+#include "static_type.h"
 namespace anthill {
-    Type::Type(const BasicType& basic_type, int pointer_levels)
+    StaticType::StaticType(const BasicType& basic_type, int pointer_levels)
         : basic_type(basic_type), pointer_levels(pointer_levels) {
         
     }
 
-    std::string Type::to_str() const {
+    std::string StaticType::to_str() const {
         std::string result = "void";
         if(basic_type == BasicType::CHAR) {
             result = "char";
