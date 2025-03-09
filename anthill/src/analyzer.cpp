@@ -26,7 +26,7 @@ namespace anthill {
      }
      
      StaticType Analyzer::visit_call_node(const std::shared_ptr<CallNode>& node, const std::shared_ptr<SymbolTable> symbol_table) {
-        return visit(node->callee);
+        return StaticType();
      }
 
 }
