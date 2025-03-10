@@ -45,15 +45,7 @@ namespace anthill {
     void SymbolTable::def(const std::string& name, const std::shared_ptr<StaticType>& type) {
         if (parent->has(name)) {
             throw std::string("variable '" + name + "' already exists");
-        }
-        variables[name] = type;
-    }
-
-    void SymbolTable::set(const std::string& name, const std::shared_ptr<StaticType>& type) {
-        if (parent->has(name)) {
-            parent->set(name, type);
-        }
-        else {
+        } else {
             variables[name] = type;
         }
     }
