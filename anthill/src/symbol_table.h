@@ -19,8 +19,6 @@ namespace anthill {
         std::shared_ptr<StaticType> get(const std::string& name);
         void def(const std::string& name, const std::shared_ptr<StaticType>& type);
         void set(const std::string& name, const std::shared_ptr<StaticType>& type);
-
-
     };
 
 }
