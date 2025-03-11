@@ -33,6 +33,7 @@ namespace anthill {
         std::shared_ptr<StaticType> visit_return_node(const std::shared_ptr<ReturnNode>& node, const std::shared_ptr<SymbolTable>& symbol_table);
         std::shared_ptr<StaticType> visit_enum_node(const std::shared_ptr<EnumNode>& node, const std::shared_ptr<SymbolTable>& symbol_table);
         std::shared_ptr<StaticType> visit_stmt_list_node(const std::shared_ptr<StmtListNode>& node, const std::shared_ptr<SymbolTable>& symbol_table);
+        std::shared_ptr<StaticType> visit_if_node(const std::shared_ptr<StmtListNode>& node, const std::shared_ptr<SymbolTable>& symbol_table);
 
     };
 }

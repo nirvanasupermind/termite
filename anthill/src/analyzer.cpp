@@ -122,5 +122,10 @@ namespace anthill {
       return std::make_shared<NonFuncType>(NonFuncType(BasicType::VOID));
    }
 
+   std::shared_ptr<StaticType> Analyzer::visit_if_node(const std::shared_ptr<IfNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
+      std::shared_ptr<SymbolTable> block_symbol_table = std::make_shared<SymbolTable>(SymbolTable(symbol_table));
+      visit(node->stmt_list, block_symbol_table);
+      return std::make_shared<NonFuncType>(NonFuncType(BasicType::VOID));
+   }
 
 }
