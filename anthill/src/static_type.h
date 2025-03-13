@@ -11,6 +11,8 @@ namespace anthill {
     };
 
 
+    BasicType str_to_basic_type(const std::string& str);
+
     class StaticType {
     public:
         virtual bool is_func() const = 0;

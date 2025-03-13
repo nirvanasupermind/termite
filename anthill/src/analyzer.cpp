@@ -20,7 +20,6 @@ namespace anthill {
          return visit_char_node(std::static_pointer_cast<CharNode>(node), symbol_table);
       case NodeType::INT:
          return visit_int_node(std::static_pointer_cast<IntNode>(node), symbol_table);
-
       case NodeType::STR:
          return visit_str_node(std::static_pointer_cast<StrNode>(node), symbol_table);
       case NodeType::IDENT:
@@ -123,8 +122,49 @@ namespace anthill {
    }
 
    std::shared_ptr<StaticType> Analyzer::visit_if_node(const std::shared_ptr<IfNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
-      std::shared_ptr<SymbolTable> block_symbol_table = std::make_shared<SymbolTable>(SymbolTable(symbol_table));
-      visit(node->stmt_list, block_symbol_table);
+      visit(node->cond, symbol_table);
+      visit(node->body, symbol_table);
+      visit(node->else_body, symbol_table);
+      return std::make_shared<NonFuncType>(NonFuncType(BasicType::VOID));
+   }
+
+   std::shared_ptr<StaticType> Analyzer::visit_while_node(const std::shared_ptr<WhileNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
+      visit(node->cond, symbol_table);
+      visit(node->body, symbol_table);
+      return std::make_shared<NonFuncType>(NonFuncType(BasicType::VOID));
+   }
+
+   std::shared_ptr<StaticType> Analyzer::visit_for_node(const std::shared_ptr<ForNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
+      visit(node->init, symbol_table);
+      visit(node->cond, symbol_table);
+      visit(node->update, symbol_table);
+      visit(node->body, symbol_table);
+      return std::make_shared<NonFuncType>(NonFuncType(BasicType::VOID));
+   }
+
+   std::shared_ptr<StaticType> Analyzer::visit_continue_node(const std::shared_ptr<ContinueNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
+      return std::make_shared<NonFuncType>(NonFuncType(BasicType::VOID));
+   }
+
+   std::shared_ptr<StaticType> Analyzer::visit_break_node(const std::shared_ptr<BreakNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
+      return std::make_shared<NonFuncType>(NonFuncType(BasicType::VOID));
+   }
+
+
+   std::shared_ptr<StaticType> Analyzer::visit_func_def_node(const std::shared_ptr<FuncDefNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
+      std::shared_ptr<SymbolTable> func_symbol_table = std::make_shared<SymbolTable>(SymbolTable(symbol_table));  
+      std::shared_ptr<TypeNode> return_type_node = std::static_pointer_cast<TypeNode>(node->return_type);
+      std::shared_ptr<NonFuncType> return_type = std::make_shared<NonFuncType>(str_to_basic_type(return_type_node->base_type.val), return_type_node->num_pointers);
+      std::vector<std::shared_ptr<NonFuncType> > arg_static_types;
+      for(int i = 0; i < node->arg_names.size(); i++) {
+         std::shared_ptr<TypeNode> type_node = std::static_pointer_cast<TypeNode>(node->arg_types.at(i));
+         std::shared_ptr<NonFuncType> type = std::make_shared<NonFuncType>(NonFuncType(str_to_basic_type(type_node->base_type.val), type_node->num_pointers));
+         arg_static_types.push_back(type);
+         func_symbol_table->def(node->arg_names.at(i).val, type);
+      }
+      std::shared_ptr<StaticType> func_type = std::make_shared<FuncType>(FuncType(return_type, arg_static_types));
+      symbol_table->def(node->name.val, func_type);
+      visit(node->body, func_symbol_table);
       return std::make_shared<NonFuncType>(NonFuncType(BasicType::VOID));
    }
 

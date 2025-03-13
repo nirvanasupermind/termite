@@ -4,6 +4,16 @@
 
 #include "static_type.h"
 namespace anthill {
+    BasicType str_to_basic_type(const std::string& str) {
+        if(str == "void") {
+            return BasicType::VOID;
+        } else if(str == "int") {
+            return BasicType::INT;
+        } else {
+            return BasicType::CHAR;
+        }
+    }
+    
     NonFuncType::NonFuncType(const BasicType& basic_type, int pointer_levels)
         : basic_type(basic_type), pointer_levels(pointer_levels) {
 
