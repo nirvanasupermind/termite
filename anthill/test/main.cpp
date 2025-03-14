@@ -5,6 +5,8 @@
 #include "../src/lexer.h"
 #include "../src/node.h"
 #include "../src/parser.h"
+#include "../src/symbol_table.h"
+#include "../src/generator.h"
 
 // #include "../src/node.h"
 // #include "../src/parser.h"
@@ -12,13 +14,14 @@
 // #include "../src/env.h"
 
 int main() {
-    std::string str = "int main(int argc, char** argv) { while(1) { break; }\n print(5); return 0; }";
+    std::string str = "3 & 4;";
     try {
         anthill::Lexer lexer("temp", str);
         std::vector<anthill::Token> tokens = lexer.generate_tokens();
         anthill::Parser parser("temp", tokens);
-        std::cout << parser.parse()->to_str() << '\n';
-     
+        anthill::Generator gen("temp");
+        gen.visit(parser.parse(), std::make_shared<anthill::SymbolTable>(anthill::SymbolTable()));
+        std::cout << gen.asm_stream.str() << '\n';
      
         // anthill::Parser parser("sample", lexer.generate_tokens());
         // anthill::Compiler compiler("sample");

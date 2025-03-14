@@ -1,5 +1,5 @@
-#ifndef ANALYZER_H
-#define ANALYZER_H
+#ifndef GENERATOR_H
+#define GENERATOR_H
 
 #include <string>
 #include <memory>
@@ -9,10 +9,11 @@
 #include "node.h"
 
 namespace anthill {
-    class Analyzer {
+    class Generator {
     public:
         std::string file;
-        Analyzer(const std::string& file);
+        std::ostringstream asm_stream;
+        Generator(const std::string& file);
         std::shared_ptr<StaticType> visit(const std::shared_ptr<Node>& node, const std::shared_ptr<SymbolTable>& symbol_table);
         std::shared_ptr<StaticType> visit_char_node(const std::shared_ptr<CharNode>& node, const std::shared_ptr<SymbolTable>& symbol_table);
         std::shared_ptr<StaticType> visit_int_node(const std::shared_ptr<IntNode>& node, const std::shared_ptr<SymbolTable>& symbol_table);

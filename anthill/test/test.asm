@@ -1,8 +1,7 @@
-b 0;
-main:
-push r-9;
-mov r-9, r12;
-subi r12, r12, 81;
-addi r12, r12, 81;
-pop r-9;
-ret;
+mov $3,%ax
+push %ax
+mov $4,%ax
+pop %dx
+and %dx,%ax
+mov %ax,%dx
+int 0nDC
