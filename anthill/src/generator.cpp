@@ -14,6 +14,10 @@ namespace anthill {
 
    }
 
+   int Generator::alloc_label() {
+      return label_id++;
+   }
+
    std::shared_ptr<StaticType> Generator::visit(const std::shared_ptr<Node>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
       switch (node->get_type()) {
       case NodeType::CHAR:
@@ -114,27 +118,185 @@ namespace anthill {
          case TokenType::AMPER: {
             asm_stream << "push %ax\n";
             right_type = visit(node->right_node, symbol_table);
-            asm_stream << "pop %dx\n";
-            asm_stream << "and %dx,%ax\n";
+            asm_stream << "pop %cx\n";
+            asm_stream << "and %cx,%ax\n";
             break;
          }
          case TokenType::PIPE: {
             visit(node->left_node, symbol_table);
             asm_stream << "push %ax\n";
             right_type = visit(node->right_node, symbol_table);
-            asm_stream << "pop %dx\n";
-            asm_stream << "or %ax,%dx\n";
+            asm_stream << "pop %cx\n";
+            asm_stream << "or %cx,%ax\n";
             break;
          }
          case TokenType::CARET: {
             visit(node->left_node, symbol_table);
             asm_stream << "push %ax\n";
             right_type = visit(node->right_node, symbol_table);
-            asm_stream << "pop %dx\n";
-            asm_stream << "xor %ax,%dx\n";
+            asm_stream << "pop %cx\n";
+            asm_stream << "xor %cx,%ax\n";
+            break;
+         }
+         case TokenType::LSHIFT: {
+            visit(node->left_node, symbol_table);
+            asm_stream << "push %ax\n";
+            right_type = visit(node->right_node, symbol_table);
+            asm_stream << "pop %cx\n";
+            asm_stream << "mov %ax,%dx\n";
+            asm_stream << "mov %cx,%ax\n";
+            asm_stream << "mov %dx,%cx\n";
+            asm_stream << "shl %cx,%ax\n";
+            break;
+         }
+         case TokenType::RSHIFT: {
+            visit(node->left_node, symbol_table);
+            asm_stream << "push %ax\n";
+            right_type = visit(node->right_node, symbol_table);
+            asm_stream << "pop %cx\n";
+            asm_stream << "mov %ax,%dx\n";
+            asm_stream << "mov %cx,%ax\n";
+            asm_stream << "mov %dx,%cx\n";
+            asm_stream << "shr %cx,%ax\n";
+            break;
+         }
+         case TokenType::LOGAND: {
+            visit(node->left_node, symbol_table);
+            asm_stream << "push %ax\n";
+            right_type = visit(node->right_node, symbol_table);
+            asm_stream << "pop %cx\n";
+            asm_stream << "and %cx,%ax\n";
+            break;
+         }
+         case TokenType::PLUS: {
+            visit(node->left_node, symbol_table);
+            asm_stream << "push %ax\n";
+            right_type = visit(node->right_node, symbol_table);
+            asm_stream << "pop %cx\n";
+            asm_stream << "add %cx,%ax\n";
+            break;
+         }
+         case TokenType::MINUS: {
+            visit(node->left_node, symbol_table);
+            asm_stream << "push %ax\n";
+            right_type = visit(node->right_node, symbol_table);
+            asm_stream << "pop %cx\n";
+            asm_stream << "mov %ax,%dx\n";
+            asm_stream << "mov %cx,%ax\n";
+            asm_stream << "mov %dx,%cx\n";
+            asm_stream << "sub %cx,%ax\n";
+            break;
+         }
+         case TokenType::STAR: {
+            visit(node->left_node, symbol_table);
+            asm_stream << "push %ax\n";
+            right_type = visit(node->right_node, symbol_table);
+            asm_stream << "pop %cx\n";
+            asm_stream << "mul %cx,%ax\n";
+            break;
+         }
+         case TokenType::SLASH: {
+            visit(node->left_node, symbol_table);
+            asm_stream << "push %ax\n";
+            right_type = visit(node->right_node, symbol_table);
+            asm_stream << "pop %cx\n";
+            asm_stream << "mov %ax,%dx\n";
+            asm_stream << "mov %cx,%ax\n";
+            asm_stream << "mov %dx,%cx\n";
+            asm_stream << "div %cx,%ax\n";
+            break;
+         }
+         case TokenType::MOD: {
+            visit(node->left_node, symbol_table);
+            asm_stream << "push %ax\n";
+            right_type = visit(node->right_node, symbol_table);
+            asm_stream << "pop %cx\n";
+            asm_stream << "mov %ax,%dx\n";
+            asm_stream << "mov %cx,%ax\n";
+            asm_stream << "mov %dx,%cx\n";
+            asm_stream << "mod %cx,%ax\n";
+            break;
+         }
+         case TokenType::EQUAL: {
+            visit(node->left_node, symbol_table);
+            asm_stream << "push %ax\n";
+            right_type = visit(node->right_node, symbol_table);
+            asm_stream << "pop %cx\n";
+            asm_stream << "cmp %ax,%cx\n";
+            asm_stream << "mov $1,%ax\n";
+            int label = alloc_label();
+            asm_stream << "je " + std::to_string(label) + "\n";
+            asm_stream << "mov $0,%ax\n";
+            asm_stream << "label" + std::to_string(label) + ":\n";
+            break;
+         }
+         case TokenType::NOTEQ: {
+            visit(node->left_node, symbol_table);
+            asm_stream << "push %ax\n";
+            right_type = visit(node->right_node, symbol_table);
+            asm_stream << "pop %cx\n";
+            asm_stream << "cmp %ax,%cx\n";
+            asm_stream << "mov $1,%ax\n";
+            int label = alloc_label();
+            asm_stream << "jne " + std::to_string(label) + "\n";
+            asm_stream << "mov $0,%ax\n";
+            asm_stream << "label" + std::to_string(label) + ":\n";
+            break;
+         }
+         case TokenType::LESS: {
+            visit(node->left_node, symbol_table);
+            asm_stream << "push %ax\n";
+            right_type = visit(node->right_node, symbol_table);
+            asm_stream << "pop %cx\n";
+            asm_stream << "cmp %ax,%cx\n";
+            asm_stream << "mov $1,%ax\n";
+            int label = alloc_label();
+            asm_stream << "jl " + std::to_string(label) + "\n";
+            asm_stream << "mov $0,%ax\n";
+            asm_stream << "label" + std::to_string(label) + ":\n";
+            break;
+         }
+         case TokenType::LTEQ: {
+            visit(node->left_node, symbol_table);
+            asm_stream << "push %ax\n";
+            right_type = visit(node->right_node, symbol_table);
+            asm_stream << "pop %cx\n";
+            asm_stream << "cmp %ax,%cx\n";
+            asm_stream << "mov $1,%ax\n";
+            int label = alloc_label();
+            asm_stream << "jle " + std::to_string(label) + "\n";
+            asm_stream << "mov $0,%ax\n";
+            asm_stream << "label" + std::to_string(label) + ":\n";
+            break;
+         }
+         case TokenType::GREATER: {
+            visit(node->left_node, symbol_table);
+            asm_stream << "push %ax\n";
+            right_type = visit(node->right_node, symbol_table);
+            asm_stream << "pop %cx\n";
+            asm_stream << "cmp %ax,%cx\n";
+            asm_stream << "mov $1,%ax\n";
+            int label = alloc_label();
+            asm_stream << "jg " + std::to_string(label) + "\n";
+            asm_stream << "mov $0,%ax\n";
+            asm_stream << "label" + std::to_string(label) + ":\n";
+            break;
+         }
+         case TokenType::GTEQ: {
+            visit(node->left_node, symbol_table);
+            asm_stream << "push %ax\n";
+            right_type = visit(node->right_node, symbol_table);
+            asm_stream << "pop %cx\n";
+            asm_stream << "cmp %ax,%cx\n";
+            asm_stream << "mov $1,%ax\n";
+            int label = alloc_label();
+            asm_stream << "jge " + std::to_string(label) + "\n";
+            asm_stream << "mov $0,%ax\n";
+            asm_stream << "label" + std::to_string(label) + ":\n";
             break;
          }
       }
+
       
       if (left_type->to_str() == "void") {
          error(file, node->left_node->line, "cannot perform binary operations on a value of type void");
@@ -145,6 +307,7 @@ namespace anthill {
       }
 
       if (left_type->to_str() == "char" && right_type->to_str() == "char") {
+         asm_stream << "and $0n4444, %ax\n";
          return left_type;
       }
       else if (left_type->to_str() == "char") {
@@ -178,15 +341,35 @@ namespace anthill {
    }
 
    std::shared_ptr<StaticType> Generator::visit_if_node(const std::shared_ptr<IfNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
+      int label = alloc_label();
+      int label2 = alloc_label();
       visit(node->cond, symbol_table);
+      asm_stream << "cmp $1, %ax\n";
+      asm_stream << "jne label" + std::to_string(label) + "\n";
       visit(node->body, symbol_table);
-      visit(node->else_body, symbol_table);
+      visit(node->cond, symbol_table);
+      asm_stream << "cmp $1, %ax\n";
+      asm_stream << "je label" + std::to_string(label2) + "\n";
+      asm_stream << "label" + std::to_string(label) + ":\n";
+      if(node->else_body) {
+         visit(node->else_body, symbol_table);
+      }
+      asm_stream << "label" + std::to_string(label2) + ":\n";
       return std::make_shared<NonFuncType>(NonFuncType(BasicType::VOID));
    }
 
    std::shared_ptr<StaticType> Generator::visit_while_node(const std::shared_ptr<WhileNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
-      visit(node->cond, symbol_table);
+      int label = alloc_label();
+      int label2 = alloc_label();
+  visit(node->cond, symbol_table);
+      asm_stream << "cmp $1, %ax\n";
+      asm_stream << "je label" + std::to_string(label) + "\n";
+      asm_stream << "label" + std::to_string(label) + ":\n";
       visit(node->body, symbol_table);
+      visit(node->cond, symbol_table);
+      asm_stream << "cmp $1, %ax\n";
+      asm_stream << "je label" + std::to_string(label) + "\n";
+      asm_stream << "label" + std::to_string(label2) + ":\n";
       return std::make_shared<NonFuncType>(NonFuncType(BasicType::VOID));
    }
 

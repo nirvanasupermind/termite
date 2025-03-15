@@ -14,7 +14,7 @@
 // #include "../src/env.h"
 
 int main() {
-    std::string str = "3 & 4;";
+    std::string str = "if(2 != 3) { 4; } else { 5; }";
     try {
         anthill::Lexer lexer("temp", str);
         std::vector<anthill::Token> tokens = lexer.generate_tokens();
