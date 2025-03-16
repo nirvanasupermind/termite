@@ -225,9 +225,9 @@ namespace anthill {
             asm_stream << "cmp %ax,%cx\n";
             asm_stream << "mov $1,%ax\n";
             int label = alloc_label();
-            asm_stream << "je " + std::to_string(label) + "\n";
+            asm_stream << "je _L" + std::to_string(label) + "\n";
             asm_stream << "mov $0,%ax\n";
-            asm_stream << "label" + std::to_string(label) + ":\n";
+            asm_stream << "_L" + std::to_string(label) + ":\n";
             break;
          }
          case TokenType::NOTEQ: {
@@ -238,9 +238,9 @@ namespace anthill {
             asm_stream << "cmp %ax,%cx\n";
             asm_stream << "mov $1,%ax\n";
             int label = alloc_label();
-            asm_stream << "jne " + std::to_string(label) + "\n";
+            asm_stream << "jne _L" + std::to_string(label) + "\n";
             asm_stream << "mov $0,%ax\n";
-            asm_stream << "label" + std::to_string(label) + ":\n";
+            asm_stream << "_L" + std::to_string(label) + ":\n";
             break;
          }
          case TokenType::LESS: {
@@ -251,9 +251,9 @@ namespace anthill {
             asm_stream << "cmp %ax,%cx\n";
             asm_stream << "mov $1,%ax\n";
             int label = alloc_label();
-            asm_stream << "jl " + std::to_string(label) + "\n";
+            asm_stream << "jl _L" + std::to_string(label) + "\n";
             asm_stream << "mov $0,%ax\n";
-            asm_stream << "label" + std::to_string(label) + ":\n";
+            asm_stream << "_L" + std::to_string(label) + ":\n";
             break;
          }
          case TokenType::LTEQ: {
@@ -264,9 +264,9 @@ namespace anthill {
             asm_stream << "cmp %ax,%cx\n";
             asm_stream << "mov $1,%ax\n";
             int label = alloc_label();
-            asm_stream << "jle " + std::to_string(label) + "\n";
+            asm_stream << "jle _L" + std::to_string(label) + "\n";
             asm_stream << "mov $0,%ax\n";
-            asm_stream << "label" + std::to_string(label) + ":\n";
+            asm_stream << "_L" + std::to_string(label) + ":\n";
             break;
          }
          case TokenType::GREATER: {
@@ -277,9 +277,9 @@ namespace anthill {
             asm_stream << "cmp %ax,%cx\n";
             asm_stream << "mov $1,%ax\n";
             int label = alloc_label();
-            asm_stream << "jg " + std::to_string(label) + "\n";
+            asm_stream << "jg _L" + std::to_string(label) + "\n";
             asm_stream << "mov $0,%ax\n";
-            asm_stream << "label" + std::to_string(label) + ":\n";
+            asm_stream << "_L" + std::to_string(label) + ":\n";
             break;
          }
          case TokenType::GTEQ: {
@@ -290,9 +290,9 @@ namespace anthill {
             asm_stream << "cmp %ax,%cx\n";
             asm_stream << "mov $1,%ax\n";
             int label = alloc_label();
-            asm_stream << "jge " + std::to_string(label) + "\n";
+            asm_stream << "jge _L" + std::to_string(label) + "\n";
             asm_stream << "mov $0,%ax\n";
-            asm_stream << "label" + std::to_string(label) + ":\n";
+            asm_stream << "_L" + std::to_string(label) + ":\n";
             break;
          }
       }
@@ -345,16 +345,16 @@ namespace anthill {
       int label2 = alloc_label();
       visit(node->cond, symbol_table);
       asm_stream << "cmp $1, %ax\n";
-      asm_stream << "jne label" + std::to_string(label) + "\n";
+      asm_stream << "jne _L" + std::to_string(label) + "\n";
       visit(node->body, symbol_table);
       visit(node->cond, symbol_table);
       asm_stream << "cmp $1, %ax\n";
-      asm_stream << "je label" + std::to_string(label2) + "\n";
-      asm_stream << "label" + std::to_string(label) + ":\n";
+      asm_stream << "jmp _L" + std::to_string(label2) + "\n";
+      asm_stream << "_L" + std::to_string(label) + ":\n";
       if(node->else_body) {
          visit(node->else_body, symbol_table);
       }
-      asm_stream << "label" + std::to_string(label2) + ":\n";
+      asm_stream << "_L" + std::to_string(label2) + ":\n";
       return std::make_shared<NonFuncType>(NonFuncType(BasicType::VOID));
    }
 

@@ -5,11 +5,11 @@ mov $3,%ax
 pop %cx
 cmp %ax,%cx
 mov $1,%ax
-jne 3
+jne _L3
 mov $0,%ax
-label3:
+_L3:
 cmp $1, %ax
-jne label1
+jne _L1
 mov $4,%ax
 mov $2,%ax
 mov $2,%ax
@@ -18,14 +18,14 @@ mov $3,%ax
 pop %cx
 cmp %ax,%cx
 mov $1,%ax
-jne 4
+jne _L4
 mov $0,%ax
-label4:
+_L4:
 cmp $1, %ax
-je label2
-label1:
+jmp _L2
+_L1:
 mov $5,%ax
-label2:
+_L2:
 mov %ax,%dx
 mov $0nDC, %ax
 int 0
