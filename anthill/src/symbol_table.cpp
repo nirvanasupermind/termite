@@ -9,17 +9,17 @@
 
 namespace anthill {
     SymbolTable::SymbolTable()
-        : parent(std::shared_ptr<SymbolTable>()), variables({}) {
+        : parent(std::shared_ptr<SymbolTable>()), types({}), addrs({}) {
 
     }
 
     SymbolTable::SymbolTable(const std::shared_ptr<SymbolTable>& parent)
-        : parent(parent), variables({}) {
+        : parent(parent), types({}), addrs({}) {
 
     }
 
     bool SymbolTable::has(const std::string& name) {
-        if (variables.count(name)) {
+        if (types.count(name)) {
             return true;
         }
         else if (parent) {
@@ -30,23 +30,44 @@ namespace anthill {
         }
     }
 
-    std::shared_ptr<StaticType> SymbolTable::get(const std::string& name) {
-        if (variables.count(name)) {
-            return variables.at(name);
+    std::shared_ptr<StaticType> SymbolTable::get_type(const std::string& name) {
+        if (types.count(name)) {
+            return types[name];
         }
         else if (parent) {
-            return parent->get(name);
+            return parent->get_type(name);
         }
         else {
             throw std::string("cannot find variable '" + name + "'");
         }
     }
 
-    void SymbolTable::def(const std::string& name, const std::shared_ptr<StaticType>& type) {
-        if (parent->has(name)) {
+    void SymbolTable::def_type(const std::string& name, const std::shared_ptr<StaticType>& type) {
+        if (has(name)) {
             throw std::string("variable '" + name + "' already exists");
         } else {
-            variables[name] = type;
+            types[name] = type;
+        }
+    }
+
+
+    int32_t SymbolTable::get_addr(const std::string& name) {
+        if (addrs.count(name)) {
+            return addrs[name];
+        }
+        else if (parent) {
+            return parent->get_addr(name);
+        }
+        else {
+            throw std::string("cannot find variable '" + name + "'");
+        }
+    }
+
+    void SymbolTable::def_addr(const std::string& name, int32_t addr) {
+        if (has(name)) {
+            throw std::string("variable '" + name + "' already exists");
+        } else {
+            addrs[name] = addr;
         }
     }
 }

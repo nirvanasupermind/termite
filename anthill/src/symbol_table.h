@@ -12,12 +12,15 @@ namespace anthill {
     class SymbolTable {
     public:
         std::shared_ptr<SymbolTable> parent;
-        std::map<std::string, std::shared_ptr<StaticType> > variables;
+        std::map<std::string, std::shared_ptr<StaticType> > types;
+        std::map<std::string, int32_t> addrs;
         SymbolTable();
         SymbolTable(const std::shared_ptr<SymbolTable>& parent);
         bool has(const std::string& name);
-        std::shared_ptr<StaticType> get(const std::string& name);
-        void def(const std::string& name, const std::shared_ptr<StaticType>& type);
+        std::shared_ptr<StaticType> get_type(const std::string& name);
+        void def_type(const std::string& name, const std::shared_ptr<StaticType>& type);
+        int32_t get_addr(const std::string& name);
+        void def_addr(const std::string& name, int32_t addr);
     };
 
 }

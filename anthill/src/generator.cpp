@@ -1,6 +1,7 @@
 #include <string>
 #include <memory>
 #include <vector>
+#include <iostream>
 #include "static_type.h"
 #include "symbol_table.h"
 #include "token.h"
@@ -16,6 +17,11 @@ namespace anthill {
 
    int Generator::alloc_label() {
       return label_id++;
+   }
+
+
+   int Generator::alloc_addr() {
+      return (addr_counter += 2);
    }
 
    std::shared_ptr<StaticType> Generator::visit(const std::shared_ptr<Node>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
@@ -44,8 +50,9 @@ namespace anthill {
          return visit_block_node(std::static_pointer_cast<BlockNode>(node), symbol_table);
          case NodeType::IF:
          return visit_if_node(std::static_pointer_cast<IfNode>(node), symbol_table);
-         case NodeType::WHILE:
+         case NodeType::WHILE: {
          return visit_while_node(std::static_pointer_cast<WhileNode>(node), symbol_table);
+         }
          case NodeType::FOR:
          return visit_for_node(std::static_pointer_cast<ForNode>(node), symbol_table);
          case NodeType::CONTINUE:
@@ -78,7 +85,8 @@ namespace anthill {
    }
 
    std::shared_ptr<StaticType> Generator::visit_ident_node(const std::shared_ptr<IdentNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
-      return symbol_table->get(node->tok.val);
+      asm_stream << "mov " << symbol_table->get_addr(node->tok.val) << ",%ax\n";
+      return symbol_table->get_type(node->tok.val);
    }
 
    std::shared_ptr<StaticType> Generator::visit_call_node(const std::shared_ptr<CallNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
@@ -322,15 +330,20 @@ namespace anthill {
       if (node->left_node->get_type() != NodeType::IDENT) {
          error(file, node->left_node->line, "cannot assign to non-identifier");
       }
-
+      int32_t addr = symbol_table->get_addr(std::static_pointer_cast<IdentNode>(node->left_node)->tok.val);
+      visit(node->right_node, symbol_table);
+      asm_stream << "mov %ax," + std::to_string(addr) + "\n";
       return visit(node->left_node, symbol_table);
    }
 
    std::shared_ptr<StaticType> Generator::visit_var_def_node(const std::shared_ptr<VarDefNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
-      if (node->name.val == "void") {
+      if (node->type->to_str() == "void") {
          error(file, node->name.line, "cannot define variable of type void");
       }
-      symbol_table->def(node->name.val, visit(node->val, symbol_table));
+      int addr = alloc_addr();
+      symbol_table->def_type(node->name.val, visit(node->val, symbol_table));
+      symbol_table->def_addr(node->name.val, addr);
+      asm_stream << "mov %ax," + std::to_string(addr) + "\n";
       return  std::make_shared<NonFuncType>(NonFuncType(BasicType::VOID));;
    }
 
@@ -347,8 +360,6 @@ namespace anthill {
       asm_stream << "cmp $1, %ax\n";
       asm_stream << "jne _L" + std::to_string(label) + "\n";
       visit(node->body, symbol_table);
-      visit(node->cond, symbol_table);
-      asm_stream << "cmp $1, %ax\n";
       asm_stream << "jmp _L" + std::to_string(label2) + "\n";
       asm_stream << "_L" + std::to_string(label) + ":\n";
       if(node->else_body) {
@@ -361,15 +372,13 @@ namespace anthill {
    std::shared_ptr<StaticType> Generator::visit_while_node(const std::shared_ptr<WhileNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
       int label = alloc_label();
       int label2 = alloc_label();
-  visit(node->cond, symbol_table);
-      asm_stream << "cmp $1, %ax\n";
-      asm_stream << "je label" + std::to_string(label) + "\n";
-      asm_stream << "label" + std::to_string(label) + ":\n";
+      asm_stream << "jmp _L" + std::to_string(label2) + "\n";
+      asm_stream << "_L" + std::to_string(label) + ":\n";;
       visit(node->body, symbol_table);
+      asm_stream << "_L" + std::to_string(label2) + ":\n";;
       visit(node->cond, symbol_table);
       asm_stream << "cmp $1, %ax\n";
-      asm_stream << "je label" + std::to_string(label) + "\n";
-      asm_stream << "label" + std::to_string(label2) + ":\n";
+      asm_stream << "je _L" + std::to_string(label) + "\n";
       return std::make_shared<NonFuncType>(NonFuncType(BasicType::VOID));
    }
 
@@ -398,10 +407,12 @@ namespace anthill {
          std::shared_ptr<TypeNode> type_node = std::static_pointer_cast<TypeNode>(node->arg_types.at(i));
          std::shared_ptr<NonFuncType> type = std::make_shared<NonFuncType>(NonFuncType(str_to_basic_type(type_node->base_type.val), type_node->num_pointers));
          arg_static_types.push_back(type);
-         func_symbol_table->def(node->arg_names.at(i).val, type);
+         func_symbol_table->def_type(node->arg_names.at(i).val, type);
+         func_symbol_table->def_addr(node->arg_names.at(i).val, alloc_addr());
       }
       std::shared_ptr<StaticType> func_type = std::make_shared<FuncType>(FuncType(return_type, arg_static_types));
-      symbol_table->def(node->name.val, func_type);
+      symbol_table->def_type(node->name.val, func_type);
+      symbol_table->def_addr(node->name.val, alloc_addr());
       visit(node->body, func_symbol_table);
       return std::make_shared<NonFuncType>(NonFuncType(BasicType::VOID));
    }
@@ -412,7 +423,8 @@ namespace anthill {
 
    std::shared_ptr<StaticType> Generator::visit_enum_node(const std::shared_ptr<EnumNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
       for (int i = 0; i < node->items.size(); i++) {
-         symbol_table->def(node->items.at(i).val, std::make_shared<NonFuncType>(NonFuncType(BasicType::INT)));
+         symbol_table->def_type(node->items.at(i).val, std::make_shared<NonFuncType>(NonFuncType(BasicType::INT)));
+         symbol_table->def_addr(node->items.at(i).val, alloc_addr());
       }
       return std::make_shared<NonFuncType>(NonFuncType(BasicType::VOID));
    }
