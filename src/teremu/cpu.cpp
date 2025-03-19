@@ -589,6 +589,21 @@ namespace termite {
                 }
                 break;
             }
+            case INS_XCHG: {
+                Word dest_mode = ins.get_trit_range(10, 11);
+                Word dest_reg = ins.get_trit_range(8, 9);
+
+                Word src_mode = ins.get_trit_range(6, 7);
+                Word src_reg = ins.get_trit_range(4, 5);
+
+                if (dest_mode.to_int32() == -3 && src_mode.to_int32() == -3) {
+                    Word temp = regs[dest_reg.to_int32() + 4];
+                    regs[dest_reg.to_int32() + 4] = regs[src_reg.to_int32() + 4];
+                    regs[src_reg.to_int32() + 4] = temp;
+                }
+                
+                break;   
+            }
             }
         }
 

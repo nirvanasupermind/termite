@@ -50,7 +50,6 @@ namespace anthill {
         }
     }
 
-
     int32_t SymbolTable::get_addr(const std::string& name) {
         if (addrs.count(name)) {
             return addrs[name];
@@ -64,10 +63,10 @@ namespace anthill {
     }
 
     void SymbolTable::def_addr(const std::string& name, int32_t addr) {
-        if (has(name)) {
-            throw std::string("variable '" + name + "' already exists");
-        } else {
+        // if (has(name)) {
+        //     throw std::string("variable '" + name + "' already exists");
+        // } else {
             addrs[name] = addr;
-        }
+        // }
     }
 }

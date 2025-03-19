@@ -151,9 +151,7 @@ namespace anthill {
             asm_stream << "push %ax\n";
             right_type = visit(node->right_node, symbol_table);
             asm_stream << "pop %cx\n";
-            asm_stream << "mov %ax,%dx\n";
-            asm_stream << "mov %cx,%ax\n";
-            asm_stream << "mov %dx,%cx\n";
+            asm_stream << "xchg %cx,%ax\n";
             asm_stream << "shl %cx,%ax\n";
             break;
          }
@@ -162,9 +160,7 @@ namespace anthill {
             asm_stream << "push %ax\n";
             right_type = visit(node->right_node, symbol_table);
             asm_stream << "pop %cx\n";
-            asm_stream << "mov %ax,%dx\n";
-            asm_stream << "mov %cx,%ax\n";
-            asm_stream << "mov %dx,%cx\n";
+            asm_stream << "xchg %cx,%ax\n";
             asm_stream << "shr %cx,%ax\n";
             break;
          }
@@ -189,9 +185,7 @@ namespace anthill {
             asm_stream << "push %ax\n";
             right_type = visit(node->right_node, symbol_table);
             asm_stream << "pop %cx\n";
-            asm_stream << "mov %ax,%dx\n";
-            asm_stream << "mov %cx,%ax\n";
-            asm_stream << "mov %dx,%cx\n";
+            asm_stream << "xchg %cx,%ax\n";
             asm_stream << "sub %cx,%ax\n";
             break;
          }
@@ -200,7 +194,7 @@ namespace anthill {
             asm_stream << "push %ax\n";
             right_type = visit(node->right_node, symbol_table);
             asm_stream << "pop %cx\n";
-            asm_stream << "mul %cx,%ax\n";
+            asm_stream << "mul %cx\n";
             break;
          }
          case TokenType::SLASH: {
@@ -208,10 +202,8 @@ namespace anthill {
             asm_stream << "push %ax\n";
             right_type = visit(node->right_node, symbol_table);
             asm_stream << "pop %cx\n";
-            asm_stream << "mov %ax,%dx\n";
-            asm_stream << "mov %cx,%ax\n";
-            asm_stream << "mov %dx,%cx\n";
-            asm_stream << "div %cx,%ax\n";
+            asm_stream << "xchg %cx,%ax\n";
+            asm_stream << "div %cx\n";
             break;
          }
          case TokenType::MOD: {
@@ -219,10 +211,9 @@ namespace anthill {
             asm_stream << "push %ax\n";
             right_type = visit(node->right_node, symbol_table);
             asm_stream << "pop %cx\n";
-            asm_stream << "mov %ax,%dx\n";
-            asm_stream << "mov %cx,%ax\n";
-            asm_stream << "mov %dx,%cx\n";
-            asm_stream << "mod %cx,%ax\n";
+            asm_stream << "xchg %cx,%ax\n";
+            asm_stream << "mod %cx\n";
+            asm_stream << "mov %dx,%ax\n";
             break;
          }
          case TokenType::EQUAL: {
@@ -344,7 +335,7 @@ namespace anthill {
       symbol_table->def_type(node->name.val, visit(node->val, symbol_table));
       symbol_table->def_addr(node->name.val, addr);
       asm_stream << "mov %ax," + std::to_string(addr) + "\n";
-      return  std::make_shared<NonFuncType>(NonFuncType(BasicType::VOID));;
+      return  std::make_shared<NonFuncType>(NonFuncType(BasicType::VOID));
    }
 
    std::shared_ptr<StaticType> Generator::visit_block_node(const std::shared_ptr<BlockNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
@@ -373,9 +364,9 @@ namespace anthill {
       int label = alloc_label();
       int label2 = alloc_label();
       asm_stream << "jmp _L" + std::to_string(label2) + "\n";
-      asm_stream << "_L" + std::to_string(label) + ":\n";;
+      asm_stream << "_L" + std::to_string(label) + ":\n";
       visit(node->body, symbol_table);
-      asm_stream << "_L" + std::to_string(label2) + ":\n";;
+      asm_stream << "_L" + std::to_string(label2) + ":\n";
       visit(node->cond, symbol_table);
       asm_stream << "cmp $1, %ax\n";
       asm_stream << "je _L" + std::to_string(label) + "\n";

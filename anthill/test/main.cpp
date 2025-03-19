@@ -14,7 +14,7 @@
 // #include "../src/env.h"
 
 int main() {
-    std::string str = "int x = 5;\nwhile (x < 100) { x = x * x; }\nx;";
+    std::string str = "int x = 100; \nwhile (x >= 5) { x = x / 2; }\nx;";
     try {
         anthill::Lexer lexer("temp", str);
         std::vector<anthill::Token> tokens = lexer.generate_tokens();

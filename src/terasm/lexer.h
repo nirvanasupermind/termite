@@ -35,7 +35,8 @@ namespace termite {
         "jne",
         "jc",
         "jnc",
-        "int"
+        "int",
+        "xchg"
     };
 
     const std::vector<std::string> REG_NAMES = {

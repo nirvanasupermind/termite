@@ -65,6 +65,7 @@ namespace termite {
         static constexpr int32_t INS_JC = -13;
         static constexpr int32_t INS_JNC = -12;
         static constexpr int32_t INS_INT = -11;
+        static constexpr int32_t INS_XCHG = -10;
         void reset(Mem& memory);
         void set_sign_flag(Word& cycles, Mem& memory, const Word& result);
         Tryte fetch_tryte(Word& cycles, Mem& memory);

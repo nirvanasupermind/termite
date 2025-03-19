@@ -38,7 +38,8 @@ namespace termite {
         {"jne", 1},
         {"jc", 1},
         {"jnc", 1},
-        {"int", 1}
+        {"int", 1},
+        {"xchg", 2}
     };
     
     class Assembler {
