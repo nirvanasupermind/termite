@@ -26,5 +26,5 @@ cmp $1, %ax
 je _L1
 mov 2,%ax
 mov %ax,%dx
-mov $0nDC, %ax
+mov $0nDC,%ax
 int 0

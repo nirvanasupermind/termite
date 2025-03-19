@@ -119,7 +119,7 @@ namespace termite {
             Word imm2 = fetch_word(cycles, memory);
             Word opcode = ins.get_trit_range(12, 15);
             switch (opcode.to_int32()) {
-            case INS_MOV: {
+                case INS_MOV: {
                 Word dest_mode = ins.get_trit_range(10, 11);
                 Word dest_reg = ins.get_trit_range(8, 9);
 
@@ -458,7 +458,7 @@ namespace termite {
             }
             case INS_RET: {
                 regs[REG_IP] = memory.get_word(regs[REG_SP]);
-                regs[REG_SP] = regs[REG_SP] + 2;
+                regs[REG_SP] = regs[REG_SP] + Word::TWO;
                 break;
             }
             case INS_JMP: {
@@ -474,7 +474,6 @@ namespace termite {
                 break;
             }
             case INS_JLE: {
-                cycles = cycles - (regs[REG_IP] - imm);
                 if (flags.get_bct_trit(1) <= 1) {
                     cycles = cycles + (regs[REG_IP] - imm);
                     regs[REG_IP] = imm;
@@ -482,7 +481,6 @@ namespace termite {
                 break;
             }
             case INS_JG: {
-                cycles = cycles - (regs[REG_IP] - imm);
                 if (flags.get_bct_trit(1) > 1) {
                     cycles = cycles + (regs[REG_IP] - imm);
                     regs[REG_IP] = imm;
@@ -490,7 +488,6 @@ namespace termite {
                 break;
             }
             case INS_JGE: {
-                cycles = cycles - (regs[REG_IP] - imm);
                 if (flags.get_bct_trit(1) >= 1) {
                     cycles = cycles + (regs[REG_IP] - imm);
                     regs[REG_IP] = imm;
@@ -498,7 +495,6 @@ namespace termite {
                 break;
             }
             case INS_JE: {
-                cycles = cycles - (regs[REG_IP] - imm);
                 if (flags.get_bct_trit(1) == 1) {
                     cycles = cycles + (regs[REG_IP] - imm);
                     regs[REG_IP] = imm;
@@ -506,7 +502,6 @@ namespace termite {
                 break;
             }
             case INS_JNE: {
-                cycles = cycles - (regs[REG_IP] - imm);
                 if (flags.get_bct_trit(1) != 1) {
                     cycles = cycles + (regs[REG_IP] - imm);
                     regs[REG_IP] = imm;
