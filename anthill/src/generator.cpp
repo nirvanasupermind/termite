@@ -10,6 +10,7 @@
 #include "generator.h"
 
 namespace anthill {
+   std::vector<std::string> arg_regs{"di","si","dx","cx"};
    Generator::Generator(const std::string& file)
       : file(file) {
 
@@ -93,6 +94,13 @@ namespace anthill {
       std::shared_ptr<StaticType> callee_type = visit(node->callee, symbol_table);
       if (!callee_type->is_func()) {
          error(file, node->callee->line, "cannot call a non-function");
+      }
+      for(int i = 0; i < arg_regs.size(); i++) {
+         std::shared_ptr<StaticType> arg_type = visit(node->args.at(i), symbol_table);
+         asm_stream << "mov %ax,%" << arg_regs[i] << '\n';
+         if(arg_type->to_str() != "char" && std::static_pointer_cast<FuncType>(callee_type)->arg_types.at(i)->to_str() == "char") {
+            asm_stream << "and %" << arg_regs[i] << "," <<  std::static_pointer_cast<FuncType>(callee_type)->arg_types.at(i) << '\n'; 
+         }
       }
       return std::static_pointer_cast<FuncType>(callee_type)->return_type;
    }
@@ -400,6 +408,7 @@ namespace anthill {
          arg_static_types.push_back(type);
          func_symbol_table->def_type(node->arg_names.at(i).val, type);
          func_symbol_table->def_addr(node->arg_names.at(i).val, alloc_addr());
+         arg_regs << "mov " << ",%ax\n";
       }
       std::shared_ptr<StaticType> func_type = std::make_shared<FuncType>(FuncType(return_type, arg_static_types));
       symbol_table->def_type(node->name.val, func_type);

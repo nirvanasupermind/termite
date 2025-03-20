@@ -9,6 +9,8 @@
 #include "node.h"
 
 namespace anthill {
+    extern std::vector<std::string> arg_regs;
+    
     class Generator {
     public:
         int label_id = 1;
