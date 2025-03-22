@@ -10,16 +10,17 @@
 
 namespace anthill {
     extern std::vector<std::string> arg_regs;
-    
     class Generator {
     public:
         int label_id = 1;
         int addr_counter = 0;
+        int func_addr_counter = 0;
         std::string file;
         std::ostringstream asm_stream;
-        Generator(const std::string& file);
+        std::shared_ptr<SymbolTable> global_scope;
+        Generator(const std::string& file, const std::shared_ptr<SymbolTable>& global_scope);
         int alloc_label();
-        int alloc_addr();
+        std::string alloc_addr(const std::shared_ptr<SymbolTable>& symbol_table);
         std::shared_ptr<StaticType> visit(const std::shared_ptr<Node>& node, const std::shared_ptr<SymbolTable>& symbol_table);
         std::shared_ptr<StaticType> visit_char_node(const std::shared_ptr<CharNode>& node, const std::shared_ptr<SymbolTable>& symbol_table);
         std::shared_ptr<StaticType> visit_int_node(const std::shared_ptr<IntNode>& node, const std::shared_ptr<SymbolTable>& symbol_table);

@@ -14,13 +14,13 @@
 // #include "../src/env.h"
 
 int main() {
-    std::string str = "int x = 100; \nwhile (x >= 5) { x = x / 2; }\nx;";
+    std::string str = "int fac(int x) { if(x == 0) { return 1; } else { return x * fac(x - 1); } } \n int main() { fac(5); return 0; }";
     try {
         anthill::Lexer lexer("temp", str);
         std::vector<anthill::Token> tokens = lexer.generate_tokens();
         anthill::Parser parser("temp", tokens);
-        anthill::Generator gen("temp");
-        gen.visit(parser.parse(), std::make_shared<anthill::SymbolTable>(anthill::SymbolTable()));
+        anthill::Generator gen("temp", std::make_shared<anthill::SymbolTable>(anthill::SymbolTable()));
+        gen.visit(parser.parse(), gen.global_scope);
         std::cout << gen.asm_stream.str() << '\n';
      
         // anthill::Parser parser("sample", lexer.generate_tokens());

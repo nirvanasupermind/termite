@@ -11,7 +11,7 @@
 
 namespace anthill {
    std::vector<std::string> arg_regs{"di","si","dx","cx"};
-   Generator::Generator(const std::string& file)
+   Generator::Generator(const std::string& file, const std::shared_ptr<SymbolTable>& global_scope)
       : file(file) {
 
    }
@@ -21,8 +21,12 @@ namespace anthill {
    }
 
 
-   int Generator::alloc_addr() {
-      return (addr_counter += 2);
+   std::string Generator::alloc_addr(const std::shared_ptr<SymbolTable>& symbol_table) {
+      if(symbol_table == global_scope) {
+      return std::to_string(addr_counter += 2);
+   } else {
+      return "-" + std::to_string(func_addr_counter += 2) + "(%rbp)";
+   }
    }
 
    std::shared_ptr<StaticType> Generator::visit(const std::shared_ptr<Node>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
@@ -95,13 +99,14 @@ namespace anthill {
       if (!callee_type->is_func()) {
          error(file, node->callee->line, "cannot call a non-function");
       }
-      for(int i = 0; i < arg_regs.size(); i++) {
+      for(int i = 0; i < node->args.size(); i++) {
          std::shared_ptr<StaticType> arg_type = visit(node->args.at(i), symbol_table);
          asm_stream << "mov %ax,%" << arg_regs[i] << '\n';
          if(arg_type->to_str() != "char" && std::static_pointer_cast<FuncType>(callee_type)->arg_types.at(i)->to_str() == "char") {
             asm_stream << "and %" << arg_regs[i] << "," <<  std::static_pointer_cast<FuncType>(callee_type)->arg_types.at(i) << '\n'; 
          }
       }
+      asm_stream << "call " << std::static_pointer_cast<IdentNode>(node->callee)->tok.val << '\n';
       return std::static_pointer_cast<FuncType>(callee_type)->return_type;
    }
 
@@ -329,9 +334,9 @@ namespace anthill {
       if (node->left_node->get_type() != NodeType::IDENT) {
          error(file, node->left_node->line, "cannot assign to non-identifier");
       }
-      int32_t addr = symbol_table->get_addr(std::static_pointer_cast<IdentNode>(node->left_node)->tok.val);
+      std::string addr = symbol_table->get_addr(std::static_pointer_cast<IdentNode>(node->left_node)->tok.val);
       visit(node->right_node, symbol_table);
-      asm_stream << "mov %ax," + std::to_string(addr) + "\n";
+      asm_stream << "mov %ax," + addr + "\n";
       return visit(node->left_node, symbol_table);
    }
 
@@ -339,10 +344,10 @@ namespace anthill {
       if (node->type->to_str() == "void") {
          error(file, node->name.line, "cannot define variable of type void");
       }
-      int addr = alloc_addr();
+      std::string addr = alloc_addr(symbol_table);
       symbol_table->def_type(node->name.val, visit(node->val, symbol_table));
       symbol_table->def_addr(node->name.val, addr);
-      asm_stream << "mov %ax," + std::to_string(addr) + "\n";
+      asm_stream << "mov %ax," + addr + "\n";
       return  std::make_shared<NonFuncType>(NonFuncType(BasicType::VOID));
    }
 
@@ -398,33 +403,42 @@ namespace anthill {
    }
 
    std::shared_ptr<StaticType> Generator::visit_func_def_node(const std::shared_ptr<FuncDefNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
+      asm_stream << "push %bp\nmov %sp,%bp\n";
       std::shared_ptr<SymbolTable> func_symbol_table = std::make_shared<SymbolTable>(SymbolTable(symbol_table));
       std::shared_ptr<TypeNode> return_type_node = std::static_pointer_cast<TypeNode>(node->return_type);
       std::shared_ptr<NonFuncType> return_type = std::make_shared<NonFuncType>(str_to_basic_type(return_type_node->base_type.val), return_type_node->num_pointers);
       std::vector<std::shared_ptr<NonFuncType> > arg_static_types;
-      for (int i = 0; i < node->arg_names.size(); i++) {
-         std::shared_ptr<TypeNode> type_node = std::static_pointer_cast<TypeNode>(node->arg_types.at(i));
+      func_addr_counter = 0;
+      for(int i = 0; i < node->arg_names.size(); i++) {
+         std::shared_ptr<TypeNode> type_node = std::static_pointer_cast<TypeNode>(node->arg_types[i]);
          std::shared_ptr<NonFuncType> type = std::make_shared<NonFuncType>(NonFuncType(str_to_basic_type(type_node->base_type.val), type_node->num_pointers));
+         std::string addr = alloc_addr(func_symbol_table);
          arg_static_types.push_back(type);
-         func_symbol_table->def_type(node->arg_names.at(i).val, type);
-         func_symbol_table->def_addr(node->arg_names.at(i).val, alloc_addr());
-         arg_regs << "mov " << ",%ax\n";
+         func_symbol_table->def_type(node->arg_names[i].val, type);
+         func_symbol_table->def_addr(node->arg_names[i].val, addr);
+         asm_stream << "mov %" << arg_regs[i] << ",%ax\n";
+         asm_stream << "mov %ax," << addr << "\n";
       }
       std::shared_ptr<StaticType> func_type = std::make_shared<FuncType>(FuncType(return_type, arg_static_types));
       symbol_table->def_type(node->name.val, func_type);
-      symbol_table->def_addr(node->name.val, alloc_addr());
+      symbol_table->def_addr(node->name.val, alloc_addr(symbol_table));
       visit(node->body, func_symbol_table);
+      asm_stream << "pop %bp\n";
+      asm_stream << "ret\n";
       return std::make_shared<NonFuncType>(NonFuncType(BasicType::VOID));
    }
 
    std::shared_ptr<StaticType> Generator::visit_return_node(const std::shared_ptr<ReturnNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
+      visit(node->body, symbol_table);
+      asm_stream << "pop %bp\n";
+      asm_stream << "ret\n";
       return std::make_shared<NonFuncType>(NonFuncType(BasicType::VOID));
    }
 
    std::shared_ptr<StaticType> Generator::visit_enum_node(const std::shared_ptr<EnumNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
       for (int i = 0; i < node->items.size(); i++) {
          symbol_table->def_type(node->items.at(i).val, std::make_shared<NonFuncType>(NonFuncType(BasicType::INT)));
-         symbol_table->def_addr(node->items.at(i).val, alloc_addr());
+         symbol_table->def_addr(node->items.at(i).val, alloc_addr(symbol_table));
       }
       return std::make_shared<NonFuncType>(NonFuncType(BasicType::VOID));
    }

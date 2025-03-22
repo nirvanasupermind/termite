@@ -40,7 +40,7 @@ namespace anthill {
                     tokens.push_back(Token(old_line, TokenType::STAR, "*"));
                 }
             }
-            else if (current == '.' || current == '-' || std::isdigit(current)) {
+            else if (current == '.' || std::isdigit(current)) {
                 tokens.push_back(generate_number());
             }
             else if (current == '*') {

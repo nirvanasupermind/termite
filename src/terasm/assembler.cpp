@@ -64,6 +64,10 @@ namespace termite {
         else {
             assemble_instr();
         }
+        
+        while (current.type == TokenType::NEWLINE) {
+            advance();
+        }
     }
 
     void Assembler::assemble_instr() {
@@ -91,7 +95,7 @@ namespace termite {
         }
 
         advance();
-        if (!(current.type == TokenType::EOF_ || current.type == TokenType::NEWLINE || current.type == TokenType::INSTR_NAME)) {
+        if (!(current.type == TokenType::EOF_ || current.type == TokenType::NEWLINE || current.type == TokenType::INSTR_NAME || current.type == TokenType::IDENTIFIER)) {
             error();
         }
     }
