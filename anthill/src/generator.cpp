@@ -21,12 +21,13 @@ namespace anthill {
    }
 
 
-   std::string Generator::alloc_addr(const std::shared_ptr<SymbolTable>& symbol_table) {
-      if(symbol_table == global_scope) {
-      return std::to_string(addr_counter += 2);
-   } else {
-      return "-" + std::to_string(func_addr_counter += 2) + "(%rbp)";
-   }
+   std::string Generator::alloc_addr(bool func_mode) {
+      std::cout << "dbg25" << '\n';
+      if(func_mode) {
+         return "-" + std::to_string(func_addr_counter += 2) + "(%rbp)";
+      } else {
+         return std::to_string(addr_counter += 2);
+      }
    }
 
    std::shared_ptr<StaticType> Generator::visit(const std::shared_ptr<Node>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
@@ -344,7 +345,7 @@ namespace anthill {
       if (node->type->to_str() == "void") {
          error(file, node->name.line, "cannot define variable of type void");
       }
-      std::string addr = alloc_addr(symbol_table);
+      std::string addr = alloc_addr();
       symbol_table->def_type(node->name.val, visit(node->val, symbol_table));
       symbol_table->def_addr(node->name.val, addr);
       asm_stream << "mov %ax," + addr + "\n";
@@ -403,25 +404,29 @@ namespace anthill {
    }
 
    std::shared_ptr<StaticType> Generator::visit_func_def_node(const std::shared_ptr<FuncDefNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
+      std::cout << "dbg407" << '\n';
       asm_stream << "push %bp\nmov %sp,%bp\n";
       std::shared_ptr<SymbolTable> func_symbol_table = std::make_shared<SymbolTable>(SymbolTable(symbol_table));
       std::shared_ptr<TypeNode> return_type_node = std::static_pointer_cast<TypeNode>(node->return_type);
       std::shared_ptr<NonFuncType> return_type = std::make_shared<NonFuncType>(str_to_basic_type(return_type_node->base_type.val), return_type_node->num_pointers);
       std::vector<std::shared_ptr<NonFuncType> > arg_static_types;
       func_addr_counter = 0;
+      std::cout << "dbg414" << '\n';
       for(int i = 0; i < node->arg_names.size(); i++) {
+         std::cout << "dbg416" << '\n';
          std::shared_ptr<TypeNode> type_node = std::static_pointer_cast<TypeNode>(node->arg_types[i]);
          std::shared_ptr<NonFuncType> type = std::make_shared<NonFuncType>(NonFuncType(str_to_basic_type(type_node->base_type.val), type_node->num_pointers));
-         std::string addr = alloc_addr(func_symbol_table);
+         std::string addr = alloc_addr(true);
          arg_static_types.push_back(type);
          func_symbol_table->def_type(node->arg_names[i].val, type);
          func_symbol_table->def_addr(node->arg_names[i].val, addr);
          asm_stream << "mov %" << arg_regs[i] << ",%ax\n";
          asm_stream << "mov %ax," << addr << "\n";
+         std::cout << "dbg425" << '\n';
       }
       std::shared_ptr<StaticType> func_type = std::make_shared<FuncType>(FuncType(return_type, arg_static_types));
       symbol_table->def_type(node->name.val, func_type);
-      symbol_table->def_addr(node->name.val, alloc_addr(symbol_table));
+      symbol_table->def_addr(node->name.val, alloc_addr());
       visit(node->body, func_symbol_table);
       asm_stream << "pop %bp\n";
       asm_stream << "ret\n";
@@ -438,7 +443,7 @@ namespace anthill {
    std::shared_ptr<StaticType> Generator::visit_enum_node(const std::shared_ptr<EnumNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
       for (int i = 0; i < node->items.size(); i++) {
          symbol_table->def_type(node->items.at(i).val, std::make_shared<NonFuncType>(NonFuncType(BasicType::INT)));
-         symbol_table->def_addr(node->items.at(i).val, alloc_addr(symbol_table));
+         symbol_table->def_addr(node->items.at(i).val, alloc_addr());
       }
       return std::make_shared<NonFuncType>(NonFuncType(BasicType::VOID));
    }

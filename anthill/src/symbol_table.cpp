@@ -1,7 +1,7 @@
 #include <string>
 #include <memory>
 #include <map>
-
+#include <iostream>
 #include "token.h"
 #include "static_type.h"
 #include "symbol_table.h"
@@ -22,7 +22,7 @@ namespace anthill {
         if (types.count(name)) {
             return true;
         }
-        else if (parent) {
+        else if (parent != nullptr) {
             return parent->has(name);
         }
         else {
@@ -63,6 +63,7 @@ namespace anthill {
     }
 
     void SymbolTable::def_addr(const std::string& name, const std::string& addr) {
+        std::cout << "dbg66" << '\n';
         // if (has(name)) {
         //     throw std::string("variable '" + name + "' already exists");
         // } else {
