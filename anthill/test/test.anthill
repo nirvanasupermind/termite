@@ -2,6 +2,7 @@ int fac(int x) {
     return x * x;
 }
 int main() {
-    print fac(5);
-    return 0;
+    int x = fac(5);
+    x;
+    __asm__("mov %ax,%dx\nmov $0nDC,%ax\nint 0\n");
 }

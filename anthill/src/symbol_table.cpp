@@ -9,23 +9,26 @@
 
 namespace anthill {
     SymbolTable::SymbolTable()
-        : parent(std::shared_ptr<SymbolTable>()), types({}), addrs({}) {
+        : parent(std::shared_ptr<SymbolTable>()), types(std::map<std::string, std::shared_ptr<StaticType> >({})), addrs(std::map<std::string, std::string>({})) {
 
     }
 
     SymbolTable::SymbolTable(const std::shared_ptr<SymbolTable>& parent)
-        : parent(parent), types({}), addrs({}) {
+        : parent(parent), types(std::map<std::string, std::shared_ptr<StaticType> >({})), addrs(std::map<std::string, std::string>({})) {
 
     }
 
     bool SymbolTable::has(const std::string& name) {
         if (types.count(name)) {
+            std::cout << "dbg24" << '\n';
             return true;
         }
-        else if (parent != nullptr) {
+        else if (parent) {
+            std::cout << "dbg27" << '\n';
             return parent->has(name);
         }
         else {
+            std::cout << "dbg32" << '\n';
             return false;
         }
     }
@@ -43,9 +46,12 @@ namespace anthill {
     }
 
     void SymbolTable::def_type(const std::string& name, const std::shared_ptr<StaticType>& type) {
+        std::cout << "dbg46" << '\n';
         if (has(name)) {
+            std::cout << "dbg48" << '\n';
             throw std::string("variable '" + name + "' already exists");
         } else {
+            std::cout << "dbg51" << '\n';
             types[name] = type;
         }
     }

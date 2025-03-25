@@ -12,7 +12,7 @@
 namespace anthill {
    std::vector<std::string> arg_regs{"di","si","dx","cx"};
    Generator::Generator(const std::string& file, const std::shared_ptr<SymbolTable>& global_scope)
-      : file(file) {
+      : file(file), global_scope(global_scope) {
 
    }
 
@@ -24,7 +24,7 @@ namespace anthill {
    std::string Generator::alloc_addr(bool func_mode) {
       std::cout << "dbg25" << '\n';
       if(func_mode) {
-         return "-" + std::to_string(func_addr_counter += 2) + "(%rbp)";
+         return "-" + std::to_string(func_addr_counter += 2) + "(%bp)";
       } else {
          return std::to_string(addr_counter += 2);
       }
@@ -96,11 +96,15 @@ namespace anthill {
    }
 
    std::shared_ptr<StaticType> Generator::visit_call_node(const std::shared_ptr<CallNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
+      if(std::static_pointer_cast<IdentNode>(node->callee)->tok.val == "__asm__") {
+         asm_stream << std::static_pointer_cast<StrNode>(node->args.at(0))->tok.val;
+         return std::make_shared<NonFuncType>(NonFuncType(BasicType::VOID));
+      } else {
       std::shared_ptr<StaticType> callee_type = visit(node->callee, symbol_table);
       if (!callee_type->is_func()) {
          error(file, node->callee->line, "cannot call a non-function");
       }
-      for(int i = 0; i < node->args.size(); i++) {
+       for(int i = 0; i < node->args.size(); i++) {
          std::shared_ptr<StaticType> arg_type = visit(node->args.at(i), symbol_table);
          asm_stream << "mov %ax,%" << arg_regs[i] << '\n';
          if(arg_type->to_str() != "char" && std::static_pointer_cast<FuncType>(callee_type)->arg_types.at(i)->to_str() == "char") {
@@ -108,7 +112,10 @@ namespace anthill {
          }
       }
       asm_stream << "call " << std::static_pointer_cast<IdentNode>(node->callee)->tok.val << '\n';
+
+
       return std::static_pointer_cast<FuncType>(callee_type)->return_type;
+   }
    }
 
    std::shared_ptr<StaticType> Generator::visit_postfix_node(const std::shared_ptr<PostfixNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
@@ -404,7 +411,7 @@ namespace anthill {
    }
 
    std::shared_ptr<StaticType> Generator::visit_func_def_node(const std::shared_ptr<FuncDefNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
-      std::cout << "dbg407" << '\n';
+      asm_stream << node->name.val << ":\n";
       asm_stream << "push %bp\nmov %sp,%bp\n";
       std::shared_ptr<SymbolTable> func_symbol_table = std::make_shared<SymbolTable>(SymbolTable(symbol_table));
       std::shared_ptr<TypeNode> return_type_node = std::static_pointer_cast<TypeNode>(node->return_type);
@@ -425,8 +432,10 @@ namespace anthill {
          std::cout << "dbg425" << '\n';
       }
       std::shared_ptr<StaticType> func_type = std::make_shared<FuncType>(FuncType(return_type, arg_static_types));
+      std::cout << node->name.to_str() << '\n';
       symbol_table->def_type(node->name.val, func_type);
-      symbol_table->def_addr(node->name.val, alloc_addr());
+      symbol_table->def_addr(node->name.val, node->name.val);
+      std::cout << "dbg430" << '\n';
       visit(node->body, func_symbol_table);
       asm_stream << "pop %bp\n";
       asm_stream << "ret\n";

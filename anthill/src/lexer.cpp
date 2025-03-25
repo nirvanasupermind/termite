@@ -400,7 +400,6 @@ namespace anthill {
             str += x;
             advance();
         }
-        advance();
         return Token(line, TokenType::STRLIT, str);
     }
 }
