@@ -1,8 +1,8 @@
-int fac(int x) {
-    return x * x;
+int f(int x) {
+    return x;
 }
 int main() {
-    int x = fac(5);
-    x;
+    f(5);
     __asm__("mov %ax,%dx\nmov $0nDC,%ax\nint 0\n");
+    return 0;
 }

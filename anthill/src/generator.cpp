@@ -30,7 +30,7 @@ namespace anthill {
       }
    }
 
-   std::shared_ptr<StaticType> Generator::visit(const std::shared_ptr<Node>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
+   std::shared_ptr<StaticType> Generator::visit(const std::shared_ptr<Node>& node, const std::shared_ptr<SymbolTable>& symbol_table, bool no_gen) {
       switch (node->get_type()) {
       case NodeType::CHAR:
          return visit_char_node(std::static_pointer_cast<CharNode>(node), symbol_table);
@@ -39,7 +39,7 @@ namespace anthill {
       case NodeType::STR:
          return visit_str_node(std::static_pointer_cast<StrNode>(node), symbol_table);
       case NodeType::IDENT:
-         return visit_ident_node(std::static_pointer_cast<IdentNode>(node), symbol_table);
+         return visit_ident_node(std::static_pointer_cast<IdentNode>(node), symbol_table, no_gen);
       case NodeType::CALL:
          return visit_call_node(std::static_pointer_cast<CallNode>(node), symbol_table);
       case NodeType::POSTFIX:
@@ -90,8 +90,10 @@ namespace anthill {
       return  std::make_shared<NonFuncType>(NonFuncType(BasicType::CHAR, 1));
    }
 
-   std::shared_ptr<StaticType> Generator::visit_ident_node(const std::shared_ptr<IdentNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
-      asm_stream << "mov " << symbol_table->get_addr(node->tok.val) << ",%ax\n";
+   std::shared_ptr<StaticType> Generator::visit_ident_node(const std::shared_ptr<IdentNode>& node, const std::shared_ptr<SymbolTable>& symbol_table, bool no_gen) {
+      if(!no_gen) {
+         asm_stream << "mov " << symbol_table->get_addr(node->tok.val) << ",%ax\n";
+      }
       return symbol_table->get_type(node->tok.val);
    }
 
@@ -100,7 +102,7 @@ namespace anthill {
          asm_stream << std::static_pointer_cast<StrNode>(node->args.at(0))->tok.val;
          return std::make_shared<NonFuncType>(NonFuncType(BasicType::VOID));
       } else {
-      std::shared_ptr<StaticType> callee_type = visit(node->callee, symbol_table);
+      std::shared_ptr<StaticType> callee_type = visit(node->callee, symbol_table, true);
       if (!callee_type->is_func()) {
          error(file, node->callee->line, "cannot call a non-function");
       }

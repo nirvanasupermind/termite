@@ -101,8 +101,8 @@ Note 2: Logical/shift operations do not work the same way as normal, because the
 |`C1`           |`mul`   |Multiply                          |`src` (reg/idx)                       |`(dx ax) = ax * src` (`dx` stores high word of the 2-word result, `ax` stores low word)|
 |`C2`           |`div`   |Divide                            |`src` (reg/idx)                       |`ax = ax / src; dx = ax % src`      |
 |`C3`           |`neg`   |Negate/trit-wise logical NOT      |`src` (reg/idx)                       |`src = -src`                        |
-|`C4`           |`cmp`   |Compare                           |`src` (imm/reg/idx), `dest` (reg/idx)|`set-flags(dest - src)`             |
-|`BD`           |`call`  |Call procedure                    |`dest` (imm)                          |`sp = sp - 2; [sp] = ip; ip = dest;`|=
+|`C4`           |`cmp`   |Compare                           |`src` (imm/reg/idx), `dest` (reg/idx)|`set-flags(dest - src)`              |
+|`BD`           |`call`  |Call procedure                    |`dest` (imm)                          |`sp = sp - 2; [sp] = ip; ip = dest;`|
 |`BC`           |`ret`   |Return from procedure             |No operands                           |`ip = [sp]; sp = sp + 2`            |
 |`BB`           |`jmp`   |Unconditional jump                |`dest` (imm)                          |`ip = dest`                         |
 |`BA`           |`jl`    |Jump if less than                 |`dest` (imm)                          |`ip = dest` if `SF < 0`             |

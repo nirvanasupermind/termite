@@ -453,15 +453,15 @@ namespace termite {
             case INS_CALL: {
                 cycles = cycles + (regs[REG_IP] - imm);
                 regs[REG_SP] = regs[REG_SP] - Word::TWO;
+                std::cout  << "! "<< regs[REG_SP].to_int32() << '\n';
                 memory.set_word(regs[REG_SP], regs[REG_IP]);
                 regs[REG_IP] = imm;
                 break;
             }
             case INS_RET: {
-                std::cout << cycles.to_int32() << '\n';
-                std::cout << (regs[REG_IP] - memory.get_word(regs[REG_SP])).to_int32() << '\n';
                 cycles = cycles + (regs[REG_IP] - memory.get_word(regs[REG_SP]));
                 regs[REG_IP] = memory.get_word(regs[REG_SP]);
+                std::cout <<"dbg464 " << regs[REG_IP].to_int32() << '\n';
                 regs[REG_SP] = regs[REG_SP] + Word::TWO;
                 break;
             }
