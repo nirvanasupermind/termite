@@ -56,9 +56,8 @@ namespace anthill {
          return visit_block_node(std::static_pointer_cast<BlockNode>(node), symbol_table);
          case NodeType::IF:
          return visit_if_node(std::static_pointer_cast<IfNode>(node), symbol_table);
-         case NodeType::WHILE: {
+         case NodeType::WHILE:
          return visit_while_node(std::static_pointer_cast<WhileNode>(node), symbol_table);
-         }
          case NodeType::FOR:
          return visit_for_node(std::static_pointer_cast<ForNode>(node), symbol_table);
          case NodeType::CONTINUE:
@@ -460,7 +459,9 @@ namespace anthill {
    }
 
    std::shared_ptr<StaticType> Generator::visit_stmt_list_node(const std::shared_ptr<StmtListNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
+      std::cout << "dbg462 " << node->stmts.size() << '\n';
       for (int i = 0; i < node->stmts.size(); i++) {
+         std::cout << "dbg464" << '\n';
          visit(node->stmts.at(i), symbol_table);
       }
       return std::make_shared<NonFuncType>(NonFuncType(BasicType::VOID));

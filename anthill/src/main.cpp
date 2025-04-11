@@ -29,7 +29,6 @@ int main(int argc, char** argv) {
         anthill::Lexer lexer(file_path, str);
         std::vector<anthill::Token> tokens = lexer.generate_tokens();
         anthill::Parser parser(file_path, tokens);
-        std::cout << parser.parse()->to_str() << '\n';
         anthill::Generator gen(file_path, std::make_shared<anthill::SymbolTable>(anthill::SymbolTable()));
         gen.visit(parser.parse(), gen.global_scope);
         std::ofstream myfile;
