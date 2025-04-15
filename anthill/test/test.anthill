@@ -1,7 +1,12 @@
-int f() {
-    return 5;
+int fac(int x) {
+    if(x == 0) {
+        return 1;
+    } else {
+        return x * fac(x - 1);
+    }
 }
 int main() {
-    f();
+    fac(5);
+    __asm__("mov %ax,%dx\nmov $0nDC,%ax\nint 0\n");
     return 0;
 }
