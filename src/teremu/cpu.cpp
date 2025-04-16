@@ -118,7 +118,7 @@ namespace termite {
             Word imm = fetch_word(cycles, memory);
             Word imm2 = fetch_word(cycles, memory);
             Word opcode = ins.get_trit_range(12, 15);
-            std::cout << "dbg121 " << opcode.to_int32() << '\n';
+            // std::cout << "dbg121 " << opcode.to_int32() << '\n';
             switch (opcode.to_int32()) {
                 case INS_MOV: {
 
@@ -165,6 +165,7 @@ namespace termite {
                     memory.set_word(addr, val_at_sp);
                 }
                 regs[REG_SP] = regs[REG_SP] + Word::TWO;
+                break;
             }
             case INS_PUSHF: {
                 regs[REG_SP] = regs[REG_SP] - Word::TWO;
@@ -454,18 +455,19 @@ namespace termite {
                 break;
             }
             case INS_CALL: {
-                std::cout << "dbg455 " << regs[REG_SP].to_int32() << '\n';
+                // std::cout << "dbg455 " << regs[REG_SP].to_int32() << '\n';
+                regs[REG_SP] = regs[REG_SP] - Word::TWO;
                 memory.set_word(regs[REG_SP], regs[REG_IP]);
-                regs[REG_SP] = regs[REG_SP] + Word::TWO;
                 cycles = cycles + (regs[REG_IP] - imm);
                 regs[REG_IP] = imm;
                 break;
             }
             case INS_RET: {
-                std::cout << "dbg464 " << regs[REG_SP].to_int32() << '\n';
-                cycles = cycles + (regs[REG_IP] - memory.get_word(regs[REG_SP]));
-                regs[REG_IP] = memory.get_word(regs[REG_SP]);
-                regs[REG_SP] = regs[REG_SP] - Word::TWO;
+                // std::cout << "dbg465 " << regs[REG_SP].to_int32() << '\n';
+                Word val_at_sp = memory.get_word(regs[REG_SP]);
+                cycles = cycles + (regs[REG_IP] - val_at_sp);
+                regs[REG_IP] = val_at_sp;
+                regs[REG_SP] = regs[REG_SP] + Word::TWO;
                 break;
             }
             case INS_JMP: {
