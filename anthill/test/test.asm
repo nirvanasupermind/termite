@@ -9,6 +9,9 @@ main:
 push %bp
 mov %sp,%bp
 call f
+mov %ax,%dx
+mov $0nDC,%ax
+int $0
 mov $0,%ax
 pop %bp
 ret

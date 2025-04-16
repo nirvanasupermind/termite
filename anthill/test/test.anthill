@@ -3,5 +3,6 @@ int f() {
 }
 int main() {
     f();
+    __asm__("mov %ax,%dx\nmov $0nDC,%ax\nint $0\n");
     return 0;
 }

@@ -1,1 +1,1 @@
-__asm__("mov %ax,%dx\nmov $0nDC,%ax\nint 0\n");
+__asm__("mov %ax,%dx\nmov $0nDC,%ax\nint $0\n");
