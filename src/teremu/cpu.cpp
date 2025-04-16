@@ -118,17 +118,16 @@ namespace termite {
             Word imm = fetch_word(cycles, memory);
             Word imm2 = fetch_word(cycles, memory);
             Word opcode = ins.get_trit_range(12, 15);
-            std::cout << "[DEBUG] OPCODE " << opcode.to_int32()  << "\n";
             switch (opcode.to_int32()) {
                 case INS_MOV: {
+                    std::cout << "dbg123 " << regs[REG_SP].to_int32() << '\n';
 
-                Word src_mode = ins.get_trit_range(10, 11);
-                Word src_reg = ins.get_trit_range(8, 9);
+                Word dest_mode = ins.get_trit_range(10, 11);
+                Word dest_reg = ins.get_trit_range(8, 9);
 
-                Word dest_mode = ins.get_trit_range(6, 7);
-                Word dest_reg = ins.get_trit_range(4, 5);
+                Word src_mode = ins.get_trit_range(6, 7);
+                Word src_reg = ins.get_trit_range(4, 5);
 
-                std::cout << "[DEBUG] MOV from R" << src_reg.to_int32() << " to R" << dest_reg.to_int32() << ", val = " <<  get_addr_mode(cycles, memory, src_mode, src_reg, imm2).to_int32() << "\n";
 
                 if (dest_mode.to_int32() == -3) {
                     regs[dest_reg.to_int32() + 4] = get_addr_mode(cycles, memory, src_mode, src_reg, imm2);
@@ -178,10 +177,10 @@ namespace termite {
                 break;
             }
             case INS_AND: {
-                Word src_mode = ins.get_trit_range(10, 11);
-                Word src_reg = ins.get_trit_range(8, 9);
-                Word dest_mode = ins.get_trit_range(6, 7);
-                Word dest_reg = ins.get_trit_range(4, 5);
+                Word dest_mode = ins.get_trit_range(10, 11);
+                Word dest_reg = ins.get_trit_range(8, 9);
+                Word src_mode = ins.get_trit_range(6, 7);
+                Word src_reg = ins.get_trit_range(4, 5);
                 Word result;
                 if (dest_mode.to_int32() == -3) {
                     result = regs[dest_reg.to_int32() + 4] & get_addr_mode(cycles, memory, src_mode, src_reg, imm2);
@@ -200,11 +199,11 @@ namespace termite {
                 break;
             }
             case INS_OR: {
-                Word src_mode = ins.get_trit_range(10, 11);
-                Word src_reg = ins.get_trit_range(8, 9);
+                Word dest_mode = ins.get_trit_range(10, 11);
+                Word dest_reg = ins.get_trit_range(8, 9);
 
-                Word dest_mode = ins.get_trit_range(6, 7);
-                Word dest_reg = ins.get_trit_range(4, 5);
+                Word src_mode = ins.get_trit_range(6, 7);
+                Word src_reg = ins.get_trit_range(4, 5);
                 Word result;
                 if (dest_mode.to_int32() == -3) {
                     result = regs[dest_reg.to_int32() + 4] | get_addr_mode(cycles, memory, src_mode, src_reg, imm2);
@@ -223,11 +222,11 @@ namespace termite {
                 break;
             }
             case INS_XOR: {
-                Word src_mode = ins.get_trit_range(10, 11);
-                Word src_reg = ins.get_trit_range(8, 9);
+                Word dest_mode = ins.get_trit_range(10, 11);
+                Word dest_reg = ins.get_trit_range(8, 9);
 
-                Word dest_mode = ins.get_trit_range(6, 7);
-                Word dest_reg = ins.get_trit_range(4, 5);
+                Word src_mode = ins.get_trit_range(6, 7);
+                Word src_reg = ins.get_trit_range(4, 5);
                 Word result;
                 if (dest_mode.to_int32() == -3) {
                     result = regs[dest_reg.to_int32() + 4] ^ get_addr_mode(cycles, memory, src_mode, src_reg, imm2);
@@ -246,11 +245,11 @@ namespace termite {
                 break;
             }
             case INS_SHL: {
-                Word src_mode = ins.get_trit_range(10, 11);
-                Word src_reg = ins.get_trit_range(8, 9);
+                Word dest_mode = ins.get_trit_range(10, 11);
+                Word dest_reg = ins.get_trit_range(8, 9);
 
-                Word dest_mode = ins.get_trit_range(6, 7);
-                Word dest_reg = ins.get_trit_range(4, 5);
+                Word src_mode = ins.get_trit_range(6, 7);
+                Word src_reg = ins.get_trit_range(4, 5);
                 Word result;
                 if (dest_mode.to_int32() == -3) {
                     result = regs[dest_reg.to_int32() + 4] << get_addr_mode(cycles, memory, src_mode, src_reg, imm2);
@@ -269,11 +268,11 @@ namespace termite {
                 break;
             }
             case INS_SHR: {
-                Word src_mode = ins.get_trit_range(10, 11);
-                Word src_reg = ins.get_trit_range(8, 9);
+                Word dest_mode = ins.get_trit_range(10, 11);
+                Word dest_reg = ins.get_trit_range(8, 9);
 
-                Word dest_mode = ins.get_trit_range(6, 7);
-                Word dest_reg = ins.get_trit_range(4, 5);
+                Word src_mode = ins.get_trit_range(6, 7);
+                Word src_reg = ins.get_trit_range(4, 5);
                 Word result;
                 if (dest_mode.to_int32() == -3) {
                     result = regs[dest_reg.to_int32() + 4] >> get_addr_mode(cycles, memory, src_mode, src_reg, imm2);
@@ -292,11 +291,11 @@ namespace termite {
                 break;
             }
             case INS_ADD: {
-                Word src_mode = ins.get_trit_range(10, 11);
-                Word src_reg = ins.get_trit_range(8, 9);
+                Word dest_mode = ins.get_trit_range(10, 11);
+                Word dest_reg = ins.get_trit_range(8, 9);
 
-                Word dest_mode = ins.get_trit_range(6, 7);
-                Word dest_reg = ins.get_trit_range(4, 5);
+                Word src_mode = ins.get_trit_range(6, 7);
+                Word src_reg = ins.get_trit_range(4, 5);
 
                 std::pair<Word, Word> result;
                 if (dest_mode.to_int32() == -3) {
@@ -317,11 +316,11 @@ namespace termite {
                 break;
             }
             case INS_ADC: {
-                Word src_mode = ins.get_trit_range(10, 11);
-                Word src_reg = ins.get_trit_range(8, 9);
+                Word dest_mode = ins.get_trit_range(10, 11);
+                Word dest_reg = ins.get_trit_range(8, 9);
 
-                Word dest_mode = ins.get_trit_range(6, 7);
-                Word dest_reg = ins.get_trit_range(4, 5);
+                Word src_mode = ins.get_trit_range(6, 7);
+                Word src_reg = ins.get_trit_range(4, 5);
 
                 Word carry = Word::from_int32(flags.get_bct_trit(0) - 1);
 
@@ -344,11 +343,11 @@ namespace termite {
                 break;
             }
             case INS_SUB: {
-                Word src_mode = ins.get_trit_range(10, 11);
-                Word src_reg = ins.get_trit_range(8, 9);
+                Word dest_mode = ins.get_trit_range(10, 11);
+                Word dest_reg = ins.get_trit_range(8, 9);
 
-                Word dest_mode = ins.get_trit_range(6, 7);
-                Word dest_reg = ins.get_trit_range(4, 5);
+                Word src_mode = ins.get_trit_range(6, 7);
+                Word src_reg = ins.get_trit_range(4, 5);
 
                 std::pair<Word, Word> result;
                 if (dest_mode.to_int32() == -3) {
@@ -369,11 +368,11 @@ namespace termite {
                 break;
             }
             case INS_SBB: {
-                Word src_mode = ins.get_trit_range(10, 11);
-                Word src_reg = ins.get_trit_range(8, 9);
+                Word dest_mode = ins.get_trit_range(10, 11);
+                Word dest_reg = ins.get_trit_range(8, 9);
 
-                Word dest_mode = ins.get_trit_range(6, 7);
-                Word dest_reg = ins.get_trit_range(4, 5);
+                Word src_mode = ins.get_trit_range(6, 7);
+                Word src_reg = ins.get_trit_range(4, 5);
 
                 Word carry = Word::from_int32(flags.get_bct_trit(0) - 1);
 
@@ -433,11 +432,11 @@ namespace termite {
                 break;
             }
             case INS_CMP: {
-                Word src_mode = ins.get_trit_range(10, 11);
-                Word src_reg = ins.get_trit_range(8, 9);
+                Word dest_mode = ins.get_trit_range(10, 11);
+                Word dest_reg = ins.get_trit_range(8, 9);
 
-                Word dest_mode = ins.get_trit_range(6, 7);
-                Word dest_reg = ins.get_trit_range(4, 5);
+                Word src_mode = ins.get_trit_range(6, 7);
+                Word src_reg = ins.get_trit_range(4, 5);
 
                 std::pair<Word, Word> result;
                 if (dest_mode.to_int32() == -3) {

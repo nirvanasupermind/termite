@@ -244,20 +244,12 @@ namespace termite {
         advance();
         std::vector<Word> operand2 = assemble_operand();
 
-    code.push_back(Word(((Word::from_int32(opcode).get_bct() & 0xff) << 24)
-        + ((operand1[0].get_bct() & 0xf) << 20)  // ADDR_MODE1 (src)
-+ ((operand1[1].get_bct() & 0xf) << 16)  // REG1
-+ ((operand2[0].get_bct() & 0xf) << 12)  // ADDR_MODE2 (dst)
-+ ((operand2[1].get_bct() & 0xf) << 8)   // REG2
+        code.push_back(Word(((Word::from_int32(opcode).get_bct() & 0xff) << 24)
+            + ((operand2[0].get_bct() & 0xf) << 20)
+            + ((operand2[1].get_bct() & 0xf) << 16)
+            + ((operand1[0].get_bct() & 0xf) << 12)
+            + ((operand1[1].get_bct() & 0xf) << 8)
             + 0x55));
-            
-        // code.push_back(Word(((Word::from_int32(opcode).get_bct() & 0xff) << 24)
-        //     + ((operand2[0].get_bct() & 0xf) << 20)
-        //     + ((operand2[1].get_bct() & 0xf) << 16)
-        //     + ((operand1[0].get_bct() & 0xf) << 12)
-        //     + ((operand1[1].get_bct() & 0xf) << 8)
-        //     + 0x55));
-
         code.push_back(operand2[2]);
         code.push_back(operand1[2]);
     }
