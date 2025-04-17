@@ -21,12 +21,12 @@ namespace anthill {
    }
 
 
-   std::string Generator::alloc_addr(bool func_mode) {
-      std::cout << "dbg25" << '\n';
+   std::string Generator::alloc_addr(const std::shared_ptr<NonFuncType>& type, bool func_mode) {
+      // std::cout << "dbg25" << '\n';
       if(func_mode) {
-         return "-" + std::to_string(func_addr_counter += 2) + "(%bp)";
+         return "-" + std::to_string(func_addr_counter += type->size()) + "(%bp)";
       } else {
-         return std::to_string(addr_counter += 2);
+         return std::to_string(addr_counter += type->size());
       }
    }
 
@@ -86,6 +86,17 @@ namespace anthill {
    }
 
    std::shared_ptr<StaticType> Generator::visit_str_node(const std::shared_ptr<StrNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
+      std::string start_addr = alloc_addr(std::make_shared<NonFuncType>(NonFuncType(BasicType::CHAR)));
+      for(int i = 0; i < node->tok.val.size(); i++) {
+         std::string addr;
+         if(i == 0) {
+            addr = start_addr;
+         } else {
+            addr = alloc_addr(std::make_shared<NonFuncType>(NonFuncType(BasicType::CHAR)));
+         }
+         asm_stream << "mov $" << (int)(node->tok.val.at(i)) << ",%ax\n";
+      }
+      asm_stream << "mov " + start_addr + ",%ax\n";      
       return  std::make_shared<NonFuncType>(NonFuncType(BasicType::CHAR, 1));
    }
 
@@ -132,6 +143,32 @@ namespace anthill {
    std::shared_ptr<StaticType> Generator::visit_prefix_node(const std::shared_ptr<PrefixNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
       std::shared_ptr<StaticType> node_type = visit(node->node, symbol_table);
 
+      switch (node->op_tok.type) {
+         case TokenType::AMPER: {
+            if(node->node->get_type() == NodeType::IDENT) {
+               std::string addr = symbol_table->get_addr(std::static_pointer_cast<IdentNode>(node->node)->tok.val);
+               if(addr.find('(') != std::string::npos) {
+                  std::string disp = addr.substr(0, addr.find('('));
+                  std::string reg = addr.substr(addr.find('(') + 1, addr.find(')') - addr.find('(') - 1);
+                  asm_stream << "mov $" << disp << ",%ax\n";
+                  asm_stream << "add %ax," << reg << "\n";
+               } else {
+                  asm_stream << "mov $" << addr << ",%ax\n";
+               }
+            }
+            break;
+         }
+      case TokenType::STAR: {
+         asm_stream << "mov %ax,%dx\n";
+         asm_stream << "mov 0(%dx),%ax\n";
+         break;
+      }
+      case TokenType::MINUS: {
+         asm_stream << "neg %ax\n";
+         break;
+      }
+   }
+   
       if (node_type->to_str() == "void") {
          error(file, node->node->line, "cannot perform prefix unary operations on a value of type void");
       }
@@ -353,7 +390,7 @@ namespace anthill {
       if (node->type->to_str() == "void") {
          error(file, node->name.line, "cannot define variable of type void");
       }
-      std::string addr = alloc_addr();
+      std::string addr = alloc_addr(NonFuncType::parse_type(node->type->to_str()));
       symbol_table->def_type(node->name.val, visit(node->val, symbol_table));
       symbol_table->def_addr(node->name.val, addr);
       asm_stream << "mov %ax," + addr + "\n";
@@ -419,24 +456,24 @@ namespace anthill {
       std::shared_ptr<NonFuncType> return_type = std::make_shared<NonFuncType>(str_to_basic_type(return_type_node->base_type.val), return_type_node->num_pointers);
       std::vector<std::shared_ptr<NonFuncType> > arg_static_types;
       func_addr_counter = 0;
-      std::cout << "dbg414" << '\n';
+      // std::cout << "dbg414" << '\n';
       for(int i = 0; i < node->arg_names.size(); i++) {
-         std::cout << "dbg416" << '\n';
+         // std::cout << "dbg416" << '\n';
          std::shared_ptr<TypeNode> type_node = std::static_pointer_cast<TypeNode>(node->arg_types[i]);
          std::shared_ptr<NonFuncType> type = std::make_shared<NonFuncType>(NonFuncType(str_to_basic_type(type_node->base_type.val), type_node->num_pointers));
-         std::string addr = alloc_addr(true);
+         std::string addr = alloc_addr(type, true);
          arg_static_types.push_back(type);
          func_symbol_table->def_type(node->arg_names[i].val, type);
          func_symbol_table->def_addr(node->arg_names[i].val, addr);
          asm_stream << "mov %" << arg_regs[i] << ",%ax\n";
          asm_stream << "mov %ax," << addr << "\n";
-         std::cout << "dbg425" << '\n';
+         // std::cout << "dbg425" << '\n';
       }
       std::shared_ptr<StaticType> func_type = std::make_shared<FuncType>(FuncType(return_type, arg_static_types));
       std::cout << node->name.to_str() << '\n';
       symbol_table->def_type(node->name.val, func_type);
       symbol_table->def_addr(node->name.val, node->name.val);
-      std::cout << "dbg430" << '\n';
+      // std::cout << "dbg430" << '\n';
       visit(node->body, func_symbol_table);
       asm_stream << "pop %bp\n";
       asm_stream << "ret\n";
@@ -452,16 +489,17 @@ namespace anthill {
 
    std::shared_ptr<StaticType> Generator::visit_enum_node(const std::shared_ptr<EnumNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
       for (int i = 0; i < node->items.size(); i++) {
-         symbol_table->def_type(node->items.at(i).val, std::make_shared<NonFuncType>(NonFuncType(BasicType::INT)));
-         symbol_table->def_addr(node->items.at(i).val, alloc_addr());
+         std::shared_ptr<NonFuncType> int_type = std::make_shared<NonFuncType>(NonFuncType(BasicType::INT));
+         symbol_table->def_type(node->items.at(i).val, int_type);
+         symbol_table->def_addr(node->items.at(i).val, alloc_addr(int_type));
       }
       return std::make_shared<NonFuncType>(NonFuncType(BasicType::VOID));
    }
 
    std::shared_ptr<StaticType> Generator::visit_stmt_list_node(const std::shared_ptr<StmtListNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
-      std::cout << "dbg462 " << node->stmts.size() << '\n';
+      // std::cout << "dbg462 " << node->stmts.size() << '\n';
       for (int i = 0; i < node->stmts.size(); i++) {
-         std::cout << "dbg464" << '\n';
+         // std::cout << "dbg464" << '\n';
          visit(node->stmts.at(i), symbol_table);
       }
       return std::make_shared<NonFuncType>(NonFuncType(BasicType::VOID));

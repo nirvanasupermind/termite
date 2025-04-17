@@ -20,7 +20,7 @@ namespace anthill {
         std::shared_ptr<SymbolTable> global_scope;
         Generator(const std::string& file, const std::shared_ptr<SymbolTable>& global_scope);
         int alloc_label();
-        std::string alloc_addr(bool func_mode = false);
+        std::string alloc_addr(const std::shared_ptr<NonFuncType>& type, bool func_mode = false);
         std::shared_ptr<StaticType> visit(const std::shared_ptr<Node>& node, const std::shared_ptr<SymbolTable>& symbol_table, bool no_gen = false);
         std::shared_ptr<StaticType> visit_char_node(const std::shared_ptr<CharNode>& node, const std::shared_ptr<SymbolTable>& symbol_table);
         std::shared_ptr<StaticType> visit_int_node(const std::shared_ptr<IntNode>& node, const std::shared_ptr<SymbolTable>& symbol_table);

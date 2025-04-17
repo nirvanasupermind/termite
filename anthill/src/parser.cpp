@@ -104,7 +104,7 @@ namespace anthill {
         Token tok = current;
         if (tok.type == TokenType::PLUS || tok.type == TokenType::MINUS || tok.type == TokenType::NOT || tok.type == TokenType::AMPER || tok.type == TokenType::STAR) {
             advance();
-            return std::make_shared<PrefixNode>(PrefixNode(tok.line, tok, postfix_expr( terminator)));
+            return std::make_shared<PrefixNode>(PrefixNode(tok.line, tok, prefix_expr(terminator)));
         }
         else {
             return postfix_expr( terminator);

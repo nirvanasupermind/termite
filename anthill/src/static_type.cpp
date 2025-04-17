@@ -51,6 +51,30 @@ namespace anthill {
         return result;
     }
 
+    int NonFuncType::size() const {
+        if(basic_type == BasicType::CHAR && pointer_levels == 0) {
+            return 1;
+        } else {
+            return 2;
+        }
+    }
+
+    std::shared_ptr<NonFuncType> NonFuncType::parse_type(const std::string& str) {
+        BasicType basic_type;
+        if(str[0] == 'c' && str[1] == 'h' && str[2] == 'a' && str[3] == 'r') {
+            basic_type = BasicType::INT;
+        } else {
+            basic_type = BasicType::INT;
+        }
+        int pointer_levels = 0;
+        for(int i = 2; i < str.size(); i++) {
+            if(str[i] == '*') {
+                pointer_levels++;
+            };
+        }
+        return std::make_shared<NonFuncType>(NonFuncType(basic_type, pointer_levels));
+    }
+    
     FuncType::FuncType(const std::shared_ptr<NonFuncType>& return_type, const std::vector<std::shared_ptr<NonFuncType> >& arg_types)
         : return_type(return_type), arg_types(arg_types) {
 

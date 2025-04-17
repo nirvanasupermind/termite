@@ -152,7 +152,12 @@ namespace anthill {
     }
 
     std::string TypeNode::to_str() const {
-        return "(" + base_type.to_str() + "," + std::to_string(num_pointers) + ")";
+        std::string result = base_type.to_str();
+        for(int i = 0; i < num_pointers; i++) {
+            result += '*';
+        }
+        return result;
+        // return base_type.to_str() + "," + std::to_string(num_pointers) + ")";
     }
 
     NodeType TypeNode::get_type() const {

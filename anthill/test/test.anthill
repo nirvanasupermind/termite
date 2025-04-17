@@ -1,12 +1,8 @@
-int f(int x) {
-    if(x == 0) {
-        return 1;
-    } else {
-        return x * f(x - 1);
-    }
-}
 int main() {
-    f(6);
+    int x = 5;
+    int y = 900;
+    int* z = 4;
+    -*z;
     __asm__("mov %ax,%dx\nmov $0nDC,%ax\nint $0\n");
     return 0;
 }

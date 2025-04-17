@@ -26,6 +26,8 @@ namespace anthill {
         NonFuncType(const BasicType& basic_type = BasicType::VOID, int pointer_levels = 0);
         bool is_func() const;
         std::string to_str() const;
+        int size() const;
+        static std::shared_ptr<NonFuncType> parse_type(const std::string& str);
     };
 
     class FuncType : public StaticType {
