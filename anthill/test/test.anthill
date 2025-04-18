@@ -1,8 +1,8 @@
 int main() {
-    int x = 5;
-    int y = 900;
-    int* z = 4;
-    -*z;
+    int x = 13 + 1;
+    int* y = &x;
+    *y = 104 + 2;
+    x;
     __asm__("mov %ax,%dx\nmov $0nDC,%ax\nint $0\n");
     return 0;
 }

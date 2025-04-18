@@ -159,8 +159,8 @@ namespace anthill {
             break;
          }
       case TokenType::STAR: {
-         asm_stream << "mov %ax,%dx\n";
-         asm_stream << "mov 0(%dx),%ax\n";
+         asm_stream << "mov %ax,%bx\n";
+         asm_stream << "mov 0(%bx),%ax\n";
          break;
       }
       case TokenType::MINUS: {
@@ -377,8 +377,23 @@ namespace anthill {
    }
 
    std::shared_ptr<StaticType> Generator::visit_assign_node(const std::shared_ptr<AssignNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
+      if(node->left_node->get_type() == NodeType::PREFIX) {
+         std::shared_ptr<PrefixNode> prefix_node = std::static_pointer_cast<PrefixNode>(node->left_node);
+         if (prefix_node->op_tok.type != TokenType::STAR) {
+            error(file, node->left_node->line, "cannot assign to a non-identifier/dereference");
+         }
+         if (prefix_node->node->get_type() != NodeType::IDENT) {
+            error(file, node->left_node->line, "cannot assign to a non-identifier/dereference");
+         }
+         std::string addr = symbol_table->get_addr(std::static_pointer_cast<IdentNode>(prefix_node->node)->tok.val);
+         asm_stream << "mov " + addr + ",%bx\n";
+         visit(node->right_node, symbol_table);
+         asm_stream << "mov %ax,0(%bx)\n";
+         return visit(node->left_node, symbol_table);
+      }
+
       if (node->left_node->get_type() != NodeType::IDENT) {
-         error(file, node->left_node->line, "cannot assign to non-identifier");
+         error(file, node->left_node->line, "cannot assign to a non-identifier/dereference");
       }
       std::string addr = symbol_table->get_addr(std::static_pointer_cast<IdentNode>(node->left_node)->tok.val);
       visit(node->right_node, symbol_table);
