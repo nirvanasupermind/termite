@@ -1,8 +1,6 @@
 int main() {
-    int x = 13 + 1;
-    int* y = &x;
-    *y = 104 + 2;
-    x;
+    char x = 50000;
+    *&x;
     __asm__("mov %ax,%dx\nmov $0nDC,%ax\nint $0\n");
     return 0;
 }
