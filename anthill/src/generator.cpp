@@ -39,8 +39,7 @@ namespace anthill {
    }
 
    void Generator::trunc_to_8_trits() {
-      asm_stream << "shl 8, %ax\n";
-      asm_stream << "shr 8, %ax\n";
+      asm_stream << "xor $0nDDDD, %ax\n";
    }
 
    std::string Generator::alloc_addr(const std::shared_ptr<NonFuncType>& type, bool func_mode) {

@@ -20,8 +20,7 @@ mov %ax,0
 mov 0,%ax
 mov %ax,%bx
 mov 0(%bx),%ax
-shl 8, %ax
-shr 8, %ax
+xor $0nDDDD, %ax
 mov %ax,%dx
 mov $0nDC,%ax
 int $0
