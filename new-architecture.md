@@ -205,7 +205,7 @@ All instructions are 3 words in length. The first word is the main part of the i
 
 
 # Interrupts
-There is only one interrupt vector which can be accessed by calling `int 0` and leads to the main API (this is analogous to `int 21h` for DOS API on x86). The following subfunctions are provided by `int 0` depending on the value of `ax`:
+There is only one interrupt vector which can be accessed by calling `int $0` and leads to the main API (this is analogous to `int 21h` for DOS API on x86). The following subfunctions are provided by `int $0` depending on the value of `ax`:
 |`ax` (nonary)  |Description                               |Operands                  |
 |---------------|------------------------------------------|--------------------------|
 |`DD`           |Exit program with `dx` as code (zero for success, nonzero for failure)           |`dx`                      |

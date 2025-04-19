@@ -21,6 +21,7 @@ namespace anthill {
    }
 
    void Generator::set_var(const std::shared_ptr<StaticType>& var_type, const std::string& addr) {
+      std::cout << var_type->to_str() << '\n';
       if (var_type->to_str() == "char") {
          std::string inc_addr = std::to_string(std::stoi(addr) + 1);
          if (addr.find('(') != std::string::npos) {
@@ -37,15 +38,24 @@ namespace anthill {
       }
    }
 
+   void Generator::trunc_to_8_trits() {
+      asm_stream << "shl 8, %ax\n";
+      asm_stream << "shr 8, %ax\n";
+   }
+
    std::string Generator::alloc_addr(const std::shared_ptr<NonFuncType>& type, bool func_mode) {
-      // std::cout << "dbg25" << '\n';
       if (func_mode) {
-         return "-" + std::to_string(func_addr_counter += type->size()) + "(%bp)";
+         std::string result = "-" + std::to_string(func_addr_counter) + "(%bp)";
+         func_addr_counter += type->size();
+         return result;
       }
       else {
-         return std::to_string(addr_counter += type->size());
+         std::string result = std::to_string(addr_counter);
+         addr_counter += type->size();
+         return result;
       }
    }
+
 
    std::shared_ptr<StaticType> Generator::visit(const std::shared_ptr<Node>& node, const std::shared_ptr<SymbolTable>& symbol_table, bool no_gen) {
       switch (node->get_type()) {
@@ -103,6 +113,7 @@ namespace anthill {
    }
 
    std::shared_ptr<StaticType> Generator::visit_str_node(const std::shared_ptr<StrNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
+      // alloc_addr(std::make_shared<NonFuncType>(NonFuncType(BasicType::CHAR)));
       std::string start_addr = alloc_addr(std::make_shared<NonFuncType>(NonFuncType(BasicType::CHAR)));
       for (int i = 0; i < node->tok.val.size(); i++) {
          std::string addr;
@@ -112,8 +123,21 @@ namespace anthill {
          else {
             addr = alloc_addr(std::make_shared<NonFuncType>(NonFuncType(BasicType::CHAR)));
          }
+         std::string inc_addr = std::to_string(std::stoi(addr) + 1);
+         if (addr.find('(') != std::string::npos) {
+            std::string disp = addr.substr(0, addr.find('('));
+            std::string reg = addr.substr(addr.find('(') + 1, addr.find(')') - addr.find('(') - 1);
+            inc_addr = std::to_string(std::stoi(disp) + 1) + "(" + reg + ")";
+         }
+         if(i == node->tok.val.size() -1) {
+         asm_stream << "push " + inc_addr + "\n";
          asm_stream << "mov $" << (int)(node->tok.val.at(i)) << "," << addr << '\n';
+         asm_stream << "pop " + inc_addr + "\n";
+         } else {
+            asm_stream << "mov $" << (int)(node->tok.val.at(i)) << "," << addr << '\n';
+         }
       }
+      // asm_stream << "mov $" << (int)(node->tok.val.at(i)) << "," << addr << '\n';
       asm_stream << "mov $" + start_addr + ",%ax\n";
       return  std::make_shared<NonFuncType>(NonFuncType(BasicType::CHAR, 1));
    }
@@ -181,9 +205,14 @@ namespace anthill {
       case TokenType::STAR: {
          asm_stream << "mov %ax,%bx\n";
          asm_stream << "mov 0(%bx),%ax\n";
-         if (node_type->to_str() == "char") {
+         if (node_type->to_str() == "char*") {
+            trunc_to_8_trits();
          }
-         break;
+         std::shared_ptr<NonFuncType> non_func_type = std::static_pointer_cast<NonFuncType>(node_type);
+         if(non_func_type->pointer_levels == 0) {
+            error(file, node->node->line, "cannot dereference a non-pointer");
+         }
+          return std::make_shared<NonFuncType>(non_func_type->basic_type, non_func_type->pointer_levels - 1);
       }
       case TokenType::MINUS: {
          asm_stream << "neg %ax\n";
@@ -387,7 +416,7 @@ namespace anthill {
       }
 
       if (left_type->to_str() == "char" && right_type->to_str() == "char") {
-         asm_stream << "and $0n4444, %ax\n";
+         trunc_to_8_trits();
          return left_type;
       }
       else if (left_type->to_str() == "char") {
@@ -432,7 +461,6 @@ namespace anthill {
       std::string addr = alloc_addr(NonFuncType::parse_type(node->type->to_str()));
       symbol_table->def_type(node->name.val, visit(node->val, symbol_table));
       symbol_table->def_addr(node->name.val, addr);
-      visit(node->val, symbol_table);
       set_var(var_type, addr);
       return std::make_shared<NonFuncType>(NonFuncType(BasicType::VOID));
    }

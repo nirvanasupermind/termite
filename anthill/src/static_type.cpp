@@ -1,6 +1,7 @@
 #include <string>
 #include <memory>
 #include <map>
+#include <iostream>
 
 #include "static_type.h"
 namespace anthill {
@@ -62,7 +63,7 @@ namespace anthill {
     std::shared_ptr<NonFuncType> NonFuncType::parse_type(const std::string& str) {
         BasicType basic_type;
         if(str[0] == 'c' && str[1] == 'h' && str[2] == 'a' && str[3] == 'r') {
-            basic_type = BasicType::INT;
+            basic_type = BasicType::CHAR;
         } else {
             basic_type = BasicType::INT;
         }

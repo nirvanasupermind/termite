@@ -1,6 +1,6 @@
 int main() {
-    char x = 50000;
-    *&x;
+    char* x = "And test";
+    *x;
     __asm__("mov %ax,%dx\nmov $0nDC,%ax\nint $0\n");
     return 0;
 }

@@ -34,6 +34,9 @@ namespace termite {
     }
 
     Word Mem::get_word(const Word& addr) const {
+        // std::cout << "dbg37 " << addr.to_int32() << '\n';
+        // std::cout << "dbg38 "<< get_tryte(addr).to_int16() << '\n';
+        // std::cout << "dbg39 "<< get_tryte(addr + Word::ONE).to_int16() << '\n';
         return Word(get_tryte(addr), get_tryte(addr + Word::ONE));
     }
 
