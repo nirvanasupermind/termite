@@ -39,7 +39,7 @@ namespace anthill {
    }
 
    void Generator::trunc_to_8_trits() {
-      asm_stream << "xor $0nDDDD, %ax\n";
+      asm_stream << "xor $0nDDD4, %ax\n";
    }
 
    std::string Generator::alloc_addr(const std::shared_ptr<NonFuncType>& type, bool func_mode) {
@@ -128,11 +128,12 @@ namespace anthill {
             std::string reg = addr.substr(addr.find('(') + 1, addr.find(')') - addr.find('(') - 1);
             inc_addr = std::to_string(std::stoi(disp) + 1) + "(" + reg + ")";
          }
-         if(i == node->tok.val.size() -1) {
-         asm_stream << "push " + inc_addr + "\n";
-         asm_stream << "mov $" << (int)(node->tok.val.at(i)) << "," << addr << '\n';
-         asm_stream << "pop " + inc_addr + "\n";
-         } else {
+         if (i == node->tok.val.size() - 1) {
+            asm_stream << "push " + inc_addr + "\n";
+            asm_stream << "mov $" << (int)(node->tok.val.at(i)) << "," << addr << '\n';
+            asm_stream << "pop " + inc_addr + "\n";
+         }
+         else {
             asm_stream << "mov $" << (int)(node->tok.val.at(i)) << "," << addr << '\n';
          }
       }
@@ -149,7 +150,35 @@ namespace anthill {
    }
 
    std::shared_ptr<StaticType> Generator::visit_call_node(const std::shared_ptr<CallNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
-      if (std::static_pointer_cast<IdentNode>(node->callee)->tok.val == "__asm__") {
+      if (node->callee->get_type() == NodeType::TYPE) {
+         if (node->callee->to_str() == "void") {
+            error(file, node->callee->line, "cannot cast to type void");
+         }
+         std::shared_ptr<NonFuncType> cast_type = NonFuncType::parse_type(node->callee->to_str());
+         if (node->args.size() > 1) {
+            error(file, node->callee->line,  "cannot cast with multiple arguments");
+         }
+         std::shared_ptr<StaticType> arg_type = visit(node->args.at(0), symbol_table);
+         if (arg_type->is_func()) {
+            error(file, node->callee->line, "cannot cast a function");
+         }
+         if (arg_type->to_str() == "void") {
+            error(file, node->callee->line, "cannot cast a value of type void");
+         }
+         return arg_type;
+      }
+   
+   
+
+      if (node->callee->get_type() != NodeType::IDENT) {
+         error(file, node->callee->line, "cannot call a non-identifier expression");
+      }
+
+      std::string func_name = std::static_pointer_cast<IdentNode>(node->callee)->tok.val;
+      if (func_name == "__asm__") {
+         if (node->args.size() > 1) {
+            error(file, node->callee->line, "cannot use __asm__ with multiple arguments");
+         }
          asm_stream << std::static_pointer_cast<StrNode>(node->args.at(0))->tok.val;
          return std::make_shared<NonFuncType>(NonFuncType(BasicType::VOID));
       }
@@ -158,17 +187,19 @@ namespace anthill {
          if (!callee_type->is_func()) {
             error(file, node->callee->line, "cannot call a non-function");
          }
+         std::shared_ptr<FuncType> func_type = std::static_pointer_cast<FuncType>(callee_type);
+         if (node->args.size() != func_type->arg_types.size()) {
+            error(file, node->callee->line, "expected " + std::to_string(func_type->arg_types.size()) + " arguments to function '" + func_name +  "', got " + std::to_string(node->args.size()));
+         }
          for (int i = 0; i < node->args.size(); i++) {
             std::shared_ptr<StaticType> arg_type = visit(node->args.at(i), symbol_table);
             asm_stream << "mov %ax,%" << arg_regs[i] << '\n';
-            if (arg_type->to_str() != "char" && std::static_pointer_cast<FuncType>(callee_type)->arg_types.at(i)->to_str() == "char") {
-               asm_stream << "and %" << arg_regs[i] << "," << std::static_pointer_cast<FuncType>(callee_type)->arg_types.at(i) << '\n';
+            if (arg_type->to_str() != "char" && func_type->arg_types.at(i)->to_str() == "char") {
+               asm_stream << "and %" << arg_regs[i] << "," << func_type->arg_types.at(i) << '\n';
             }
          }
-         asm_stream << "call " << std::static_pointer_cast<IdentNode>(node->callee)->tok.val << '\n';
-
-
-         return std::static_pointer_cast<FuncType>(callee_type)->return_type;
+         asm_stream << "call " << func_name << '\n';
+         return func_type->return_type;
       }
    }
 
@@ -208,10 +239,13 @@ namespace anthill {
             trunc_to_8_trits();
          }
          std::shared_ptr<NonFuncType> non_func_type = std::static_pointer_cast<NonFuncType>(node_type);
-         if(non_func_type->pointer_levels == 0) {
+         if (non_func_type->pointer_levels == 0) {
             error(file, node->node->line, "cannot dereference a non-pointer");
          }
-          return std::make_shared<NonFuncType>(non_func_type->basic_type, non_func_type->pointer_levels - 1);
+         if (non_func_type->to_str() == "void*") {
+            error(file, node->node->line, "cannot dereference a void pointer");
+         }
+         return std::make_shared<NonFuncType>(non_func_type->basic_type, non_func_type->pointer_levels - 1);
       }
       case TokenType::MINUS: {
          asm_stream << "neg %ax\n";
@@ -228,13 +262,29 @@ namespace anthill {
 
 
    std::shared_ptr<StaticType> Generator::visit_bin_op_node(const std::shared_ptr<BinOpNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
-      std::shared_ptr<StaticType> left_type = visit(node->left_node, symbol_table);
-      std::shared_ptr<StaticType> right_type;
+      std::shared_ptr<StaticType> temp = visit(node->left_node, symbol_table);
+      if (temp->is_func()) {
+         error(file, node->left_node->line, "cannot perform binary operations on a function");
+      }
+      std::shared_ptr<NonFuncType> left_type = std::static_pointer_cast<NonFuncType>(temp);
+      std::shared_ptr<NonFuncType> right_type;
 
+      if (left_type->to_str() == "void") {
+         error(file, node->right_node->line, "cannot perform binary operations on a value of type void");
+      }
+
+      // if (left_type->to_str() == "void*") {
+      //    error(file, node->right_node->line, "cannot perform binary operations on a void pointer");
+      // }
+      
       switch (node->op_tok.type) {
       case TokenType::AMPER: {
          asm_stream << "push %ax\n";
-         right_type = visit(node->right_node, symbol_table);
+         std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
+         if (temp2->is_func()) {
+            error(file, node->right_node->line, "cannot perform binary operations on a function");
+         }
+         right_type = std::static_pointer_cast<NonFuncType>(temp2);
          asm_stream << "pop %cx\n";
          asm_stream << "and %cx,%ax\n";
          break;
@@ -242,7 +292,12 @@ namespace anthill {
       case TokenType::PIPE: {
          visit(node->left_node, symbol_table);
          asm_stream << "push %ax\n";
-         right_type = visit(node->right_node, symbol_table);
+         std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
+         if (temp2->is_func()) {
+            error(file, node->right_node->line, "cannot perform binary operations on a function");
+         }
+         right_type = std::static_pointer_cast<NonFuncType>(temp2);
+
          asm_stream << "pop %cx\n";
          asm_stream << "or %cx,%ax\n";
          break;
@@ -250,7 +305,11 @@ namespace anthill {
       case TokenType::CARET: {
          visit(node->left_node, symbol_table);
          asm_stream << "push %ax\n";
-         right_type = visit(node->right_node, symbol_table);
+         std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
+         if (temp2->is_func()) {
+            error(file, node->right_node->line, "cannot perform binary operations on a function");
+         }
+         right_type = std::static_pointer_cast<NonFuncType>(temp2);
          asm_stream << "pop %cx\n";
          asm_stream << "xor %cx,%ax\n";
          break;
@@ -258,7 +317,11 @@ namespace anthill {
       case TokenType::LSHIFT: {
          visit(node->left_node, symbol_table);
          asm_stream << "push %ax\n";
-         right_type = visit(node->right_node, symbol_table);
+         std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
+         if (temp2->is_func()) {
+            error(file, node->right_node->line, "cannot perform binary operations on a function");
+         }
+         right_type = std::static_pointer_cast<NonFuncType>(temp2);
          asm_stream << "pop %cx\n";
          asm_stream << "xchg %cx,%ax\n";
          asm_stream << "shl %cx,%ax\n";
@@ -267,7 +330,11 @@ namespace anthill {
       case TokenType::RSHIFT: {
          visit(node->left_node, symbol_table);
          asm_stream << "push %ax\n";
-         right_type = visit(node->right_node, symbol_table);
+         std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
+         if (temp2->is_func()) {
+            error(file, node->right_node->line, "cannot perform binary operations on a function");
+         }
+         right_type = std::static_pointer_cast<NonFuncType>(temp2);
          asm_stream << "pop %cx\n";
          asm_stream << "xchg %cx,%ax\n";
          asm_stream << "shr %cx,%ax\n";
@@ -276,7 +343,11 @@ namespace anthill {
       case TokenType::LOGAND: {
          visit(node->left_node, symbol_table);
          asm_stream << "push %ax\n";
-         right_type = visit(node->right_node, symbol_table);
+         std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
+         if (temp2->is_func()) {
+            error(file, node->right_node->line, "cannot perform binary operations on a function");
+         }
+         right_type = std::static_pointer_cast<NonFuncType>(temp2);
          asm_stream << "pop %cx\n";
          asm_stream << "and %cx,%ax\n";
          break;
@@ -284,15 +355,28 @@ namespace anthill {
       case TokenType::PLUS: {
          visit(node->left_node, symbol_table);
          asm_stream << "push %ax\n";
-         right_type = visit(node->right_node, symbol_table);
+         std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
+         if (temp2->is_func()) {
+            error(file, node->right_node->line, "cannot perform binary operations on a function");
+         }
+         right_type = std::static_pointer_cast<NonFuncType>(temp2);
          asm_stream << "pop %cx\n";
          asm_stream << "add %cx,%ax\n";
+         // if(left_type->pointer_levels > 0 && left_type->to_str() != "char*") {
+         //    asm_stream << "add %cx,%ax\n";
+         // } else if(right_type->pointer_levels > 0 && right_type->to_str() != "char*") {
+         //    asm_stream << "add %cx,%ax\n";
+         // }
          break;
       }
       case TokenType::MINUS: {
          visit(node->left_node, symbol_table);
          asm_stream << "push %ax\n";
-         right_type = visit(node->right_node, symbol_table);
+         std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
+         if (temp2->is_func()) {
+            error(file, node->right_node->line, "cannot perform binary operations on a function");
+         }
+         right_type = std::static_pointer_cast<NonFuncType>(temp2);
          asm_stream << "pop %cx\n";
          asm_stream << "xchg %cx,%ax\n";
          asm_stream << "sub %cx,%ax\n";
@@ -301,7 +385,11 @@ namespace anthill {
       case TokenType::STAR: {
          visit(node->left_node, symbol_table);
          asm_stream << "push %ax\n";
-         right_type = visit(node->right_node, symbol_table);
+         std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
+         if (temp2->is_func()) {
+            error(file, node->right_node->line, "cannot perform binary operations on a function");
+         }
+         right_type = std::static_pointer_cast<NonFuncType>(temp2);
          asm_stream << "pop %cx\n";
          asm_stream << "mul %cx\n";
          break;
@@ -309,7 +397,11 @@ namespace anthill {
       case TokenType::SLASH: {
          visit(node->left_node, symbol_table);
          asm_stream << "push %ax\n";
-         right_type = visit(node->right_node, symbol_table);
+         std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
+         if (temp2->is_func()) {
+            error(file, node->right_node->line, "cannot perform binary operations on a function");
+         }
+         right_type = std::static_pointer_cast<NonFuncType>(temp2);
          asm_stream << "pop %cx\n";
          asm_stream << "xchg %cx,%ax\n";
          asm_stream << "div %cx\n";
@@ -318,7 +410,11 @@ namespace anthill {
       case TokenType::MOD: {
          visit(node->left_node, symbol_table);
          asm_stream << "push %ax\n";
-         right_type = visit(node->right_node, symbol_table);
+         std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
+         if (temp2->is_func()) {
+            error(file, node->right_node->line, "cannot perform binary operations on a function");
+         }
+         right_type = std::static_pointer_cast<NonFuncType>(temp2);
          asm_stream << "pop %cx\n";
          asm_stream << "xchg %cx,%ax\n";
          asm_stream << "mod %cx\n";
@@ -328,7 +424,11 @@ namespace anthill {
       case TokenType::EQUAL: {
          visit(node->left_node, symbol_table);
          asm_stream << "push %ax\n";
-         right_type = visit(node->right_node, symbol_table);
+         std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
+         if (temp2->is_func()) {
+            error(file, node->right_node->line, "cannot perform binary operations on a function");
+         }
+         right_type = std::static_pointer_cast<NonFuncType>(temp2);
          asm_stream << "pop %cx\n";
          asm_stream << "cmp %ax,%cx\n";
          asm_stream << "mov $1,%ax\n";
@@ -341,7 +441,11 @@ namespace anthill {
       case TokenType::NOTEQ: {
          visit(node->left_node, symbol_table);
          asm_stream << "push %ax\n";
-         right_type = visit(node->right_node, symbol_table);
+         std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
+         if (temp2->is_func()) {
+            error(file, node->right_node->line, "cannot perform binary operations on a function");
+         }
+         right_type = std::static_pointer_cast<NonFuncType>(temp2);
          asm_stream << "pop %cx\n";
          asm_stream << "cmp %ax,%cx\n";
          asm_stream << "mov $1,%ax\n";
@@ -354,7 +458,11 @@ namespace anthill {
       case TokenType::LESS: {
          visit(node->left_node, symbol_table);
          asm_stream << "push %ax\n";
-         right_type = visit(node->right_node, symbol_table);
+         std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
+         if (temp2->is_func()) {
+            error(file, node->right_node->line, "cannot perform binary operations on a function");
+         }
+         right_type = std::static_pointer_cast<NonFuncType>(temp2);
          asm_stream << "pop %cx\n";
          asm_stream << "cmp %ax,%cx\n";
          asm_stream << "mov $1,%ax\n";
@@ -367,7 +475,11 @@ namespace anthill {
       case TokenType::LTEQ: {
          visit(node->left_node, symbol_table);
          asm_stream << "push %ax\n";
-         right_type = visit(node->right_node, symbol_table);
+         std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
+         if (temp2->is_func()) {
+            error(file, node->right_node->line, "cannot perform binary operations on a function");
+         }
+         right_type = std::static_pointer_cast<NonFuncType>(temp2);
          asm_stream << "pop %cx\n";
          asm_stream << "cmp %ax,%cx\n";
          asm_stream << "mov $1,%ax\n";
@@ -380,7 +492,11 @@ namespace anthill {
       case TokenType::GREATER: {
          visit(node->left_node, symbol_table);
          asm_stream << "push %ax\n";
-         right_type = visit(node->right_node, symbol_table);
+         std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
+         if (temp2->is_func()) {
+            error(file, node->right_node->line, "cannot perform binary operations on a function");
+         }
+         right_type = std::static_pointer_cast<NonFuncType>(temp2);
          asm_stream << "pop %cx\n";
          asm_stream << "cmp %ax,%cx\n";
          asm_stream << "mov $1,%ax\n";
@@ -393,7 +509,11 @@ namespace anthill {
       case TokenType::GTEQ: {
          visit(node->left_node, symbol_table);
          asm_stream << "push %ax\n";
-         right_type = visit(node->right_node, symbol_table);
+         std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
+         if (temp2->is_func()) {
+            error(file, node->right_node->line, "cannot perform binary operations on a function");
+         }
+         right_type = std::static_pointer_cast<NonFuncType>(temp2);
          asm_stream << "pop %cx\n";
          asm_stream << "cmp %ax,%cx\n";
          asm_stream << "mov $1,%ax\n";
@@ -405,11 +525,14 @@ namespace anthill {
       }
       }
 
+      // if (left_type->pointer_levels > 0 && right_type->pointer_levels > 0) {
+      //    error(file, node->left_node->line, "cannot perform binary operations when both operands are pointers");
+      // }
 
-      if (left_type->to_str() == "void") {
-         error(file, node->left_node->line, "cannot perform binary operations on a value of type void");
+      if (right_type->is_func()) {
+         error(file, node->left_node->line, "cannot perform binary operations on a function");
       }
-
+      
       if (right_type->to_str() == "void") {
          error(file, node->right_node->line, "cannot perform binary operations on a value of type void");
       }
