@@ -64,11 +64,11 @@ namespace anthill {
                 eat(TokenType::RPAREN);
                 std::shared_ptr<Node> val = expr(terminator);
                 return std::make_shared<CastNode>(CastNode(tok.line, type_, val));
+            } else {
+                std::shared_ptr<Node> result = expr(terminator);
+                eat(TokenType::RPAREN);
+                return result;
             }
-            std::shared_ptr<Node> result = expr(terminator);
-            eat(TokenType::RPAREN);
-            advance();
-            return result;
         }
         else {
             syntax_error();

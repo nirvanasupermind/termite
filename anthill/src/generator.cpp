@@ -257,6 +257,7 @@ namespace anthill {
             trunc_to_8_trits();
          }
          std::shared_ptr<NonFuncType> non_func_type = std::static_pointer_cast<NonFuncType>(node_type);
+         std::cout << "dbg260 " << non_func_type->to_str() << '\n';
          if (non_func_type->pointer_levels == 0) {
             error(file, node->node->line, "cannot dereference a non-pointer");
          }
@@ -377,10 +378,12 @@ namespace anthill {
          right_type = std::static_pointer_cast<NonFuncType>(temp2);
          asm_stream << "pop %cx\n";
          asm_stream << "add %cx,%ax\n";
-         if (left_type->pointer_levels > 0 && left_type->to_str() != "char*") {
-            asm_stream << "add %cx,%ax\n";
-         }
-         else if (right_type->pointer_levels > 0 && right_type->to_str() != "char*") {
+         std::cout << left_type->to_str() << '\n';
+         if ((left_type->pointer_levels > 0 && left_type->to_str() != "char*")
+      || (right_type->pointer_levels > 0 && right_type->to_str() != "char*")) {
+         asm_stream << "push %ax\n";
+         visit(node->right_node, symbol_table);  
+            asm_stream << "pop %cx\n";
             asm_stream << "add %cx,%ax\n";
          }
          break;
@@ -396,10 +399,12 @@ namespace anthill {
          asm_stream << "pop %cx\n";
          asm_stream << "xchg %cx,%ax\n";
          asm_stream << "sub %cx,%ax\n";
-         if (left_type->pointer_levels > 0 && left_type->to_str() != "char*") {
-            asm_stream << "sub %cx,%ax\n";
-         }
-         else if (right_type->pointer_levels > 0 && right_type->to_str() != "char*") {
+         if ((left_type->pointer_levels > 0 && left_type->to_str() != "char*")
+      || (right_type->pointer_levels > 0 && right_type->to_str() != "char*")) {
+         asm_stream << "push %ax\n";
+         visit(node->right_node, symbol_table);  
+            asm_stream << "pop %cx\n";
+            asm_stream << "xchg %cx,%ax\n";
             asm_stream << "sub %cx,%ax\n";
          }
          break;
@@ -572,7 +577,7 @@ namespace anthill {
          trunc_to_8_trits();
          return left_type;
       }
-      else if (left_type->to_str() == "char") {
+      else if (left_type->to_str() == "char" ||  right_type->pointer_levels > 0) {
          return right_type;
       }
       else {
@@ -586,11 +591,7 @@ namespace anthill {
          if (prefix_node->op_tok.type != TokenType::STAR) {
             error(file, node->left_node->line, "cannot assign to a non-identifier/dereference");
          }
-         if (prefix_node->node->get_type() != NodeType::IDENT) {
-            error(file, node->left_node->line, "cannot assign to a non-identifier/dereference");
-         }
-         std::string addr = symbol_table->get_addr(std::static_pointer_cast<IdentNode>(prefix_node->node)->tok.val);
-         asm_stream << "mov " + addr + ",%bx\n";
+         asm_stream << "mov %ax,%bx\n";
          visit(node->right_node, symbol_table);
          asm_stream << "mov %ax,0(%bx)\n";
          return visit(node->left_node, symbol_table);
@@ -607,12 +608,13 @@ namespace anthill {
 
    std::shared_ptr<StaticType> Generator::visit_var_def_node(const std::shared_ptr<VarDefNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
       try {
-         std::shared_ptr<StaticType> var_type = NonFuncType::parse_type(node->type->to_str());
+         std::shared_ptr<NonFuncType> var_type = NonFuncType::parse_type(node->type->to_str());
          if (var_type->to_str() == "void") {
             error(file, node->name.line, "cannot define variable of type void");
          }
-         std::string addr = alloc_addr(NonFuncType::parse_type(node->type->to_str()));
-         symbol_table->def_type(node->name.val, visit(node->val, symbol_table));
+         visit(node->val, symbol_table);
+         std::string addr = alloc_addr(var_type);
+         symbol_table->def_type(node->name.val, var_type);
          symbol_table->def_addr(node->name.val, addr);
          set_var(var_type, addr);
       }
