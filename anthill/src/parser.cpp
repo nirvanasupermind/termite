@@ -59,8 +59,15 @@ namespace anthill {
         }
         else if (tok.type == TokenType::LPAREN) {
             advance();
-            std::shared_ptr<Node> result = expr( terminator);
+            if(current.type == TokenType::INT || current.type == TokenType::CHAR || current.type == TokenType::VOID) {
+                std::shared_ptr<Node> type_ = type(terminator);
+                eat(TokenType::RPAREN);
+                std::shared_ptr<Node> val = expr(terminator);
+                return std::make_shared<CastNode>(CastNode(tok.line, type_, val));
+            }
+            std::shared_ptr<Node> result = expr(terminator);
             eat(TokenType::RPAREN);
+            advance();
             return result;
         }
         else {

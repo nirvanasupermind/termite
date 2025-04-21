@@ -63,6 +63,19 @@ namespace anthill {
     }
 
 
+    CastNode::CastNode(int line, const std::shared_ptr<Node>& type, const std::shared_ptr<Node>& val)
+        : type(type), val(val) {
+        this->line = line;
+    }
+
+    std::string CastNode::to_str() const {
+        return "(" + type->to_str() + "," + val->to_str() + ")";
+    }
+
+    NodeType CastNode::get_type() const {
+        return NodeType::CAST;
+    }
+
     CallNode::CallNode(int line, const std::shared_ptr<Node>& callee, const std::vector<std::shared_ptr<Node> >& args)
         : callee(callee), args(args) {
         this->line = line;

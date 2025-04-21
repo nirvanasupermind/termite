@@ -66,6 +66,8 @@ namespace anthill {
          return visit_str_node(std::static_pointer_cast<StrNode>(node), symbol_table);
       case NodeType::IDENT:
          return visit_ident_node(std::static_pointer_cast<IdentNode>(node), symbol_table, no_gen);
+      case NodeType::CAST:
+         return visit_cast_node(std::static_pointer_cast<CastNode>(node), symbol_table);
       case NodeType::CALL:
          return visit_call_node(std::static_pointer_cast<CallNode>(node), symbol_table);
       case NodeType::POSTFIX:
@@ -143,33 +145,36 @@ namespace anthill {
    }
 
    std::shared_ptr<StaticType> Generator::visit_ident_node(const std::shared_ptr<IdentNode>& node, const std::shared_ptr<SymbolTable>& symbol_table, bool no_gen) {
+      try {
       if (!no_gen) {
          asm_stream << "mov " << symbol_table->get_addr(node->tok.val) << ",%ax\n";
       }
       return symbol_table->get_type(node->tok.val);
+      } catch(const std::string& e) {
+         error(file, node->line, e);
+      }
+   }
+
+   std::shared_ptr<StaticType> Generator::visit_cast_node(const std::shared_ptr<CastNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
+      if (node->type->to_str() == "void") {
+         error(file, node->type->line, "cannot cast to type void");
+      }
+      std::shared_ptr<NonFuncType> cast_type = NonFuncType::parse_type(node->type->to_str());
+      std::shared_ptr<StaticType> val_type = visit(node->val, symbol_table);
+      if (val_type->is_func()) {
+         error(file, node->type->line, "cannot cast a function");
+      }
+      if (val_type->to_str() == "void") {
+         error(file, node->type->line, "cannot cast a value of type void");
+      }
+      if (val_type->to_str() != "char" && node->type->to_str() == "char") {
+         trunc_to_8_trits();
+      }
+
+      return cast_type;
    }
 
    std::shared_ptr<StaticType> Generator::visit_call_node(const std::shared_ptr<CallNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
-      if (node->callee->get_type() == NodeType::TYPE) {
-         if (node->callee->to_str() == "void") {
-            error(file, node->callee->line, "cannot cast to type void");
-         }
-         std::shared_ptr<NonFuncType> cast_type = NonFuncType::parse_type(node->callee->to_str());
-         if (node->args.size() > 1) {
-            error(file, node->callee->line,  "cannot cast with multiple arguments");
-         }
-         std::shared_ptr<StaticType> arg_type = visit(node->args.at(0), symbol_table);
-         if (arg_type->is_func()) {
-            error(file, node->callee->line, "cannot cast a function");
-         }
-         if (arg_type->to_str() == "void") {
-            error(file, node->callee->line, "cannot cast a value of type void");
-         }
-         return arg_type;
-      }
-   
-   
-
       if (node->callee->get_type() != NodeType::IDENT) {
          error(file, node->callee->line, "cannot call a non-identifier expression");
       }
@@ -564,18 +569,18 @@ namespace anthill {
          asm_stream << "mov %ax,0(%bx)\n";
          return visit(node->left_node, symbol_table);
       }
-
       if (node->left_node->get_type() != NodeType::IDENT) {
          error(file, node->left_node->line, "cannot assign to a non-identifier/dereference");
       }
       std::string addr = symbol_table->get_addr(std::static_pointer_cast<IdentNode>(node->left_node)->tok.val);
       visit(node->right_node, symbol_table);
-      std::shared_ptr<StaticType> var_type = visit(node->left_node, symbol_table);
+      std::shared_ptr<StaticType> var_type = visit(node->left_node, symbol_table, true);
       set_var(var_type, addr);
       return var_type;
    }
 
    std::shared_ptr<StaticType> Generator::visit_var_def_node(const std::shared_ptr<VarDefNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
+      try {
       std::shared_ptr<StaticType> var_type = NonFuncType::parse_type(node->type->to_str());
       if (var_type->to_str() == "void") {
          error(file, node->name.line, "cannot define variable of type void");
@@ -584,6 +589,9 @@ namespace anthill {
       symbol_table->def_type(node->name.val, visit(node->val, symbol_table));
       symbol_table->def_addr(node->name.val, addr);
       set_var(var_type, addr);
+   } catch (const std::string& e) {
+      error(file, node->line, e);
+   }
       return std::make_shared<NonFuncType>(NonFuncType(BasicType::VOID));
    }
 

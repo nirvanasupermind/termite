@@ -1,7 +1,6 @@
 int main() {
     char* x = "And test";
-    void* y = *x;
-    *(int*)y;
+    *(int*)x;
     __asm__("mov %ax,%dx\nmov $0nDC,%ax\nint $0\n");
     return 0;
 }

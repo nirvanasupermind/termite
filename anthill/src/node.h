@@ -12,6 +12,7 @@ namespace anthill {
         INT,
         STR,
         IDENT,
+        CAST,
         CALL,
         POSTFIX,
         PREFIX,
@@ -72,6 +73,15 @@ namespace anthill {
         NodeType get_type() const;
     };
 
+
+    class CastNode : public Node {
+    public:
+        std::shared_ptr<Node> type;
+        std::shared_ptr<Node> val;
+        CastNode(int line, const std::shared_ptr<Node>& type, const std::shared_ptr<Node>& val);
+        std::string to_str() const;
+        NodeType get_type() const;
+    };
 
     class CallNode : public Node {
     public:
