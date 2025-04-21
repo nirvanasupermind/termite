@@ -146,11 +146,12 @@ namespace anthill {
 
    std::shared_ptr<StaticType> Generator::visit_ident_node(const std::shared_ptr<IdentNode>& node, const std::shared_ptr<SymbolTable>& symbol_table, bool no_gen) {
       try {
-      if (!no_gen) {
-         asm_stream << "mov " << symbol_table->get_addr(node->tok.val) << ",%ax\n";
+         if (!no_gen) {
+            asm_stream << "mov " << symbol_table->get_addr(node->tok.val) << ",%ax\n";
+         }
+         return symbol_table->get_type(node->tok.val);
       }
-      return symbol_table->get_type(node->tok.val);
-      } catch(const std::string& e) {
+      catch (const std::string& e) {
          error(file, node->line, e);
       }
    }
@@ -194,7 +195,7 @@ namespace anthill {
          }
          std::shared_ptr<FuncType> func_type = std::static_pointer_cast<FuncType>(callee_type);
          if (node->args.size() != func_type->arg_types.size()) {
-            error(file, node->callee->line, "expected " + std::to_string(func_type->arg_types.size()) + " arguments to function '" + func_name +  "', got " + std::to_string(node->args.size()));
+            error(file, node->callee->line, "expected " + std::to_string(func_type->arg_types.size()) + " arguments to function '" + func_name + "', got " + std::to_string(node->args.size()));
          }
          for (int i = 0; i < node->args.size(); i++) {
             std::shared_ptr<StaticType> arg_type = visit(node->args.at(i), symbol_table);
@@ -221,6 +222,15 @@ namespace anthill {
    std::shared_ptr<StaticType> Generator::visit_prefix_node(const std::shared_ptr<PrefixNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
       std::shared_ptr<StaticType> node_type = visit(node->node, symbol_table);
 
+      
+      if (node_type->is_func()) {
+         error(file, node->node->line, "cannot perform prefix unary operations on a function");
+      }
+
+      if (node_type->to_str() == "void") {
+         error(file, node->node->line, "cannot perform prefix unary operations on a value of type void");
+      }
+
       switch (node->op_tok.type) {
       case TokenType::AMPER: {
          if (node->node->get_type() == NodeType::IDENT) {
@@ -230,12 +240,15 @@ namespace anthill {
                std::string reg = addr.substr(addr.find('(') + 1, addr.find(')') - addr.find('(') - 1);
                asm_stream << "mov $" << disp << ",%ax\n";
                asm_stream << "add %ax," << reg << "\n";
-            }
-            else {
+            } else {
                asm_stream << "mov $" << addr << ",%ax\n";
             }
          }
-         break;
+         else {
+            error(file, node->node->line, "cannot find the address of a non-identifier expression");
+         }
+         std::shared_ptr<NonFuncType> non_func_type = std::static_pointer_cast<NonFuncType>(node_type);
+         return std::make_shared<NonFuncType>(non_func_type->basic_type, non_func_type->pointer_levels + 1);
       }
       case TokenType::STAR: {
          asm_stream << "mov %ax,%bx\n";
@@ -258,9 +271,6 @@ namespace anthill {
       }
       }
 
-      if (node_type->to_str() == "void") {
-         error(file, node->node->line, "cannot perform prefix unary operations on a value of type void");
-      }
 
       return node_type;
    }
@@ -281,7 +291,7 @@ namespace anthill {
       // if (left_type->to_str() == "void*") {
       //    error(file, node->right_node->line, "cannot perform binary operations on a void pointer");
       // }
-      
+
       switch (node->op_tok.type) {
       case TokenType::AMPER: {
          asm_stream << "push %ax\n";
@@ -367,11 +377,12 @@ namespace anthill {
          right_type = std::static_pointer_cast<NonFuncType>(temp2);
          asm_stream << "pop %cx\n";
          asm_stream << "add %cx,%ax\n";
-         // if(left_type->pointer_levels > 0 && left_type->to_str() != "char*") {
-         //    asm_stream << "add %cx,%ax\n";
-         // } else if(right_type->pointer_levels > 0 && right_type->to_str() != "char*") {
-         //    asm_stream << "add %cx,%ax\n";
-         // }
+         if (left_type->pointer_levels > 0 && left_type->to_str() != "char*") {
+            asm_stream << "add %cx,%ax\n";
+         }
+         else if (right_type->pointer_levels > 0 && right_type->to_str() != "char*") {
+            asm_stream << "add %cx,%ax\n";
+         }
          break;
       }
       case TokenType::MINUS: {
@@ -385,6 +396,12 @@ namespace anthill {
          asm_stream << "pop %cx\n";
          asm_stream << "xchg %cx,%ax\n";
          asm_stream << "sub %cx,%ax\n";
+         if (left_type->pointer_levels > 0 && left_type->to_str() != "char*") {
+            asm_stream << "sub %cx,%ax\n";
+         }
+         else if (right_type->pointer_levels > 0 && right_type->to_str() != "char*") {
+            asm_stream << "sub %cx,%ax\n";
+         }
          break;
       }
       case TokenType::STAR: {
@@ -530,14 +547,23 @@ namespace anthill {
       }
       }
 
-      // if (left_type->pointer_levels > 0 && right_type->pointer_levels > 0) {
-      //    error(file, node->left_node->line, "cannot perform binary operations when both operands are pointers");
-      // }
+      if ((left_type->pointer_levels > 0 || right_type->pointer_levels > 0) && !(node->op_tok.type == TokenType::PLUS || node->op_tok.type == TokenType::MINUS)) {
+         if (left_type->pointer_levels) {
+            error(file, node->left_node->line, "cannot perform binary operations other than addition or subtraction on a pointer");
+         }
+         else {
+            error(file, node->right_node->line, "cannot perform binary operations other than addition or subtraction on a pointer");
+         }
+      }
+
+      if (left_type->pointer_levels > 0 && right_type->pointer_levels > 0) {
+         error(file, node->left_node->line, "cannot perform binary operations when both operands are pointers");
+      }
 
       if (right_type->is_func()) {
          error(file, node->left_node->line, "cannot perform binary operations on a function");
       }
-      
+
       if (right_type->to_str() == "void") {
          error(file, node->right_node->line, "cannot perform binary operations on a value of type void");
       }
@@ -581,17 +607,18 @@ namespace anthill {
 
    std::shared_ptr<StaticType> Generator::visit_var_def_node(const std::shared_ptr<VarDefNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
       try {
-      std::shared_ptr<StaticType> var_type = NonFuncType::parse_type(node->type->to_str());
-      if (var_type->to_str() == "void") {
-         error(file, node->name.line, "cannot define variable of type void");
+         std::shared_ptr<StaticType> var_type = NonFuncType::parse_type(node->type->to_str());
+         if (var_type->to_str() == "void") {
+            error(file, node->name.line, "cannot define variable of type void");
+         }
+         std::string addr = alloc_addr(NonFuncType::parse_type(node->type->to_str()));
+         symbol_table->def_type(node->name.val, visit(node->val, symbol_table));
+         symbol_table->def_addr(node->name.val, addr);
+         set_var(var_type, addr);
       }
-      std::string addr = alloc_addr(NonFuncType::parse_type(node->type->to_str()));
-      symbol_table->def_type(node->name.val, visit(node->val, symbol_table));
-      symbol_table->def_addr(node->name.val, addr);
-      set_var(var_type, addr);
-   } catch (const std::string& e) {
-      error(file, node->line, e);
-   }
+      catch (const std::string& e) {
+         error(file, node->line, e);
+      }
       return std::make_shared<NonFuncType>(NonFuncType(BasicType::VOID));
    }
 
