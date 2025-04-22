@@ -1,12 +1,11 @@
-enum Letter {
-    a,
-    b,
-    c,
-    d
+enum MyEnum  {
+    low,
+    mid,
+    high
 };
 
 int main() {
-    d;
+    high;
     __asm__("mov %ax,%dx\nmov $0nDC,%ax\nint $0\n");
     return 0;
 }
