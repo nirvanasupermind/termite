@@ -19,6 +19,16 @@ pop %cx
 add %cx,%ax
 mov %ax,%bx
 mov 0(%bx),%ax
+mov 0,%ax
+mov 0,%ax
+push %ax
+mov $1,%ax
+pop %cx
+add %cx,%ax
+push %ax
+mov $1,%ax
+pop %cx
+add %cx,%ax
 mov %ax,%bx
 mov $2,%ax
 mov %ax,0(%bx)
