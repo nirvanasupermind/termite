@@ -714,8 +714,11 @@ namespace anthill {
    std::shared_ptr<StaticType> Generator::visit_enum_node(const std::shared_ptr<EnumNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
       for (int i = 0; i < node->items.size(); i++) {
          std::shared_ptr<NonFuncType> int_type = std::make_shared<NonFuncType>(NonFuncType(BasicType::INT));
+         std::string addr = alloc_addr(int_type);
          symbol_table->def_type(node->items.at(i).val, int_type);
-         symbol_table->def_addr(node->items.at(i).val, alloc_addr(int_type));
+         symbol_table->def_addr(node->items.at(i).val, addr);
+         asm_stream << "mov $" << i << ", " << addr << '\n';
+
       }
       return std::make_shared<NonFuncType>(NonFuncType(BasicType::VOID));
    }

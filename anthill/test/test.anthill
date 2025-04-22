@@ -1,8 +1,12 @@
+enum Letter {
+    a,
+    b,
+    c,
+    d
+};
+
 int main() {
-    int* x = 1000;
-    *(x + 109) = 2;
-    *(x + 1) = 13;
-    *(x + 109) + *(x + 1);
+    d;
     __asm__("mov %ax,%dx\nmov $0nDC,%ax\nint $0\n");
     return 0;
 }
