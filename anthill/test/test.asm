@@ -7,9 +7,6 @@ push %bp
 mov %sp,%bp
 mov $1000,%ax
 mov %ax,0
-mov %ax,%bx
-mov $5,%ax
-mov %ax,0(%bx)
 mov 0,%ax
 mov 0,%ax
 push %ax
@@ -22,6 +19,9 @@ pop %cx
 add %cx,%ax
 mov %ax,%bx
 mov 0(%bx),%ax
+mov %ax,%bx
+mov $2,%ax
+mov %ax,0(%bx)
 mov 0,%ax
 mov 0,%ax
 push %ax

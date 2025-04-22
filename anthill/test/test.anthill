@@ -1,6 +1,6 @@
 int main() {
     int* x = 1000;
-    *(x + 1) = 5;
+    *(x + 1) = 2;
     *(x + 1);
     __asm__("mov %ax,%dx\nmov $0nDC,%ax\nint $0\n");
     return 0;

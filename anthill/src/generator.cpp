@@ -586,6 +586,7 @@ namespace anthill {
    }
 
    std::shared_ptr<StaticType> Generator::visit_assign_node(const std::shared_ptr<AssignNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
+      std::shared_ptr<StaticType> left_node_type =  visit(node->left_node, symbol_table);
       if (node->left_node->get_type() == NodeType::PREFIX) {
          std::shared_ptr<PrefixNode> prefix_node = std::static_pointer_cast<PrefixNode>(node->left_node);
          if (prefix_node->op_tok.type != TokenType::STAR) {
@@ -594,16 +595,16 @@ namespace anthill {
          asm_stream << "mov %ax,%bx\n";
          visit(node->right_node, symbol_table);
          asm_stream << "mov %ax,0(%bx)\n";
-         return visit(node->left_node, symbol_table);
+         return left_node_type;
       }
       if (node->left_node->get_type() != NodeType::IDENT) {
          error(file, node->left_node->line, "cannot assign to a non-identifier/dereference");
       }
       std::string addr = symbol_table->get_addr(std::static_pointer_cast<IdentNode>(node->left_node)->tok.val);
       visit(node->right_node, symbol_table);
-      std::shared_ptr<StaticType> var_type = visit(node->left_node, symbol_table, true);
-      set_var(var_type, addr);
-      return var_type;
+      // std::shared_ptr<StaticType> var_type = visit(node->left_node, symbol_table, true);
+      set_var(left_node_type, addr);
+      return left_node_type;
    }
 
    std::shared_ptr<StaticType> Generator::visit_var_def_node(const std::shared_ptr<VarDefNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
