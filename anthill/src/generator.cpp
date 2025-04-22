@@ -717,7 +717,7 @@ namespace anthill {
          std::string addr = alloc_addr(int_type);
          symbol_table->def_type(node->items.at(i).val, int_type);
          symbol_table->def_addr(node->items.at(i).val, addr);
-         asm_stream << "mov $" << i << ", " << addr << '\n';
+         asm_stream << "mov $" << i << "," << addr << '\n';
 
       }
       return std::make_shared<NonFuncType>(NonFuncType(BasicType::VOID));
