@@ -241,7 +241,6 @@ namespace anthill {
                 if(directive.type == TokenType::DEFINE) {
                     advance();
                     Token macro_name = generate_identifier();
-                    std::cout << "E" << '\n';
                     std::string macro_code = "";
                     while(current != '\n') {
                         macro_code += current;
@@ -250,6 +249,9 @@ namespace anthill {
                     Lexer lexer2("<macro '" + macro_name.val + "'>", macro_code);
                     std::vector<Token> tokens2 = lexer2.generate_tokens();
                     macros[macro_name.val] = tokens2;
+                } else if(directive.type == TokenType::INCLUDE) {
+                    tokens.push_back(directive);
+                    advance();
                 } else {
                     error(file, line, std::string("the only accepted preprocessor directives are define and include, got '") + current + "'");
                 }
@@ -258,7 +260,7 @@ namespace anthill {
                 Token ident = generate_identifier();
                 if(macros.count(ident.val)) {
                     std::vector<Token> tokens2 = macros[ident.val];
-                    for(int i = 0; i < tokens2.size(); i++) {
+                    for(int i = 0; i < tokens2.size() - 1; i++) {
                         tokens.push_back(tokens2[i]);
                     }
                 } else {

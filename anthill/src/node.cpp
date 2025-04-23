@@ -343,6 +343,22 @@ namespace anthill {
     }
 
 
+    IncludeNode::IncludeNode(int line, const Token& path)
+        : path(path) {
+        this->line = line;
+    }
+
+    std::string IncludeNode::to_str() const {
+        std::string result = "(";
+        result = result + path.val;
+        result = result + ")";
+        return result;
+    }
+
+    NodeType IncludeNode::get_type() const {
+        return NodeType::INCLUDE;
+    }
+
     StmtListNode::StmtListNode(int line, const std::vector<std::shared_ptr<Node> >& stmts)
         : stmts(stmts) {
         this->line = line;

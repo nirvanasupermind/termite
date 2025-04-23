@@ -49,6 +49,7 @@ namespace anthill {
         std::shared_ptr<Node> break_stmt(const TokenType& terminator = TokenType::XEOF);
         std::shared_ptr<Node> return_stmt(const TokenType& terminator = TokenType::XEOF);
         std::shared_ptr<Node> enum_stmt(const TokenType& terminator = TokenType::XEOF);
+        std::shared_ptr<Node> include_stmt(const TokenType& terminator = TokenType::XEOF);
         std::shared_ptr<Node> stmt(const TokenType& terminator = TokenType::XEOF);
         std::shared_ptr<Node> stmt_list(const TokenType& terminator = TokenType::XEOF);
 

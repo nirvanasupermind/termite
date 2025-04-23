@@ -29,6 +29,7 @@ namespace anthill {
         BREAK,
         RETURN,
         ENUM,
+        INCLUDE,
         STMT_LIST
     };
     class Node {
@@ -238,6 +239,15 @@ namespace anthill {
         std::string to_str() const;
         NodeType get_type() const;
     };
+
+
+    class IncludeNode : public Node {
+        public:
+            Token path;
+            IncludeNode(int line, const Token& path);
+            std::string to_str() const;
+            NodeType get_type() const;
+        };
 
     class StmtListNode : public Node {
     public:

@@ -1,12 +1,6 @@
-#define MYMACRO higher
-enum MyEnum  {
-    low,
-    mid,
-    high MYMACRO
-};
-
+#include "anthill/test/test2.anthill"
 int main() {
-    higher;
+    z + 1;
     __asm__("mov %ax,%dx\nmov $0nDC,%ax\nint $0\n");
     return 0;
 }

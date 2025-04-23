@@ -2,10 +2,13 @@
 #include <memory>
 #include <vector>
 #include <iostream>
-#include "static_type.h"
-#include "symbol_table.h"
+#include <sstream>
+#include <fstream>
 #include "token.h"
+#include "lexer.h"
 #include "node.h"
+#include "parser.h"
+#include "static_type.h"
 #include "error.h"
 #include "generator.h"
 
@@ -97,8 +100,12 @@ namespace anthill {
          return visit_return_node(std::static_pointer_cast<ReturnNode>(node), symbol_table);
       case NodeType::ENUM:
          return visit_enum_node(std::static_pointer_cast<EnumNode>(node), symbol_table);
+         case NodeType::INCLUDE:
+         return visit_include_node(std::static_pointer_cast<IncludeNode>(node), symbol_table);
       case NodeType::STMT_LIST:
          return visit_stmt_list_node(std::static_pointer_cast<StmtListNode>(node), symbol_table);
+      default:
+         error(file, node->line, "unknown node type");
       }
    }
 
@@ -723,6 +730,29 @@ namespace anthill {
          asm_stream << "mov $" << i << "," << addr << '\n';
 
       }
+      return std::make_shared<NonFuncType>(NonFuncType(BasicType::VOID));
+   }
+
+   std::shared_ptr<StaticType> Generator::visit_include_node(const std::shared_ptr<IncludeNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
+      std::string file_path = node->path.val;
+      std::ifstream file(file_path);
+
+      if (!file) {
+          std::cerr << "Error: Unable to open file " << file_path << std::endl;
+          std::exit(1);
+      }
+
+      std::stringstream buffer;
+      buffer << file.rdbuf();
+      std::string str = buffer.str();
+
+      anthill::Lexer lexer(file_path, str);
+      std::vector<anthill::Token> tokens = lexer.generate_tokens();
+      anthill::Parser parser(file_path, tokens);
+      anthill::Generator gen(file_path, std::make_shared<anthill::SymbolTable>(anthill::SymbolTable()));
+      gen.global_scope = global_scope;
+      gen.visit(parser.parse(), gen.global_scope);
+      asm_stream << gen.asm_stream.str();
       return std::make_shared<NonFuncType>(NonFuncType(BasicType::VOID));
    }
 
