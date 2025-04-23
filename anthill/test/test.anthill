@@ -1,11 +1,12 @@
+#define MYMACRO higher
 enum MyEnum  {
     low,
     mid,
-    high
+    high MYMACRO
 };
 
 int main() {
-    high;
+    higher;
     __asm__("mov %ax,%dx\nmov $0nDC,%ax\nint $0\n");
     return 0;
 }

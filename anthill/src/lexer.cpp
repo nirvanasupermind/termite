@@ -235,8 +235,35 @@ namespace anthill {
                 tokens.push_back(Token(line, TokenType::RBRACE, "}"));
                 advance();
             }
+            else if (current == '#') {
+                advance();
+                Token directive = generate_identifier();
+                if(directive.type == TokenType::DEFINE) {
+                    advance();
+                    Token macro_name = generate_identifier();
+                    std::cout << "E" << '\n';
+                    std::string macro_code = "";
+                    while(current != '\n') {
+                        macro_code += current;
+                        advance();
+                    }
+                    Lexer lexer2("<macro '" + macro_name.val + "'>", macro_code);
+                    std::vector<Token> tokens2 = lexer2.generate_tokens();
+                    macros[macro_name.val] = tokens2;
+                } else {
+                    error(file, line, std::string("the only accepted preprocessor directives are define and include, got '") + current + "'");
+                }
+            }
             else if (current == '_' || std::isalpha(current)) {
-                tokens.push_back(generate_identifier());
+                Token ident = generate_identifier();
+                if(macros.count(ident.val)) {
+                    std::vector<Token> tokens2 = macros[ident.val];
+                    for(int i = 0; i < tokens2.size(); i++) {
+                        tokens.push_back(tokens2[i]);
+                    }
+                } else {
+                tokens.push_back(ident);
+                }
             }
             else if (isdigit(current)) {
                 tokens.push_back(generate_number());
@@ -333,6 +360,12 @@ namespace anthill {
         }
         else if (identifier_str == "char") {
             type = TokenType::CHAR;
+        }
+        else if (identifier_str == "define") {
+            type = TokenType::DEFINE;
+        }
+        else if (identifier_str == "include") {
+            type = TokenType::INCLUDE;
         }
         return Token(line, type, identifier_str);
     }

@@ -288,38 +288,50 @@ namespace anthill {
             str += "XMARK";
             break;
         }
-        case TokenType::P_INCLUDE: {
-            str += "P_INCLUDE";
+        case TokenType::POUND: {
+            str += "POUND";
             break;
         }
-        case TokenType::P_DEFINE: {
-            str += "P_DEFINE";
+        case TokenType::INCLUDE: {
+            str += "INCLUDE";
             break;
         }
-        case TokenType::P_ENDIF: {
-            str += "P_ENDIF";
+        case TokenType::DEFINE: {
+            str += "DEFINE";
             break;
         }
-        case TokenType::P_ELSE: {
-            str += "P_ELSE";
-            break;
-        }
-        case TokenType::P_ELSENOT: {
-            str += "P_ELSENOT";
-            break;
-        }
-        case TokenType::P_IFDEF: {
-            str += "P_IFDEF";
-            break;
-        }
-        case TokenType::P_IFNDEF: {
-            str += "P_IFNDEF";
-            break;
-        }
-        case TokenType::P_UNDEF: {
-            str += "P_UNDEF";
-            break;
-        }
+        // case TokenType::P_INCLUDE: {
+        //     str += "P_INCLUDE";
+        //     break;
+        // }
+        // case TokenType::P_DEFINE: {
+        //     str += "P_DEFINE";
+        //     break;
+        // }
+        // case TokenType::P_ENDIF: {
+        //     str += "P_ENDIF";
+        //     break;
+        // }
+        // case TokenType::P_ELSE: {
+        //     str += "P_ELSE";
+        //     break;
+        // }
+        // case TokenType::P_ELSENOT: {
+        //     str += "P_ELSENOT";
+        //     break;
+        // }
+        // case TokenType::P_IFDEF: {
+        //     str += "P_IFDEF";
+        //     break;
+        // }
+        // case TokenType::P_IFNDEF: {
+        //     str += "P_IFNDEF";
+        //     break;
+        // }
+        // case TokenType::P_UNDEF: {
+        //     str += "P_UNDEF";
+        //     break;
+        // }
 
         }
 

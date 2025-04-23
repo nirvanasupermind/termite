@@ -2,6 +2,7 @@
 #define LEXER_H
 #include <string>
 #include <vector>
+#include <map>
 #include "token.h"
 
 namespace anthill {
@@ -12,6 +13,7 @@ namespace anthill {
         int line;
         int pos;
         char current;
+        std::map<std::string, std::vector<Token> > macros;
         Lexer();
         Lexer(const std::string& file, const std::string& text);
         void advance();
