@@ -104,7 +104,19 @@ namespace anthill {
     std::shared_ptr<Node> Parser::postfix_expr(const TokenType& terminator) {
         std::shared_ptr<Node> result = call_expr(terminator);
         while ((current.type == TokenType::INCR || current.type == TokenType::DECR) && current.type != terminator) {
-            result = std::make_shared<PostfixNode>(PostfixNode(result->line, result, current));
+            if(current.type == TokenType::INCR) {
+                std::shared_ptr<Node> int_node = std::make_shared<IntNode>(IntNode(result->line, Token(result->line, TokenType::INT, "1")));
+                Token plus = Token(result->line, TokenType::PLUS, "+");
+                std::shared_ptr<Node> bin_op_node = std::make_shared<BinOpNode>(BinOpNode(result->line, result, plus, int_node));
+                Token assign = Token(result->line, TokenType::ASSIGN, "=");
+                result = std::make_shared<AssignNode>(AssignNode(result->line, result, assign, bin_op_node));
+            } else {
+                std::shared_ptr<Node> int_node = std::make_shared<IntNode>(IntNode(result->line, Token(result->line, TokenType::INT, "1")));
+                Token minus = Token(result->line, TokenType::MINUS, "-");
+                std::shared_ptr<Node> bin_op_node = std::make_shared<BinOpNode>(BinOpNode(result->line, result, minus, int_node));
+                Token assign = Token(result->line, TokenType::ASSIGN, "=");
+                result = std::make_shared<AssignNode>(AssignNode(result->line, result, assign, bin_op_node));
+            }
             advance();
         }
         return result;

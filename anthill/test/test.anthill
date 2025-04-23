@@ -1,6 +1,9 @@
-#include "anthill/test/test2.anthill"
 int main() {
-    z + 1;
+    int x = 10;
+    for(int i = 0; i < 10; i++) {
+        x = x * 2;
+    }
+    x;
     __asm__("mov %ax,%dx\nmov $0nDC,%ax\nint $0\n");
     return 0;
 }

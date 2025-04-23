@@ -218,9 +218,22 @@ namespace anthill {
    std::shared_ptr<StaticType> Generator::visit_postfix_node(const std::shared_ptr<PostfixNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
       std::shared_ptr<StaticType> node_type = visit(node->node, symbol_table);
 
-      if (node_type->to_str() == "void") {
-         error(file, node->node->line, "cannot perform postfix unary operations on a value of type void");
-      }
+      // if (node_type->to_str() == "void") {
+      //    error(file, node->node->line, "cannot perform postfix unary operations on a value of type void");
+      // }
+
+
+      // switch (node->op_tok.type) {
+      //    case TokenType::INCR: {
+      //       std::shared_ptr<StaticType> node_type =  visit(node->node, symbol_table, true);
+      //       if (node->node->get_type() == NodeType::PREFIX) {
+      //          visit(std::static_pointer_cast<PrefixNode>(node->node)->node, symbol_table);
+             
+      //       }
+              
+      //       break;
+      //    }
+      //    }
 
       return node_type;
    }
@@ -597,10 +610,7 @@ namespace anthill {
          visit(std::static_pointer_cast<PrefixNode>(node->left_node)->node, symbol_table);
          asm_stream << "mov %ax,%bx\n";
          visit(node->right_node, symbol_table);
-         if(left_node_type->to_str() == "char") {
-            trunc_to_8_trits();
-         }
-         asm_stream << "mov %ax,0(%bx)\n";
+         set_var(left_node_type, "0(%bx)");
          return left_node_type;
       } else {
          std::string addr = symbol_table->get_addr(std::static_pointer_cast<IdentNode>(node->left_node)->tok.val);
@@ -665,9 +675,16 @@ namespace anthill {
 
    std::shared_ptr<StaticType> Generator::visit_for_node(const std::shared_ptr<ForNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
       visit(node->init, symbol_table);
-      visit(node->cond, symbol_table);
-      visit(node->update, symbol_table);
+      int label = alloc_label();
+      int label2 = alloc_label();
+      asm_stream << "jmp _L" + std::to_string(label2) + "\n";
+      asm_stream << "_L" + std::to_string(label) + ":\n";
       visit(node->body, symbol_table);
+      visit(node->update, symbol_table);
+      asm_stream << "_L" + std::to_string(label2) + ":\n";
+      visit(node->cond, symbol_table);
+      asm_stream << "cmp $1, %ax\n";
+      asm_stream << "je _L" + std::to_string(label) + "\n";
       return std::make_shared<NonFuncType>(NonFuncType(BasicType::VOID));
    }
 
