@@ -697,9 +697,9 @@ namespace anthill {
    }
 
    std::shared_ptr<StaticType> Generator::visit_func_def_node(const std::shared_ptr<FuncDefNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
-      if(node->name.val == "main") {
+      // if(node->name.val == "main") {
           asm_stream << "call main\nmov %ax,%dx\nmov $0nDD,%ax\nint $0\n";
-      }
+      // }
       asm_stream << node->name.val << ":\n";
       asm_stream << "push %bp\nmov %sp,%bp\n";
       std::shared_ptr<SymbolTable> func_symbol_table = std::make_shared<SymbolTable>(SymbolTable(symbol_table));

@@ -1,0 +1,28 @@
+void print_char(char c) {
+    c;
+    __asm__("mov %ax,%dx\nmov $0nD0,%ax\nint $0\n");
+}
+
+void print_int(int i) {
+    i;
+    __asm__("mov %ax,%dx\nmov $0nDC,%ax\nint $0\n");
+}
+
+ void test_char_lit() {
+   print_char('c');
+   print_char('h');
+   print_char('a');
+   print_char('r');
+   print_char('_');
+   print_char('l');
+   print_char('i');
+   print_char('t');
+   print_char(' ');
+
+   print_int('A' == 'A');
+}
+
+int main() {
+    test_char_lit();
+    return 0;
+}
