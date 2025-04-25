@@ -8,21 +8,70 @@ void print_int(int i) {
     __asm__("mov %ax,%dx\nmov $0nDC,%ax\nint $0\n");
 }
 
- void test_char_lit() {
-   print_char('c');
-   print_char('h');
-   print_char('a');
-   print_char('r');
-   print_char('_');
-   print_char('l');
-   print_char('i');
-   print_char('t');
-   print_char(' ');
+void print_str(char* s) {
+    int i = 0;
+    while(*(s + i) != 0) {
+        print_char(*(s + i));
+        i++;
+    }
+}
 
-   print_int('A' == 'A');
+void test_cast() {
+    print_char('c');
+    print_char('a');
+    print_char('s');
+    print_char('t');
+    print_char(':');
+    print_char(' ');
+    print_int((char)86438 == 1145);
+    print_char('\n');
+}
+
+void test_inc() {
+    print_char('i');
+    print_char('n');
+    print_char('c');
+    print_char(':');
+    print_char(' ');
+    int x = 57;
+    x++;
+    print_int(x == 58);
+    print_char('\n');
+}
+
+
+void test_dec() {
+    print_char('d');
+    print_char('e');
+    print_char('c');
+    print_char(':');
+    print_char(' ');
+    int x = 100;
+    x--;
+    print_int(x == 99);
+    print_char('\n');
+}
+
+
+void test_ptr_deref() {
+    print_char('p');
+    print_char('t');
+    print_char('r');
+    print_char('_');
+    print_char('d');
+    print_char('e');
+    print_char('r');
+    print_char('e');
+    print_char('f');
+    print_char(':');
+    print_char(' ');
+    int* ptr = 38476;
+    print_int(*(ptr));
 }
 
 int main() {
-    test_char_lit();
+    test_cast();
+    test_inc();
+    test_dec();
     return 0;
 }

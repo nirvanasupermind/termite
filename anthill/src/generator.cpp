@@ -41,7 +41,7 @@ namespace anthill {
    }
 
    void Generator::trunc_to_8_trits() {
-      asm_stream << "xor $0nDDD4, %ax\n";
+      asm_stream << "xor $0nDDDD, %ax\n";
    }
 
    std::string Generator::alloc_addr(const std::shared_ptr<NonFuncType>& type, bool func_mode) {
@@ -122,7 +122,7 @@ namespace anthill {
    std::shared_ptr<StaticType> Generator::visit_str_node(const std::shared_ptr<StrNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
       // alloc_addr(std::make_shared<NonFuncType>(NonFuncType(BasicType::CHAR)));
       std::string start_addr = alloc_addr(std::make_shared<NonFuncType>(NonFuncType(BasicType::CHAR)));
-      for (int i = 0; i < node->tok.val.size(); i++) {
+      for (int i = 0; i <= node->tok.val.size(); i++) {
          std::string addr;
          if (i == 0) {
             addr = start_addr;
@@ -136,9 +136,9 @@ namespace anthill {
             std::string reg = addr.substr(addr.find('(') + 1, addr.find(')') - addr.find('(') - 1);
             inc_addr = std::to_string(std::stoi(disp) + 1) + "(" + reg + ")";
          }
-         if (i == node->tok.val.size() - 1) {
+         if (i == node->tok.val.size()) {
             asm_stream << "push " + inc_addr + "\n";
-            asm_stream << "mov $" << (int)(node->tok.val.at(i)) << "," << addr << '\n';
+            asm_stream << "mov $0," << addr << '\n';
             asm_stream << "pop " + inc_addr + "\n";
          }
          else {
