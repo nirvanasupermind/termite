@@ -100,7 +100,7 @@ namespace anthill {
          return visit_return_node(std::static_pointer_cast<ReturnNode>(node), symbol_table);
       case NodeType::ENUM:
          return visit_enum_node(std::static_pointer_cast<EnumNode>(node), symbol_table);
-         case NodeType::INCLUDE:
+      case NodeType::INCLUDE:
          return visit_include_node(std::static_pointer_cast<IncludeNode>(node), symbol_table);
       case NodeType::STMT_LIST:
          return visit_stmt_list_node(std::static_pointer_cast<StmtListNode>(node), symbol_table);
@@ -228,9 +228,9 @@ namespace anthill {
       //       std::shared_ptr<StaticType> node_type =  visit(node->node, symbol_table, true);
       //       if (node->node->get_type() == NodeType::PREFIX) {
       //          visit(std::static_pointer_cast<PrefixNode>(node->node)->node, symbol_table);
-             
+
       //       }
-              
+
       //       break;
       //    }
       //    }
@@ -241,7 +241,7 @@ namespace anthill {
    std::shared_ptr<StaticType> Generator::visit_prefix_node(const std::shared_ptr<PrefixNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
       std::shared_ptr<StaticType> node_type = visit(node->node, symbol_table);
 
-      
+
       if (node_type->is_func()) {
          error(file, node->node->line, "cannot perform prefix unary operations on a function");
       }
@@ -259,7 +259,8 @@ namespace anthill {
                std::string reg = addr.substr(addr.find('(') + 1, addr.find(')') - addr.find('(') - 1);
                asm_stream << "mov $" << disp << ",%ax\n";
                asm_stream << "add %ax," << reg << "\n";
-            } else {
+            }
+            else {
                asm_stream << "mov $" << addr << ",%ax\n";
             }
          }
@@ -287,6 +288,9 @@ namespace anthill {
       }
       case TokenType::MINUS: {
          asm_stream << "neg %ax\n";
+         break;
+      }
+      case TokenType::PLUS: {
          break;
       }
       }
@@ -399,9 +403,9 @@ namespace anthill {
          asm_stream << "add %cx,%ax\n";
          std::cout << left_type->to_str() << '\n';
          if ((left_type->pointer_levels > 0 && left_type->to_str() != "char*")
-      || (right_type->pointer_levels > 0 && right_type->to_str() != "char*")) {
-         asm_stream << "push %ax\n";
-         visit(node->right_node, symbol_table);  
+            || (right_type->pointer_levels > 0 && right_type->to_str() != "char*")) {
+            asm_stream << "push %ax\n";
+            visit(node->right_node, symbol_table);
             asm_stream << "pop %cx\n";
             asm_stream << "add %cx,%ax\n";
          }
@@ -419,9 +423,9 @@ namespace anthill {
          asm_stream << "xchg %cx,%ax\n";
          asm_stream << "sub %cx,%ax\n";
          if ((left_type->pointer_levels > 0 && left_type->to_str() != "char*")
-      || (right_type->pointer_levels > 0 && right_type->to_str() != "char*")) {
-         asm_stream << "push %ax\n";
-         visit(node->right_node, symbol_table);  
+            || (right_type->pointer_levels > 0 && right_type->to_str() != "char*")) {
+            asm_stream << "push %ax\n";
+            visit(node->right_node, symbol_table);
             asm_stream << "pop %cx\n";
             asm_stream << "xchg %cx,%ax\n";
             asm_stream << "sub %cx,%ax\n";
@@ -596,7 +600,7 @@ namespace anthill {
          trunc_to_8_trits();
          return left_type;
       }
-      else if (left_type->to_str() == "char" ||  right_type->pointer_levels > 0) {
+      else if (left_type->to_str() == "char" || right_type->pointer_levels > 0) {
          return right_type;
       }
       else {
@@ -605,14 +609,15 @@ namespace anthill {
    }
 
    std::shared_ptr<StaticType> Generator::visit_assign_node(const std::shared_ptr<AssignNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
-      std::shared_ptr<StaticType> left_node_type =  visit(node->left_node, symbol_table, true);
+      std::shared_ptr<StaticType> left_node_type = visit(node->left_node, symbol_table, true);
       if (node->left_node->get_type() == NodeType::PREFIX) {
          visit(std::static_pointer_cast<PrefixNode>(node->left_node)->node, symbol_table);
          asm_stream << "mov %ax,%bx\n";
          visit(node->right_node, symbol_table);
          set_var(left_node_type, "0(%bx)");
          return left_node_type;
-      } else {
+      }
+      else {
          std::string addr = symbol_table->get_addr(std::static_pointer_cast<IdentNode>(node->left_node)->tok.val);
          visit(node->right_node, symbol_table);
          set_var(left_node_type, addr);
@@ -697,33 +702,38 @@ namespace anthill {
    }
 
    std::shared_ptr<StaticType> Generator::visit_func_def_node(const std::shared_ptr<FuncDefNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
-      // if(node->name.val == "main") {
-          asm_stream << "call main\nmov %ax,%dx\nmov $0nDD,%ax\nint $0\n";
-      // }
-      asm_stream << node->name.val << ":\n";
-      asm_stream << "push %bp\nmov %sp,%bp\n";
-      std::shared_ptr<SymbolTable> func_symbol_table = std::make_shared<SymbolTable>(SymbolTable(symbol_table));
-      std::shared_ptr<TypeNode> return_type_node = std::static_pointer_cast<TypeNode>(node->return_type);
-      std::shared_ptr<NonFuncType> return_type = std::make_shared<NonFuncType>(str_to_basic_type(return_type_node->base_type.val), return_type_node->num_pointers);
-      std::vector<std::shared_ptr<NonFuncType> > arg_static_types;
-      func_addr_counter = 0;
-      // std::cout << "dbg414" << '\n';
-      for (int i = 0; i < node->arg_names.size(); i++) {
-         // std::cout << "dbg416" << '\n';
-         std::shared_ptr<TypeNode> type_node = std::static_pointer_cast<TypeNode>(node->arg_types[i]);
-         std::shared_ptr<NonFuncType> type = std::make_shared<NonFuncType>(NonFuncType(str_to_basic_type(type_node->base_type.val), type_node->num_pointers));
-         std::string addr = alloc_addr(type, true);
-         arg_static_types.push_back(type);
-         func_symbol_table->def_type(node->arg_names[i].val, type);
-         func_symbol_table->def_addr(node->arg_names[i].val, addr);
-         asm_stream << "mov %" << arg_regs[i] << ",%ax\n";
-         asm_stream << "mov %ax," << addr << "\n";
-         // std::cout << "dbg425" << '\n';
+      try {
+         // if(node->name.val == "main") {
+         asm_stream << "call main\nmov %ax,%dx\nmov $0nDD,%ax\nint $0\n";
+         // }
+         asm_stream << node->name.val << ":\n";
+         asm_stream << "push %bp\nmov %sp,%bp\n";
+         std::shared_ptr<SymbolTable> func_symbol_table = std::make_shared<SymbolTable>(SymbolTable(symbol_table));
+         std::shared_ptr<TypeNode> return_type_node = std::static_pointer_cast<TypeNode>(node->return_type);
+         std::shared_ptr<NonFuncType> return_type = std::make_shared<NonFuncType>(str_to_basic_type(return_type_node->base_type.val), return_type_node->num_pointers);
+         std::vector<std::shared_ptr<NonFuncType> > arg_static_types;
+         func_addr_counter = 0;
+         // std::cout << "dbg414" << '\n';
+         for (int i = 0; i < node->arg_names.size(); i++) {
+            // std::cout << "dbg416" << '\n';
+            std::shared_ptr<TypeNode> type_node = std::static_pointer_cast<TypeNode>(node->arg_types[i]);
+            std::shared_ptr<NonFuncType> type = std::make_shared<NonFuncType>(NonFuncType(str_to_basic_type(type_node->base_type.val), type_node->num_pointers));
+            std::string addr = alloc_addr(type, true);
+            arg_static_types.push_back(type);
+            func_symbol_table->def_type(node->arg_names[i].val, type);
+            func_symbol_table->def_addr(node->arg_names[i].val, addr);
+            asm_stream << "mov %" << arg_regs[i] << ",%ax\n";
+            asm_stream << "mov %ax," << addr << "\n";
+            // std::cout << "dbg425" << '\n';
+         }
+         std::shared_ptr<StaticType> func_type = std::make_shared<FuncType>(FuncType(return_type, arg_static_types));
+         std::cout << node->name.to_str() << '\n';
+         symbol_table->def_type(node->name.val, func_type);
+         symbol_table->def_addr(node->name.val, node->name.val);
       }
-      std::shared_ptr<StaticType> func_type = std::make_shared<FuncType>(FuncType(return_type, arg_static_types));
-      std::cout << node->name.to_str() << '\n';
-      symbol_table->def_type(node->name.val, func_type);
-      symbol_table->def_addr(node->name.val, node->name.val);
+      catch (const std::string& e) {
+         error(file, node->line, e);
+      }
       // std::cout << "dbg430" << '\n';
       visit(node->body, func_symbol_table);
       asm_stream << "pop %bp\n";
@@ -755,8 +765,8 @@ namespace anthill {
       std::ifstream file(file_path);
 
       if (!file) {
-          std::cerr << "Error: Unable to open file " << file_path << std::endl;
-          std::exit(1);
+         std::cerr << "Error: Unable to open file " << file_path << std::endl;
+         std::exit(1);
       }
 
       std::stringstream buffer;

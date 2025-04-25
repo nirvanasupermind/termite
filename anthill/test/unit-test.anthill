@@ -23,7 +23,7 @@ void test_cast() {
     print_char('t');
     print_char(':');
     print_char(' ');
-    print_int((char)86438 == 1145);
+    print_int(((char)86438) == 1145);
     print_char('\n');
 }
 
@@ -52,7 +52,6 @@ void test_dec() {
     print_char('\n');
 }
 
-
 void test_ptr_deref() {
     print_char('p');
     print_char('t');
@@ -65,13 +64,81 @@ void test_ptr_deref() {
     print_char('f');
     print_char(':');
     print_char(' ');
-    int* ptr = 38476;
-    print_int(*(ptr));
+    int x = 14;
+    print_int(*&x == 14);
+    print_char('\n');
+}
+
+void test_uminus() {
+    print_char('u');
+    print_char('m');
+    print_char('i');
+    print_char('n');
+    print_char('u');
+    print_char('s');
+    print_char(':');
+    print_char(' ');
+    print_int(-(-22) == 22);
+    print_char('\n');
+}
+
+void test_uminus2() {
+    print_char('u');
+    print_char('m');
+    print_char('i');
+    print_char('n');
+    print_char('u');
+    print_char('s');
+    print_char('2');
+    print_char(':');
+    print_char(' ');
+    int x = -93;
+    print_int(-x == 93);
+    print_char('\n');
+}
+
+void test_uplus() {
+    print_char('u');
+    print_char('p');
+    print_char('l');
+    print_char('u');
+    print_char('s');
+    print_char(':');
+    print_char(' ');
+    print_int(+67 == 67);
+    print_char('\n');
+}
+
+
+void test_add() {
+    print_char('a');
+    print_char('d');
+    print_char('d');
+    print_char(':');
+    print_char(' ');
+    print_int(618039+206056 == 824095);
+    print_char('\n');
+}
+
+void test_sub() {
+    print_char('s');
+    print_char('u');
+    print_char('b');
+    print_char(':');
+    print_char(' ');
+    print_int(-832341-883287 == -1715628);
+    print_char('\n');
 }
 
 int main() {
     test_cast();
     test_inc();
     test_dec();
+    test_ptr_deref();
+    test_uminus();
+    test_uminus2();
+    test_uplus();
+    test_add();
+    test_sub();
     return 0;
 }

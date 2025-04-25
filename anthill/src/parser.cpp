@@ -103,7 +103,7 @@ namespace anthill {
 
     std::shared_ptr<Node> Parser::postfix_expr(const TokenType& terminator) {
         std::shared_ptr<Node> result = call_expr(terminator);
-        while ((current.type == TokenType::INCR || current.type == TokenType::DECR) && current.type != terminator) {
+        while ((current.type == TokenType::INCR || current.type == TokenType::DECR) && current.type != TokenType::SEMI  && current.type != terminator) {
             if(current.type == TokenType::INCR) {
                 std::shared_ptr<Node> int_node = std::make_shared<IntNode>(IntNode(result->line, Token(result->line, TokenType::INT, "1")));
                 Token plus = Token(result->line, TokenType::PLUS, "+");

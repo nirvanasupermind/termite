@@ -94,7 +94,7 @@ namespace anthill {
             else if (current == '-') {
                 int old_line = line;
                 advance();
-                if (current == '+') {
+                if (current == '-') {
                     tokens.push_back(Token(old_line, TokenType::DECR, "--"));
                     advance();
                 }
