@@ -110,6 +110,16 @@ void test_uplus() {
 }
 
 
+void test_and() {
+    print_char('a');
+    print_char('n');
+    print_char('d');
+    print_char(':');
+    print_char(' ');
+    print_int(-67 && 95 == -67);
+    print_char('\n');
+}
+
 void test_add() {
     print_char('a');
     print_char('d');
@@ -130,6 +140,36 @@ void test_sub() {
     print_char('\n');
 }
 
+void test_mul() {
+    print_char('s');
+    print_char('u');
+    print_char('b');
+    print_char(':');
+    print_char(' ');
+    print_int(869328*-655735==18930123);
+    print_char('\n');
+}
+
+void test_div() {
+    print_char('d');
+    print_char('i');
+    print_char('v');
+    print_char(':');
+    print_char(' ');
+    print_int(565466/110934==5);
+    print_char('\n');
+}
+
+void test_mod() {
+    print_char('m');
+    print_char('o');
+    print_char('d');
+    print_char(':');
+    print_char(' ');
+    print_int(494105%26819==11363);
+    print_char('\n');
+}
+
 int main() {
     test_cast();
     test_inc();
@@ -138,7 +178,11 @@ int main() {
     test_uminus();
     test_uminus2();
     test_uplus();
+    test_and();
     test_add();
     test_sub();
+    test_mul();
+    test_div();
+    test_mod();
     return 0;
 }
