@@ -467,7 +467,7 @@ namespace anthill {
          right_type = std::static_pointer_cast<NonFuncType>(temp2);
          asm_stream << "pop %cx\n";
          asm_stream << "xchg %cx,%ax\n";
-         asm_stream << "mod %cx\n";
+         asm_stream << "div %cx\n";
          asm_stream << "mov %dx,%ax\n";
          break;
       }
@@ -702,13 +702,13 @@ namespace anthill {
    }
 
    std::shared_ptr<StaticType> Generator::visit_func_def_node(const std::shared_ptr<FuncDefNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
+      asm_stream << "call main\nmov %ax,%dx\nmov $0nDD,%ax\nint $0\n";
+      // }
+      asm_stream << node->name.val << ":\n";
+      asm_stream << "push %bp\nmov %sp,%bp\n";
+      std::shared_ptr<SymbolTable> func_symbol_table = std::make_shared<SymbolTable>(SymbolTable(symbol_table));
       try {
          // if(node->name.val == "main") {
-         asm_stream << "call main\nmov %ax,%dx\nmov $0nDD,%ax\nint $0\n";
-         // }
-         asm_stream << node->name.val << ":\n";
-         asm_stream << "push %bp\nmov %sp,%bp\n";
-         std::shared_ptr<SymbolTable> func_symbol_table = std::make_shared<SymbolTable>(SymbolTable(symbol_table));
          std::shared_ptr<TypeNode> return_type_node = std::static_pointer_cast<TypeNode>(node->return_type);
          std::shared_ptr<NonFuncType> return_type = std::make_shared<NonFuncType>(str_to_basic_type(return_type_node->base_type.val), return_type_node->num_pointers);
          std::vector<std::shared_ptr<NonFuncType> > arg_static_types;

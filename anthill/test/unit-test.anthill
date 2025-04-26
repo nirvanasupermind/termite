@@ -116,7 +116,36 @@ void test_and() {
     print_char('d');
     print_char(':');
     print_char(' ');
-    print_int(-67 && 95 == -67);
+    print_int((-67 & 95) == -67);
+    print_char('\n');
+}
+
+void test_or() {
+    print_char('o');
+    print_char('r');
+    print_char(':');
+    print_char(' ');
+    print_int((47 | 69) == 75);
+    print_char('\n');
+}
+
+void test_xor() {
+    print_char('x');
+    print_char('o');
+    print_char('r');
+    print_char(':');
+    print_char(' ');
+    print_int((-18 ^ -14) == 18);
+    print_char('\n');
+}
+
+void test_shl() {
+    print_char('s');
+    print_char('h');
+    print_char('l');
+    print_char(':');
+    print_char(' ');
+    print_int((23 << 1) == 69);
     print_char('\n');
 }
 
@@ -126,7 +155,7 @@ void test_add() {
     print_char('d');
     print_char(':');
     print_char(' ');
-    print_int(618039+206056 == 824095);
+    print_int((618039+206056) == 824095);
     print_char('\n');
 }
 
@@ -136,7 +165,7 @@ void test_sub() {
     print_char('b');
     print_char(':');
     print_char(' ');
-    print_int(-832341-883287 == -1715628);
+    print_int((-832341-883287) == -1715628);
     print_char('\n');
 }
 
@@ -146,7 +175,7 @@ void test_mul() {
     print_char('b');
     print_char(':');
     print_char(' ');
-    print_int(869328*-655735==18930123);
+    print_int((869328*-655735)==18930123);
     print_char('\n');
 }
 
@@ -156,7 +185,7 @@ void test_div() {
     print_char('v');
     print_char(':');
     print_char(' ');
-    print_int(565466/110934==5);
+    print_int((565466/110934)==5);
     print_char('\n');
 }
 
@@ -166,7 +195,7 @@ void test_mod() {
     print_char('d');
     print_char(':');
     print_char(' ');
-    print_int(494105%26819==11363);
+    print_int((494105%26819)==11363);
     print_char('\n');
 }
 
@@ -179,6 +208,9 @@ int main() {
     test_uminus2();
     test_uplus();
     test_and();
+    test_or();
+    test_xor();
+    test_shl();
     test_add();
     test_sub();
     test_mul();
