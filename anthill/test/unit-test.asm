@@ -84,7 +84,7 @@ pop %cx
 cmp %ax,%cx
 mov $1,%ax
 jne _L3
-mov $0,%ax
+mov $-1,%ax
 _L3:
 cmp $1, %ax
 je _L1
@@ -125,7 +125,7 @@ pop %cx
 cmp %ax,%cx
 mov $1,%ax
 je _L4
-mov $0,%ax
+mov $-1,%ax
 _L4:
 mov %ax,%di
 call print_int
@@ -173,7 +173,7 @@ pop %cx
 cmp %ax,%cx
 mov $1,%ax
 je _L5
-mov $0,%ax
+mov $-1,%ax
 _L5:
 mov %ax,%di
 call print_int
@@ -222,7 +222,7 @@ pop %cx
 cmp %ax,%cx
 mov $1,%ax
 je _L6
-mov $0,%ax
+mov $-1,%ax
 _L6:
 mov %ax,%di
 call print_int
@@ -287,7 +287,7 @@ pop %cx
 cmp %ax,%cx
 mov $1,%ax
 je _L7
-mov $0,%ax
+mov $-1,%ax
 _L7:
 mov %ax,%di
 call print_int
@@ -339,7 +339,7 @@ pop %cx
 cmp %ax,%cx
 mov $1,%ax
 je _L8
-mov $0,%ax
+mov $-1,%ax
 _L8:
 mov %ax,%di
 call print_int
@@ -395,7 +395,7 @@ pop %cx
 cmp %ax,%cx
 mov $1,%ax
 je _L9
-mov $0,%ax
+mov $-1,%ax
 _L9:
 mov %ax,%di
 call print_int
@@ -440,7 +440,7 @@ pop %cx
 cmp %ax,%cx
 mov $1,%ax
 je _L10
-mov $0,%ax
+mov $-1,%ax
 _L10:
 mov %ax,%di
 call print_int
@@ -490,7 +490,7 @@ pop %cx
 cmp %ax,%cx
 mov $1,%ax
 je _L11
-mov $0,%ax
+mov $-1,%ax
 _L11:
 mov %ax,%di
 call print_int
@@ -536,7 +536,7 @@ pop %cx
 cmp %ax,%cx
 mov $1,%ax
 je _L12
-mov $0,%ax
+mov $-1,%ax
 _L12:
 mov %ax,%di
 call print_int
@@ -567,15 +567,26 @@ call print_char
 mov $32,%ax
 mov %ax,%di
 call print_char
-mov $18,%ax
-neg %ax
-mov $18,%ax
-neg %ax
+mov $269,%ax
+mov $269,%ax
 push %ax
-mov $14,%ax
-neg %ax
+mov $689,%ax
 pop %cx
 xor %cx,%ax
+mov $269,%ax
+mov $269,%ax
+push %ax
+mov $689,%ax
+pop %cx
+xor %cx,%ax
+push %ax
+mov $26,%ax
+pop %cx
+cmp %ax,%cx
+mov $1,%ax
+je _L13
+mov $-1,%ax
+_L13:
 mov %ax,%di
 call print_int
 mov $10,%ax
@@ -624,9 +635,9 @@ mov $69,%ax
 pop %cx
 cmp %ax,%cx
 mov $1,%ax
-je _L13
-mov $0,%ax
-_L13:
+je _L14
+mov $-1,%ax
+_L14:
 mov %ax,%di
 call print_int
 mov $10,%ax
@@ -673,9 +684,9 @@ mov $824095,%ax
 pop %cx
 cmp %ax,%cx
 mov $1,%ax
-je _L14
-mov $0,%ax
-_L14:
+je _L15
+mov $-1,%ax
+_L15:
 mov %ax,%di
 call print_int
 mov $10,%ax
@@ -729,9 +740,9 @@ neg %ax
 pop %cx
 cmp %ax,%cx
 mov $1,%ax
-je _L15
-mov $0,%ax
-_L15:
+je _L16
+mov $-1,%ax
+_L16:
 mov %ax,%di
 call print_int
 mov $10,%ax
@@ -780,9 +791,9 @@ mov $18930123,%ax
 pop %cx
 cmp %ax,%cx
 mov $1,%ax
-je _L16
-mov $0,%ax
-_L16:
+je _L17
+mov $-1,%ax
+_L17:
 mov %ax,%di
 call print_int
 mov $10,%ax
@@ -831,9 +842,9 @@ mov $5,%ax
 pop %cx
 cmp %ax,%cx
 mov $1,%ax
-je _L17
-mov $0,%ax
-_L17:
+je _L18
+mov $-1,%ax
+_L18:
 mov %ax,%di
 call print_int
 mov $10,%ax
@@ -884,9 +895,236 @@ mov $11363,%ax
 pop %cx
 cmp %ax,%cx
 mov $1,%ax
-je _L18
-mov $0,%ax
-_L18:
+je _L19
+mov $-1,%ax
+_L19:
+mov %ax,%di
+call print_int
+mov $10,%ax
+mov %ax,%di
+call print_char
+pop %bp
+ret
+call main
+mov %ax,%dx
+mov $0nDD,%ax
+int $0
+test_eq:
+push %bp
+mov %sp,%bp
+mov $101,%ax
+mov %ax,%di
+call print_char
+mov $113,%ax
+mov %ax,%di
+call print_char
+mov $58,%ax
+mov %ax,%di
+call print_char
+mov $32,%ax
+mov %ax,%di
+call print_char
+mov $681521,%ax
+neg %ax
+mov $681521,%ax
+neg %ax
+push %ax
+mov $681521,%ax
+neg %ax
+pop %cx
+cmp %ax,%cx
+mov $1,%ax
+je _L20
+mov $-1,%ax
+_L20:
+mov %ax,%di
+call print_int
+mov $10,%ax
+mov %ax,%di
+call print_char
+pop %bp
+ret
+call main
+mov %ax,%dx
+mov $0nDD,%ax
+int $0
+test_ne:
+push %bp
+mov %sp,%bp
+mov $110,%ax
+mov %ax,%di
+call print_char
+mov $101,%ax
+mov %ax,%di
+call print_char
+mov $58,%ax
+mov %ax,%di
+call print_char
+mov $32,%ax
+mov %ax,%di
+call print_char
+mov $417075,%ax
+neg %ax
+mov $417075,%ax
+neg %ax
+push %ax
+mov $195894,%ax
+pop %cx
+cmp %ax,%cx
+mov $1,%ax
+jne _L21
+mov $-1,%ax
+_L21:
+mov %ax,%di
+call print_int
+mov $10,%ax
+mov %ax,%di
+call print_char
+pop %bp
+ret
+call main
+mov %ax,%dx
+mov $0nDD,%ax
+int $0
+test_lt:
+push %bp
+mov %sp,%bp
+mov $108,%ax
+mov %ax,%di
+call print_char
+mov $116,%ax
+mov %ax,%di
+call print_char
+mov $58,%ax
+mov %ax,%di
+call print_char
+mov $32,%ax
+mov %ax,%di
+call print_char
+mov $455064,%ax
+neg %ax
+mov $455064,%ax
+neg %ax
+push %ax
+mov $830396,%ax
+pop %cx
+cmp %ax,%cx
+mov $1,%ax
+jl _L22
+mov $-1,%ax
+_L22:
+mov %ax,%di
+call print_int
+mov $10,%ax
+mov %ax,%di
+call print_char
+pop %bp
+ret
+call main
+mov %ax,%dx
+mov $0nDD,%ax
+int $0
+test_le:
+push %bp
+mov %sp,%bp
+mov $108,%ax
+mov %ax,%di
+call print_char
+mov $101,%ax
+mov %ax,%di
+call print_char
+mov $58,%ax
+mov %ax,%di
+call print_char
+mov $32,%ax
+mov %ax,%di
+call print_char
+mov $163526,%ax
+mov $163526,%ax
+push %ax
+mov $209771,%ax
+pop %cx
+cmp %ax,%cx
+mov $1,%ax
+jle _L23
+mov $-1,%ax
+_L23:
+mov %ax,%di
+call print_int
+mov $10,%ax
+mov %ax,%di
+call print_char
+pop %bp
+ret
+call main
+mov %ax,%dx
+mov $0nDD,%ax
+int $0
+test_gt:
+push %bp
+mov %sp,%bp
+mov $103,%ax
+mov %ax,%di
+call print_char
+mov $116,%ax
+mov %ax,%di
+call print_char
+mov $58,%ax
+mov %ax,%di
+call print_char
+mov $32,%ax
+mov %ax,%di
+call print_char
+mov $757575,%ax
+mov $757575,%ax
+push %ax
+mov $563775,%ax
+neg %ax
+pop %cx
+cmp %ax,%cx
+mov $1,%ax
+jg _L24
+mov $-1,%ax
+_L24:
+mov %ax,%di
+call print_int
+mov $10,%ax
+mov %ax,%di
+call print_char
+pop %bp
+ret
+call main
+mov %ax,%dx
+mov $0nDD,%ax
+int $0
+test_ge:
+push %bp
+mov %sp,%bp
+mov $103,%ax
+mov %ax,%di
+call print_char
+mov $101,%ax
+mov %ax,%di
+call print_char
+mov $58,%ax
+mov %ax,%di
+call print_char
+mov $32,%ax
+mov %ax,%di
+call print_char
+mov $579487,%ax
+neg %ax
+mov $579487,%ax
+neg %ax
+push %ax
+mov $579618,%ax
+neg %ax
+pop %cx
+cmp %ax,%cx
+mov $1,%ax
+jge _L25
+mov $-1,%ax
+_L25:
 mov %ax,%di
 call print_int
 mov $10,%ax
@@ -917,6 +1155,12 @@ call test_sub
 call test_mul
 call test_div
 call test_mod
+call test_eq
+call test_ne
+call test_lt
+call test_le
+call test_gt
+call test_ge
 mov $0,%ax
 pop %bp
 ret

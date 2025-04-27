@@ -484,7 +484,7 @@ namespace anthill {
          asm_stream << "mov $1,%ax\n";
          int label = alloc_label();
          asm_stream << "je _L" + std::to_string(label) + "\n";
-         asm_stream << "mov $0,%ax\n";
+         asm_stream << "mov $-1,%ax\n";
          asm_stream << "_L" + std::to_string(label) + ":\n";
          break;
       }
@@ -501,7 +501,7 @@ namespace anthill {
          asm_stream << "mov $1,%ax\n";
          int label = alloc_label();
          asm_stream << "jne _L" + std::to_string(label) + "\n";
-         asm_stream << "mov $0,%ax\n";
+         asm_stream << "mov $-1,%ax\n";
          asm_stream << "_L" + std::to_string(label) + ":\n";
          break;
       }
@@ -518,7 +518,7 @@ namespace anthill {
          asm_stream << "mov $1,%ax\n";
          int label = alloc_label();
          asm_stream << "jl _L" + std::to_string(label) + "\n";
-         asm_stream << "mov $0,%ax\n";
+         asm_stream << "mov $-1,%ax\n";
          asm_stream << "_L" + std::to_string(label) + ":\n";
          break;
       }
@@ -535,7 +535,7 @@ namespace anthill {
          asm_stream << "mov $1,%ax\n";
          int label = alloc_label();
          asm_stream << "jle _L" + std::to_string(label) + "\n";
-         asm_stream << "mov $0,%ax\n";
+         asm_stream << "mov $-1,%ax\n";
          asm_stream << "_L" + std::to_string(label) + ":\n";
          break;
       }
@@ -552,7 +552,7 @@ namespace anthill {
          asm_stream << "mov $1,%ax\n";
          int label = alloc_label();
          asm_stream << "jg _L" + std::to_string(label) + "\n";
-         asm_stream << "mov $0,%ax\n";
+         asm_stream << "mov $-1,%ax\n";
          asm_stream << "_L" + std::to_string(label) + ":\n";
          break;
       }
@@ -569,7 +569,7 @@ namespace anthill {
          asm_stream << "mov $1,%ax\n";
          int label = alloc_label();
          asm_stream << "jge _L" + std::to_string(label) + "\n";
-         asm_stream << "mov $0,%ax\n";
+         asm_stream << "mov $-1,%ax\n";
          asm_stream << "_L" + std::to_string(label) + ":\n";
          break;
       }

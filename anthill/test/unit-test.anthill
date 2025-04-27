@@ -135,7 +135,7 @@ void test_xor() {
     print_char('r');
     print_char(':');
     print_char(' ');
-    print_int((-18 ^ -14) == 18);
+    print_int((269 ^ 689) == 26);
     print_char('\n');
 }
 
@@ -199,6 +199,62 @@ void test_mod() {
     print_char('\n');
 }
 
+void test_eq() {
+    print_char('e');
+    print_char('q');
+    print_char(':');
+    print_char(' ');
+    print_int(-681521==-681521);
+    print_char('\n');
+}
+
+void test_ne() {
+    print_char('n');
+    print_char('e');
+    print_char(':');
+    print_char(' ');
+    print_int(-417075!=195894);
+    print_char('\n');
+}
+
+void test_lt() {
+    print_char('l');
+    print_char('t');
+    print_char(':');
+    print_char(' ');
+    print_int(-455064<830396);
+    print_char('\n');
+}
+
+void test_le() {
+    print_char('l');
+    print_char('e');
+    print_char(':');
+    print_char(' ');
+    print_int(163526<=209771);
+    print_char('\n');
+}
+
+
+void test_gt() {
+    print_char('g');
+    print_char('t');
+    print_char(':');
+    print_char(' ');
+    print_int(757575>-563775);
+    print_char('\n');
+}
+
+void test_ge() {
+    print_char('g');
+    print_char('e');
+    print_char(':');
+    print_char(' ');
+    print_int(-579487>=-579618);
+    print_char('\n');
+}
+
+
 int main() {
     test_cast();
     test_inc();
@@ -216,5 +272,11 @@ int main() {
     test_mul();
     test_div();
     test_mod();
+    test_eq();
+    test_ne();
+    test_lt();
+    test_le();
+    test_gt();
+    test_ge();
     return 0;
 }
