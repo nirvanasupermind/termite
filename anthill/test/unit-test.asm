@@ -1537,12 +1537,6 @@ mov %ax,24
 jmp _L39
 _L38:
 mov 24,%ax
-mov %ax,%di
-call print_int
-mov $10,%ax
-mov %ax,%di
-call print_char
-mov 24,%ax
 push %ax
 mov $2,%ax
 pop %cx
