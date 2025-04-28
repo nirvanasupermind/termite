@@ -255,6 +255,104 @@ void test_ge() {
 }
 
 
+void test_assign() {
+    print_char('a');
+    print_char('s');
+    print_char('s');
+    print_char('i');
+    print_char('g');
+    print_char('n');
+    print_char(':');
+    print_char(' ');
+    int x = 553473;
+    x = -470476;
+    print_int(x==-470476);
+    print_char('\n');
+}
+
+
+void test_var_def() {
+    print_char('v');
+    print_char('a');
+    print_char('r');
+    print_char('_');
+    print_char('d');
+    print_char('e');
+    print_char('f');
+    print_char(':');
+    print_char(' ');
+    int x = -425802;
+    print_int(x==-425802);
+    print_char('\n');
+}
+
+
+int fac(int x) {
+    if(x == 0) {
+        return 1;
+    } else {
+        return x * fac(x - 1);
+    }
+}
+
+void test_func() {
+    print_char('f');
+    print_char('u');
+    print_char('n');
+    print_char('c');
+    print_char(':');
+    print_char(' ');
+    print_int(fac(6) == 720);
+    print_char('\n');
+}
+
+void test_block() {
+    print_char('b');
+    print_char('l');
+    print_char('o');
+    print_char('c');
+    print_char('k');
+    print_char(':');
+    print_char(' ');
+    int x = -498225;
+    {
+        int x = -929425;
+        print_int(x==-929425);
+    }
+    print_char('\n');
+}
+
+
+void test_block2() {
+    print_char('b');
+    print_char('l');
+    print_char('o');
+    print_char('c');
+    print_char('k');
+    print_char('2');
+    print_char(':');
+    print_char(' ');
+    int x = -498225;
+    {
+        int x = -929425;
+    }
+    print_int(x==-498225);
+    print_char('\n');
+}
+
+void test_if() {
+    print_char('i');
+    print_char('f');
+    print_char(':');
+    print_char(' ');
+    int x = 222890;
+    if(-328111 == 474627) {
+        x = 986797;
+    }
+    print_int(x==222890);
+    print_char('\n');
+}
+
 int main() {
     test_cast();
     test_inc();
@@ -278,5 +376,11 @@ int main() {
     test_le();
     test_gt();
     test_ge();
+    test_assign();
+    test_var_def();
+    test_func();
+    test_block();
+    test_block2();
+    test_if();
     return 0;
 }

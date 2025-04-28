@@ -46,12 +46,9 @@ namespace anthill {
     }
 
     void SymbolTable::def_type(const std::string& name, const std::shared_ptr<StaticType>& type) {
-        std::cout << "dbg46" << '\n';
-        if (has(name)) {
-            std::cout << "dbg48" << '\n';
+        if (types.count(name)) {
             throw std::string("variable '" + name + "' already exists");
         } else {
-            std::cout << "dbg51" << '\n';
             types[name] = type;
         }
     }
