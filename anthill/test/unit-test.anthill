@@ -353,6 +353,37 @@ void test_if() {
     print_char('\n');
 }
 
+void test_while() {
+    print_char('w');
+    print_char('h');
+    print_char('i');
+    print_char('l');
+    print_char('e');
+    print_char(':');
+    print_char(' ');
+    int x = 1;
+    while(x < 100) {
+        x *= 2;
+    }
+    print_int(x==128);
+    print_char('\n');
+}
+
+
+void test_for() {
+    print_char('f');
+    print_char('o');
+    print_char('r');
+    print_char(':');
+    print_char(' ');
+    int x = 0;
+    for(int i = 0; i < 100; i += 6) {
+        x = i;
+    }
+    print_int(x==96);
+    print_char('\n');
+}
+
 int main() {
     test_cast();
     test_inc();
@@ -382,5 +413,7 @@ int main() {
     test_block();
     test_block2();
     test_if();
+    test_while();
+    test_for();
     return 0;
 }

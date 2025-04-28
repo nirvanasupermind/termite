@@ -1165,8 +1165,12 @@ mov %ax,%di
 call print_char
 mov $553473,%ax
 mov %ax,10
+mov 10,%ax
+push %ax
 mov $470476,%ax
 neg %ax
+pop %cx
+and %cx,%ax
 mov %ax,10
 mov 10,%ax
 mov 10,%ax
@@ -1474,7 +1478,11 @@ mov $-1,%ax
 _L36:
 cmp $1, %ax
 jne _L34
+mov 22,%ax
+push %ax
 mov $986797,%ax
+pop %cx
+and %cx,%ax
 mov %ax,22
 jmp _L35
 _L34:
@@ -1489,6 +1497,150 @@ mov $1,%ax
 je _L37
 mov $-1,%ax
 _L37:
+mov %ax,%di
+call print_int
+mov $10,%ax
+mov %ax,%di
+call print_char
+pop %bp
+ret
+call main
+mov %ax,%dx
+mov $0nDD,%ax
+int $0
+test_while:
+push %bp
+mov %sp,%bp
+mov $119,%ax
+mov %ax,%di
+call print_char
+mov $104,%ax
+mov %ax,%di
+call print_char
+mov $105,%ax
+mov %ax,%di
+call print_char
+mov $108,%ax
+mov %ax,%di
+call print_char
+mov $101,%ax
+mov %ax,%di
+call print_char
+mov $58,%ax
+mov %ax,%di
+call print_char
+mov $32,%ax
+mov %ax,%di
+call print_char
+mov $1,%ax
+mov %ax,24
+jmp _L39
+_L38:
+mov 24,%ax
+mov %ax,%di
+call print_int
+mov $10,%ax
+mov %ax,%di
+call print_char
+mov 24,%ax
+push %ax
+mov $2,%ax
+pop %cx
+and %cx,%ax
+mov %ax,24
+_L39:
+mov 24,%ax
+mov 24,%ax
+push %ax
+mov $100,%ax
+pop %cx
+cmp %ax,%cx
+mov $1,%ax
+jl _L40
+mov $-1,%ax
+_L40:
+cmp $1, %ax
+je _L38
+mov 24,%ax
+mov 24,%ax
+push %ax
+mov $128,%ax
+pop %cx
+cmp %ax,%cx
+mov $1,%ax
+je _L41
+mov $-1,%ax
+_L41:
+mov %ax,%di
+call print_int
+mov $10,%ax
+mov %ax,%di
+call print_char
+pop %bp
+ret
+call main
+mov %ax,%dx
+mov $0nDD,%ax
+int $0
+test_for:
+push %bp
+mov %sp,%bp
+mov $102,%ax
+mov %ax,%di
+call print_char
+mov $111,%ax
+mov %ax,%di
+call print_char
+mov $114,%ax
+mov %ax,%di
+call print_char
+mov $58,%ax
+mov %ax,%di
+call print_char
+mov $32,%ax
+mov %ax,%di
+call print_char
+mov $0,%ax
+mov %ax,26
+mov $0,%ax
+mov %ax,28
+jmp _L43
+_L42:
+mov 26,%ax
+push %ax
+mov 28,%ax
+pop %cx
+and %cx,%ax
+mov %ax,26
+mov 28,%ax
+push %ax
+mov $6,%ax
+pop %cx
+and %cx,%ax
+mov %ax,28
+_L43:
+mov 28,%ax
+mov 28,%ax
+push %ax
+mov $100,%ax
+pop %cx
+cmp %ax,%cx
+mov $1,%ax
+jl _L44
+mov $-1,%ax
+_L44:
+cmp $1, %ax
+je _L42
+mov 26,%ax
+mov 26,%ax
+push %ax
+mov $96,%ax
+pop %cx
+cmp %ax,%cx
+mov $1,%ax
+je _L45
+mov $-1,%ax
+_L45:
 mov %ax,%di
 call print_int
 mov $10,%ax
@@ -1531,6 +1683,8 @@ call test_func
 call test_block
 call test_block2
 call test_if
+call test_while
+call test_for
 mov $0,%ax
 pop %bp
 ret
