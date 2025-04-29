@@ -1165,12 +1165,8 @@ mov %ax,%di
 call print_char
 mov $553473,%ax
 mov %ax,10
-mov 10,%ax
-push %ax
 mov $470476,%ax
 neg %ax
-pop %cx
-and %cx,%ax
 mov %ax,10
 mov 10,%ax
 mov 10,%ax
@@ -1478,11 +1474,7 @@ mov $-1,%ax
 _L36:
 cmp $1, %ax
 jne _L34
-mov 22,%ax
-push %ax
 mov $986797,%ax
-pop %cx
-and %cx,%ax
 mov %ax,22
 jmp _L35
 _L34:
@@ -1537,10 +1529,11 @@ mov %ax,24
 jmp _L39
 _L38:
 mov 24,%ax
+mov 24,%ax
 push %ax
 mov $2,%ax
 pop %cx
-and %cx,%ax
+mul %cx
 mov %ax,24
 _L39:
 mov 24,%ax
@@ -1600,17 +1593,14 @@ mov $0,%ax
 mov %ax,28
 jmp _L43
 _L42:
-mov 26,%ax
-push %ax
 mov 28,%ax
-pop %cx
-and %cx,%ax
 mov %ax,26
+mov 28,%ax
 mov 28,%ax
 push %ax
 mov $6,%ax
 pop %cx
-and %cx,%ax
+add %cx,%ax
 mov %ax,28
 _L43:
 mov 28,%ax
@@ -1635,6 +1625,81 @@ mov $1,%ax
 je _L45
 mov $-1,%ax
 _L45:
+mov %ax,%di
+call print_int
+mov $10,%ax
+mov %ax,%di
+call print_char
+pop %bp
+ret
+call main
+mov %ax,%dx
+mov $0nDD,%ax
+int $0
+test_for2:
+push %bp
+mov %sp,%bp
+mov $102,%ax
+mov %ax,%di
+call print_char
+mov $111,%ax
+mov %ax,%di
+call print_char
+mov $114,%ax
+mov %ax,%di
+call print_char
+mov $50,%ax
+mov %ax,%di
+call print_char
+mov $58,%ax
+mov %ax,%di
+call print_char
+mov $32,%ax
+mov %ax,%di
+call print_char
+mov $0,%ax
+mov %ax,30
+mov $0,%ax
+mov %ax,32
+jmp _L47
+_L46:
+mov 30,%ax
+mov 30,%ax
+push %ax
+mov 32,%ax
+pop %cx
+add %cx,%ax
+mov %ax,30
+mov 32,%ax
+mov 32,%ax
+push %ax
+mov $1,%ax
+pop %cx
+add %cx,%ax
+mov %ax,32
+_L47:
+mov 32,%ax
+mov 32,%ax
+push %ax
+mov $100,%ax
+pop %cx
+cmp %ax,%cx
+mov $1,%ax
+jl _L48
+mov $-1,%ax
+_L48:
+cmp $1, %ax
+je _L46
+mov 30,%ax
+mov 30,%ax
+push %ax
+mov $4950,%ax
+pop %cx
+cmp %ax,%cx
+mov $1,%ax
+je _L49
+mov $-1,%ax
+_L49:
 mov %ax,%di
 call print_int
 mov $10,%ax
@@ -1679,6 +1744,7 @@ call test_block2
 call test_if
 call test_while
 call test_for
+call test_for2
 mov $0,%ax
 pop %bp
 ret

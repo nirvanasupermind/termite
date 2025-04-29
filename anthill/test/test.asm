@@ -10,10 +10,9 @@ mov %ax,0
 mov 0,%ax
 mov 0,%ax
 push %ax
-mov $1,%ax
+mov $3,%ax
 pop %cx
-xchg %cx,%ax
-sub %cx,%ax
+mul %cx
 mov %ax,0
 mov %ax,%dx
 mov $0nDC,%ax

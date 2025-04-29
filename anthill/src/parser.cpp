@@ -216,9 +216,9 @@ namespace anthill {
             Token op_tok = current;
             advance();
             std::shared_ptr<Node> right = assign_expr(terminator);
-            if (current.type != TokenType::ASSIGN) {
+            if (op_tok.type != TokenType::ASSIGN) {
                 TokenType bin_op_type;
-                switch (current.type) {
+                switch (op_tok.type) {
                 case TokenType::ASAND:
                     bin_op_type = TokenType::AMPER;
                     break;
@@ -239,9 +239,10 @@ namespace anthill {
                 case TokenType::ASMINUS:
                     bin_op_type = TokenType::MINUS;
                     break;
-                case TokenType::ASMUL:
+                case TokenType::ASMUL: {
                     bin_op_type = TokenType::STAR;
                     break;
+                }
                 case TokenType::ASDIV:
                     bin_op_type = TokenType::SLASH;
                     break;
@@ -251,9 +252,12 @@ namespace anthill {
                 }
 
                 Token op = Token(left->line, bin_op_type, std::string(1, op_tok.val[0]));
+                std::cout << "dbg255 " << op_tok.val[0] << '\n';
+                std::cout << "dbg256 " << op.to_str() << '\n';
                 std::shared_ptr<Node> bin_op_node = std::make_shared<BinOpNode>(BinOpNode(left->line, left, op, right));
                 Token assign = Token(left->line, TokenType::ASSIGN, "=");
                 left = std::make_shared<AssignNode>(AssignNode(left->line, left, assign, bin_op_node));
+                std::cout << "dbg257 " << left->to_str() << '\n';
             }
             else {
                 left = std::make_shared<AssignNode>(AssignNode(left->line, left, op_tok, right));

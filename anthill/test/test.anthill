@@ -1,6 +1,6 @@
 int main() {
     int x = 5;
-    x--;
+    x *= 3;
     __asm__("mov %ax,%dx\nmov $0nDC,%ax\nint $0\n");
     return 0;
 }
