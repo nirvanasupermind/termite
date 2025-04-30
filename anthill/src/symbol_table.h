@@ -14,6 +14,7 @@ namespace anthill {
         std::shared_ptr<SymbolTable> parent;
         std::map<std::string, std::shared_ptr<StaticType> > types;
         std::map<std::string, std::string> addrs;
+        bool is_func;
         SymbolTable();
         SymbolTable(const std::shared_ptr<SymbolTable>& parent);
         bool has(const std::string& name);

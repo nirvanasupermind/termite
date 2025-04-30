@@ -54,6 +54,7 @@ namespace termite {
     class Lexer {
     public:
         std::string text{};
+        int line;
         int pos;
         char current;
         Lexer();

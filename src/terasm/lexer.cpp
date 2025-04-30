@@ -5,11 +5,15 @@
 
 namespace termite {
     Lexer::Lexer(const std::string& text)
-        : text(text), pos(0), current(0) {
+        : text(text), pos(0), line(1), current(0) {
         advance();
     }
 
     void Lexer::advance() {
+        if(text[pos] == '\n') {
+            line++;
+        }
+
         if (pos < text.length()) {
             current = text.at(pos++);
         }
@@ -32,46 +36,46 @@ namespace termite {
                 while(current != '\n') {
                     advance();
                 }
-                tokens.push_back(Token(TokenType::NEWLINE, "\n"));
+                tokens.push_back(Token(line, TokenType::NEWLINE, "\n"));
                 advance();
             }
             else if (current == '_' || std::isalpha(current)) {
                 tokens.push_back(generate_identifier());
             }
             else if (current == ':') {
-                tokens.push_back(Token(TokenType::COLON, ":"));
+                tokens.push_back(Token(line, TokenType::COLON, ":"));
                 advance();
             }
             else if (current == ',') {
-                tokens.push_back(Token(TokenType::COMMA, ","));
+                tokens.push_back(Token(line, TokenType::COMMA, ","));
                 advance();
             }
             else if (current == '(') {
-                tokens.push_back(Token(TokenType::LPAREN, "("));
+                tokens.push_back(Token(line, TokenType::LPAREN, "("));
                 advance();
             }
             else if (current == ')') {
-                tokens.push_back(Token(TokenType::RPAREN, ")"));
+                tokens.push_back(Token(line, TokenType::RPAREN, ")"));
                 advance();
             }
             else if (current == '+') {
-                tokens.push_back(Token(TokenType::PLUS, "+"));
+                tokens.push_back(Token(line, TokenType::PLUS, "+"));
                 advance();
             }
             else if (current == '$') {
-                tokens.push_back(Token(TokenType::DOLLAR, "$"));
+                tokens.push_back(Token(line, TokenType::DOLLAR, "$"));
                 advance();
             }
             else if (current == '%') {
-                tokens.push_back(Token(TokenType::PERCENT, "%"));
+                tokens.push_back(Token(line, TokenType::PERCENT, "%"));
                 advance();
             }
             else if (current == '\n') {
-                tokens.push_back(Token(TokenType::NEWLINE, "\n"));
+                tokens.push_back(Token(line, TokenType::NEWLINE, "\n"));
                 advance();
             }
             else {
-                throw std::string("Error: illegal character '") + current + "'";
+                throw std::string("line " + std::to_string(line) + ": " + "error: illegal character '") + current + "'";
                 break;
             }
         }
@@ -113,7 +117,7 @@ namespace termite {
                 advance();
             }
         }
-        return Token(TokenType::NUMBER, number_str);
+        return Token(line, TokenType::NUMBER, number_str);
     }
 
     Token Lexer::generate_identifier() {
@@ -126,13 +130,13 @@ namespace termite {
         }
 
         if (std::find(INSTR_NAMES.begin(), INSTR_NAMES.end(), identifier_str) != INSTR_NAMES.end()) {
-            return Token(TokenType::INSTR_NAME, identifier_str);
+            return Token(line, TokenType::INSTR_NAME, identifier_str);
         }
         else if(std::find(REG_NAMES.begin(), REG_NAMES.end(), identifier_str) != REG_NAMES.end()) {
-            return Token(TokenType::REG_NAME, identifier_str);   
+            return Token(line, TokenType::REG_NAME, identifier_str);   
         }
         else {
-            return Token(TokenType::IDENTIFIER, identifier_str);
+            return Token(line, TokenType::IDENTIFIER, identifier_str);
         }
 
     }

@@ -2,8 +2,8 @@
 #include "token.h"
 
 namespace termite {
-    Token::Token(TokenType type, const std::string& value)
-        : type(type), value(value) {
+    Token::Token(int line, TokenType type, const std::string& value)
+        : line(line), type(type), value(value) {
 
     }
 } // namespace termite

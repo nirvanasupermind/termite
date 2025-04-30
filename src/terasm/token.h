@@ -22,9 +22,10 @@ namespace termite {
 
     class Token {
     public:
+        int line;
         TokenType type;
         std::string value;
-        Token(TokenType type, const std::string& value);
+        Token(int line, TokenType type, const std::string& value);
     };
 } // namespace termite
 

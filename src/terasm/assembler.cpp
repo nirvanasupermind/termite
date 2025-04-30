@@ -9,12 +9,12 @@
 
 namespace termite {
     Assembler::Assembler(const std::vector<Token>& tokens)
-        : tokens(tokens), pos(0), current(Token(TokenType::EOF_, "")) {
+        : tokens(tokens), pos(0), current(Token(1, TokenType::EOF_, "")) {
         advance();
     }
 
     void Assembler::error() const {
-        throw std::string("Error: invalid syntax near '" + current.value + "'");
+        throw std::string("line " + std::to_string(current.line) + ": error: invalid syntax near '" + current.value + "'");
     }
 
     void Assembler::advance() {
@@ -22,7 +22,7 @@ namespace termite {
             current = tokens.at(pos++);
         }
         else {
-            current = Token(TokenType::EOF_, "");
+            current = Token(current.line, TokenType::EOF_, "");
         }
     }
 

@@ -1,8 +1,6 @@
 #include "anthill/stl/io.anthill"
 int main() {
-    char* s = "hello";
-    for(int i = 0; i < 20; i++) {
-        print_char(*(s + i));
-    }
+    char*x = "Hello world!";
+    print_int(x);
     return 0;
 }

@@ -9,12 +9,12 @@
 
 namespace anthill {
     SymbolTable::SymbolTable()
-        : parent(std::shared_ptr<SymbolTable>()), types(std::map<std::string, std::shared_ptr<StaticType> >({})), addrs(std::map<std::string, std::string>({})) {
+        : parent(std::shared_ptr<SymbolTable>()), types(std::map<std::string, std::shared_ptr<StaticType> >({})), addrs(std::map<std::string, std::string>({})), is_func(false) {
 
     }
 
     SymbolTable::SymbolTable(const std::shared_ptr<SymbolTable>& parent)
-        : parent(parent), types(std::map<std::string, std::shared_ptr<StaticType> >({})), addrs(std::map<std::string, std::string>({})) {
+        : parent(parent), types(std::map<std::string, std::shared_ptr<StaticType> >({})), addrs(std::map<std::string, std::string>({})), is_func(parent->is_func) {
 
     }
 
