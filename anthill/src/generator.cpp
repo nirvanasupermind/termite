@@ -123,14 +123,14 @@ namespace anthill {
 
    std::shared_ptr<StaticType> Generator::visit_str_node(const std::shared_ptr<StrNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
       // alloc_addr(std::make_shared<NonFuncType>(NonFuncType(BasicType::CHAR, symbol_table)));
-      std::string start_addr = alloc_addr(std::make_shared<NonFuncType>(NonFuncType(BasicType::CHAR)), symbol_table);
+      std::string start_addr = alloc_addr(std::make_shared<NonFuncType>(NonFuncType(BasicType::CHAR)), global_scope);
       for (int i = 0; i <= node->tok.val.size(); i++) {
          std::string addr;
          if (i == 0) {
             addr = start_addr;
          }
          else {
-            addr = alloc_addr(std::make_shared<NonFuncType>(NonFuncType(BasicType::CHAR)), symbol_table);
+            addr = alloc_addr(std::make_shared<NonFuncType>(NonFuncType(BasicType::CHAR)), global_scope);
          }
          std::string inc_addr = std::to_string(std::stoi(addr) + 1);
          if (addr.find('(') != std::string::npos) {
