@@ -147,8 +147,14 @@ namespace anthill {
             asm_stream << "mov $" << (int)(node->tok.val.at(i)) << "," << addr << '\n';
          }
       }
-      // asm_stream << "mov $" << (int)(node->tok.val.at(i)) << "," << addr << '\n';
+      if(start_addr.find('(') != std::string::npos) {
+         std::string disp = start_addr.substr(0, start_addr.find('('));
+         std::string reg = start_addr.substr(start_addr.find('(') + 1, start_addr.find(')') - start_addr.find('(') - 1);
+         asm_stream << "mov $" + disp + ",%ax\n";
+         asm_stream << "add " + reg + ",%ax\n"; 
+      } else {
       asm_stream << "mov $" + start_addr + ",%ax\n";
+      }
       return  std::make_shared<NonFuncType>(NonFuncType(BasicType::CHAR, 1));
    }
 
@@ -260,7 +266,7 @@ namespace anthill {
                std::string disp = addr.substr(0, addr.find('('));
                std::string reg = addr.substr(addr.find('(') + 1, addr.find(')') - addr.find('(') - 1);
                asm_stream << "mov $" << disp << ",%ax\n";
-               asm_stream << "add %ax," << reg << "\n";
+               asm_stream << "add " << reg << ",%ax\n";
             }
             else {
                asm_stream << "mov $" << addr << ",%ax\n";
@@ -613,8 +619,9 @@ namespace anthill {
       std::shared_ptr<StaticType> left_node_type = visit(node->left_node, symbol_table, true);
       if (node->left_node->get_type() == NodeType::PREFIX) {
          visit(std::static_pointer_cast<PrefixNode>(node->left_node)->node, symbol_table);
-         asm_stream << "mov %ax,%bx\n";
+         asm_stream << "push %ax\n";
          visit(node->right_node, symbol_table);
+         asm_stream << "pop %bx\n";
          set_var(left_node_type, "0(%bx)");
          return left_node_type;
       }

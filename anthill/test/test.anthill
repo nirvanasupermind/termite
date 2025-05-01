@@ -1,6 +1,6 @@
-#include "anthill/stl/io.anthill"
 int main() {
-    char*x = "Hello world!";
-    print_int(x);
+    int x = 4;
+    &x;
+    __asm__("mov %ax,%dx\nmov $0nDC,%ax\nint $0\n");
     return 0;
 }

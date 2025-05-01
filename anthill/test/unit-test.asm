@@ -38,45 +38,42 @@ mov %sp,%bp
 mov %di,%ax
 mov %ax,-0(%bp)
 mov $0,%ax
-mov %ax,0
+mov %ax,-2(%bp)
 jmp _L2
 _L1:
 mov -0(%bp),%ax
 mov -0(%bp),%ax
 push %ax
-mov 0,%ax
+mov -2(%bp),%ax
 pop %cx
 add %cx,%ax
-mov %ax,%bx
-mov 0(%bx),%ax
+mov 0(%ax),%ax
 xor $0nDDDD, %ax
 mov %ax,%di
 call print_char
-mov 0,%ax
-mov 0,%ax
+mov -2(%bp),%ax
+mov -2(%bp),%ax
 push %ax
 mov $1,%ax
 pop %cx
 add %cx,%ax
-mov %ax,0
+mov %ax,-2(%bp)
 _L2:
 mov -0(%bp),%ax
 mov -0(%bp),%ax
 push %ax
-mov 0,%ax
+mov -2(%bp),%ax
 pop %cx
 add %cx,%ax
-mov %ax,%bx
-mov 0(%bx),%ax
+mov 0(%ax),%ax
 xor $0nDDDD, %ax
 mov -0(%bp),%ax
 mov -0(%bp),%ax
 push %ax
-mov 0,%ax
+mov -2(%bp),%ax
 pop %cx
 add %cx,%ax
-mov %ax,%bx
-mov 0(%bx),%ax
+mov 0(%ax),%ax
 xor $0nDDDD, %ax
 push %ax
 mov $0,%ax
@@ -157,16 +154,16 @@ mov $32,%ax
 mov %ax,%di
 call print_char
 mov $57,%ax
-mov %ax,2
-mov 2,%ax
-mov 2,%ax
+mov %ax,-0(%bp)
+mov -0(%bp),%ax
+mov -0(%bp),%ax
 push %ax
 mov $1,%ax
 pop %cx
 add %cx,%ax
-mov %ax,2
-mov 2,%ax
-mov 2,%ax
+mov %ax,-0(%bp)
+mov -0(%bp),%ax
+mov -0(%bp),%ax
 push %ax
 mov $58,%ax
 pop %cx
@@ -205,17 +202,17 @@ mov $32,%ax
 mov %ax,%di
 call print_char
 mov $100,%ax
-mov %ax,4
-mov 4,%ax
-mov 4,%ax
+mov %ax,-0(%bp)
+mov -0(%bp),%ax
+mov -0(%bp),%ax
 push %ax
 mov $1,%ax
 pop %cx
 xchg %cx,%ax
 sub %cx,%ax
-mov %ax,4
-mov 4,%ax
-mov 4,%ax
+mov %ax,-0(%bp)
+mov -0(%bp),%ax
+mov -0(%bp),%ax
 push %ax
 mov $99,%ax
 pop %cx
@@ -272,15 +269,15 @@ mov $32,%ax
 mov %ax,%di
 call print_char
 mov $14,%ax
-mov %ax,6
-mov 6,%ax
-mov $6,%ax
-mov %ax,%bx
-mov 0(%bx),%ax
-mov 6,%ax
-mov $6,%ax
-mov %ax,%bx
-mov 0(%bx),%ax
+mov %ax,-0(%bp)
+mov -0(%bp),%ax
+mov $-0,%ax
+add %bp,%ax
+mov 0(%ax),%ax
+mov -0(%bp),%ax
+mov $-0,%ax
+add %bp,%ax
+mov 0(%ax),%ax
 push %ax
 mov $14,%ax
 pop %cx
@@ -384,10 +381,10 @@ mov %ax,%di
 call print_char
 mov $93,%ax
 neg %ax
-mov %ax,8
-mov 8,%ax
+mov %ax,-0(%bp)
+mov -0(%bp),%ax
 neg %ax
-mov 8,%ax
+mov -0(%bp),%ax
 neg %ax
 push %ax
 mov $93,%ax
@@ -1164,12 +1161,12 @@ mov $32,%ax
 mov %ax,%di
 call print_char
 mov $553473,%ax
-mov %ax,10
+mov %ax,-0(%bp)
 mov $470476,%ax
 neg %ax
-mov %ax,10
-mov 10,%ax
-mov 10,%ax
+mov %ax,-0(%bp)
+mov -0(%bp),%ax
+mov -0(%bp),%ax
 push %ax
 mov $470476,%ax
 neg %ax
@@ -1222,9 +1219,9 @@ mov %ax,%di
 call print_char
 mov $425802,%ax
 neg %ax
-mov %ax,12
-mov 12,%ax
-mov 12,%ax
+mov %ax,-0(%bp)
+mov -0(%bp),%ax
+mov -0(%bp),%ax
 push %ax
 mov $425802,%ax
 neg %ax
@@ -1362,12 +1359,12 @@ mov %ax,%di
 call print_char
 mov $498225,%ax
 neg %ax
-mov %ax,14
+mov %ax,-0(%bp)
 mov $929425,%ax
 neg %ax
-mov %ax,16
-mov 16,%ax
-mov 16,%ax
+mov %ax,-2(%bp)
+mov -2(%bp),%ax
+mov -2(%bp),%ax
 push %ax
 mov $929425,%ax
 neg %ax
@@ -1417,12 +1414,12 @@ mov %ax,%di
 call print_char
 mov $498225,%ax
 neg %ax
-mov %ax,18
+mov %ax,-0(%bp)
 mov $929425,%ax
 neg %ax
-mov %ax,20
-mov 18,%ax
-mov 18,%ax
+mov %ax,-2(%bp)
+mov -0(%bp),%ax
+mov -0(%bp),%ax
 push %ax
 mov $498225,%ax
 neg %ax
@@ -1459,7 +1456,7 @@ mov $32,%ax
 mov %ax,%di
 call print_char
 mov $222890,%ax
-mov %ax,22
+mov %ax,-0(%bp)
 mov $328111,%ax
 neg %ax
 mov $328111,%ax
@@ -1475,12 +1472,12 @@ _L36:
 cmp $1, %ax
 jne _L34
 mov $986797,%ax
-mov %ax,22
+mov %ax,-0(%bp)
 jmp _L35
 _L34:
 _L35:
-mov 22,%ax
-mov 22,%ax
+mov -0(%bp),%ax
+mov -0(%bp),%ax
 push %ax
 mov $222890,%ax
 pop %cx
@@ -1525,19 +1522,19 @@ mov $32,%ax
 mov %ax,%di
 call print_char
 mov $1,%ax
-mov %ax,24
+mov %ax,-0(%bp)
 jmp _L39
 _L38:
-mov 24,%ax
-mov 24,%ax
+mov -0(%bp),%ax
+mov -0(%bp),%ax
 push %ax
 mov $2,%ax
 pop %cx
 mul %cx
-mov %ax,24
+mov %ax,-0(%bp)
 _L39:
-mov 24,%ax
-mov 24,%ax
+mov -0(%bp),%ax
+mov -0(%bp),%ax
 push %ax
 mov $100,%ax
 pop %cx
@@ -1548,8 +1545,8 @@ mov $-1,%ax
 _L40:
 cmp $1, %ax
 je _L38
-mov 24,%ax
-mov 24,%ax
+mov -0(%bp),%ax
+mov -0(%bp),%ax
 push %ax
 mov $128,%ax
 pop %cx
@@ -1588,23 +1585,23 @@ mov $32,%ax
 mov %ax,%di
 call print_char
 mov $0,%ax
-mov %ax,26
+mov %ax,-0(%bp)
 mov $0,%ax
-mov %ax,28
+mov %ax,-2(%bp)
 jmp _L43
 _L42:
-mov 28,%ax
-mov %ax,26
-mov 28,%ax
-mov 28,%ax
+mov -2(%bp),%ax
+mov %ax,-0(%bp)
+mov -2(%bp),%ax
+mov -2(%bp),%ax
 push %ax
 mov $6,%ax
 pop %cx
 add %cx,%ax
-mov %ax,28
+mov %ax,-2(%bp)
 _L43:
-mov 28,%ax
-mov 28,%ax
+mov -2(%bp),%ax
+mov -2(%bp),%ax
 push %ax
 mov $100,%ax
 pop %cx
@@ -1615,8 +1612,8 @@ mov $-1,%ax
 _L44:
 cmp $1, %ax
 je _L42
-mov 26,%ax
-mov 26,%ax
+mov -0(%bp),%ax
+mov -0(%bp),%ax
 push %ax
 mov $96,%ax
 pop %cx
@@ -1658,28 +1655,28 @@ mov $32,%ax
 mov %ax,%di
 call print_char
 mov $0,%ax
-mov %ax,30
+mov %ax,-0(%bp)
 mov $0,%ax
-mov %ax,32
+mov %ax,-2(%bp)
 jmp _L47
 _L46:
-mov 30,%ax
-mov 30,%ax
+mov -0(%bp),%ax
+mov -0(%bp),%ax
 push %ax
-mov 32,%ax
+mov -2(%bp),%ax
 pop %cx
 add %cx,%ax
-mov %ax,30
-mov 32,%ax
-mov 32,%ax
+mov %ax,-0(%bp)
+mov -2(%bp),%ax
+mov -2(%bp),%ax
 push %ax
 mov $1,%ax
 pop %cx
 add %cx,%ax
-mov %ax,32
+mov %ax,-2(%bp)
 _L47:
-mov 32,%ax
-mov 32,%ax
+mov -2(%bp),%ax
+mov -2(%bp),%ax
 push %ax
 mov $100,%ax
 pop %cx
@@ -1690,8 +1687,8 @@ mov $-1,%ax
 _L48:
 cmp $1, %ax
 je _L46
-mov 30,%ax
-mov 30,%ax
+mov -0(%bp),%ax
+mov -0(%bp),%ax
 push %ax
 mov $4950,%ax
 pop %cx
