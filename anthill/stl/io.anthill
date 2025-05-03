@@ -10,7 +10,7 @@ void print_int(int i) {
 
 void print_str(char* s) {
     int i = 0;
-    while(*(s + i) != 0) {
+    while(i < 10) {
         print_char(*(s + i));
         i++;
     }

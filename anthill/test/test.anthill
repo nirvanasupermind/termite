@@ -1,5 +1,9 @@
 #include "anthill/stl/io.anthill"
 int main() {
-    print_str("Hel");
+    int x = 0;
+    while(x < 10) {
+        x++;
+    }
+    print_int(x);
     return 0;
 }
