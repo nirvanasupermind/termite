@@ -1,9 +1,9 @@
 #include "anthill/stl/io.anthill"
 int main() {
     int x = 0;
-    while(x < 10) {
+    while(x < 2) {
+    print_int(x);
         x++;
     }
-    print_int(x);
     return 0;
 }

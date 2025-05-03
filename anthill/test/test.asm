@@ -5,6 +5,7 @@ int $0
 print_char:
 push %bp
 mov %sp,%bp
+sub %sp,729
 mov %di,%ax
 mov %ax,-0(%bp)
 mov -0(%bp),%ax
@@ -20,6 +21,7 @@ int $0
 print_int:
 push %bp
 mov %sp,%bp
+sub %sp,729
 mov %di,%ax
 mov %ax,-0(%bp)
 mov -0(%bp),%ax
@@ -35,6 +37,7 @@ int $0
 print_str:
 push %bp
 mov %sp,%bp
+sub %sp,729
 mov %di,%ax
 mov %ax,-0(%bp)
 mov $0,%ax
@@ -80,10 +83,14 @@ int $0
 main:
 push %bp
 mov %sp,%bp
+sub %sp,729
 mov $0,%ax
 mov %ax,-0(%bp)
 jmp _L2
 _L1:
+mov -0(%bp),%ax
+mov %ax,%di
+call print_int
 mov -0(%bp),%ax
 mov -0(%bp),%ax
 push %ax
@@ -95,7 +102,7 @@ _L2:
 mov -0(%bp),%ax
 mov -0(%bp),%ax
 push %ax
-mov $10,%ax
+mov $2,%ax
 pop %cx
 cmp %ax,%cx
 mov $1,%ax
@@ -104,9 +111,6 @@ mov $-1,%ax
 _L3:
 cmp $1, %ax
 je _L1
-mov -0(%bp),%ax
-mov %ax,%di
-call print_int
 mov $0,%ax
 pop %bp
 ret

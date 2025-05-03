@@ -713,7 +713,7 @@ namespace anthill {
       asm_stream << "call main\nmov %ax,%dx\nmov $0nDD,%ax\nint $0\n";
       // }
       asm_stream << node->name.val << ":\n";
-      asm_stream << "push %bp\nmov %sp,%bp\n";
+      asm_stream << "push %bp\nmov %sp,%bp\nsub %sp,729\n";
       std::shared_ptr<SymbolTable> func_symbol_table = std::make_shared<SymbolTable>(SymbolTable(symbol_table));
       func_symbol_table->is_func = true;
       try {
