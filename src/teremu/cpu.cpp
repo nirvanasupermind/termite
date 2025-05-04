@@ -536,7 +536,8 @@ namespace termite {
             }
             case INS_INT: {
                 if (imm == Word::ZERO) {
-                    Word code = regs[REG_AX].to_int32();
+                    int code = regs[REG_AX].to_int32();
+                    std::cerr << "INT $0 with code (ax): " << code << "\n";
                     if (code == -40) {
                         std::exit(regs[REG_DX].to_int32());
                     }

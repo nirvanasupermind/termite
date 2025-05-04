@@ -95,7 +95,7 @@ namespace termite {
                 number_str += current;
                 advance();
                         
-                while (current && (current == 'A' || current == 'a' || current == '0' | current == '1')) {
+                while (current && (current == 'A' || current == 'a' || current == '0' || current == '1')) {
                     number_str += current;
                     advance();
                 }
@@ -104,7 +104,7 @@ namespace termite {
                 advance();
                 while (current && (current == 'A' || current == 'a'  || current == 'B' || current == 'b'
                     || current == 'C' || current == 'c' || current == 'D' || current == 'd'
-                    || current == '0' | current == '1' || current == '2' || current == '3' || current == '4')) {
+                    || current == '0' || current == '1' || current == '2' || current == '3' || current == '4')) {
                     number_str += current;
                     advance();
                 }
