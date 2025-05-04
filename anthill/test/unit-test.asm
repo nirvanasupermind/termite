@@ -3,74 +3,66 @@ mov %ax,%dx
 mov $0nDD,%ax
 int $0
 print_char:
-push %bp
-mov %sp,%bp
 mov %di,%ax
-mov %ax,-0(%bp)
-mov -0(%bp),%ax
+mov %ax,0
+mov 0,%ax
 mov %ax,%dx
 mov $0nD0,%ax
 int $0
-pop %bp
 ret
 call main
 mov %ax,%dx
 mov $0nDD,%ax
 int $0
 print_int:
-push %bp
-mov %sp,%bp
 mov %di,%ax
-mov %ax,-0(%bp)
-mov -0(%bp),%ax
+mov %ax,1
+mov 1,%ax
 mov %ax,%dx
 mov $0nDC,%ax
 int $0
-pop %bp
 ret
 call main
 mov %ax,%dx
 mov $0nDD,%ax
 int $0
 print_str:
-push %bp
-mov %sp,%bp
 mov %di,%ax
-mov %ax,-0(%bp)
+mov %ax,3
 mov $0,%ax
-mov %ax,-2(%bp)
+mov %ax,5
 jmp _L2
 _L1:
-mov -0(%bp),%ax
-mov -0(%bp),%ax
+mov 3,%ax
+mov 3,%ax
 push %ax
-mov -2(%bp),%ax
+mov 5,%ax
 pop %cx
 add %cx,%ax
 mov 0(%ax),%ax
 xor $0nDDDD, %ax
 mov %ax,%di
 call print_char
-mov -2(%bp),%ax
-mov -2(%bp),%ax
+mov 5,%ax
+mov 5,%ax
 push %ax
 mov $1,%ax
 pop %cx
 add %cx,%ax
-mov %ax,-2(%bp)
+mov %ax,5
 _L2:
-mov -0(%bp),%ax
-mov -0(%bp),%ax
+mov 3,%ax
+mov 3,%ax
 push %ax
-mov -2(%bp),%ax
+mov 5,%ax
 pop %cx
 add %cx,%ax
 mov 0(%ax),%ax
 xor $0nDDDD, %ax
-mov -0(%bp),%ax
-mov -0(%bp),%ax
+mov 3,%ax
+mov 3,%ax
 push %ax
-mov -2(%bp),%ax
+mov 5,%ax
 pop %cx
 add %cx,%ax
 mov 0(%ax),%ax
@@ -85,15 +77,12 @@ mov $-1,%ax
 _L3:
 cmp $1, %ax
 je _L1
-pop %bp
 ret
 call main
 mov %ax,%dx
 mov $0nDD,%ax
 int $0
 test_cast:
-push %bp
-mov %sp,%bp
 mov $99,%ax
 mov %ax,%di
 call print_char
@@ -129,15 +118,12 @@ call print_int
 mov $10,%ax
 mov %ax,%di
 call print_char
-pop %bp
 ret
 call main
 mov %ax,%dx
 mov $0nDD,%ax
 int $0
 test_inc:
-push %bp
-mov %sp,%bp
 mov $105,%ax
 mov %ax,%di
 call print_char
@@ -154,16 +140,16 @@ mov $32,%ax
 mov %ax,%di
 call print_char
 mov $57,%ax
-mov %ax,-0(%bp)
-mov -0(%bp),%ax
-mov -0(%bp),%ax
+mov %ax,7
+mov 7,%ax
+mov 7,%ax
 push %ax
 mov $1,%ax
 pop %cx
 add %cx,%ax
-mov %ax,-0(%bp)
-mov -0(%bp),%ax
-mov -0(%bp),%ax
+mov %ax,7
+mov 7,%ax
+mov 7,%ax
 push %ax
 mov $58,%ax
 pop %cx
@@ -177,15 +163,12 @@ call print_int
 mov $10,%ax
 mov %ax,%di
 call print_char
-pop %bp
 ret
 call main
 mov %ax,%dx
 mov $0nDD,%ax
 int $0
 test_dec:
-push %bp
-mov %sp,%bp
 mov $100,%ax
 mov %ax,%di
 call print_char
@@ -202,17 +185,17 @@ mov $32,%ax
 mov %ax,%di
 call print_char
 mov $100,%ax
-mov %ax,-0(%bp)
-mov -0(%bp),%ax
-mov -0(%bp),%ax
+mov %ax,9
+mov 9,%ax
+mov 9,%ax
 push %ax
 mov $1,%ax
 pop %cx
 xchg %cx,%ax
 sub %cx,%ax
-mov %ax,-0(%bp)
-mov -0(%bp),%ax
-mov -0(%bp),%ax
+mov %ax,9
+mov 9,%ax
+mov 9,%ax
 push %ax
 mov $99,%ax
 pop %cx
@@ -226,15 +209,12 @@ call print_int
 mov $10,%ax
 mov %ax,%di
 call print_char
-pop %bp
 ret
 call main
 mov %ax,%dx
 mov $0nDD,%ax
 int $0
 test_ptr_deref:
-push %bp
-mov %sp,%bp
 mov $112,%ax
 mov %ax,%di
 call print_char
@@ -269,14 +249,12 @@ mov $32,%ax
 mov %ax,%di
 call print_char
 mov $14,%ax
-mov %ax,-0(%bp)
-mov -0(%bp),%ax
-mov $-0,%ax
-add %bp,%ax
+mov %ax,11
+mov 11,%ax
+mov $11,%ax
 mov 0(%ax),%ax
-mov -0(%bp),%ax
-mov $-0,%ax
-add %bp,%ax
+mov 11,%ax
+mov $11,%ax
 mov 0(%ax),%ax
 push %ax
 mov $14,%ax
@@ -291,15 +269,12 @@ call print_int
 mov $10,%ax
 mov %ax,%di
 call print_char
-pop %bp
 ret
 call main
 mov %ax,%dx
 mov $0nDD,%ax
 int $0
 test_uminus:
-push %bp
-mov %sp,%bp
 mov $117,%ax
 mov %ax,%di
 call print_char
@@ -343,15 +318,12 @@ call print_int
 mov $10,%ax
 mov %ax,%di
 call print_char
-pop %bp
 ret
 call main
 mov %ax,%dx
 mov $0nDD,%ax
 int $0
 test_uminus2:
-push %bp
-mov %sp,%bp
 mov $117,%ax
 mov %ax,%di
 call print_char
@@ -381,10 +353,10 @@ mov %ax,%di
 call print_char
 mov $93,%ax
 neg %ax
-mov %ax,-0(%bp)
-mov -0(%bp),%ax
+mov %ax,13
+mov 13,%ax
 neg %ax
-mov -0(%bp),%ax
+mov 13,%ax
 neg %ax
 push %ax
 mov $93,%ax
@@ -399,15 +371,12 @@ call print_int
 mov $10,%ax
 mov %ax,%di
 call print_char
-pop %bp
 ret
 call main
 mov %ax,%dx
 mov $0nDD,%ax
 int $0
 test_uplus:
-push %bp
-mov %sp,%bp
 mov $117,%ax
 mov %ax,%di
 call print_char
@@ -444,15 +413,12 @@ call print_int
 mov $10,%ax
 mov %ax,%di
 call print_char
-pop %bp
 ret
 call main
 mov %ax,%dx
 mov $0nDD,%ax
 int $0
 test_and:
-push %bp
-mov %sp,%bp
 mov $97,%ax
 mov %ax,%di
 call print_char
@@ -494,15 +460,12 @@ call print_int
 mov $10,%ax
 mov %ax,%di
 call print_char
-pop %bp
 ret
 call main
 mov %ax,%dx
 mov $0nDD,%ax
 int $0
 test_or:
-push %bp
-mov %sp,%bp
 mov $111,%ax
 mov %ax,%di
 call print_char
@@ -540,15 +503,12 @@ call print_int
 mov $10,%ax
 mov %ax,%di
 call print_char
-pop %bp
 ret
 call main
 mov %ax,%dx
 mov $0nDD,%ax
 int $0
 test_xor:
-push %bp
-mov %sp,%bp
 mov $120,%ax
 mov %ax,%di
 call print_char
@@ -589,15 +549,12 @@ call print_int
 mov $10,%ax
 mov %ax,%di
 call print_char
-pop %bp
 ret
 call main
 mov %ax,%dx
 mov $0nDD,%ax
 int $0
 test_shl:
-push %bp
-mov %sp,%bp
 mov $115,%ax
 mov %ax,%di
 call print_char
@@ -640,15 +597,12 @@ call print_int
 mov $10,%ax
 mov %ax,%di
 call print_char
-pop %bp
 ret
 call main
 mov %ax,%dx
 mov $0nDD,%ax
 int $0
 test_add:
-push %bp
-mov %sp,%bp
 mov $97,%ax
 mov %ax,%di
 call print_char
@@ -689,15 +643,12 @@ call print_int
 mov $10,%ax
 mov %ax,%di
 call print_char
-pop %bp
 ret
 call main
 mov %ax,%dx
 mov $0nDD,%ax
 int $0
 test_sub:
-push %bp
-mov %sp,%bp
 mov $115,%ax
 mov %ax,%di
 call print_char
@@ -745,15 +696,12 @@ call print_int
 mov $10,%ax
 mov %ax,%di
 call print_char
-pop %bp
 ret
 call main
 mov %ax,%dx
 mov $0nDD,%ax
 int $0
 test_mul:
-push %bp
-mov %sp,%bp
 mov $115,%ax
 mov %ax,%di
 call print_char
@@ -796,15 +744,12 @@ call print_int
 mov $10,%ax
 mov %ax,%di
 call print_char
-pop %bp
 ret
 call main
 mov %ax,%dx
 mov $0nDD,%ax
 int $0
 test_div:
-push %bp
-mov %sp,%bp
 mov $100,%ax
 mov %ax,%di
 call print_char
@@ -847,15 +792,12 @@ call print_int
 mov $10,%ax
 mov %ax,%di
 call print_char
-pop %bp
 ret
 call main
 mov %ax,%dx
 mov $0nDD,%ax
 int $0
 test_mod:
-push %bp
-mov %sp,%bp
 mov $109,%ax
 mov %ax,%di
 call print_char
@@ -900,15 +842,12 @@ call print_int
 mov $10,%ax
 mov %ax,%di
 call print_char
-pop %bp
 ret
 call main
 mov %ax,%dx
 mov $0nDD,%ax
 int $0
 test_eq:
-push %bp
-mov %sp,%bp
 mov $101,%ax
 mov %ax,%di
 call print_char
@@ -939,15 +878,12 @@ call print_int
 mov $10,%ax
 mov %ax,%di
 call print_char
-pop %bp
 ret
 call main
 mov %ax,%dx
 mov $0nDD,%ax
 int $0
 test_ne:
-push %bp
-mov %sp,%bp
 mov $110,%ax
 mov %ax,%di
 call print_char
@@ -977,15 +913,12 @@ call print_int
 mov $10,%ax
 mov %ax,%di
 call print_char
-pop %bp
 ret
 call main
 mov %ax,%dx
 mov $0nDD,%ax
 int $0
 test_lt:
-push %bp
-mov %sp,%bp
 mov $108,%ax
 mov %ax,%di
 call print_char
@@ -1015,15 +948,12 @@ call print_int
 mov $10,%ax
 mov %ax,%di
 call print_char
-pop %bp
 ret
 call main
 mov %ax,%dx
 mov $0nDD,%ax
 int $0
 test_le:
-push %bp
-mov %sp,%bp
 mov $108,%ax
 mov %ax,%di
 call print_char
@@ -1051,15 +981,12 @@ call print_int
 mov $10,%ax
 mov %ax,%di
 call print_char
-pop %bp
 ret
 call main
 mov %ax,%dx
 mov $0nDD,%ax
 int $0
 test_gt:
-push %bp
-mov %sp,%bp
 mov $103,%ax
 mov %ax,%di
 call print_char
@@ -1088,15 +1015,12 @@ call print_int
 mov $10,%ax
 mov %ax,%di
 call print_char
-pop %bp
 ret
 call main
 mov %ax,%dx
 mov $0nDD,%ax
 int $0
 test_ge:
-push %bp
-mov %sp,%bp
 mov $103,%ax
 mov %ax,%di
 call print_char
@@ -1127,15 +1051,12 @@ call print_int
 mov $10,%ax
 mov %ax,%di
 call print_char
-pop %bp
 ret
 call main
 mov %ax,%dx
 mov $0nDD,%ax
 int $0
 test_assign:
-push %bp
-mov %sp,%bp
 mov $97,%ax
 mov %ax,%di
 call print_char
@@ -1161,12 +1082,12 @@ mov $32,%ax
 mov %ax,%di
 call print_char
 mov $553473,%ax
-mov %ax,-0(%bp)
+mov %ax,15
 mov $470476,%ax
 neg %ax
-mov %ax,-0(%bp)
-mov -0(%bp),%ax
-mov -0(%bp),%ax
+mov %ax,15
+mov 15,%ax
+mov 15,%ax
 push %ax
 mov $470476,%ax
 neg %ax
@@ -1181,15 +1102,12 @@ call print_int
 mov $10,%ax
 mov %ax,%di
 call print_char
-pop %bp
 ret
 call main
 mov %ax,%dx
 mov $0nDD,%ax
 int $0
 test_var_def:
-push %bp
-mov %sp,%bp
 mov $118,%ax
 mov %ax,%di
 call print_char
@@ -1219,9 +1137,9 @@ mov %ax,%di
 call print_char
 mov $425802,%ax
 neg %ax
-mov %ax,-0(%bp)
-mov -0(%bp),%ax
-mov -0(%bp),%ax
+mov %ax,17
+mov 17,%ax
+mov 17,%ax
 push %ax
 mov $425802,%ax
 neg %ax
@@ -1236,19 +1154,16 @@ call print_int
 mov $10,%ax
 mov %ax,%di
 call print_char
-pop %bp
 ret
 call main
 mov %ax,%dx
 mov $0nDD,%ax
 int $0
 fac:
-push %bp
-mov %sp,%bp
 mov %di,%ax
-mov %ax,-0(%bp)
-mov -0(%bp),%ax
-mov -0(%bp),%ax
+mov %ax,19
+mov 19,%ax
+mov 19,%ax
 push %ax
 mov $0,%ax
 pop %cx
@@ -1260,15 +1175,14 @@ _L30:
 cmp $1, %ax
 jne _L28
 mov $1,%ax
-pop %bp
 ret
 jmp _L29
 _L28:
-mov -0(%bp),%ax
-mov -0(%bp),%ax
+mov 19,%ax
+mov 19,%ax
 push %ax
-mov -0(%bp),%ax
-mov -0(%bp),%ax
+mov 19,%ax
+mov 19,%ax
 push %ax
 mov $1,%ax
 pop %cx
@@ -1278,18 +1192,14 @@ mov %ax,%di
 call fac
 pop %cx
 mul %cx
-pop %bp
 ret
 _L29:
-pop %bp
 ret
 call main
 mov %ax,%dx
 mov $0nDD,%ax
 int $0
 test_func:
-push %bp
-mov %sp,%bp
 mov $102,%ax
 mov %ax,%di
 call print_char
@@ -1327,15 +1237,12 @@ call print_int
 mov $10,%ax
 mov %ax,%di
 call print_char
-pop %bp
 ret
 call main
 mov %ax,%dx
 mov $0nDD,%ax
 int $0
 test_block:
-push %bp
-mov %sp,%bp
 mov $98,%ax
 mov %ax,%di
 call print_char
@@ -1359,12 +1266,12 @@ mov %ax,%di
 call print_char
 mov $498225,%ax
 neg %ax
-mov %ax,-0(%bp)
+mov %ax,21
 mov $929425,%ax
 neg %ax
-mov %ax,-2(%bp)
-mov -2(%bp),%ax
-mov -2(%bp),%ax
+mov %ax,23
+mov 23,%ax
+mov 23,%ax
 push %ax
 mov $929425,%ax
 neg %ax
@@ -1379,15 +1286,12 @@ call print_int
 mov $10,%ax
 mov %ax,%di
 call print_char
-pop %bp
 ret
 call main
 mov %ax,%dx
 mov $0nDD,%ax
 int $0
 test_block2:
-push %bp
-mov %sp,%bp
 mov $98,%ax
 mov %ax,%di
 call print_char
@@ -1414,12 +1318,12 @@ mov %ax,%di
 call print_char
 mov $498225,%ax
 neg %ax
-mov %ax,-0(%bp)
+mov %ax,25
 mov $929425,%ax
 neg %ax
-mov %ax,-2(%bp)
-mov -0(%bp),%ax
-mov -0(%bp),%ax
+mov %ax,27
+mov 25,%ax
+mov 25,%ax
 push %ax
 mov $498225,%ax
 neg %ax
@@ -1434,15 +1338,12 @@ call print_int
 mov $10,%ax
 mov %ax,%di
 call print_char
-pop %bp
 ret
 call main
 mov %ax,%dx
 mov $0nDD,%ax
 int $0
 test_if:
-push %bp
-mov %sp,%bp
 mov $105,%ax
 mov %ax,%di
 call print_char
@@ -1456,7 +1357,7 @@ mov $32,%ax
 mov %ax,%di
 call print_char
 mov $222890,%ax
-mov %ax,-0(%bp)
+mov %ax,29
 mov $328111,%ax
 neg %ax
 mov $328111,%ax
@@ -1472,12 +1373,12 @@ _L36:
 cmp $1, %ax
 jne _L34
 mov $986797,%ax
-mov %ax,-0(%bp)
+mov %ax,29
 jmp _L35
 _L34:
 _L35:
-mov -0(%bp),%ax
-mov -0(%bp),%ax
+mov 29,%ax
+mov 29,%ax
 push %ax
 mov $222890,%ax
 pop %cx
@@ -1491,15 +1392,12 @@ call print_int
 mov $10,%ax
 mov %ax,%di
 call print_char
-pop %bp
 ret
 call main
 mov %ax,%dx
 mov $0nDD,%ax
 int $0
 test_while:
-push %bp
-mov %sp,%bp
 mov $119,%ax
 mov %ax,%di
 call print_char
@@ -1522,19 +1420,19 @@ mov $32,%ax
 mov %ax,%di
 call print_char
 mov $1,%ax
-mov %ax,-0(%bp)
+mov %ax,31
 jmp _L39
 _L38:
-mov -0(%bp),%ax
-mov -0(%bp),%ax
+mov 31,%ax
+mov 31,%ax
 push %ax
 mov $2,%ax
 pop %cx
 mul %cx
-mov %ax,-0(%bp)
+mov %ax,31
 _L39:
-mov -0(%bp),%ax
-mov -0(%bp),%ax
+mov 31,%ax
+mov 31,%ax
 push %ax
 mov $100,%ax
 pop %cx
@@ -1545,8 +1443,8 @@ mov $-1,%ax
 _L40:
 cmp $1, %ax
 je _L38
-mov -0(%bp),%ax
-mov -0(%bp),%ax
+mov 31,%ax
+mov 31,%ax
 push %ax
 mov $128,%ax
 pop %cx
@@ -1560,15 +1458,12 @@ call print_int
 mov $10,%ax
 mov %ax,%di
 call print_char
-pop %bp
 ret
 call main
 mov %ax,%dx
 mov $0nDD,%ax
 int $0
 test_for:
-push %bp
-mov %sp,%bp
 mov $102,%ax
 mov %ax,%di
 call print_char
@@ -1585,23 +1480,23 @@ mov $32,%ax
 mov %ax,%di
 call print_char
 mov $0,%ax
-mov %ax,-0(%bp)
+mov %ax,33
 mov $0,%ax
-mov %ax,-2(%bp)
+mov %ax,35
 jmp _L43
 _L42:
-mov -2(%bp),%ax
-mov %ax,-0(%bp)
-mov -2(%bp),%ax
-mov -2(%bp),%ax
+mov 35,%ax
+mov %ax,33
+mov 35,%ax
+mov 35,%ax
 push %ax
 mov $6,%ax
 pop %cx
 add %cx,%ax
-mov %ax,-2(%bp)
+mov %ax,35
 _L43:
-mov -2(%bp),%ax
-mov -2(%bp),%ax
+mov 35,%ax
+mov 35,%ax
 push %ax
 mov $100,%ax
 pop %cx
@@ -1612,8 +1507,8 @@ mov $-1,%ax
 _L44:
 cmp $1, %ax
 je _L42
-mov -0(%bp),%ax
-mov -0(%bp),%ax
+mov 33,%ax
+mov 33,%ax
 push %ax
 mov $96,%ax
 pop %cx
@@ -1627,15 +1522,12 @@ call print_int
 mov $10,%ax
 mov %ax,%di
 call print_char
-pop %bp
 ret
 call main
 mov %ax,%dx
 mov $0nDD,%ax
 int $0
 test_for2:
-push %bp
-mov %sp,%bp
 mov $102,%ax
 mov %ax,%di
 call print_char
@@ -1655,28 +1547,28 @@ mov $32,%ax
 mov %ax,%di
 call print_char
 mov $0,%ax
-mov %ax,-0(%bp)
+mov %ax,37
 mov $0,%ax
-mov %ax,-2(%bp)
+mov %ax,39
 jmp _L47
 _L46:
-mov -0(%bp),%ax
-mov -0(%bp),%ax
+mov 37,%ax
+mov 37,%ax
 push %ax
-mov -2(%bp),%ax
+mov 39,%ax
 pop %cx
 add %cx,%ax
-mov %ax,-0(%bp)
-mov -2(%bp),%ax
-mov -2(%bp),%ax
+mov %ax,37
+mov 39,%ax
+mov 39,%ax
 push %ax
 mov $1,%ax
 pop %cx
 add %cx,%ax
-mov %ax,-2(%bp)
+mov %ax,39
 _L47:
-mov -2(%bp),%ax
-mov -2(%bp),%ax
+mov 39,%ax
+mov 39,%ax
 push %ax
 mov $100,%ax
 pop %cx
@@ -1687,8 +1579,8 @@ mov $-1,%ax
 _L48:
 cmp $1, %ax
 je _L46
-mov -0(%bp),%ax
-mov -0(%bp),%ax
+mov 37,%ax
+mov 37,%ax
 push %ax
 mov $4950,%ax
 pop %cx
@@ -1702,15 +1594,12 @@ call print_int
 mov $10,%ax
 mov %ax,%di
 call print_char
-pop %bp
 ret
 call main
 mov %ax,%dx
 mov $0nDD,%ax
 int $0
 main:
-push %bp
-mov %sp,%bp
 call test_cast
 call test_inc
 call test_dec
@@ -1743,7 +1632,5 @@ call test_while
 call test_for
 call test_for2
 mov $0,%ax
-pop %bp
 ret
-pop %bp
 ret

@@ -1,69 +1,50 @@
-call main
-mov %ax,%dx
-mov $0nDD,%ax
-int $0
-print_char:
-push %bp
-mov %sp,%bp
-sub %sp,729
+putc:
 mov %di,%ax
-mov %ax,-0(%bp)
-mov -0(%bp),%ax
+push 1
+mov %ax,0
+pop 1
+mov 0,%ax
 mov %ax,%dx
 mov $0nD0,%ax
 int $0
-pop %bp
+mov %dx,%ax
 ret
-call main
-mov %ax,%dx
-mov $0nDD,%ax
-int $0
-print_int:
-push %bp
-mov %sp,%bp
-sub %sp,729
+puti:
 mov %di,%ax
-mov %ax,-0(%bp)
-mov -0(%bp),%ax
+mov %ax,1
+mov 1,%ax
 mov %ax,%dx
 mov $0nDC,%ax
 int $0
-pop %bp
+mov %dx,%ax
 ret
-call main
-mov %ax,%dx
-mov $0nDD,%ax
-int $0
-print_str:
-push %bp
-mov %sp,%bp
-sub %sp,729
+puts:
 mov %di,%ax
-mov %ax,-0(%bp)
+mov %ax,3
 mov $0,%ax
-mov %ax,-2(%bp)
+mov %ax,5
 jmp _L2
 _L1:
-mov -0(%bp),%ax
-mov -0(%bp),%ax
+mov 3,%ax
+mov 3,%ax
 push %ax
-mov -2(%bp),%ax
+mov 5,%ax
 pop %cx
 add %cx,%ax
 mov 0(%ax),%ax
 xor $0nDDDD, %ax
 mov %ax,%di
-call print_char
-mov -2(%bp),%ax
-mov -2(%bp),%ax
+call putc
+mov 5,%ax
+mov 5,%ax
 push %ax
 mov $1,%ax
 pop %cx
 add %cx,%ax
-mov %ax,-2(%bp)
+mov %ax,5
 _L2:
-mov -2(%bp),%ax
-mov -2(%bp),%ax
+mov 5,%ax
+mov 5,%ax
 push %ax
 mov $10,%ax
 pop %cx
@@ -74,35 +55,27 @@ mov $-1,%ax
 _L3:
 cmp $1, %ax
 je _L1
-pop %bp
 ret
-call main
-mov %ax,%dx
-mov $0nDD,%ax
-int $0
 main:
-push %bp
-mov %sp,%bp
-sub %sp,729
 mov $0,%ax
-mov %ax,-0(%bp)
+mov %ax,0
 jmp _L2
 _L1:
-mov -0(%bp),%ax
+mov 0,%ax
 mov %ax,%di
-call print_int
-mov -0(%bp),%ax
-mov -0(%bp),%ax
+call puti
+mov 0,%ax
+mov 0,%ax
 push %ax
 mov $1,%ax
 pop %cx
 add %cx,%ax
-mov %ax,-0(%bp)
+mov %ax,0
 _L2:
-mov -0(%bp),%ax
-mov -0(%bp),%ax
+mov 0,%ax
+mov 0,%ax
 push %ax
-mov $2,%ax
+mov $3,%ax
 pop %cx
 cmp %ax,%cx
 mov $1,%ax
@@ -112,7 +85,5 @@ _L3:
 cmp $1, %ax
 je _L1
 mov $0,%ax
-pop %bp
 ret
-pop %bp
 ret

@@ -1,289 +1,270 @@
-void print_char(char c) {
-    c;
-    __asm__("mov %ax,%dx\nmov $0nD0,%ax\nint $0\n");
-}
-
-void print_int(int i) {
-    i;
-    __asm__("mov %ax,%dx\nmov $0nDC,%ax\nint $0\n");
-}
-
-void print_str(char* s) {
-    int i = 0;
-    while(*(s + i) != 0) {
-        print_char(*(s + i));
-        i++;
-    }
-}
-
 void test_cast() {
-    print_char('c');
-    print_char('a');
-    print_char('s');
-    print_char('t');
-    print_char(':');
-    print_char(' ');
-    print_int(((char)86438) == 1145);
-    print_char('\n');
+    putchar('c');
+    putchar('a');
+    putchar('s');
+    putchar('t');
+    putchar(':');
+    putchar(' ');
+    puti(((char)86438) == 1145);
+    putchar('\n');
 }
 
 void test_inc() {
-    print_char('i');
-    print_char('n');
-    print_char('c');
-    print_char(':');
-    print_char(' ');
+    putchar('i');
+    putchar('n');
+    putchar('c');
+    putchar(':');
+    putchar(' ');
     int x = 57;
     x++;
-    print_int(x == 58);
-    print_char('\n');
+    puti(x == 58);
+    putchar('\n');
 }
 
-
 void test_dec() {
-    print_char('d');
-    print_char('e');
-    print_char('c');
-    print_char(':');
-    print_char(' ');
+    putchar('d');
+    putchar('e');
+    putchar('c');
+    putchar(':');
+    putchar(' ');
     int x = 100;
     x--;
-    print_int(x == 99);
-    print_char('\n');
+    puti(x == 99);
+    putchar('\n');
 }
 
 void test_ptr_deref() {
-    print_char('p');
-    print_char('t');
-    print_char('r');
-    print_char('_');
-    print_char('d');
-    print_char('e');
-    print_char('r');
-    print_char('e');
-    print_char('f');
-    print_char(':');
-    print_char(' ');
+    putchar('p');
+    putchar('t');
+    putchar('r');
+    putchar('_');
+    putchar('d');
+    putchar('e');
+    putchar('r');
+    putchar('e');
+    putchar('f');
+    putchar(':');
+    putchar(' ');
     int x = 14;
-    print_int(*&x == 14);
-    print_char('\n');
+    puti(*&x == 14);
+    putchar('\n');
 }
 
 void test_uminus() {
-    print_char('u');
-    print_char('m');
-    print_char('i');
-    print_char('n');
-    print_char('u');
-    print_char('s');
-    print_char(':');
-    print_char(' ');
-    print_int(-(-22) == 22);
-    print_char('\n');
+    putchar('u');
+    putchar('m');
+    putchar('i');
+    putchar('n');
+    putchar('u');
+    putchar('s');
+    putchar(':');
+    putchar(' ');
+    puti(-(-22) == 22);
+    putchar('\n');
 }
 
 void test_uminus2() {
-    print_char('u');
-    print_char('m');
-    print_char('i');
-    print_char('n');
-    print_char('u');
-    print_char('s');
-    print_char('2');
-    print_char(':');
-    print_char(' ');
+    putchar('u');
+    putchar('m');
+    putchar('i');
+    putchar('n');
+    putchar('u');
+    putchar('s');
+    putchar('2');
+    putchar(':');
+    putchar(' ');
     int x = -93;
-    print_int(-x == 93);
-    print_char('\n');
+    puti(-x == 93);
+    putchar('\n');
 }
 
 void test_uplus() {
-    print_char('u');
-    print_char('p');
-    print_char('l');
-    print_char('u');
-    print_char('s');
-    print_char(':');
-    print_char(' ');
-    print_int(+67 == 67);
-    print_char('\n');
+    putchar('u');
+    putchar('p');
+    putchar('l');
+    putchar('u');
+    putchar('s');
+    putchar(':');
+    putchar(' ');
+    puti(+67 == 67);
+    putchar('\n');
 }
 
 
 void test_and() {
-    print_char('a');
-    print_char('n');
-    print_char('d');
-    print_char(':');
-    print_char(' ');
-    print_int((-67 & 95) == -67);
-    print_char('\n');
+    putchar('a');
+    putchar('n');
+    putchar('d');
+    putchar(':');
+    putchar(' ');
+    puti((-67 & 95) == -67);
+    putchar('\n');
 }
 
 void test_or() {
-    print_char('o');
-    print_char('r');
-    print_char(':');
-    print_char(' ');
-    print_int((47 | 69) == 75);
-    print_char('\n');
+    putchar('o');
+    putchar('r');
+    putchar(':');
+    putchar(' ');
+    puti((47 | 69) == 75);
+    putchar('\n');
 }
 
 void test_xor() {
-    print_char('x');
-    print_char('o');
-    print_char('r');
-    print_char(':');
-    print_char(' ');
-    print_int((269 ^ 689) == 26);
-    print_char('\n');
+    putchar('x');
+    putchar('o');
+    putchar('r');
+    putchar(':');
+    putchar(' ');
+    puti((269 ^ 689) == 26);
+    putchar('\n');
 }
 
 void test_shl() {
-    print_char('s');
-    print_char('h');
-    print_char('l');
-    print_char(':');
-    print_char(' ');
-    print_int((23 << 1) == 69);
-    print_char('\n');
+    putchar('s');
+    putchar('h');
+    putchar('l');
+    putchar(':');
+    putchar(' ');
+    puti((23 << 1) == 69);
+    putchar('\n');
 }
 
 void test_add() {
-    print_char('a');
-    print_char('d');
-    print_char('d');
-    print_char(':');
-    print_char(' ');
-    print_int((618039+206056) == 824095);
-    print_char('\n');
+    putchar('a');
+    putchar('d');
+    putchar('d');
+    putchar(':');
+    putchar(' ');
+    puti((618039+206056) == 824095);
+    putchar('\n');
 }
 
 void test_sub() {
-    print_char('s');
-    print_char('u');
-    print_char('b');
-    print_char(':');
-    print_char(' ');
-    print_int((-832341-883287) == -1715628);
-    print_char('\n');
+    putchar('s');
+    putchar('u');
+    putchar('b');
+    putchar(':');
+    putchar(' ');
+    puti((-832341-883287) == -1715628);
+    putchar('\n');
 }
 
 void test_mul() {
-    print_char('s');
-    print_char('u');
-    print_char('b');
-    print_char(':');
-    print_char(' ');
-    print_int((869328*-655735)==18930123);
-    print_char('\n');
+    putchar('s');
+    putchar('u');
+    putchar('b');
+    putchar(':');
+    putchar(' ');
+    puti((869328*-655735)==18930123);
+    putchar('\n');
 }
 
 void test_div() {
-    print_char('d');
-    print_char('i');
-    print_char('v');
-    print_char(':');
-    print_char(' ');
-    print_int((565466/110934)==5);
-    print_char('\n');
+    putchar('d');
+    putchar('i');
+    putchar('v');
+    putchar(':');
+    putchar(' ');
+    puti((565466/110934)==5);
+    putchar('\n');
 }
 
 void test_mod() {
-    print_char('m');
-    print_char('o');
-    print_char('d');
-    print_char(':');
-    print_char(' ');
-    print_int((494105%26819)==11363);
-    print_char('\n');
+    putchar('m');
+    putchar('o');
+    putchar('d');
+    putchar(':');
+    putchar(' ');
+    puti((494105%26819)==11363);
+    putchar('\n');
 }
 
 void test_eq() {
-    print_char('e');
-    print_char('q');
-    print_char(':');
-    print_char(' ');
-    print_int(-681521==-681521);
-    print_char('\n');
+    putchar('e');
+    putchar('q');
+    putchar(':');
+    putchar(' ');
+    puti(-681521==-681521);
+    putchar('\n');
 }
 
 void test_ne() {
-    print_char('n');
-    print_char('e');
-    print_char(':');
-    print_char(' ');
-    print_int(-417075!=195894);
-    print_char('\n');
+    putchar('n');
+    putchar('e');
+    putchar(':');
+    putchar(' ');
+    puti(-417075!=195894);
+    putchar('\n');
 }
 
 void test_lt() {
-    print_char('l');
-    print_char('t');
-    print_char(':');
-    print_char(' ');
-    print_int(-455064<830396);
-    print_char('\n');
+    putchar('l');
+    putchar('t');
+    putchar(':');
+    putchar(' ');
+    puti(-455064<830396);
+    putchar('\n');
 }
 
 void test_le() {
-    print_char('l');
-    print_char('e');
-    print_char(':');
-    print_char(' ');
-    print_int(163526<=209771);
-    print_char('\n');
+    putchar('l');
+    putchar('e');
+    putchar(':');
+    putchar(' ');
+    puti(163526<=209771);
+    putchar('\n');
 }
 
 
 void test_gt() {
-    print_char('g');
-    print_char('t');
-    print_char(':');
-    print_char(' ');
-    print_int(757575>-563775);
-    print_char('\n');
+    putchar('g');
+    putchar('t');
+    putchar(':');
+    putchar(' ');
+    puti(757575>-563775);
+    putchar('\n');
 }
 
 void test_ge() {
-    print_char('g');
-    print_char('e');
-    print_char(':');
-    print_char(' ');
-    print_int(-579487>=-579618);
-    print_char('\n');
+    putchar('g');
+    putchar('e');
+    putchar(':');
+    putchar(' ');
+    puti(-579487>=-579618);
+    putchar('\n');
 }
 
 
 void test_assign() {
-    print_char('a');
-    print_char('s');
-    print_char('s');
-    print_char('i');
-    print_char('g');
-    print_char('n');
-    print_char(':');
-    print_char(' ');
+    putchar('a');
+    putchar('s');
+    putchar('s');
+    putchar('i');
+    putchar('g');
+    putchar('n');
+    putchar(':');
+    putchar(' ');
     int x = 553473;
     x = -470476;
-    print_int(x==-470476);
-    print_char('\n');
+    puti(x==-470476);
+    putchar('\n');
 }
 
 
 void test_var_def() {
-    print_char('v');
-    print_char('a');
-    print_char('r');
-    print_char('_');
-    print_char('d');
-    print_char('e');
-    print_char('f');
-    print_char(':');
-    print_char(' ');
+    putchar('v');
+    putchar('a');
+    putchar('r');
+    putchar('_');
+    putchar('d');
+    putchar('e');
+    putchar('f');
+    putchar(':');
+    putchar(' ');
     int x = -425802;
-    print_int(x==-425802);
-    print_char('\n');
+    puti(x==-425802);
+    putchar('\n');
 }
 
 
@@ -296,107 +277,107 @@ int fac(int x) {
 }
 
 void test_func() {
-    print_char('f');
-    print_char('u');
-    print_char('n');
-    print_char('c');
-    print_char(':');
-    print_char(' ');
-    print_int(fac(6) == 720);
-    print_char('\n');
+    putchar('f');
+    putchar('u');
+    putchar('n');
+    putchar('c');
+    putchar(':');
+    putchar(' ');
+    puti(fac(6) == 720);
+    putchar('\n');
 }
 
 void test_block() {
-    print_char('b');
-    print_char('l');
-    print_char('o');
-    print_char('c');
-    print_char('k');
-    print_char(':');
-    print_char(' ');
+    putchar('b');
+    putchar('l');
+    putchar('o');
+    putchar('c');
+    putchar('k');
+    putchar(':');
+    putchar(' ');
     int x = -498225;
     {
         int x = -929425;
-        print_int(x==-929425);
+        puti(x==-929425);
     }
-    print_char('\n');
+    putchar('\n');
 }
 
 
 void test_block2() {
-    print_char('b');
-    print_char('l');
-    print_char('o');
-    print_char('c');
-    print_char('k');
-    print_char('2');
-    print_char(':');
-    print_char(' ');
+    putchar('b');
+    putchar('l');
+    putchar('o');
+    putchar('c');
+    putchar('k');
+    putchar('2');
+    putchar(':');
+    putchar(' ');
     int x = -498225;
     {
         int x = -929425;
     }
-    print_int(x==-498225);
-    print_char('\n');
+    puti(x==-498225);
+    putchar('\n');
 }
 
 void test_if() {
-    print_char('i');
-    print_char('f');
-    print_char(':');
-    print_char(' ');
+    putchar('i');
+    putchar('f');
+    putchar(':');
+    putchar(' ');
     int x = 222890;
     if(-328111 == 474627) {
         x = 986797;
     }
-    print_int(x==222890);
-    print_char('\n');
+    puti(x==222890);
+    putchar('\n');
 }
 
 void test_while() {
-    print_char('w');
-    print_char('h');
-    print_char('i');
-    print_char('l');
-    print_char('e');
-    print_char(':');
-    print_char(' ');
+    putchar('w');
+    putchar('h');
+    putchar('i');
+    putchar('l');
+    putchar('e');
+    putchar(':');
+    putchar(' ');
     int x = 1;
     while(x < 100) {
         x *= 2;
     }
-    print_int(x==128);
-    print_char('\n');
+    puti(x==128);
+    putchar('\n');
 }
 
 
 void test_for() {
-    print_char('f');
-    print_char('o');
-    print_char('r');
-    print_char(':');
-    print_char(' ');
+    putchar('f');
+    putchar('o');
+    putchar('r');
+    putchar(':');
+    putchar(' ');
     int x = 0;
     for(int i = 0; i < 100; i += 6) {
         x = i;
     }
-    print_int(x==96);
-    print_char('\n');
+    puti(x==96);
+    putchar('\n');
 }
 
 void test_for2() {
-    print_char('f');
-    print_char('o');
-    print_char('r');
-    print_char('2');
-    print_char(':');
-    print_char(' ');
+    putchar('f');
+    putchar('o');
+    putchar('r');
+    putchar('2');
+    putchar(':');
+    putchar(' ');
     int x = 0;
     for(int i = 0; i < 100; i++) {
         x = x + i;
     }
-    print_int(x==4950);
-    print_char('\n');
+    puti(x==4950);
+    putchar('\n');
 }
 
 int main() {

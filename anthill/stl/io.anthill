@@ -1,17 +1,17 @@
-void print_char(char c) {
+void putc(char c) {
     c;
-    __asm__("mov %ax,%dx\nmov $0nD0,%ax\nint $0\n");
+    __asm__("mov %ax,%dx\nmov $0nD0,%ax\nint $0\nmov %dx,%ax\n");
 }
 
-void print_int(int i) {
+void puti(int i) {
     i;
-    __asm__("mov %ax,%dx\nmov $0nDC,%ax\nint $0\n");
+    __asm__("mov %ax,%dx\nmov $0nDC,%ax\nint $0\nmov %dx,%ax\n");
 }
 
-void print_str(char* s) {
+void puts(char* s) {
     int i = 0;
     while(i < 10) {
-        print_char(*(s + i));
+        putc(*(s + i));
         i++;
     }
 }
