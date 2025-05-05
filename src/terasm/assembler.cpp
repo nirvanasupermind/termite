@@ -137,10 +137,12 @@ namespace termite {
         }
         else if(current.type == TokenType::NUMBER) {
             addr_mode = Word::from_int32(-2);
+            std::cout << "assembling literal: " << current.value << "\n";
             if (current.value[0] == '0' && current.value[1] == 't') {
                 imm = Word::from_ternary_str(current.value.substr(2));
             }
             else if (current.value[0] == '0' && current.value[1] == 'n') {
+                std::cout << "passing to from_nonary_str: " << current.value.substr(2) << "\n";
                 imm = Word::from_nonary_str(current.value.substr(2));
             }
             else {

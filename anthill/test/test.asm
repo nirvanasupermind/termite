@@ -57,33 +57,9 @@ cmp $1, %ax
 je _L1
 ret
 main:
-mov $0,%ax
-mov %ax,0
-jmp _L2
-_L1:
-mov 0,%ax
+mov $5,%ax
 mov %ax,%di
 call puti
-mov 0,%ax
-mov 0,%ax
-push %ax
-mov $1,%ax
-pop %cx
-add %cx,%ax
-mov %ax,0
-_L2:
-mov 0,%ax
-mov 0,%ax
-push %ax
-mov $3,%ax
-pop %cx
-cmp %ax,%cx
-mov $1,%ax
-jl _L3
-mov $-1,%ax
-_L3:
-cmp $1, %ax
-je _L1
 mov $0,%ax
 ret
 ret

@@ -1,9 +1,5 @@
 #include "anthill/stl/io.anthill"
 int main() {
-    int x = 0;
-    while(x < 3) {
-    puti(x);
-        x++;
-    }
+    puti(5);
     return 0;
 }

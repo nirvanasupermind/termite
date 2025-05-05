@@ -117,6 +117,7 @@ namespace termite {
                 advance();
             }
         }
+        std::cout << "dbg120 " << number_str << '\n';
         return Token(line, TokenType::NUMBER, number_str);
     }
 
