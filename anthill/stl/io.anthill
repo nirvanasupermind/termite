@@ -4,7 +4,7 @@ void putc(char c) {
 }
 
 void puti(int i) {
-    __asm__("mov %di,%dx\nmov $0nDC,%ax\nint $0\n");
+    __asm__("mov %di,%dx\nmov $0nDC,%ax\nint $0\nmov %dx,%ax\n");
 }
 
 void puts(char* s) {

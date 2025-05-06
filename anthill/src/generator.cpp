@@ -41,17 +41,17 @@ namespace anthill {
    }
 
    std::string Generator::alloc_addr(const std::shared_ptr<NonFuncType>& type, const std::shared_ptr<SymbolTable>& symbol_table) {
-      // if (symbol_table->is_func) {
-      //    std::string result = "-" + std::to_string(func_addr_counter) + "(%bp)";
-      //    func_addr_counter += type->size();
-      //    std::cout << "dbg51 " << func_addr_counter << '\n';
-      //    return result;
-      // }
-      // else {
+      if (symbol_table->is_func) {
+         std::string result = "-" + std::to_string(func_addr_counter) + "(%bp)";
+         func_addr_counter += type->size();
+         std::cout << "dbg51 " << func_addr_counter << '\n';
+         return result;
+      }
+      else {
          std::string result = std::to_string(addr_counter);
          addr_counter += type->size();
          return result;
-      // }
+      }
    }
 
    void Generator::trunc_to_8_trits() {
@@ -713,7 +713,7 @@ namespace anthill {
       // asm_stream << "call main\nmov %ax,%dx\nmov $0nDD,%ax\nint $0\n";
       // }
       asm_stream << node->name.val << ":\n";
-      // asm_stream << "push %bp\nmov %sp,%bp\nsub %sp,729\n";
+      asm_stream << "push %bp\nmov %sp,%bp\nsub %sp,729\n";
       std::shared_ptr<SymbolTable> func_symbol_table = std::make_shared<SymbolTable>(SymbolTable(symbol_table));
       func_symbol_table->is_func = true;
       try {
@@ -746,14 +746,14 @@ namespace anthill {
       }
       // std::cout << "dbg430" << '\n';
       visit(node->body, func_symbol_table);
-      // asm_stream << "pop %bp\n";
+      asm_stream << "pop %bp\n";
       asm_stream << "ret\n";
       return std::make_shared<NonFuncType>(NonFuncType(BasicType::VOID));
    }
 
    std::shared_ptr<StaticType> Generator::visit_return_node(const std::shared_ptr<ReturnNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
       visit(node->body, symbol_table);
-      // asm_stream << "pop %bp\n";
+      asm_stream << "pop %bp\n";
       asm_stream << "ret\n";
       return std::make_shared<NonFuncType>(NonFuncType(BasicType::VOID));
    }
