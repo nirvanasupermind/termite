@@ -1,7 +1,4 @@
-mov $139, %dx
+main:
 mov $0nDC, %ax
+mov $123, %dx
 int $0
-mov $287, %dx
-mov $0nDC, %ax
-int $0
-ret

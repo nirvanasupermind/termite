@@ -12,12 +12,9 @@ ret
 puti:
 mov %di,%ax
 mov %ax,1
-mov 1,%ax
-mov %ax,%dx
+mov %di,%dx
 mov $0nDC,%ax
-int $0
-mov %dx,%ax
-ret
+jmp after_puti
 puts:
 mov %di,%ax
 mov %ax,3
@@ -59,7 +56,8 @@ ret
 main:
 mov $5,%ax
 mov %ax,%di
-call puti
+jmp puti
+after_puti:
 mov $0,%ax
 ret
 ret
