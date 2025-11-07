@@ -33,6 +33,7 @@ int main(int argc, char** argv) {
         gen.visit(parser.parse(), gen.global_scope);
         std::ofstream myfile;
         myfile.open(file_path.substr(0, file_path.size() - 7) + "asm");
+        myfile << "call main;\n";
         myfile << gen.asm_stream.str();
 } catch(const std::string&e) {
     std::cerr << e << '\n';

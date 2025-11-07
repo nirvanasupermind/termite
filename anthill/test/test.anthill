@@ -1,5 +1,7 @@
 #include "anthill/stl/io.anthill"
+
+
 int main() {
-    puti(5);
+    puti(*("Ze"));
     return 0;
 }

@@ -1,7 +1,7 @@
+call main;
 putc:
 push %bp
 mov %sp,%bp
-sub %sp,729
 mov %di,%ax
 push 1(%bp)
 mov %ax,-0(%bp)
@@ -16,10 +16,10 @@ ret
 puti:
 push %bp
 mov %sp,%bp
-sub %sp,729
 mov %di,%ax
 mov %ax,-0(%bp)
-mov %di,%dx
+mov -0(%bp),%ax
+mov %ax,%dx
 mov $0nDC,%ax
 int $0
 mov %dx,%ax
@@ -28,7 +28,6 @@ ret
 puts:
 push %bp
 mov %sp,%bp
-sub %sp,729
 mov %di,%ax
 mov %ax,-0(%bp)
 mov $0,%ax
@@ -70,8 +69,14 @@ ret
 main:
 push %bp
 mov %sp,%bp
-sub %sp,729
-mov $5,%ax
+mov $90,0
+mov $101,1
+push 3
+mov $0,2
+pop 3
+mov $0,%ax
+mov 0(%ax),%ax
+xor $0nDDDD, %ax
 mov %ax,%di
 call puti
 mov $0,%ax
