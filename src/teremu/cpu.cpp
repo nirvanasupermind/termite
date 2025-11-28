@@ -149,27 +149,52 @@ namespace termite {
                 Word src_mode = ins.get_trit_range(10, 11);
                 Word src_reg = ins.get_trit_range(8, 9);
 
+                // std::cout << "dbg153 OLD REG SP: " <<  regs[REG_SP].to_int32() << '\n';
                 regs[REG_SP] = regs[REG_SP] - Word::TWO;
                 memory.set_word(regs[REG_SP], get_addr_mode(cycles, memory, src_mode, src_reg, imm));
                 break;
             }
-            case INS_POP: {
-                Word dest_mode = ins.get_trit_range(10, 11);
+                        case INS_POP: {
+                                // std::cout << "dbg158 REG SP: " <<  regs[REG_SP].to_int32() << '\n';
+
+                            Word dest_mode = ins.get_trit_range(10, 11);
                 Word dest_reg = ins.get_trit_range(8, 9);
                 Word val_at_sp = memory.get_word(regs[REG_SP]);
+                                // std::cout << "dbg163 " <<  regs[REG_SP].to_int32() << '\n';
+
                 if (dest_mode.to_int32() == -3) {
                     regs[dest_reg.to_int32() + 4] = val_at_sp;
+
                 }
                 else if (dest_mode.to_int32() == -2) {
                     memory.set_word(imm, val_at_sp);
                 }
                 else {
-                    Word addr = regs[dest_reg.to_int32() + 4] + imm;
+                    Word addr = regs[dest_reg.to_int32()] + imm;
                     memory.set_word(addr, val_at_sp);
                 }
+                // std::cout << "dbg171 MIDDLE REG SP: " <<  regs[REG_SP].to_int32() << '\n';
                 regs[REG_SP] = regs[REG_SP] + Word::TWO;
+                // std::cout << "dbg172 NEW REG SP: " <<  regs[REG_SP].to_int32() << '\n';
                 break;
             }
+            // case INS_POP: {
+            //     Word dest_mode = ins.get_trit_range(10, 11);
+            //     Word dest_reg = ins.get_trit_range(8, 9);
+            //     Word val_at_sp = memory.get_word(regs[REG_SP]);
+            //     if (dest_mode.to_int32() == -3) {
+            //         regs[dest_reg.to_int32() + 4] = val_at_sp;
+            //     }
+            //     else if (dest_mode.to_int32() == -2) {
+            //         memory.set_word(imm, val_at_sp);
+            //     }
+            //     else {
+            //         Word addr = regs[dest_reg.to_int32() + 4] + imm;
+            //         memory.set_word(addr, val_at_sp);
+            //     }
+            //     regs[REG_SP] = regs[REG_SP] + Word::TWO;
+            //     break;
+            // }
             case INS_PUSHF: {
                 regs[REG_SP] = regs[REG_SP] - Word::TWO;
                 memory.set_word(regs[REG_SP], flags);
@@ -543,6 +568,7 @@ namespace termite {
                         std::exit(regs[REG_DX].to_int32());
                     }
                     else if (code == -39) {
+                        std::cout << "dbg571 THE CODE -39 PATH HAS HIT" << '\n';
                         std::cout << regs[REG_DX].to_int32();
                     }
                     else if (code == -38) {

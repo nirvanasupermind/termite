@@ -12,6 +12,6 @@ void puts(char* s) {
     int i = 0;
     while(i < 10) {
         putc(*(s + i));
-        i++;
+        i = i + 1;
     }
 }

@@ -15,6 +15,7 @@ namespace anthill {
         int label_id = 1;
         int addr_counter = 0;
         int func_addr_counter = 0;
+        std::string current_func_name = "";
         std::string file;
         std::ostringstream asm_stream;
         std::shared_ptr<SymbolTable> global_scope;

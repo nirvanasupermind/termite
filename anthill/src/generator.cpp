@@ -42,8 +42,8 @@ namespace anthill {
 
    std::string Generator::alloc_addr(const std::shared_ptr<NonFuncType>& type, const std::shared_ptr<SymbolTable>& symbol_table) {
       if (symbol_table->is_func) {
-         std::string result = "-" + std::to_string(func_addr_counter) + "(%bp)";
          func_addr_counter += type->size();
+         std::string result = "-" + std::to_string(func_addr_counter) + "(%bp)";
          std::cout << "dbg51 " << func_addr_counter << '\n';
          return result;
       }
@@ -710,6 +710,7 @@ namespace anthill {
    }
 
    std::shared_ptr<StaticType> Generator::visit_func_def_node(const std::shared_ptr<FuncDefNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
+      current_func_name = node->name.val;
       // asm_stream << "call main\nmov %ax,%dx\nmov $0nDD,%ax\nint $0\n";
       // }
       asm_stream << node->name.val << ":\n";
@@ -753,8 +754,14 @@ namespace anthill {
 
    std::shared_ptr<StaticType> Generator::visit_return_node(const std::shared_ptr<ReturnNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
       visit(node->body, symbol_table);
+      if(current_func_name == "main") {
+      asm_stream << "mov %ax,%dx\n";
+      asm_stream << "mov $0nDD,%ax\n";
+      asm_stream << "int $0\n";
+      } else {
       asm_stream << "pop %bp\n";
       asm_stream << "ret\n";
+      }
       return std::make_shared<NonFuncType>(NonFuncType(BasicType::VOID));
    }
 
@@ -765,7 +772,6 @@ namespace anthill {
          symbol_table->def_type(node->items.at(i).val, int_type);
          symbol_table->def_addr(node->items.at(i).val, addr);
          asm_stream << "mov $" << i << "," << addr << '\n';
-
       }
       return std::make_shared<NonFuncType>(NonFuncType(BasicType::VOID));
    }
@@ -790,6 +796,9 @@ namespace anthill {
       gen.global_scope = global_scope;
       gen.visit(parser.parse(), gen.global_scope);
       asm_stream << gen.asm_stream.str();
+      label_id = gen.label_id + 1;
+      addr_counter = gen.addr_counter + 1;
+
       return std::make_shared<NonFuncType>(NonFuncType(BasicType::VOID));
    }
 
