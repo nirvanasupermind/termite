@@ -24,24 +24,24 @@ namespace anthill {
    }
 
    void Generator::set_var(const std::shared_ptr<StaticType>& var_type, const std::string& addr) {
-      if (var_type->to_str() == "char") {
-         std::string inc_addr = std::to_string(std::stoi(addr) + 1);
-         if (addr.find('(') != std::string::npos) {
-            std::string disp = addr.substr(0, addr.find('('));
-            std::string reg = addr.substr(addr.find('(') + 1, addr.find(')') - addr.find('(') - 1);
-            inc_addr = std::to_string(std::stoi(disp) + 1) + "(" + reg + ")";
-         }
-         asm_stream << "push " + inc_addr + "\n";
-         asm_stream << "mov %ax," + addr + "\n";
-         asm_stream << "pop " + inc_addr + "\n";
-      }
-      else {
-         asm_stream << "mov %ax," + addr + "\n";
-      }
+      // if (var_type->to_str() == "char") {
+      //    std::string inc_addr = std::to_string(std::stoi(addr) + 1);
+      //    if (addr.find('(') != std::string::npos) {
+      //       std::string disp = addr.substr(0, addr.find('('));
+      //       std::string reg = addr.substr(addr.find('(') + 1, addr.find(')') - addr.find('(') - 1);
+      //       inc_addr = std::to_string(std::stoi(disp) + 1) + "(" + reg + ")";
+      //    }
+      //    asm_stream << "push " + inc_addr + "\n";
+      //    asm_stream << "mov %ax," + addr + "\n";
+      //    asm_stream << "pop " + inc_addr + "\n";
+      // }
+      // else {
+      asm_stream << "mov %ax," + addr + "\n";
+      // }
    }
 
-   std::string Generator::alloc_addr(const std::shared_ptr<NonFuncType>& type, const std::shared_ptr<SymbolTable>& symbol_table) {
-      if (symbol_table->is_func) {
+   std::string Generator::alloc_addr(const std::shared_ptr<NonFuncType>& type, const std::shared_ptr<SymbolTable>& symbol_table, bool always_global) {
+      if (symbol_table->is_func && !always_global) {
          func_addr_counter += type->size();
          std::string result = "-" + std::to_string(func_addr_counter) + "(%bp)";
          std::cout << "dbg51 " << func_addr_counter << '\n';
@@ -55,10 +55,8 @@ namespace anthill {
    }
 
    void Generator::trunc_to_8_trits() {
-      asm_stream << "xor $0nDDDD, %ax\n";
+      // asm_stream << "xor $0nDDDD, %ax\n";
    }
-
-
 
    std::shared_ptr<StaticType> Generator::visit(const std::shared_ptr<Node>& node, const std::shared_ptr<SymbolTable>& symbol_table, bool no_gen) {
       switch (node->get_type()) {
@@ -122,41 +120,118 @@ namespace anthill {
    }
 
    std::shared_ptr<StaticType> Generator::visit_str_node(const std::shared_ptr<StrNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
-      // alloc_addr(std::make_shared<NonFuncType>(NonFuncType(BasicType::CHAR, symbol_table)));
-      std::string start_addr = alloc_addr(std::make_shared<NonFuncType>(NonFuncType(BasicType::CHAR)), global_scope);
-      for (int i = 0; i <= node->tok.val.size(); i++) {
-         std::string addr;
+      std::string addr;
+      const std::string& s = node->tok.val;
+      for (int i = 0; i <= s.size(); i++) {
+         std::string ch_addr = alloc_addr(std::make_shared<NonFuncType>(NonFuncType(BasicType::CHAR)), symbol_table, true);
          if (i == 0) {
-            addr = start_addr;
+            std::cout << "dbg130 " << ch_addr << '\n';
+            addr = ch_addr;
+         }
+         if (i == s.size()) {
+            asm_stream << "mov $0" << ",%ax\n";
          }
          else {
-            addr = alloc_addr(std::make_shared<NonFuncType>(NonFuncType(BasicType::CHAR)), global_scope);
+            asm_stream << "mov $" << (int)(s.at(i)) << ",%ax\n";
          }
-         std::string inc_addr = std::to_string(std::stoi(addr) + 1);
-         if (addr.find('(') != std::string::npos) {
-            std::string disp = addr.substr(0, addr.find('('));
-            std::string reg = addr.substr(addr.find('(') + 1, addr.find(')') - addr.find('(') - 1);
-            inc_addr = std::to_string(std::stoi(disp) + 1) + "(" + reg + ")";
-         }
-         if (i == node->tok.val.size()) {
-            asm_stream << "push " + inc_addr + "\n";
-            asm_stream << "mov $0," << addr << '\n';
-            asm_stream << "pop " + inc_addr + "\n";
-         }
-         else {
-            asm_stream << "mov $" << (int)(node->tok.val.at(i)) << "," << addr << '\n';
-         }
+         set_var(std::make_shared<NonFuncType>(NonFuncType(BasicType::CHAR)), ch_addr);
       }
-      if(start_addr.find('(') != std::string::npos) {
-         std::string disp = start_addr.substr(0, start_addr.find('('));
-         std::string reg = start_addr.substr(start_addr.find('(') + 1, start_addr.find(')') - start_addr.find('(') - 1);
-         asm_stream << "mov $" + disp + ",%ax\n";
-         asm_stream << "add " + reg + ",%ax\n"; 
-      } else {
-      asm_stream << "mov $" + start_addr + ",%ax\n";
-      }
-      return  std::make_shared<NonFuncType>(NonFuncType(BasicType::CHAR, 1));
+
+      asm_stream << "mov $" + addr + ",%ax\n";
+      return std::make_shared<NonFuncType>(NonFuncType(BasicType::CHAR, 1));
    }
+
+
+   //    std::shared_ptr<StaticType> Generator::visit_str_node(
+   //     const std::shared_ptr<StrNode>& node,
+   //     const std::shared_ptr<SymbolTable>& symbol_table
+   // ) {
+   //     // Literal contents, e.g. "Hello world!"
+   //     const std::string &s = node->tok.val;
+   //     const int len = static_cast<int>(s.size());
+
+   //     // For Option A, treat char as occupying a FULL word in memory.
+   //     // i.e. NonFuncType(BasicType::CHAR).size() should be the same as int (1 word).
+   //     auto charType = std::make_shared<NonFuncType>(NonFuncType(BasicType::CHAR));
+
+   //     std::string firstAddr;  // address of s[0]
+
+   //     // Emit each character as a full-word value
+   //     for (int i = 0; i < len; ++i) {
+   //         std::string addr;
+   //         if (i == 0) {
+   //             firstAddr = alloc_addr(charType, global_scope);
+   //             addr = firstAddr;
+   //         } else {
+   //             addr = alloc_addr(charType, global_scope);
+   //         }
+
+   //         unsigned char ch = static_cast<unsigned char>(s[i]);
+   //         // Store this character directly into the word at 'addr'
+   //         asm_stream << "mov $" << static_cast<int>(ch) << "," << addr << "\n";
+   //     }
+
+   //     // Emit the terminating '\0' as a full word
+   //     {
+   //         std::string termAddr = alloc_addr(charType, global_scope);
+   //         asm_stream << "mov $0," << termAddr << "\n";
+   //     }
+
+   //     // Load the address of the first character into %ax
+   //     if (firstAddr.find('(') != std::string::npos) {
+   //         // Handle something like "disp(%reg)"
+   //         std::string disp = firstAddr.substr(0, firstAddr.find('('));
+   //         std::string reg  = firstAddr.substr(
+   //             firstAddr.find('(') + 1,
+   //             firstAddr.find(')') - firstAddr.find('(') - 1
+   //         );
+   //         asm_stream << "mov $" << disp << ",%ax\n";
+   //         asm_stream << "add " << reg << ",%ax\n";
+   //     } else {
+   //         // Simple absolute address like "0", "2", "4", ...
+   //         asm_stream << "mov $" << firstAddr << ",%ax\n";
+   //     }
+
+   //     // The type of a string literal expression is char*
+   //     return std::make_shared<NonFuncType>(NonFuncType(BasicType::CHAR, 1));
+   // }
+
+      // std::shared_ptr<StaticType> Generator::visit_str_node(const std::shared_ptr<StrNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
+      //    // alloc_addr(std::make_shared<NonFuncType>(NonFuncType(BasicType::CHAR, symbol_table)));
+      //    std::string start_addr = alloc_addr(std::make_shared<NonFuncType>(NonFuncType(BasicType::CHAR)), global_scope);
+      //    for (int i = 0; i <= node->tok.val.size(); i++) {
+      //       std::string addr;
+      //       if (i == 0) {
+      //          addr = start_addr;
+      //       }
+      //       else {
+      //          addr = alloc_addr(std::make_shared<NonFuncType>(NonFuncType(BasicType::CHAR)), global_scope);
+      //       }
+      //       std::string inc_addr = std::to_string(std::stoi(addr) + 1);
+      //       if (addr.find('(') != std::string::npos) {
+      //          std::string disp = addr.substr(0, addr.find('('));
+      //          std::string reg = addr.substr(addr.find('(') + 1, addr.find(')') - addr.find('(') - 1);
+      //          inc_addr = std::to_string(std::stoi(disp) + 1) + "(" + reg + ")";
+      //       }
+      //       if (i == node->tok.val.size()) {
+      //          asm_stream << "push " + inc_addr + "\n";
+      //          asm_stream << "mov $0," << addr << '\n';
+      //          asm_stream << "pop " + inc_addr + "\n";
+      //       }
+      //       else {
+      //          asm_stream << "mov $" << (int)(node->tok.val.at(i)) << "," << addr << '\n';
+      //       }
+      //    }
+      //    if(start_addr.find('(') != std::string::npos) {
+      //       std::string disp = start_addr.substr(0, start_addr.find('('));
+      //       std::string reg = start_addr.substr(start_addr.find('(') + 1, start_addr.find(')') - start_addr.find('(') - 1);
+      //       asm_stream << "mov $" + disp + ",%ax\n";
+      //       asm_stream << "add " + reg + ",%ax\n"; 
+      //    } else {
+      //    asm_stream << "mov $" + start_addr + ",%ax\n";
+      //    }
+      //    return  std::make_shared<NonFuncType>(NonFuncType(BasicType::CHAR, 1));
+      // }
 
    std::shared_ptr<StaticType> Generator::visit_ident_node(const std::shared_ptr<IdentNode>& node, const std::shared_ptr<SymbolTable>& symbol_table, bool no_gen) {
       try {
@@ -633,16 +708,32 @@ namespace anthill {
       }
    }
 
-   std::shared_ptr<StaticType> Generator::visit_var_def_node(const std::shared_ptr<VarDefNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
+   std::shared_ptr<StaticType> Generator::visit_var_def_node(
+      const std::shared_ptr<VarDefNode>& node,
+      const std::shared_ptr<SymbolTable>& symbol_table
+   ) {
       try {
-         std::shared_ptr<NonFuncType> var_type = NonFuncType::parse_type(node->type->to_str());
+         std::shared_ptr<NonFuncType> var_type =
+            NonFuncType::parse_type(node->type->to_str());
          if (var_type->to_str() == "void") {
             error(file, node->name.line, "cannot define variable of type void");
          }
+
+         // Evaluate initializer: result in %ax
          visit(node->val, symbol_table);
+
+         // If this is a *function* scope variable, allocate stack space for it
+         if (symbol_table->is_func) {
+            // Reserve var_type->size() “words” on the stack
+            asm_stream << "sub $" << var_type->size() << ",%sp\n";
+         }
+
+         // Now assign it a negative offset using alloc_addr
          std::string addr = alloc_addr(var_type, symbol_table);
          symbol_table->def_type(node->name.val, var_type);
          symbol_table->def_addr(node->name.val, addr);
+
+         // Store %ax into that address
          set_var(var_type, addr);
       }
       catch (const std::string& e) {
@@ -650,6 +741,24 @@ namespace anthill {
       }
       return std::make_shared<NonFuncType>(NonFuncType(BasicType::VOID));
    }
+
+   // std::shared_ptr<StaticType> Generator::visit_var_def_node(const std::shared_ptr<VarDefNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
+   //    try {
+   //       std::shared_ptr<NonFuncType> var_type = NonFuncType::parse_type(node->type->to_str());
+   //       if (var_type->to_str() == "void") {
+   //          error(file, node->name.line, "cannot define variable of type void");
+   //       }
+   //       visit(node->val, symbol_table);
+   //       std::string addr = alloc_addr(var_type, symbol_table);
+   //       symbol_table->def_type(node->name.val, var_type);
+   //       symbol_table->def_addr(node->name.val, addr);
+   //       set_var(var_type, addr);
+   //    }
+   //    catch (const std::string& e) {
+   //       error(file, node->line, e);
+   //    }
+   //    return std::make_shared<NonFuncType>(NonFuncType(BasicType::VOID));
+   // }
 
    std::shared_ptr<StaticType> Generator::visit_block_node(const std::shared_ptr<BlockNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
       std::shared_ptr<SymbolTable> block_symbol_table = std::make_shared<SymbolTable>(SymbolTable(symbol_table));
@@ -709,12 +818,103 @@ namespace anthill {
       return std::make_shared<NonFuncType>(NonFuncType(BasicType::VOID));
    }
 
+   // std::shared_ptr<StaticType> Generator::visit_func_def_node(
+   //     const std::shared_ptr<FuncDefNode>& node,
+   //     const std::shared_ptr<SymbolTable>& symbol_table
+   // ) {
+   //     current_func_name = node->name.val;
+
+   //     // --- 1. Set up a temporary stream for this function's body ---
+   //     std::stringstream func_stream;
+   //     std::streambuf* old_buf = asm_stream.rdbuf(func_stream.rdbuf());
+
+   //     // --- 2. Create function-local symbol table and reset frame size ---
+   //     std::shared_ptr<SymbolTable> func_symbol_table =
+   //         std::make_shared<SymbolTable>(SymbolTable(symbol_table));
+   //     func_symbol_table->is_func = true;
+
+   //     func_addr_counter = 0;  // total stack slots (words) used by this function
+
+   //     try {
+   //         // --- 3. Set up return type and argument types as before ---
+   //         std::shared_ptr<TypeNode> return_type_node =
+   //             std::static_pointer_cast<TypeNode>(node->return_type);
+   //         std::shared_ptr<NonFuncType> return_type =
+   //             std::make_shared<NonFuncType>(
+   //                 NonFuncType(str_to_basic_type(return_type_node->base_type.val),
+   //                             return_type_node->num_pointers));
+
+   //         std::vector<std::shared_ptr<NonFuncType>> arg_static_types;
+
+   //         // func_addr_counter counts stack usage for args + locals
+   //         for (int i = 0; i < node->arg_names.size(); i++) {
+   //             std::shared_ptr<TypeNode> type_node =
+   //                 std::static_pointer_cast<TypeNode>(node->arg_types[i]);
+   //             std::shared_ptr<NonFuncType> type =
+   //                 std::make_shared<NonFuncType>(
+   //                     NonFuncType(str_to_basic_type(type_node->base_type.val),
+   //                                 type_node->num_pointers));
+
+   //             // Allocate a stack slot for this argument in the function frame
+   //             std::string addr = alloc_addr(type, func_symbol_table); // e.g. "-2(%bp)"
+
+   //             arg_static_types.push_back(type);
+   //             func_symbol_table->def_type(node->arg_names[i].val, type);
+   //             func_symbol_table->def_addr(node->arg_names[i].val, addr);
+
+   //             // Move argument from register into its stack slot
+   //             asm_stream << "mov %" << arg_regs[i] << ",%ax\n";
+   //             set_var(type, addr);
+   //         }
+
+   //         std::shared_ptr<StaticType> func_type =
+   //             std::make_shared<FuncType>(FuncType(return_type, arg_static_types));
+
+   //         std::cout << node->name.to_str() << '\n';
+   //         symbol_table->def_type(node->name.val, func_type);
+   //         symbol_table->def_addr(node->name.val, node->name.val);
+   //     }
+   //     catch (const std::string& e) {
+   //         error(file, node->line, e);
+   //     }
+
+   //     // --- 4. Generate the function body into func_stream ---
+   //     visit(node->body, func_symbol_table);
+
+   //     // NOTE: We do NOT emit any "pop %bp" / "ret" in here anymore.
+   //     // The fallthrough epilogue will be added after we restore asm_stream below.
+
+   //     // --- 5. Restore the original asm_stream buffer ---
+   //     asm_stream.rdbuf(old_buf);
+
+   //     // --- 6. Now we know func_addr_counter; emit real function with prologue ---
+   //     asm_stream << node->name.val << ":\n";
+   //     asm_stream << "push %bp\nmov %sp,%bp\n";
+
+   //     if (func_addr_counter > 0) {
+   //         asm_stream << "sub $" << func_addr_counter << ",%sp\n";
+   //     }
+
+   //     // Emit the body that we buffered
+   //     asm_stream << func_stream.str();
+
+   //     // --- 7. Fallthrough epilogue ---
+   //     // For non-main functions, early returns already emit their own epilogue
+   //     // in visit_return_node for non-main, but we still keep a generic one here
+   //     // for the "no explicit return" case.
+   //     asm_stream << "pop %bp\n";
+   //     asm_stream << "ret\n";
+
+   //     return std::make_shared<NonFuncType>(NonFuncType(BasicType::VOID));
+   // }
+
+
    std::shared_ptr<StaticType> Generator::visit_func_def_node(const std::shared_ptr<FuncDefNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
       current_func_name = node->name.val;
       // asm_stream << "call main\nmov %ax,%dx\nmov $0nDD,%ax\nint $0\n";
       // }
       asm_stream << node->name.val << ":\n";
-      asm_stream << "push %bp\nmov %sp,%bp\n";
+      asm_stream << "push %bp\nmov %sp,%bp\nsub $729,%sp\n";
       std::shared_ptr<SymbolTable> func_symbol_table = std::make_shared<SymbolTable>(SymbolTable(symbol_table));
       func_symbol_table->is_func = true;
       try {
@@ -747,6 +947,7 @@ namespace anthill {
       }
       // std::cout << "dbg430" << '\n';
       visit(node->body, func_symbol_table);
+      asm_stream << "mov %bp,%sp\n";
       asm_stream << "pop %bp\n";
       asm_stream << "ret\n";
       return std::make_shared<NonFuncType>(NonFuncType(BasicType::VOID));
@@ -754,13 +955,15 @@ namespace anthill {
 
    std::shared_ptr<StaticType> Generator::visit_return_node(const std::shared_ptr<ReturnNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
       visit(node->body, symbol_table);
-      if(current_func_name == "main") {
-      asm_stream << "mov %ax,%dx\n";
-      asm_stream << "mov $0nDD,%ax\n";
-      asm_stream << "int $0\n";
-      } else {
-      asm_stream << "pop %bp\n";
-      asm_stream << "ret\n";
+      if (current_func_name == "main") {
+         asm_stream << "mov %ax,%dx\n";
+         asm_stream << "mov $0nDD,%ax\n";
+         asm_stream << "int $0\n";
+      }
+      else {
+         asm_stream << "mov %bp,%sp\n";
+         asm_stream << "pop %bp\n";
+         asm_stream << "ret\n";
       }
       return std::make_shared<NonFuncType>(NonFuncType(BasicType::VOID));
    }

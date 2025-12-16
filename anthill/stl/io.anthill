@@ -10,8 +10,8 @@ void puti(int i) {
 
 void puts(char* s) {
     int i = 0;
-    while(i < 10) {
+    while (*(s + i) != 0) {
         putc(*(s + i));
-        i = i + 1;
+        i+=2;
     }
 }

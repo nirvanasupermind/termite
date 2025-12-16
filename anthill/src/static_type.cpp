@@ -53,11 +53,11 @@ namespace anthill {
     }
 
     int NonFuncType::size() const {
-        if(basic_type == BasicType::CHAR && pointer_levels == 0) {
-            return 1;
-        } else {
+        // if(basic_type == BasicType::CHAR && pointer_levels == 0) {
+        //     return 1;
+        // } else {
             return 2;
-        }
+        // }
     }
 
     std::shared_ptr<NonFuncType> NonFuncType::parse_type(const std::string& str) {
