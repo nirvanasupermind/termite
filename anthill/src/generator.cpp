@@ -917,6 +917,7 @@ namespace anthill {
       asm_stream << "push %bp\nmov %sp,%bp\nsub $729,%sp\n";
       std::shared_ptr<SymbolTable> func_symbol_table = std::make_shared<SymbolTable>(SymbolTable(symbol_table));
       func_symbol_table->is_func = true;
+      
       try {
          // if(node->name.val == "main") {
          std::shared_ptr<TypeNode> return_type_node = std::static_pointer_cast<TypeNode>(node->return_type);

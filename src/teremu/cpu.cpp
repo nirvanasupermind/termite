@@ -568,7 +568,7 @@ namespace termite {
                         std::exit(regs[REG_DX].to_int32());
                     }
                     else if (code == -39) {
-                        std::cout << "dbg571 THE CODE -39 PATH HAS HIT" << '\n';
+                        // std::cout << "dbg571 THE CODE -39 PATH HAS HIT" << '\n';
                         std::cout << regs[REG_DX].to_int32();
                     }
                     else if (code == -38) {
@@ -604,14 +604,15 @@ namespace termite {
                     else if (code == -30) {
                         char in;
                         std::cin >> in;
-                        regs[REG_DX] = Word::from_int32(Tryte::from_int16(in).get_bct() + ((regs[REG_DX].get_hi_tryte().get_bct()) << 16));
+                        regs[REG_DX] = Word::from_int32(in);
+                        // regs[REG_DX] = Word::from_int32(Tryte::from_int16(in).get_bct() + ((regs[REG_DX].get_hi_tryte().get_bct()) << 16));
                     }
+                    // else if (code == -29) {
+                    //     char in;
+                    //     std::cin >> in;
+                    //     regs[REG_DX] = Word::from_int32(regs[REG_DX].get_lo_tryte().get_bct() + ((Tryte::from_int16(in).get_bct()) << 16));
+                    // }
                     else if (code == -29) {
-                        char in;
-                        std::cin >> in;
-                        regs[REG_DX] = Word::from_int32(regs[REG_DX].get_lo_tryte().get_bct() + ((Tryte::from_int16(in).get_bct()) << 16));
-                    }
-                    else if (code == -28) {
                         auto now = std::chrono::system_clock::now();
                         auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch());
                         long long shifted_count = ms.count() + 21523360;

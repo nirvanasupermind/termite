@@ -12,6 +12,15 @@ void puts(char* s) {
     int i = 0;
     while (*(s + i) != 0) {
         putc(*(s + i));
-        i+=2;
+        i++;
     }
+}
+
+
+char scanc() {
+    __asm__("mov $0,%dx\nmov $0nCC,%ax\nint $0\nmov %dx,%ax\nmov %bp,%sp\n");
+}
+
+int scani() {
+    __asm__("mov $0nD3,%ax\nint $0\nmov %dx,%ax\nmov %bp,%sp\n");
 }
