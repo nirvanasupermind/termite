@@ -27,7 +27,7 @@ namespace anthill {
         // The no_gen argument is just a cheap hack I needed for assignments and function definitions, it is ignored in everything except visit_ident_node
         std::shared_ptr<StaticType> visit(const std::shared_ptr<Node>& node, const std::shared_ptr<SymbolTable>& symbol_table, bool no_gen = false);
         std::shared_ptr<StaticType> visit_char_node(const std::shared_ptr<CharNode>& node, const std::shared_ptr<SymbolTable>& symbol_table);
-        std::shared_ptr<StaticType> visit_int_node(const std::shared_ptr<IntNode>& node, const std::shared_ptr<SymbolTable>& symbol_table);
+        std::shared_ptr<StaticType> visit_num_node(const std::shared_ptr<NumNode>& node, const std::shared_ptr<SymbolTable>& symbol_table);
         std::shared_ptr<StaticType> visit_str_node(const std::shared_ptr<StrNode>& node, const std::shared_ptr<SymbolTable>& symbol_table);
         std::shared_ptr<StaticType> visit_ident_node(const std::shared_ptr<IdentNode>& node, const std::shared_ptr<SymbolTable>& symbol_table, bool no_gen = false);
         std::shared_ptr<StaticType> visit_cast_node(const std::shared_ptr<CastNode>& node, const std::shared_ptr<SymbolTable>& symbol_table);

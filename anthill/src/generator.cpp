@@ -62,8 +62,8 @@ namespace anthill {
       switch (node->get_type()) {
       case NodeType::CHAR:
          return visit_char_node(std::static_pointer_cast<CharNode>(node), symbol_table);
-      case NodeType::INT:
-         return visit_int_node(std::static_pointer_cast<IntNode>(node), symbol_table);
+      case NodeType::NUM:
+         return visit_num_node(std::static_pointer_cast<NumNode>(node), symbol_table);
       case NodeType::STR:
          return visit_str_node(std::static_pointer_cast<StrNode>(node), symbol_table);
       case NodeType::IDENT:
@@ -114,9 +114,37 @@ namespace anthill {
       return std::make_shared<NonFuncType>(NonFuncType(BasicType::CHAR));
    }
 
-   std::shared_ptr<StaticType> Generator::visit_int_node(const std::shared_ptr<IntNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
-      asm_stream << "mov $" << std::stoi(node->tok.val) << ",%ax\n";
-      return std::make_shared<NonFuncType>(NonFuncType(BasicType::INT));
+   std::shared_ptr<StaticType> Generator::visit_num_node(const std::shared_ptr<NumNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
+      if (node->tok.val.find('.') != std::string::npos) {
+         // FLOATING POINT CODE
+         double double_val = std::stod(node->tok.val);
+         double significand = double_val;
+         int exponent = 0;
+         if (double_val != 0.0) {
+            if (double_val > 265720.0 || double_val < -265720.0) {
+               while (significand > 265721.0 || significand < -265721.0) {
+                  significand /= 3.0;
+                  exponent++;
+               }
+            }
+            else {
+               while (significand < 68574.0 && significand > -68574.0) {
+                  significand *= 3.0;
+                  exponent--;
+               }
+            }
+         }
+
+         int packed_float = exponent * 531441 + (int)significand;
+
+         asm_stream << "mov $" << std::stoi(node->tok.val) << ",%ax\n";
+         return std::make_shared<NonFuncType>(NonFuncType(BasicType::FLOAT));
+      }
+      else {
+         // INTEGER CODE
+         asm_stream << "mov $" << std::stoi(node->tok.val) << ",%ax\n";
+         return std::make_shared<NonFuncType>(NonFuncType(BasicType::INT));
+      }
    }
 
    std::shared_ptr<StaticType> Generator::visit_str_node(const std::shared_ptr<StrNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
@@ -917,7 +945,7 @@ namespace anthill {
       asm_stream << "push %bp\nmov %sp,%bp\nsub $729,%sp\n";
       std::shared_ptr<SymbolTable> func_symbol_table = std::make_shared<SymbolTable>(SymbolTable(symbol_table));
       func_symbol_table->is_func = true;
-      
+
       try {
          // if(node->name.val == "main") {
          std::shared_ptr<TypeNode> return_type_node = std::static_pointer_cast<TypeNode>(node->return_type);

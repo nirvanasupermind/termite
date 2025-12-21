@@ -18,19 +18,19 @@ namespace anthill {
         return NodeType::CHAR;
     }
 
-    IntNode::IntNode(int line, const Token& tok)
+    NumNode::NumNode(int line, const Token& tok)
         : tok(tok) {
         this->line = line;
 
     }
 
-    std::string IntNode::to_str() const {
+    std::string NumNode::to_str() const {
         return tok.to_str();
     }
 
 
-    NodeType IntNode::get_type() const {
-        return NodeType::INT;
+    NodeType NumNode::get_type() const {
+        return NodeType::NUM;
     }
 
     StrNode::StrNode(int line, const Token& tok)

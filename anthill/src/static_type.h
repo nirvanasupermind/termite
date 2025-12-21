@@ -7,7 +7,8 @@ namespace anthill {
     enum class BasicType {
         VOID,
         INT,
-        CHAR
+        CHAR,
+        FLOAT
     };
 
 

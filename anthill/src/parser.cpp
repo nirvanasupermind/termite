@@ -44,9 +44,9 @@ namespace anthill {
 
     std::shared_ptr<Node> Parser::basic_expr(const TokenType& terminator) {
         Token tok = current;
-        if (tok.type == TokenType::INTLIT) {
+        if (tok.type == TokenType::NUMLIT) {
             advance();
-            return std::make_shared<IntNode>(IntNode(tok.line, tok));
+            return std::make_shared<NumNode>(NumNode(tok.line, tok));
         }
         else if (tok.type == TokenType::CHARLIT) {
             advance();
@@ -108,14 +108,14 @@ namespace anthill {
         std::shared_ptr<Node> result = call_expr(terminator);
         while ((current.type == TokenType::INCR || current.type == TokenType::DECR) && current.type != TokenType::SEMI && current.type != terminator) {
             if (current.type == TokenType::INCR) {
-                std::shared_ptr<Node> int_node = std::make_shared<IntNode>(IntNode(result->line, Token(result->line, TokenType::INT, "1")));
+                std::shared_ptr<Node> int_node = std::make_shared<NumNode>(NumNode(result->line, Token(result->line, TokenType::INT, "1")));
                 Token plus = Token(result->line, TokenType::PLUS, "+");
                 std::shared_ptr<Node> bin_op_node = std::make_shared<BinOpNode>(BinOpNode(result->line, result, plus, int_node));
                 Token assign = Token(result->line, TokenType::ASSIGN, "=");
                 result = std::make_shared<AssignNode>(AssignNode(result->line, result, assign, bin_op_node));
             }
             else if (current.type == TokenType::DECR) {
-                std::shared_ptr<Node> int_node = std::make_shared<IntNode>(IntNode(result->line, Token(result->line, TokenType::INT, "1")));
+                std::shared_ptr<Node> int_node = std::make_shared<NumNode>(NumNode(result->line, Token(result->line, TokenType::INT, "1")));
                 Token minus = Token(result->line, TokenType::MINUS, "-");
                 std::shared_ptr<Node> bin_op_node = std::make_shared<BinOpNode>(BinOpNode(result->line, result, minus, int_node));
                 Token assign = Token(result->line, TokenType::ASSIGN, "=");

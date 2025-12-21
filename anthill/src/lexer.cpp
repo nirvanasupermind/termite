@@ -399,12 +399,19 @@ namespace anthill {
         }
         else {
             advance();
-            while (current && std::isdigit(current)) {
+            int decimal_point_count = 0;
+            while (current && (std::isdigit(current) || current == '.')) {
+                if(current == '.') {
+                    decimal_point_count++;
+                    if(decimal_point_count > 1) {
+                        error(file, line, std::string("multiple decimal points in a numeric literal"));
+                    }
+                }
                 number_str += current;
                 advance();
             }
         }
-        return Token(line, TokenType::INTLIT, number_str);
+        return Token(line, TokenType::NUMLIT, number_str);
     }
 
     char Lexer::generate_ch() {

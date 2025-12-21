@@ -10,6 +10,8 @@ namespace anthill {
             return BasicType::VOID;
         } else if(str == "int") {
             return BasicType::INT;
+        } else if(str == "float") {
+            return BasicType::FLOAT;
         } else {
             return BasicType::CHAR;
         }
@@ -31,6 +33,9 @@ namespace anthill {
         }
         else if (basic_type == BasicType::INT) {
             result = "int";
+        }
+        else if (basic_type == BasicType::FLOAT) {
+            result = "float";
         }
 
         for (int i = 0; i < pointer_levels; i++) {
@@ -56,8 +61,10 @@ namespace anthill {
         // if(basic_type == BasicType::CHAR && pointer_levels == 0) {
         //     return 1;
         // } else {
-            return 2;
+            // return 2;
         // }
+    
+        return 2;
     }
 
     std::shared_ptr<NonFuncType> NonFuncType::parse_type(const std::string& str) {

@@ -9,7 +9,7 @@
 namespace anthill {
     enum class NodeType {
         CHAR,
-        INT,
+        NUM,
         STR,
         IDENT,
         CAST,
@@ -47,10 +47,10 @@ namespace anthill {
         NodeType get_type() const;
     };
 
-    class IntNode : public Node {
+    class NumNode : public Node {
     public:
         Token tok;
-        IntNode(int line, const Token& tok);
+        NumNode(int line, const Token& tok);
         std::string to_str() const;
         NodeType get_type() const;
     };

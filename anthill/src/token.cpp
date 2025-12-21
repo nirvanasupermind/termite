@@ -212,7 +212,7 @@ namespace anthill {
             str += "INT";
             break;
         }
-        case TokenType::INTLIT: {
+        case TokenType::NUMLIT: {
             str += "INTLIT";
             break;
         }

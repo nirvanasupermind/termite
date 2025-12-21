@@ -16,7 +16,14 @@ namespace termite {
     const Word Word::ONE(0x55555556);
     // BCT of 2
     const Word Word::TWO(0x55555558);
-
+    // BCT of 4782969 (minimum significand for the 32-trit floating-point numbers in terfloat.h)
+    const Word Word::MIN_FLOAT_SIG(0x65555555);
+    // BCT of -4782969
+    const Word Word::NEG_MIN_FLOAT_SIG(0x45555555);
+    // BCT of 14348907 (maximum significand for the 32-trit floating-point numbers in terfloat.h)
+    const Word Word::MAX_FLOAT_SIG(0x95555555);
+    // BCT of -14348907
+    const Word Word::NEG_MAX_FLOAT_SIG(0x15555555);
     // BCT of 0
     Word::Word()
         : bct(0x55555555) {
