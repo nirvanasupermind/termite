@@ -11,6 +11,9 @@
 #include "terfloat.h"
 
 namespace termite {
+    const TerFloat TerFloat::HALF(Word(1789569706), Word(1431655764));
+    const TerFloat TerFloat::THREE_HALVES(Word(1789569706), Word(1431655765));
+
     TerFloat::TerFloat()
         : significand(Word::ZERO), exponent(Word::ZERO) {        
     }
@@ -53,6 +56,8 @@ namespace termite {
        return TerFloat(significand / other.significand, exponent - other.exponent);
     }
     
+    
+
     TerFloat TerFloat::operator-(const TerFloat& other) const {
         return operator+(-other);
     }
@@ -80,6 +85,15 @@ namespace termite {
                 exponent = exponent + Word::ONE;
             }
         }
+    }
+
+
+    TerFloat TerFloat::sqrt() const {
+        TerFloat result(significand, exponent / Word::TWO);
+        for(int i = 0; i < 5; i++) {
+            result = result*(TerFloat::THREE_HALVES - operator*(TerFloat::HALF) * result * result);
+        }
+        return result;
     }
 
     TerFloat TerFloat::operator-() const {
