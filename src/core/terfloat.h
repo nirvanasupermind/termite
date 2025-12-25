@@ -29,6 +29,7 @@ namespace termite {
         TerFloat operator+(const TerFloat& other) const;
         TerFloat operator-(const TerFloat& other) const;
         TerFloat operator*(const TerFloat& other) const;
+        TerFloat rec() const;
         TerFloat operator/(const TerFloat& other) const;
         TerFloat sqrt() const;
 

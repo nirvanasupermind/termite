@@ -52,10 +52,6 @@ namespace termite {
     }
     
         
-    TerFloat TerFloat::operator/(const TerFloat& other) const {
-       return TerFloat(significand / other.significand, exponent - other.exponent);
-    }
-    
     
 
     TerFloat TerFloat::operator-(const TerFloat& other) const {
@@ -71,7 +67,7 @@ namespace termite {
                 significand = significand.shl_int8(1);
                 exponent = exponent - Word::ONE;
             }
-            while(significand > Word::MAX_FLOAT_SIG) {
+            while(significand >= Word::MAX_FLOAT_SIG) {
                 significand = significand.shr_int8(1);
                 exponent = exponent + Word::ONE;
             }
@@ -80,13 +76,32 @@ namespace termite {
                 significand = significand.shl_int8(1);
                 exponent = exponent - Word::ONE;
             }
-            while(significand < Word::NEG_MAX_FLOAT_SIG) {
+            while(significand <= Word::NEG_MAX_FLOAT_SIG) {
                 significand = significand.shr_int8(1);
                 exponent = exponent + Word::ONE;
             }
         }
     }
 
+
+    TerFloat TerFloat::rec() const {
+        TerFloat result(-(significand - Word::MIN_FLOAT_SIG) + Word::MAX_FLOAT_SIG, Word::from_int32(-1) - exponent);
+        for(int i = 0; i < 4; i++) {
+            result = result * (TerFloat::from_double(2.0) - operator*(result));
+        }
+
+        // result = result + result * (TerFloat::from_double(1.0) - operator*(result));
+        // result = result + result * (TerFloat::from_double(1.0) - operator*(result));
+
+        // for(int i = 0; i < 5; i++) {
+        //     result = result*(TerFloat::THREE_HALVES - operator*(TerFloat::HALF) * result * result);
+        // }
+        return result;
+    }
+
+    TerFloat TerFloat::operator/(const TerFloat& other) const {
+        return operator*(other.rec());
+    }
 
     TerFloat TerFloat::sqrt() const {
         TerFloat result(significand, exponent / Word::TWO);
