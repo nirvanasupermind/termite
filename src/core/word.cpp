@@ -204,36 +204,26 @@ namespace termite {
         return result;
     }
 
-    std::pair<Word, Word> Word::mul32(const Word& other) const {
-        Word low, high;
+    static inline std::pair<int32_t,int32_t> mul_wide_int32(int32_t a, int32_t b) {
+    int64_t p = (int64_t)a * (int64_t)b;
+    // Split in base 3^16 since one Word = 16 trits.
+    const int64_t BASE = 43046721LL; // 3^16
+    int64_t lo = p % BASE;
+    int64_t hi = (p - lo) / BASE;
 
-        for (int i = 0; i < TRITS_PER_WORD; i++) {
-            Word shifted = (*this) << Word::from_int32(i);
+    // Make remainder symmetric like your balanced representation prefers:
+    // lo should be in roughly [-BASE/2, BASE/2] if you want, but simplest:
+    // just keep lo in [-BASE+1, BASE-1] and ensure consistent reconstruction.
+    return {(int32_t)lo, (int32_t)hi};
+}
 
-            switch (other.get_bct_trit(i)) {
-            case 0b00: {
-                // -1 in balanced ternary 
-                std::pair<Word, uint8_t> sbb_result = low.sub_with_borrow(shifted);                
-                low = sbb_result.first;
-                high = Word::from_int32(sbb_result.second - 1);
-                break;
-            }
-            case 0b01: //  0 in balanced ternary (no effect)
-                break;
-            case 0b10: {
-                // 1 in balanced ternary 
-                std::pair<Word, uint8_t> adc_result = low.add_with_carry(shifted);                
-                low = adc_result.first;
-                high = Word::from_int32(adc_result.second + 1);
-                break;
-            }
-            default:
-                break;
-            }
-        }
+std::pair<Word, Word> Word::mul32_ref(const Word& other) const {
+    int32_t a = this->to_int32();
+    int32_t b = other.to_int32();
+    auto [lo, hi] = mul_wide_int32(a, b);
+    return { Word::from_int32(lo), Word::from_int32(hi) };
+}
 
-        return std::make_pair(low, high);
-    }
 
     // std::pair<Word, Word> Word::mul32(const Word& other) const {
     // Tryte a = get_lo_tryte();

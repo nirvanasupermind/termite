@@ -46,10 +46,36 @@ namespace termite {
             return TerFloat(x.significand + y.significand.shr_int8(x.exponent.to_int32() - y.exponent.to_int32()), x.exponent);
         }
     }
-    
+
     TerFloat TerFloat::operator*(const TerFloat& other) const {
-       return TerFloat(significand.shr_int8(7) *other.significand.shr_int8(7), exponent + other.exponent);
-    }
+    Word a = significand.shr_int8(7);
+    Word b = other.significand.shr_int8(7);
+
+    auto [lo, hi] = a.mul32_ref(b); // (lo + hi*3^16)
+
+    // After shrinking both by 3^7, product is scaled by 3^14 overall,
+    // which matches what we want (since original wants /3^14).
+    // We now need a 16-trit significand. The "best" 16 trits depends on magnitude:
+    // Usually you'd take the HIGH word for stability, but normalization expects
+    // sig in [3^14, 3^15), so you typically want something around that.
+    //
+    // Simple first cut: take hi as significand and adjust exponent accordingly.
+    // If you take hi, that effectively divides by 3^16 relative to lo+hi*3^16.
+    // So you must compensate exponent by +16 trits => +16 in exponent (base-3 exponent units).
+    //
+    // But note: your exponent counts powers of 3^1, not 3^16.
+    // Shifting by 16 trits equals multiplying/dividing by 3^16.
+    //
+    // If we choose hi, exp += 16.
+    Word sig = hi;
+    Word exp = exponent + other.exponent + Word::from_int32(16);
+
+    return TerFloat(sig, exp);
+}
+
+    // TerFloat TerFloat::operator*(const TerFloat& other) const {
+    //    return TerFloat(significand.shr_int8(7) *other.significand.shr_int8(7), exponent + other.exponent);
+    // }
     
         
     
