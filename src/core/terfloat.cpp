@@ -47,31 +47,37 @@ namespace termite {
         }
     }
 
-    TerFloat TerFloat::operator*(const TerFloat& other) const {
-    Word a = significand.shr_int8(7);
-    Word b = other.significand.shr_int8(7);
+  TerFloat TerFloat::operator*(const TerFloat& other) const {
+    // scale down each significand by 3^7 so total scaling is /3^14
+    int64_t a = (int64_t)significand.shr_int8(7).to_int32();
+    int64_t b = (int64_t)other.significand.shr_int8(7).to_int32();
+    int64_t p = a * b;
 
-    auto [lo, hi] = a.mul32_ref(b); // (lo + hi*3^16)
+    int32_t exp = exponent.to_int32() + other.exponent.to_int32();
 
-    // After shrinking both by 3^7, product is scaled by 3^14 overall,
-    // which matches what we want (since original wants /3^14).
-    // We now need a 16-trit significand. The "best" 16 trits depends on magnitude:
-    // Usually you'd take the HIGH word for stability, but normalization expects
-    // sig in [3^14, 3^15), so you typically want something around that.
-    //
-    // Simple first cut: take hi as significand and adjust exponent accordingly.
-    // If you take hi, that effectively divides by 3^16 relative to lo+hi*3^16.
-    // So you must compensate exponent by +16 trits => +16 in exponent (base-3 exponent units).
-    //
-    // But note: your exponent counts powers of 3^1, not 3^16.
-    // Shifting by 16 trits equals multiplying/dividing by 3^16.
-    //
-    // If we choose hi, exp += 16.
-    Word sig = hi;
-    Word exp = exponent + other.exponent + Word::from_int32(16);
+    if (p == 0) {
+        return TerFloat(Word::ZERO, Word::ZERO);
+    }
 
-    return TerFloat(sig, exp);
+    // target range: [MIN_FLOAT_SIG, MAX_FLOAT_SIG) in magnitude
+    const int64_t MIN = 4782969LL;   // 3^14
+    const int64_t MAX = 14348907LL;  // 3^15
+
+    // normalize p into 16-trit significand window by shifting base-3
+    while (std::llabs(p) < MIN) {
+        p *= 3;
+        exp -= 1;
+    }
+    while (std::llabs(p) >= MAX) {
+        // optional rounding could go here; for now truncation is fine
+        p /= 3;
+        exp += 1;
+    }
+
+    return TerFloat(Word::from_int32((int32_t)p), Word::from_int32(exp));
 }
+
+
 
     // TerFloat TerFloat::operator*(const TerFloat& other) const {
     //    return TerFloat(significand.shr_int8(7) *other.significand.shr_int8(7), exponent + other.exponent);
