@@ -9,9 +9,6 @@
 #include "word.h"
 
 namespace termite {
-    // Produces q ≈ (a / b) in QK (scaled by 3^K) without overflowing Word width.
-    // Assumes a,b are Word (balanced ternary), b != 0.
-    Word div_fixed_QK(Word a, Word b, int K);
     class TerFloat {
     // protected:
     public:
@@ -31,7 +28,11 @@ namespace termite {
         TerFloat operator*(const TerFloat& other) const;
         TerFloat rec() const;
         TerFloat operator/(const TerFloat& other) const;
+        TerFloat operator%(const TerFloat& other) const;
         TerFloat sqrt() const;
+        double to_double() const;
+        TerFloat floor() const;
+        TerFloat sin() const;
 
         std::string to_str() const;
     };

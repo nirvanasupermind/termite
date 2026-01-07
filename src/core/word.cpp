@@ -217,28 +217,28 @@ namespace termite {
     return {(int32_t)lo, (int32_t)hi};
 }
 
-std::pair<Word, Word> Word::mul32_ref(const Word& other) const {
-    int32_t a = this->to_int32();
-    int32_t b = other.to_int32();
-    auto [lo, hi] = mul_wide_int32(a, b);
-    return { Word::from_int32(lo), Word::from_int32(hi) };
-}
+// std::pair<Word, Word> Word::mul32_ref(const Word& other) const {
+//     int32_t a = this->to_int32();
+//     int32_t b = other.to_int32();
+//     auto [lo, hi] = mul_wide_int32(a, b);
+//     return { Word::from_int32(lo), Word::from_int32(hi) };
+// }
 
 
-    // std::pair<Word, Word> Word::mul32(const Word& other) const {
-    // Tryte a = get_lo_tryte();
-    // Tryte b = get_hi_tryte();
-    // Tryte c = other.get_lo_tryte();
-    // Tryte d = other.get_hi_tryte();
-    // Word t1 = Word(a, Tryte()) * Word(c, Tryte()); 
-    // Word t2 = (Word(a, Tryte()) * Word(d, Tryte())).shl_int8(8);
-    // Word t3 = (Word(b, Tryte()) * Word(c, Tryte())).shl_int8(8);
-    // Word t4 = Word(b, Tryte()) * Word(d, Tryte());
+    std::pair<Word, Word> Word::mul32(const Word& other) const {
+    Tryte a = get_lo_tryte();
+    Tryte b = get_hi_tryte();
+    Tryte c = other.get_lo_tryte();
+    Tryte d = other.get_hi_tryte();
+    Word t1 = Word(a, Tryte()) * Word(c, Tryte()); 
+    Word t2 = (Word(a, Tryte()) * Word(d, Tryte())).shl_int8(8);
+    Word t3 = (Word(b, Tryte()) * Word(c, Tryte())).shl_int8(8);
+    Word t4 = Word(b, Tryte()) * Word(d, Tryte());
     // std::cout << "!, " << b.to_int16() << '\n';
     // std::cout << "!, " << other.to_int32() << '\n';
-    // std::cout << t4.to_int32() << '\n';
-    // return {t1 + t2 + t3, t4};
-    // }
+    std::cout << t4.to_int32() << '\n';
+    return {t1 + t2 + t3, t4};
+    }
 
 // std::pair<Word, Word> Word::mul32(const Word& other) const {
 //         // Extract 8-bit parts of each 16-bit operand
