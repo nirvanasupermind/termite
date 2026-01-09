@@ -24,9 +24,11 @@ namespace termite {
     }
 
     TerFloat TerFloat::from_double(double n) {
-        if (n < 0) {
+        if (n < 0.0) {
             return -TerFloat::from_double(-n);
         }
+        if (n == 0.0) return TerFloat(Word::ZERO, Word::ZERO);
+
         double log3n = std::log(n) / std::log(3);
         double exponent = std::floor(log3n);
         double significand = std::pow(3, (log3n - exponent) + 14);
@@ -51,13 +53,8 @@ namespace termite {
 
     TerFloat TerFloat::operator*(const TerFloat& other) const {
         Word result_sig = significand.mul32(other.significand).second;
-        // std::cout << (exponent + other.exponent).to_int32() << '\n';
-        // std::cout << result_sig.to_int32() << '\n';
         return TerFloat(result_sig, exponent + other.exponent + Word::TWO);
     }
-
-
-
 
 
 
@@ -114,7 +111,8 @@ namespace termite {
 
 
     TerFloat TerFloat::operator%(const TerFloat& other) const {
-        return operator-(operator/(other).floor()*other);
+        return TerFloat::from_double(std::fmod(to_double(), other.to_double()));
+        // return operator-(operator/(other).floor()*other);
     }
 
     TerFloat TerFloat::sqrt() const {
@@ -140,10 +138,15 @@ namespace termite {
     }
 
     TerFloat TerFloat::sin() const {
-        TerFloat t1 = operator%(TerFloat::from_double(6.283185307179586));
-        TerFloat t2 = t1 * t1 * t1 * TerFloat::from_double(1.0 / 6.0);
-        TerFloat t3 = t1 * t1 * t1 * t1 * t1 * TerFloat::from_double(1.0 / 120.0);
-        return t1 + t2 + t3;
+        // Taylor serise iteration
+        TerFloat x = operator%(TerFloat::from_double(6.283185307179586)); // reduce to 2π
+        TerFloat x2 = x * x;
+
+        TerFloat t1 = x;
+        TerFloat t2 = x * x2 * TerFloat::from_double(1.0 / 6.0);      // x^3/6
+        TerFloat t3 = x * x2 * x2 * TerFloat::from_double(1.0 / 120); // x^5/120
+        TerFloat t4 = x * x2 * x2 * x2 * TerFloat::from_double(1.0 / 5040.0); // x^7/5040
+        return t1 - t2 + t3 - t4;
     }
 
 

@@ -297,6 +297,15 @@ namespace termite {
 
 
     Word Word::operator/(const Word& other) const {
+        if(operator<(Word::ZERO)) {
+            if(other < Word::ZERO) {
+            return operator-().operator/(-other);
+            } else {
+                return -(operator-() / other);
+            }
+        } else if(other < Word::ZERO) {
+            return -operator/(-other);
+        } 
         Word rem(bct);
         Word quo;
         while(rem.to_int32() >= other.to_int32()) {
