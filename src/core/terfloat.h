@@ -33,7 +33,8 @@ namespace termite {
         double to_double() const;
         TerFloat floor() const;
         TerFloat sin() const;
-
+        TerFloat cos() const;
+        TerFloat tan() const;
         std::string to_str() const;
     };
 } // namespace termite

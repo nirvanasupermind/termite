@@ -144,11 +144,19 @@ namespace termite {
 
         TerFloat t1 = x;
         TerFloat t2 = x * x2 * TerFloat::from_double(1.0 / 6.0);      // x^3/6
-        TerFloat t3 = x * x2 * x2 * TerFloat::from_double(1.0 / 120); // x^5/120
+        TerFloat t3 = x * x2 * x2 * TerFloat::from_double(1.0 / 120.0); // x^5/120
         TerFloat t4 = x * x2 * x2 * x2 * TerFloat::from_double(1.0 / 5040.0); // x^7/5040
         return t1 - t2 + t3 - t4;
     }
 
+    TerFloat TerFloat::cos() const {
+        return (TerFloat::from_double(1.5707963267948966) - *this).sin();
+    }
+
+
+    TerFloat TerFloat::tan() const {
+        return sin() / cos();
+    }
 
     // TerFloat TerFloat::sqrt() const {
     //     // std::cout << exponent.to_int32() << '\n';
