@@ -35,6 +35,7 @@ namespace termite {
         TerFloat sin() const;
         TerFloat cos() const;
         TerFloat tan() const;
+        TerFloat exp() const;
         std::string to_str() const;
     };
 } // namespace termite

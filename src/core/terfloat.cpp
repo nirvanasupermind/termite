@@ -148,6 +148,30 @@ namespace termite {
         TerFloat t4 = x * x2 * x2 * x2 * TerFloat::from_double(1.0 / 5040.0); // x^7/5040
         return t1 - t2 + t3 - t4;
     }
+    
+    TerFloat TerFloat::exp() const {
+        if(to_double() <= 0.0) {
+            return operator+(TerFloat::from_double(1.0)).exp() * TerFloat::from_double(0.36787944117144233);
+        }
+        if(to_double() >= 1.0) {
+            return operator-(TerFloat::from_double(1.0)).exp() * TerFloat::from_double(2.718281828459045);
+        }
+        // Taylor serises iteration
+        TerFloat x = *this;
+        TerFloat x2 = x * x;
+
+        TerFloat t0 = TerFloat::from_double(1.0);
+        TerFloat t1 = x;
+        TerFloat t2 = x2 * TerFloat::from_double(1.0 / 2.0); // x^2/2
+        TerFloat t3 = x * x2 * TerFloat::from_double(1.0 / 6.0); // x^3/6
+        TerFloat t4 = x2 * x2 * TerFloat::from_double(1.0 / 24.0); // x^4/24
+        TerFloat t5 = x * x2 * x2 * TerFloat::from_double(1.0 / 120.0); // x^5/120
+        TerFloat t6 = x2 * x2 * x2 * TerFloat::from_double(1.0 / 720.0); // x^5/120
+
+
+        return t0 + t1 + t2 + t3 + t4 + t5 + t6;
+    }
+    
 
     TerFloat TerFloat::cos() const {
         return (TerFloat::from_double(1.5707963267948966) - *this).sin();
