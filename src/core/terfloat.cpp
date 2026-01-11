@@ -150,11 +150,12 @@ namespace termite {
     }
     
     TerFloat TerFloat::exp() const {
-        if(to_double() <= 0.0) {
-            return operator+(TerFloat::from_double(1.0)).exp() * TerFloat::from_double(0.36787944117144233);
+        if(to_double() < 0.0) {
+            return operator-().exp().rec();
         }
         if(to_double() >= 1.0) {
-            return operator-(TerFloat::from_double(1.0)).exp() * TerFloat::from_double(2.718281828459045);
+            TerFloat temp = operator/(TerFloat::from_double(2.0)).exp();
+            return temp * temp;
         }
         // Taylor serises iteration
         TerFloat x = *this;
@@ -166,10 +167,11 @@ namespace termite {
         TerFloat t3 = x * x2 * TerFloat::from_double(1.0 / 6.0); // x^3/6
         TerFloat t4 = x2 * x2 * TerFloat::from_double(1.0 / 24.0); // x^4/24
         TerFloat t5 = x * x2 * x2 * TerFloat::from_double(1.0 / 120.0); // x^5/120
-        TerFloat t6 = x2 * x2 * x2 * TerFloat::from_double(1.0 / 720.0); // x^5/120
+        TerFloat t6 = x2 * x2 * x2 * TerFloat::from_double(1.0 / 720.0); // x^6/720
+        TerFloat t7 = x2 * x2 * x2 * TerFloat::from_double(1.0 / 5040.0); // x^7/5040
 
 
-        return t0 + t1 + t2 + t3 + t4 + t5 + t6;
+        return t0 + t1 + t2 + t3 + t4 + t5 + t6 + t7;
     }
     
 
