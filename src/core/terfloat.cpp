@@ -168,12 +168,46 @@ namespace termite {
         TerFloat t4 = x2 * x2 * TerFloat::from_double(1.0 / 24.0); // x^4/24
         TerFloat t5 = x * x2 * x2 * TerFloat::from_double(1.0 / 120.0); // x^5/120
         TerFloat t6 = x2 * x2 * x2 * TerFloat::from_double(1.0 / 720.0); // x^6/720
-        TerFloat t7 = x2 * x2 * x2 * TerFloat::from_double(1.0 / 5040.0); // x^7/5040
+        TerFloat t7 = x * x2 * x2 * x2 * TerFloat::from_double(1.0 / 5040.0); // x^7/5040
 
 
         return t0 + t1 + t2 + t3 + t4 + t5 + t6 + t7;
     }
     
+
+
+    TerFloat TerFloat::log() const {
+        TerFloat x(significand, Word::ZERO);
+        TerFloat x2 = x * x;
+        // Coefficients computed by me using numpy polynomial regression because taylor series is too slow
+        TerFloat t0 = TerFloat::from_double(-2.15992321e+00);
+        TerFloat t1 = x * TerFloat::from_double(4.53754024e+00);
+        TerFloat t2 = x2 * TerFloat::from_double(-4.42298621e+00);
+        TerFloat t3 = x * x2 * TerFloat::from_double(3.22668318e+00);
+        TerFloat t4 = x2 * x2 * TerFloat::from_double(-1.62646402e+00);
+        TerFloat t5 = x * x2 * x2 * TerFloat::from_double(5.50260978e-01);
+        TerFloat t6 = x2 * x2 * x2 * TerFloat::from_double(-1.19227045e-01);
+        TerFloat t7 = x * x2 * x2 * x2 * TerFloat::from_double(1.49458088e-02);
+        TerFloat t8 = x2 * x2 * x2 * x2 * TerFloat::from_double(-8.24182119e-04);
+        // TerFloat t0 = TerFloat::from_double(-8.24182119e-04);
+        // TerFloat t1 = x * TerFloat::from_double(1.49458088e-02);
+        // TerFloat t2 = x2 * TerFloat::from_double(-1.19227045e-01);
+        // TerFloat t3 = x * x2 * TerFloat::from_double(5.50260978e-01);
+        // TerFloat t4 = x2 * x2 * TerFloat::from_double(-1.62646402e+00);
+        // TerFloat t5 = x * x2 * x2 * TerFloat::from_double(3.22668318e+00); // x^6/720
+        // TerFloat t6 = x2 * x2 * x2 * TerFloat::from_double(-4.42298621e+00);
+        // TerFloat t7 = x * x2 * x2 * x2 * TerFloat::from_double(4.53754024e+00);
+        // TerFloat t8 = x2 * x2 * x2 * x2 * TerFloat::from_double(-2.15992321e+00);
+        return t0 + t1 + t2 + t3 + t4 + t5 + t6 + t7 + t8;
+    }
+
+        TerFloat TerFloat::abs() const {
+        if(significand < Word::ZERO) {
+            return operator-();
+        } else {
+            return *this;
+        }
+    }
 
     TerFloat TerFloat::cos() const {
         return (TerFloat::from_double(1.5707963267948966) - *this).sin();
@@ -198,7 +232,23 @@ namespace termite {
     }
 
     std::string TerFloat::to_str() const {
-        return std::to_string(((double)significand.to_int32()) / 4782969.0) + "*3^" + std::to_string(exponent.to_int32());
+        if(significand == Word::ZERO) {
+            return "0.000000";
+        }
+        if(!std::isinf(to_double()) && to_double() != 0) {
+            return std::to_string(to_double());
+        } else {
+            double log10_val = ((double)(exponent.to_int32()) * std::log10(3)) + std::log10((double)(significand.to_int32()) / 4782969.0);
+            double decimal_exp = std::floor(log10_val);
+            double decimal_sig = std::pow(10.0, log10_val - decimal_exp);
+            if(decimal_exp > 0) {
+            return std::to_string(decimal_sig) + "e+" + std::to_string((int)decimal_exp);
+            } else {
+                return std::to_string(decimal_sig) + "e-" + std::to_string((int)(-decimal_exp));
+            }
+        }  
+        
+        // return std::to_string(((double)significand.to_int32()) / 4782969.0) + "*3^" + std::to_string(exponent.to_int32());
     }
 
 }

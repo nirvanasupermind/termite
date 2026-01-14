@@ -236,7 +236,6 @@ namespace termite {
     Word t4 = Word(b, Tryte()) * Word(d, Tryte());
     // std::cout << "!, " << b.to_int16() << '\n';
     // std::cout << "!, " << other.to_int32() << '\n';
-    std::cout << t4.to_int32() << '\n';
     return {t1 + t2 + t3, t4};
     }
 

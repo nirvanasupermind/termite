@@ -4,12 +4,14 @@
 #include <cstdint>
 #include "../core/tryte.h"
 #include "../core/word.h"
+#include "../core/terfloat.h"
 
 namespace termite {
     class Mem {
     public:
         static constexpr uint32_t MAX_MEM = 43046721;
         std::vector<Tryte> data;
+
         void initialize();
         // Read 1 tryte with uint32_t address
         Tryte get_tryte(uint32_t addr) const;
@@ -24,6 +26,7 @@ namespace termite {
     public:
         Word regs[9];
         Word flags;
+        std::stack<TerFloat> st;
         // register indices
         static constexpr int32_t REG_AX = 0;
         static constexpr int32_t REG_BX = 1;
@@ -66,6 +69,15 @@ namespace termite {
         static constexpr int32_t INS_JNC = -12;
         static constexpr int32_t INS_INT = -11;
         static constexpr int32_t INS_XCHG = -10;
+        static constexpr int32_t INS_FLD = -9;
+        static constexpr int32_t INS_FST = -8;
+        static constexpr int32_t INS_FSTP = -7;
+        static constexpr int32_t INS_FADD = -6;
+        static constexpr int32_t INS_FSUB = -5;
+        static constexpr int32_t INS_FMUL = -4;
+        static constexpr int32_t INS_FDIV = -3;
+        static constexpr int32_t INS_FSQRT = -2;
+        
         void reset(Mem& memory);
         void set_sign_flag(Word& cycles, Mem& memory, const Word& result);
         Tryte fetch_tryte(Word& cycles, Mem& memory);

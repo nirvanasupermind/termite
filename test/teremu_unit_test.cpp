@@ -231,6 +231,8 @@ int main(int argc, char** argv) {
 {"ACD0 0000 DDDD DDCA 0000 0000 DDC3 D000 0000 0000 0000 0004", "0", "jnc_to_exit_true"},
 // jnc_to_exit_false
 {"DDC3 D000 0000 0000 4444 4444 DDC2 D000 0000 0000 0000 0001 CCC3 C200 0000 0000 0000 0000 ACD0 0000 DDDD DDAA 0000 0000 DDC3 D000 0000 0000 0000 0004", "4", "jnc_to_exit_false"}
+  // fsqrt
+        {"DDC3 D000 0000 0000 0000 00DC D1C3 D000 0000 0000 0000 001D", "-40", "fsqrt"},
 };
 
     int num_passed = 0;

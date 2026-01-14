@@ -640,6 +640,83 @@ namespace termite {
                 
                 break;   
             }
+            case INS_FLD: {
+                Word src_mode = ins.get_trit_range(10, 11);
+                Word src_reg = ins.get_trit_range(8, 9);
+                Word addr = get_addr_mode(cycles, memory, src_mode, src_reg, imm2);
+                st.push(TerFloat(memory.get_word(addr), memory.get_word(addr+Word::TWO)));                
+                break;   
+            }
+                case INS_FST: {
+                                     
+                TerFloat top = st.top();
+                
+                    Word dest_mode = ins.get_trit_range(10, 11);
+                Word dest_reg = ins.get_trit_range(8, 9);
+                Word addr = get_addr_mode(cycles, memory, dest_mode, dest_reg, imm2);
+
+                memory.set_word(addr, top.significand);
+                memory.set_word(addr + Word::TWO, top.exponent);
+                // std::cout << "dbg143 " << regs[REG_SP].to_int32() << '\n';
+                break;   
+            }
+                            case INS_FSTP: {
+                                     
+                TerFloat top = st.top();
+                st.pop();
+                
+                    Word dest_mode = ins.get_trit_range(10, 11);
+                Word dest_reg = ins.get_trit_range(8, 9);
+                Word addr = get_addr_mode(cycles, memory, dest_mode, dest_reg, imm2);
+
+                memory.set_word(addr, top.significand);
+                memory.set_word(addr + Word::TWO, top.exponent);
+                // std::cout << "dbg143 " << regs[REG_SP].to_int32() << '\n';
+                break;   
+            }
+            case INS_FADD: {
+                TerFloat a = st.top();
+                st.pop();
+                TerFloat b = st.top();
+                st.pop();
+                TerFloat result = a + b;
+                st.push(result);   
+                break;   
+            }
+            case INS_FSUB: {
+                TerFloat a = st.top();
+                st.pop();
+                TerFloat b = st.top();
+                st.pop();
+                TerFloat result = a - b;
+                st.push(result);   
+                break;   
+            }
+            case INS_FMUL: {
+                TerFloat a = st.top();
+                st.pop();
+                TerFloat b = st.top();
+                st.pop();
+                TerFloat result = a * b;
+                st.push(result);   
+                break;   
+            }
+            case INS_FDIV: {
+                TerFloat a = st.top();
+                st.pop();
+                TerFloat b = st.top();
+                st.pop();
+                TerFloat result = a / b;
+                st.push(result);   
+                break;   
+            }
+            case INS_FSQRT: {
+                TerFloat a = st.top();
+                st.pop();
+                TerFloat result = a.sqrt();
+                st.push(result);   
+                break;   
+            }
             }
         }
 

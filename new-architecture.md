@@ -114,15 +114,15 @@ Note 2: Logical/shift operations do not work the same way as normal, because the
 |`AD`           |`jc`    |Jump if carry                     |`dest` (imm)                          |`ip = dest` if `CF != 0`            |
 |`AC`           |`jnc`   |Jump if not carry                 |`dest` (imm)                          |`ip = dest` if `CF == 0`            |
 |`AB`           |`int`   |Software interrupt                |`vec` (imm)                           |Call the interrupt handler with interrupt vector `vec` (currently this is just simulated by an if-statement in the emulator)|
-|`AA`           |`fld`   |Float load             |`addr` (disp/imm) |`dest = dest & src`                 |
-|`A0`           |`fst`   |Float store             |`src` (imm/reg/disp/idx), `dest` (reg/disp/idx)|`dest = dest & src`                 |
-|`A1`           |`fstp`   |Float store and pop             |`src` (imm/reg/disp/idx), `dest` (reg/disp/idx)|`dest = dest & src`                 |
-|`A2`           |`fadd`   |Float add             |`src` (imm/reg/disp/idx), `dest` (reg/disp/idx)|`dest = dest & src`                 |
-|`A3`           |`fsub`   |Float subtract             |`src` (imm/reg/disp/idx), `dest` (reg/disp/idx)|`dest = dest & src`                 |
+|`AA`           |`xchg`   |Exchange               |tba|tba|
+|`A0`           |`fld`   |Float load             |`addr` (disp/imm) |`dest = dest & src`                 |
+|`A1`           |`fst`   |Float store             |`src` (imm/reg/disp/idx), `dest` (reg/disp/idx)|`dest = dest & src`                 |
+|`A2`           |`fstp`   |Float store and pop             |`src` (imm/reg/disp/idx), `dest` (reg/disp/idx)|`dest = dest & src`                 |
+|`A3`           |`fadd`   |Float add             |`src` (imm/reg/disp/idx), `dest` (reg/disp/idx)|`dest = dest & src`                 |
+|`A4`           |`fsub`   |Float subtract             |`src` (imm/reg/disp/idx), `dest` (reg/disp/idx)|`dest = dest & src`                 |
 |`0D`           |`fmul`   |Float multiply             |`src` (imm/reg/disp/idx), `dest` (reg/disp/idx)|`dest = dest & src`                 |
 |`0C`           |`fdiv`   |Float divide             |`src` (imm/reg/disp/idx), `dest` (reg/disp/idx)|`dest = dest & src`                 |
-|`0A`           |`fsqrt`   |Float square root             |`src` (imm/reg/disp/idx), `dest` (reg/disp/idx)|`dest = dest & src`                 |
-|`00`           |`fsqrt`   |Float square root             |`src` (imm/reg/disp/idx), `dest` (reg/disp/idx)|`dest = dest & src`                 |
+|`0B`           |`fsqrt`   |Float square root             |`src` (imm/reg/disp/idx), `dest` (reg/disp/idx)|`dest = dest & src`                 |
 
 
 
