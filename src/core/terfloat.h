@@ -35,6 +35,7 @@ namespace termite {
         TerFloat sin() const;
         TerFloat cos() const;
         TerFloat tan() const;
+        TerFloat atan() const;
         TerFloat exp() const;
         TerFloat log() const;
         TerFloat abs() const;

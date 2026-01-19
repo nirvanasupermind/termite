@@ -644,6 +644,10 @@ namespace termite {
                 Word src_mode = ins.get_trit_range(10, 11);
                 Word src_reg = ins.get_trit_range(8, 9);
                 Word addr = get_addr_mode(cycles, memory, src_mode, src_reg, imm2);
+                std::cout << addr.to_nonary_str();
+                std::cout << "dbg647 " << memory.get_word(addr).to_nonary_str();
+                std::cout << "dbg648 " << memory.get_word(addr+Word::TWO).to_nonary_str();
+
                 st.push(TerFloat(memory.get_word(addr), memory.get_word(addr+Word::TWO)));                
                 break;   
             }
@@ -712,6 +716,7 @@ namespace termite {
             }
             case INS_FSQRT: {
                 TerFloat a = st.top();
+                std::cout << "dbg715 " << a.to_double() << '\n';
                 st.pop();
                 TerFloat result = a.sqrt();
                 st.push(result);   

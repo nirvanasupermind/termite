@@ -123,8 +123,13 @@ Note 2: Logical/shift operations do not work the same way as normal, because the
 |`0D`           |`fmul`   |Float multiply             |`src` (imm/reg/disp/idx), `dest` (reg/disp/idx)|`dest = dest & src`                 |
 |`0C`           |`fdiv`   |Float divide             |`src` (imm/reg/disp/idx), `dest` (reg/disp/idx)|`dest = dest & src`                 |
 |`0B`           |`fsqrt`   |Float square root             |`src` (imm/reg/disp/idx), `dest` (reg/disp/idx)|`dest = dest & src`                 |
+|`0A`           |`fsin`   |Float sine             |`src` (imm/reg/disp/idx), `dest` (reg/disp/idx)|`dest = dest & src`                 |
+|`00`           |`fcos`   |Float cosine             |`src` (imm/reg/disp/idx), `dest` (reg/disp/idx)|`dest = dest & src`                 |
+|`01`           |`ftan`   |Float tangent             |`src` (imm/reg/disp/idx), `dest` (reg/disp/idx)|`dest = dest & src`                 |
+|`02`           |`fatan`   |Float inverse tangent             |`src` (imm/reg/disp/idx), `dest` (reg/disp/idx)|`dest = dest & src`                 |
 
-
+|`03`           |`fexp`   |Float exponent            |`src` (imm/reg/disp/idx), `dest` (reg/disp/idx)|`dest = dest & src`                 |
+|`04`           |`flog`   |Float logarithm            |`src` (imm/reg/disp/idx), `dest` (reg/disp/idx)|`dest = dest & src`                 |
 
 # Instruction format
 All instructions are 3 words in length. The first word is the main part of the instruction, the other 2 words are used to store single-word constants. In 1-operand instructions, any single-word constant which is required for the operand (if it is in immediate, displacement or indexed addressing mode) will be stored in the second word. In 2-operand instructions, any single-word constant which is required for the first operand will be stored in the second word, and single-word. Some instructions will not require all of the 3 words, in that case the unused words are padded with 0s. Padding out every instruction to 3 words is wasteful, but it makes the CPU much easier to implement by making all the instructions a fixed width, and memory is not much of a concern for this emulator currently so it is like this for now.

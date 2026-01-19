@@ -177,6 +177,9 @@ namespace termite {
 
 
     TerFloat TerFloat::log() const {
+        if(to_double() >= 3.0) {
+            return operator/(TerFloat(significand, exponent - Word::ONE)).log() + TerFloat::from_double(std::log(3));
+        }
         TerFloat x(significand, Word::ZERO);
         TerFloat x2 = x * x;
         // Coefficients computed by me using numpy polynomial regression because taylor series is too slow
@@ -216,6 +219,28 @@ namespace termite {
 
     TerFloat TerFloat::tan() const {
         return sin() / cos();
+    }
+
+        TerFloat TerFloat::atan() const {
+            if(significand < Word::ZERO) {
+                return -operator-().atan();
+            } else if(significand > Word::ONE) {
+                return TerFloat::from_double(1.5707963267948966) - rec().atan();
+            } else {
+                TerFloat x = *this;
+                TerFloat x2 = x*x;
+                
+                        TerFloat t0 = TerFloat::from_double(-1.15861248e-02);
+        TerFloat t1 = x * TerFloat::from_double(  9.92837258e-02);
+        TerFloat t2 = x2 * TerFloat::from_double(-4.42298621e+00);
+        TerFloat t3 = x * x2 * TerFloat::from_double(-2.99476356e-01);
+        TerFloat t4 = x2 * x2 * TerFloat::from_double(-1.62646402e+00);
+        TerFloat t5 = x * x2 * x2 * TerFloat::from_double(3.82629843e-01);
+        TerFloat t6 = x2 * x2 * x2 * TerFloat::from_double(-6.33708278e-02);
+        TerFloat t7 = x * x2 * x2 * x2 * TerFloat::from_double(-3.20855563e-01);
+        TerFloat t8 = x2 * x2 * x2 * x2 * TerFloat::from_double(-1.28153654e-03);
+        return t0 + t1 + t2 + t3 + t4 + t5 + t6 + t7 + t8;
+            }
     }
 
     // TerFloat TerFloat::sqrt() const {
