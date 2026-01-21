@@ -115,21 +115,24 @@ Note 2: Logical/shift operations do not work the same way as normal, because the
 |`AC`           |`jnc`   |Jump if not carry                 |`dest` (imm)                          |`ip = dest` if `CF == 0`            |
 |`AB`           |`int`   |Software interrupt                |`vec` (imm)                           |Call the interrupt handler with interrupt vector `vec` (currently this is just simulated by an if-statement in the emulator)|
 |`AA`           |`xchg`   |Exchange               |tba|tba|
-|`A0`           |`fld`   |Float load             |`addr` (disp/imm) |`dest = dest & src`                 |
-|`A1`           |`fst`   |Float store             |`src` (imm/reg/disp/idx), `dest` (reg/disp/idx)|`dest = dest & src`                 |
-|`A2`           |`fstp`   |Float store and pop             |`src` (imm/reg/disp/idx), `dest` (reg/disp/idx)|`dest = dest & src`                 |
-|`A3`           |`fadd`   |Float add             |`src` (imm/reg/disp/idx), `dest` (reg/disp/idx)|`dest = dest & src`                 |
-|`A4`           |`fsub`   |Float subtract             |`src` (imm/reg/disp/idx), `dest` (reg/disp/idx)|`dest = dest & src`                 |
-|`0D`           |`fmul`   |Float multiply             |`src` (imm/reg/disp/idx), `dest` (reg/disp/idx)|`dest = dest & src`                 |
-|`0C`           |`fdiv`   |Float divide             |`src` (imm/reg/disp/idx), `dest` (reg/disp/idx)|`dest = dest & src`                 |
-|`0B`           |`fsqrt`   |Float square root             |`src` (imm/reg/disp/idx), `dest` (reg/disp/idx)|`dest = dest & src`                 |
-|`0A`           |`fsin`   |Float sine             |`src` (imm/reg/disp/idx), `dest` (reg/disp/idx)|`dest = dest & src`                 |
-|`00`           |`fcos`   |Float cosine             |`src` (imm/reg/disp/idx), `dest` (reg/disp/idx)|`dest = dest & src`                 |
-|`01`           |`ftan`   |Float tangent             |`src` (imm/reg/disp/idx), `dest` (reg/disp/idx)|`dest = dest & src`                 |
-|`02`           |`fatan`   |Float inverse tangent             |`src` (imm/reg/disp/idx), `dest` (reg/disp/idx)|`dest = dest & src`                 |
+|`A0`           |`fld`   |Float load             |`addr` (disp/imm) |`push([addr], [addr + 1] w/ trytes re-interpreted as a float)`                 |
+|`A1`           |`fst`   |Float store             |`addr` (disp/imm)|`[addr], [addr + 1] = top()`                 |
+|`A2`           |`fstp`   |Float store and pop             |`src` (imm/reg/disp/idx), `dest` (reg/disp/idx)|`[addr], [addr + 1] = pop()`                 |
+|`A3`           |`fadd`   |Float add             |`src` (imm/reg/disp/idx), `dest` (reg/disp/idx)|`push(pop() + pop())`                 |
+|`A4`           |`fsub`   |Float subtract             |`src` (imm/reg/disp/idx), `dest` (reg/disp/idx)|`push(pop() - pop())`                 |
+|`0D`           |`fmul`   |Float multiply             |`src` (imm/reg/disp/idx), `dest` (reg/disp/idx)|`push(pop() * pop())`                 |
+|`0C`           |`fdiv`   |Float divide             |`src` (imm/reg/disp/idx), `dest` (reg/disp/idx)|`push(pop() / pop())`                 |
+|`0B`           |`fsqrt`   |Float square root             |`src` (imm/reg/disp/idx), `dest` (reg/disp/idx)|`push(sqrt(pop());`              |
+|`0A`           |`fsin`   |Float sine             |`src` (imm/reg/disp/idx), `dest` (reg/disp/idx)|`push(sin(pop());`                 |
+|`00`           |`fcos`   |Float cosine             |`src` (imm/reg/disp/idx), `dest` (reg/disp/idx)|`push(cos(pop());`                |
+|`01`           |`ftan`   |Float tangent             |`src` (imm/reg/disp/idx), `dest` (reg/disp/idx)|`push(tan(pop());`              |
+|`02`           |`fatan`   |Float inverse tangent (2-argument)             |`src` (imm/reg/disp/idx), `dest` (reg/disp/idx)|`push(atan(pop()/pop());`                |
 
-|`03`           |`fexp`   |Float exponent            |`src` (imm/reg/disp/idx), `dest` (reg/disp/idx)|`dest = dest & src`                 |
-|`04`           |`flog`   |Float logarithm            |`src` (imm/reg/disp/idx), `dest` (reg/disp/idx)|`dest = dest & src`                 |
+|`03`           |`fexp`   |Float exponent            |`src` (imm/reg/disp/idx), `dest` (reg/disp/idx)|`push(exp(pop());`                 |
+|`04`           |`flog`   |Float logarithm            |`src` (imm/reg/disp/idx), `dest` (reg/disp/idx)|`push(log(pop());`                |
+|`1D`           |`fabs`   |Float absolute value            |`src` (imm/reg/disp/idx), `dest` (reg/disp/idx)|`push(abs(pop());`                 |
+|`1C`           |`ffloor`   |Float floor            |`src` (imm/reg/disp/idx), `dest` (reg/disp/idx)|`push(floor(pop());`                 |
+
 
 # Instruction format
 All instructions are 3 words in length. The first word is the main part of the instruction, the other 2 words are used to store single-word constants. In 1-operand instructions, any single-word constant which is required for the operand (if it is in immediate, displacement or indexed addressing mode) will be stored in the second word. In 2-operand instructions, any single-word constant which is required for the first operand will be stored in the second word, and single-word. Some instructions will not require all of the 3 words, in that case the unused words are padded with 0s. Padding out every instruction to 3 words is wasteful, but it makes the CPU much easier to implement by making all the instructions a fixed width, and memory is not much of a concern for this emulator currently so it is like this for now.

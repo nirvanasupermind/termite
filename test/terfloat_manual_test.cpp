@@ -6,7 +6,7 @@
 #include "../src/core/terfloat.h"
 
 int main() {
-    termite::TerFloat x = termite::TerFloat::from_double(0.5);
+    termite::TerFloat x = termite::TerFloat::from_double(1.0);
     // termite::TerFloat y = termite::TerFloat::from_double(2.1);
     
 

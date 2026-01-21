@@ -113,17 +113,17 @@ namespace termite {
 
     void CPU::execute(Word& cycles, Mem& memory, bool verbose) {
         while (cycles > Word::ZERO) {
-            if(verbose) {
+            if (verbose) {
                 print_state();
             }
-            
+
             Word ins = fetch_word(cycles, memory);
             Word imm = fetch_word(cycles, memory);
             Word imm2 = fetch_word(cycles, memory);
             Word opcode = ins.get_trit_range(12, 15);
             // std::cout << "dbg121 " << opcode.to_int32() << '\n';
             switch (opcode.to_int32()) {
-                case INS_MOV: {
+            case INS_MOV: {
 
                 Word dest_mode = ins.get_trit_range(10, 11);
                 Word dest_reg = ins.get_trit_range(8, 9);
@@ -154,13 +154,13 @@ namespace termite {
                 memory.set_word(regs[REG_SP], get_addr_mode(cycles, memory, src_mode, src_reg, imm));
                 break;
             }
-                        case INS_POP: {
-                                // std::cout << "dbg158 REG SP: " <<  regs[REG_SP].to_int32() << '\n';
+            case INS_POP: {
+                // std::cout << "dbg158 REG SP: " <<  regs[REG_SP].to_int32() << '\n';
 
-                            Word dest_mode = ins.get_trit_range(10, 11);
+                Word dest_mode = ins.get_trit_range(10, 11);
                 Word dest_reg = ins.get_trit_range(8, 9);
                 Word val_at_sp = memory.get_word(regs[REG_SP]);
-                                // std::cout << "dbg163 " <<  regs[REG_SP].to_int32() << '\n';
+                // std::cout << "dbg163 " <<  regs[REG_SP].to_int32() << '\n';
 
                 if (dest_mode.to_int32() == -3) {
                     regs[dest_reg.to_int32() + 4] = val_at_sp;
@@ -178,23 +178,23 @@ namespace termite {
                 // std::cout << "dbg172 NEW REG SP: " <<  regs[REG_SP].to_int32() << '\n';
                 break;
             }
-            // case INS_POP: {
-            //     Word dest_mode = ins.get_trit_range(10, 11);
-            //     Word dest_reg = ins.get_trit_range(8, 9);
-            //     Word val_at_sp = memory.get_word(regs[REG_SP]);
-            //     if (dest_mode.to_int32() == -3) {
-            //         regs[dest_reg.to_int32() + 4] = val_at_sp;
-            //     }
-            //     else if (dest_mode.to_int32() == -2) {
-            //         memory.set_word(imm, val_at_sp);
-            //     }
-            //     else {
-            //         Word addr = regs[dest_reg.to_int32() + 4] + imm;
-            //         memory.set_word(addr, val_at_sp);
-            //     }
-            //     regs[REG_SP] = regs[REG_SP] + Word::TWO;
-            //     break;
-            // }
+                        // case INS_POP: {
+                        //     Word dest_mode = ins.get_trit_range(10, 11);
+                        //     Word dest_reg = ins.get_trit_range(8, 9);
+                        //     Word val_at_sp = memory.get_word(regs[REG_SP]);
+                        //     if (dest_mode.to_int32() == -3) {
+                        //         regs[dest_reg.to_int32() + 4] = val_at_sp;
+                        //     }
+                        //     else if (dest_mode.to_int32() == -2) {
+                        //         memory.set_word(imm, val_at_sp);
+                        //     }
+                        //     else {
+                        //         Word addr = regs[dest_reg.to_int32() + 4] + imm;
+                        //         memory.set_word(addr, val_at_sp);
+                        //     }
+                        //     regs[REG_SP] = regs[REG_SP] + Word::TWO;
+                        //     break;
+                        // }
             case INS_PUSHF: {
                 regs[REG_SP] = regs[REG_SP] - Word::TWO;
                 memory.set_word(regs[REG_SP], flags);
@@ -637,8 +637,8 @@ namespace termite {
                     regs[dest_reg.to_int32() + 4] = regs[src_reg.to_int32() + 4];
                     regs[src_reg.to_int32() + 4] = temp;
                 }
-                
-                break;   
+
+                break;
             }
             case INS_FLD: {
                 Word src_mode = ins.get_trit_range(10, 11);
@@ -646,37 +646,37 @@ namespace termite {
                 Word addr = get_addr_mode(cycles, memory, src_mode, src_reg, imm2);
                 std::cout << addr.to_nonary_str();
                 std::cout << "dbg647 " << memory.get_word(addr).to_nonary_str();
-                std::cout << "dbg648 " << memory.get_word(addr+Word::TWO).to_nonary_str();
+                std::cout << "dbg648 " << memory.get_word(addr + Word::TWO).to_nonary_str();
 
-                st.push(TerFloat(memory.get_word(addr), memory.get_word(addr+Word::TWO)));                
-                break;   
+                st.push(TerFloat(memory.get_word(addr), memory.get_word(addr + Word::TWO)));
+                break;
             }
-                case INS_FST: {
-                                     
+            case INS_FST: {
+
                 TerFloat top = st.top();
-                
-                    Word dest_mode = ins.get_trit_range(10, 11);
+
+                Word dest_mode = ins.get_trit_range(10, 11);
                 Word dest_reg = ins.get_trit_range(8, 9);
                 Word addr = get_addr_mode(cycles, memory, dest_mode, dest_reg, imm2);
 
                 memory.set_word(addr, top.significand);
                 memory.set_word(addr + Word::TWO, top.exponent);
                 // std::cout << "dbg143 " << regs[REG_SP].to_int32() << '\n';
-                break;   
+                break;
             }
-                            case INS_FSTP: {
-                                     
+            case INS_FSTP: {
+
                 TerFloat top = st.top();
                 st.pop();
-                
-                    Word dest_mode = ins.get_trit_range(10, 11);
+
+                Word dest_mode = ins.get_trit_range(10, 11);
                 Word dest_reg = ins.get_trit_range(8, 9);
                 Word addr = get_addr_mode(cycles, memory, dest_mode, dest_reg, imm2);
 
                 memory.set_word(addr, top.significand);
                 memory.set_word(addr + Word::TWO, top.exponent);
                 // std::cout << "dbg143 " << regs[REG_SP].to_int32() << '\n';
-                break;   
+                break;
             }
             case INS_FADD: {
                 TerFloat a = st.top();
@@ -684,8 +684,8 @@ namespace termite {
                 TerFloat b = st.top();
                 st.pop();
                 TerFloat result = a + b;
-                st.push(result);   
-                break;   
+                st.push(result);
+                break;
             }
             case INS_FSUB: {
                 TerFloat a = st.top();
@@ -693,8 +693,8 @@ namespace termite {
                 TerFloat b = st.top();
                 st.pop();
                 TerFloat result = a - b;
-                st.push(result);   
-                break;   
+                st.push(result);
+                break;
             }
             case INS_FMUL: {
                 TerFloat a = st.top();
@@ -702,8 +702,8 @@ namespace termite {
                 TerFloat b = st.top();
                 st.pop();
                 TerFloat result = a * b;
-                st.push(result);   
-                break;   
+                st.push(result);
+                break;
             }
             case INS_FDIV: {
                 TerFloat a = st.top();
@@ -711,25 +711,82 @@ namespace termite {
                 TerFloat b = st.top();
                 st.pop();
                 TerFloat result = a / b;
-                st.push(result);   
-                break;   
+                st.push(result);
+                break;
             }
             case INS_FSQRT: {
                 TerFloat a = st.top();
-                std::cout << "dbg715 " << a.to_double() << '\n';
                 st.pop();
                 TerFloat result = a.sqrt();
-                st.push(result);   
-                break;   
+                st.push(result);
+                break;
+            }
+            case INS_FSIN: {
+                TerFloat a = st.top();
+                st.pop();
+                TerFloat result = a.sin();
+                st.push(result);
+                break;
+            }
+            case INS_FCOS: {
+                TerFloat a = st.top();
+                st.pop();
+                TerFloat result = a.cos();
+                st.push(result);
+                break;
+            }
+            case INS_FTAN: {
+                TerFloat a = st.top();
+                st.pop();
+                TerFloat result = a.tan();
+                st.push(result);
+                break;
+            }
+            case INS_FATAN: {
+                TerFloat a = st.top();
+                st.pop();
+                TerFloat b = st.top();
+                st.pop();
+                TerFloat result = b.atan() / a.atan();
+                st.push(result);
+                break;
+            }
+            case INS_FEXP: {
+                TerFloat a = st.top();
+                st.pop();
+                TerFloat result = a.exp();
+                st.push(result);
+                break;
+            }
+            case INS_FLOG: {
+                TerFloat a = st.top();
+                st.pop();
+                TerFloat result = a.log();
+                st.push(result);
+                break;
+            }
+            case INS_FABS: {
+                TerFloat a = st.top();
+                st.pop();
+                TerFloat result = a.abs();
+                st.push(result);
+                break;
+            }
+            case INS_FFLOOR: {
+                TerFloat a = st.top();
+                st.pop();
+                TerFloat result = a.floor();
+                st.push(result);
+                break;
             }
             }
         }
 
-    
+
     }
 
     void CPU::exec_text(std::string& text, Mem& memory, bool verbose) {
-       text.erase(std::remove(text.begin(), text.end(), ' '), text.end());
+        text.erase(std::remove(text.begin(), text.end(), ' '), text.end());
         reset(memory);
 
         for (int i = 0; i < text.size(); i += 8) {
@@ -743,5 +800,5 @@ namespace termite {
         termite::Word cycles = termite::Word::from_int32(text.size() >> 2);
         execute(cycles, memory, verbose);
     }
-    
+
 }

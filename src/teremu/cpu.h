@@ -77,7 +77,14 @@ namespace termite {
         static constexpr int32_t INS_FMUL = -4;
         static constexpr int32_t INS_FDIV = -3;
         static constexpr int32_t INS_FSQRT = -2;
-        
+        static constexpr int32_t INS_FSIN = -1;
+        static constexpr int32_t INS_FCOS = 0;
+        static constexpr int32_t INS_FTAN = 1;
+        static constexpr int32_t INS_FATAN = 2;
+        static constexpr int32_t INS_FEXP = 3;
+        static constexpr int32_t INS_FLOG = 4;
+        static constexpr int32_t INS_FABS = 5;
+        static constexpr int32_t INS_FFLOOR = 6;
         void reset(Mem& memory);
         void set_sign_flag(Word& cycles, Mem& memory, const Word& result);
         Tryte fetch_tryte(Word& cycles, Mem& memory);

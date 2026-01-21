@@ -224,22 +224,34 @@ namespace termite {
         TerFloat TerFloat::atan() const {
             if(significand < Word::ZERO) {
                 return -operator-().atan();
-            } else if(significand > Word::ONE) {
+            } else if(to_double() > 1.0) {
                 return TerFloat::from_double(1.5707963267948966) - rec().atan();
             } else {
                 TerFloat x = *this;
                 TerFloat x2 = x*x;
                 
-                        TerFloat t0 = TerFloat::from_double(-1.15861248e-02);
-        TerFloat t1 = x * TerFloat::from_double(  9.92837258e-02);
-        TerFloat t2 = x2 * TerFloat::from_double(-4.42298621e+00);
-        TerFloat t3 = x * x2 * TerFloat::from_double(-2.99476356e-01);
-        TerFloat t4 = x2 * x2 * TerFloat::from_double(-1.62646402e+00);
+
+                // Coefficients computed by me using numpy polynomial regression because taylor series is too slow
+
+                TerFloat t1 = x * TerFloat::from_double( 1.00005597e+00);
+                        TerFloat t2 = x2 * TerFloat::from_double(-1.28153654e-03);
+                        TerFloat t3 = x  * x2 * TerFloat::from_double(-3.20855563e-01);
+        TerFloat t4 = x2 * x2 * TerFloat::from_double(-6.33708278e-02);
         TerFloat t5 = x * x2 * x2 * TerFloat::from_double(3.82629843e-01);
-        TerFloat t6 = x2 * x2 * x2 * TerFloat::from_double(-6.33708278e-02);
-        TerFloat t7 = x * x2 * x2 * x2 * TerFloat::from_double(-3.20855563e-01);
-        TerFloat t8 = x2 * x2 * x2 * x2 * TerFloat::from_double(-1.28153654e-03);
-        return t0 + t1 + t2 + t3 + t4 + t5 + t6 + t7 + t8;
+        TerFloat t6 = x * x2 * x2 * x2 * TerFloat::from_double(-2.99476356e-01);
+        TerFloat t7 = x * x2 * x2 * x2 * x2 * TerFloat::from_double(9.92837258e-02);
+        TerFloat t8 = x2 * x2 * x2 * x2 * x2 * TerFloat::from_double(-1.15861248e-02);
+
+                //                 TerFloat t0 = TerFloat::from_double(-1.15861248e-02);
+        // TerFloat t1 = x * TerFloat::from_double(  9.92837258e-02);
+        // TerFloat t2 = x2 * TerFloat::from_double(-4.42298621e+00);
+        // TerFloat t3 = x * x2 * TerFloat::from_double(-2.99476356e-01);
+        // TerFloat t4 = x2 * x2 * TerFloat::from_double(-1.62646402e+00);
+        // TerFloat t5 = x * x2 * x2 * TerFloat::from_double(3.82629843e-01);
+        // TerFloat t6 = x2 * x2 * x2 * TerFloat::from_double(-6.33708278e-02);
+        // TerFloat t7 = x * x2 * x2 * x2 * TerFloat::from_double(-3.20855563e-01);
+        // TerFloat t8 = x2 * x2 * x2 * x2 * TerFloat::from_double(-1.28153654e-03);
+        return t1 + t2 + t3 + t4 + t5 + t6 + t7 + t8;
             }
     }
 
