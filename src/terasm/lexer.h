@@ -36,7 +36,24 @@ namespace termite {
         "jc",
         "jnc",
         "int",
-        "xchg"
+        "xchg",
+        "fld",
+        "fst",
+        "fstp",
+        "fadd",
+        "fsub",
+        "fmul",
+        "fdiv",
+        "fsqrt",
+        "fsin",
+        "fcos",
+        "ftan",
+        "fatan",
+        "fexp",
+        "flog",
+        "fabs",
+        "ffloor",
+        "fcmp"
     };
 
     const std::vector<std::string> REG_NAMES = {

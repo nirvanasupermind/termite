@@ -335,36 +335,36 @@ namespace termite {
 
 
     bool Word::operator==(const Word& other) const {
-        return to_int32() == other.to_int32();
-        // return bct == other.bct;
+        // return to_int32() == other.to_int32();
+        return bct == other.bct;
     }
 
 
     bool Word::operator!=(const Word& other) const {
-        return to_int32() != other.to_int32();
-        // return bct != other.bct;
+        // return to_int32() != other.to_int32();
+        return bct != other.bct;
     }
 
 
     bool Word::operator>(const Word& other) const {
-        return to_int32() > other.to_int32();
+        // return to_int32() > other.to_int32();
         // Luckily, comparing the BCT encodings works for comparison
-        // return bct > other.bct;
+        return bct > other.bct;
     }
 
     bool Word::operator>=(const Word& other) const {
-        return to_int32() >= other.to_int32();
-        // return bct >= other.bct;
+        // return to_int32() >= other.to_int32();
+        return bct >= other.bct;
     }
 
     bool Word::operator<(const Word& other) const {
-        return to_int32() < other.to_int32();
-        // return bct < other.bct;
+        // return to_int32() < other.to_int32();
+        return bct < other.bct;
     }
 
     bool Word::operator<=(const Word& other) const {
-        return to_int32() <= other.to_int32();
-        // return bct <= other.bct;
+        // return to_int32() <= other.to_int32();
+        return bct <= other.bct;
     }
 
     std::string Word::to_ternary_str() const {

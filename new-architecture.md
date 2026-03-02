@@ -132,6 +132,7 @@ Note 2: Logical/shift operations do not work the same way as normal, because the
 |`04`           |`flog`   |Float logarithm            |`src` (imm/reg/disp/idx), `dest` (reg/disp/idx)|`push(log(pop());`                |
 |`1D`           |`fabs`   |Float absolute value            |`src` (imm/reg/disp/idx), `dest` (reg/disp/idx)|`push(abs(pop());`                 |
 |`1C`           |`ffloor`   |Float floor            |`src` (imm/reg/disp/idx), `dest` (reg/disp/idx)|`push(floor(pop());`                 |
+|`1B`           |`fcmp`   |Float compare            |`src` (imm/reg/disp/idx), `dest` (reg/disp/idx)||
 
 
 # Instruction format
@@ -238,4 +239,5 @@ There is only one interrupt vector which can be accessed by calling `int $0` and
 |`D4`           |Input ternary number into `dx`            |No operands               |
 |`CD`           |Input nonary number into `dx`             |No operands               |
 |`CC`           |Input character into `dx`                 |No operands               |
-|`CA`           |Get current 2-word Unix timestamp in milliseconds (low word stored in `ax`, high word stored in `dx`)|No operands               |
+|`CB`           |Get current 2-word Unix timestamp in milliseconds (low word stored in `ax`, high word stored in `dx`)|No operands               |
+|`CA`           |Print float at the top of the stack|No operands               |

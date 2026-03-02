@@ -58,6 +58,9 @@ namespace anthill {
     }
 
     int NonFuncType::size() const {
+        if(basic_type == BasicType::FLOAT && pointer_levels == 0) {
+            return 4;
+        }
         // if(basic_type == BasicType::CHAR && pointer_levels == 0) {
         //     return 1;
         // } else {
@@ -71,6 +74,8 @@ namespace anthill {
         BasicType basic_type;
         if(str[0] == 'c' && str[1] == 'h' && str[2] == 'a' && str[3] == 'r') {
             basic_type = BasicType::CHAR;
+        }  else if(str[0] == 'f' && str[1] == 'l' && str[2] == 'o' && str[3] == 'a' && str[4] == 't') {
+            basic_type = BasicType::FLOAT;
         } else {
             basic_type = BasicType::INT;
         }

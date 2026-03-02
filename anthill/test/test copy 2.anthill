@@ -1,0 +1,17 @@
+#include "anthill/stl/io.anthill"
+
+int fac(int x) {
+    if(x < 2) {
+        return 1;
+    } else {
+        return x * fac(x - 1);
+    }
+}
+
+
+int main() {
+    int x = scani();
+    puts("The factorial is:");
+    puti(fac(x));
+     return 0;
+}

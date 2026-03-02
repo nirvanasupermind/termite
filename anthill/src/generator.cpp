@@ -44,12 +44,14 @@ namespace anthill {
       if (symbol_table->is_func && !always_global) {
          func_addr_counter += type->size();
          std::string result = "-" + std::to_string(func_addr_counter) + "(%bp)";
-         std::cout << "dbg51 " << func_addr_counter << '\n';
+         // std::cout << "dbg51 " << func_addr_counter << '\n';
          return result;
       }
       else {
+         std::cout << "dbg51 " << addr_counter << '\n';
          std::string result = std::to_string(addr_counter);
          addr_counter += type->size();
+         std::cout << "dbg54 " << addr_counter << '\n';
          return result;
       }
    }
@@ -118,26 +120,19 @@ namespace anthill {
       if (node->tok.val.find('.') != std::string::npos) {
          // FLOATING POINT CODE
          double double_val = std::stod(node->tok.val);
-         double significand = double_val;
-         int exponent = 0;
-         if (double_val != 0.0) {
-            if (double_val > 265720.0 || double_val < -265720.0) {
-               while (significand > 265721.0 || significand < -265721.0) {
-                  significand /= 3.0;
-                  exponent++;
-               }
-            }
-            else {
-               while (significand < 68574.0 && significand > -68574.0) {
-                  significand *= 3.0;
-                  exponent--;
-               }
-            }
-         }
+         double exponent = std::floor(std::log(double_val) / std::log(3.0));
+         double significand = double_val / std::pow(3.0, exponent);
+         std::string addr = "$" + alloc_addr(std::make_shared<NonFuncType>(BasicType::FLOAT), symbol_table, true);
 
-         int packed_float = exponent * 531441 + (int)significand;
+         std::cout << "dbg125" << significand << '\n';
+         std::cout << "dbg126" << exponent << '\n';
 
-         asm_stream << "mov $" << std::stoi(node->tok.val) << ",%ax\n";
+         // int packed_float = exponent * 531441 + (int)significand;
+
+         asm_stream << "mov " << addr << ",%ax\n";
+         asm_stream << "mov $" << (int)(std::round(significand * 4782969.0)) << ",0(%ax)\n";
+         asm_stream << "mov $" << (int)(std::round(exponent)) << ",2(%ax)\n";
+
          return std::make_shared<NonFuncType>(NonFuncType(BasicType::FLOAT));
       }
       else {
@@ -426,263 +421,458 @@ namespace anthill {
       //    error(file, node->right_node->line, "cannot perform binary operations on a void pointer");
       // }
 
-      switch (node->op_tok.type) {
-      case TokenType::AMPER: {
-         asm_stream << "push %ax\n";
-         std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
-         if (temp2->is_func()) {
-            error(file, node->right_node->line, "cannot perform binary operations on a function");
+      if (left_type->to_str() == "float") {
+         switch (node->op_tok.type) {
+         case TokenType::PLUS: {
+            asm_stream << "fld %ax\n";
+            std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
+            if (temp2->to_str() != "float") {
+               error(file, node->right_node->line, "cannot perform binary operations on a mix of float and non-float types");
+            }
+            right_type = std::static_pointer_cast<NonFuncType>(temp2);
+            asm_stream << "fld %ax\n";
+            asm_stream << "fadd\n";
+            asm_stream << "fstp %ax\n";
+            break;
          }
-         right_type = std::static_pointer_cast<NonFuncType>(temp2);
-         asm_stream << "pop %cx\n";
-         asm_stream << "and %cx,%ax\n";
-         break;
-      }
-      case TokenType::PIPE: {
-         visit(node->left_node, symbol_table);
-         asm_stream << "push %ax\n";
-         std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
-         if (temp2->is_func()) {
-            error(file, node->right_node->line, "cannot perform binary operations on a function");
+         case TokenType::MINUS: {
+            asm_stream << "fld %ax\n";
+            std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
+            if (temp2->to_str() != "float") {
+               error(file, node->right_node->line, "cannot perform binary operations on a mix of float and non-float types");
+            }
+            right_type = std::static_pointer_cast<NonFuncType>(temp2);
+            asm_stream << "fld %ax\n";
+            asm_stream << "fsub\n";
+            asm_stream << "fstp %ax\n";
+            break;
          }
-         right_type = std::static_pointer_cast<NonFuncType>(temp2);
+         case TokenType::STAR: {
+            asm_stream << "fld %ax\n";
+            std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
+            if (temp2->to_str() != "float") {
+               error(file, node->right_node->line, "cannot perform binary operations on a mix of float and non-float types");
+            }
+            right_type = std::static_pointer_cast<NonFuncType>(temp2);
+            asm_stream << "fld %ax\n";
+            asm_stream << "fmul\n";
+            asm_stream << "fstp %ax\n";
+            break;
+         }
+         case TokenType::SLASH: {
+            asm_stream << "fld %ax\n";
+            std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
+            if (temp2->to_str() != "float") {
+               error(file, node->right_node->line, "cannot perform binary operations on a mix of float and non-float types");
+            }
+            right_type = std::static_pointer_cast<NonFuncType>(temp2);
+            asm_stream << "fld %ax\n";
+            asm_stream << "fdiv\n";
+            asm_stream << "fstp %ax\n";
+            break;
+         }
+         case TokenType::EQUAL: {
+            asm_stream << "fld %ax\n";
+            std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
+            if (temp2->to_str() != "float") {
+               error(file, node->right_node->line, "cannot perform binary operations on a mix of float and non-float types");
+            }
+            right_type = std::static_pointer_cast<NonFuncType>(temp2);
+            asm_stream << "fld %ax\n";
+            asm_stream << "fcmp\n";
+            asm_stream << "mov $1,%ax\n";
+            int label = alloc_label();
+            asm_stream << "je _L" + std::to_string(label) + "\n";
+            asm_stream << "mov $-1,%ax\n";
+            asm_stream << "_L" + std::to_string(label) + ":\n";
+            break;
+         }
+         case TokenType::NOTEQ: {
+            asm_stream << "fld %ax\n";
+            std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
+            if (temp2->to_str() != "float") {
+               error(file, node->right_node->line, "cannot perform binary operations on a mix of float and non-float types");
+            }
+            right_type = std::static_pointer_cast<NonFuncType>(temp2);
+            asm_stream << "fld %ax\n";
+            asm_stream << "fcmp\n";
+            asm_stream << "mov $1,%ax\n";
+            int label = alloc_label();
+            asm_stream << "jne _L" + std::to_string(label) + "\n";
+            asm_stream << "mov $-1,%ax\n";
+            asm_stream << "_L" + std::to_string(label) + ":\n";
+            break;
+         }
+         case TokenType::LESS: {
+            asm_stream << "fld %ax\n";
+            std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
+            if (temp2->to_str() != "float") {
+               error(file, node->right_node->line, "cannot perform binary operations on a mix of float and non-float types");
+            }
+            right_type = std::static_pointer_cast<NonFuncType>(temp2);
+            asm_stream << "fld %ax\n";
+            asm_stream << "fcmp\n";
+            asm_stream << "mov $1,%ax\n";
+            int label = alloc_label();
+            asm_stream << "jl _L" + std::to_string(label) + "\n";
+            asm_stream << "mov $-1,%ax\n";
+            asm_stream << "_L" + std::to_string(label) + ":\n";
+            break;
+         }
+         case TokenType::LTEQ: {
+            asm_stream << "fld %ax\n";
+            std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
+            if (temp2->to_str() != "float") {
+               error(file, node->right_node->line, "cannot perform binary operations on a mix of float and non-float types");
+            }
+            right_type = std::static_pointer_cast<NonFuncType>(temp2);
+            asm_stream << "fld %ax\n";
+            asm_stream << "fcmp\n";
+            asm_stream << "mov $1,%ax\n";
+            int label = alloc_label();
+            asm_stream << "jle _L" + std::to_string(label) + "\n";
+            asm_stream << "mov $-1,%ax\n";
+            asm_stream << "_L" + std::to_string(label) + ":\n";
+            break;
+         }
+         case TokenType::GREATER: {
+            asm_stream << "fld %ax\n";
+            std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
+            if (temp2->to_str() != "float") {
+               error(file, node->right_node->line, "cannot perform binary operations on a mix of float and non-float types");
+            }
+            right_type = std::static_pointer_cast<NonFuncType>(temp2);
+            asm_stream << "fld %ax\n";
+            asm_stream << "fcmp\n";
+            asm_stream << "mov $1,%ax\n";
+            int label = alloc_label();
+            asm_stream << "jg _L" + std::to_string(label) + "\n";
+            asm_stream << "mov $-1,%ax\n";
+            asm_stream << "_L" + std::to_string(label) + ":\n";
+            break;
+         }
+         case TokenType::GTEQ: {
+            asm_stream << "fld %ax\n";
+            std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
+            if (temp2->to_str() != "float") {
+               error(file, node->right_node->line, "cannot perform binary operations on a mix of float and non-float types");
+            }
+            right_type = std::static_pointer_cast<NonFuncType>(temp2);
+            asm_stream << "fld %ax\n";
+            asm_stream << "fcmp\n";
+            asm_stream << "mov $1,%ax\n";
+            int label = alloc_label();
+            asm_stream << "jge _L" + std::to_string(label) + "\n";
+            asm_stream << "mov $-1,%ax\n";
+            asm_stream << "_L" + std::to_string(label) + ":\n";
+            break;
+         }
 
-         asm_stream << "pop %cx\n";
-         asm_stream << "or %cx,%ax\n";
-         break;
-      }
-      case TokenType::CARET: {
-         visit(node->left_node, symbol_table);
-         asm_stream << "push %ax\n";
-         std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
-         if (temp2->is_func()) {
-            error(file, node->right_node->line, "cannot perform binary operations on a function");
          }
-         right_type = std::static_pointer_cast<NonFuncType>(temp2);
-         asm_stream << "pop %cx\n";
-         asm_stream << "xor %cx,%ax\n";
-         break;
       }
-      case TokenType::LSHIFT: {
-         visit(node->left_node, symbol_table);
-         asm_stream << "push %ax\n";
-         std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
-         if (temp2->is_func()) {
-            error(file, node->right_node->line, "cannot perform binary operations on a function");
-         }
-         right_type = std::static_pointer_cast<NonFuncType>(temp2);
-         asm_stream << "pop %cx\n";
-         asm_stream << "xchg %cx,%ax\n";
-         asm_stream << "shl %cx,%ax\n";
-         break;
-      }
-      case TokenType::RSHIFT: {
-         visit(node->left_node, symbol_table);
-         asm_stream << "push %ax\n";
-         std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
-         if (temp2->is_func()) {
-            error(file, node->right_node->line, "cannot perform binary operations on a function");
-         }
-         right_type = std::static_pointer_cast<NonFuncType>(temp2);
-         asm_stream << "pop %cx\n";
-         asm_stream << "xchg %cx,%ax\n";
-         asm_stream << "shr %cx,%ax\n";
-         break;
-      }
-      case TokenType::LOGAND: {
-         visit(node->left_node, symbol_table);
-         asm_stream << "push %ax\n";
-         std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
-         if (temp2->is_func()) {
-            error(file, node->right_node->line, "cannot perform binary operations on a function");
-         }
-         right_type = std::static_pointer_cast<NonFuncType>(temp2);
-         asm_stream << "pop %cx\n";
-         asm_stream << "and %cx,%ax\n";
-         break;
-      }
-      case TokenType::PLUS: {
-         visit(node->left_node, symbol_table);
-         asm_stream << "push %ax\n";
-         std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
-         if (temp2->is_func()) {
-            error(file, node->right_node->line, "cannot perform binary operations on a function");
-         }
-         right_type = std::static_pointer_cast<NonFuncType>(temp2);
-         asm_stream << "pop %cx\n";
-         asm_stream << "add %cx,%ax\n";
-         std::cout << left_type->to_str() << '\n';
-         if ((left_type->pointer_levels > 0 && left_type->to_str() != "char*")
-            || (right_type->pointer_levels > 0 && right_type->to_str() != "char*")) {
+      else {
+         switch (node->op_tok.type) {
+         case TokenType::AMPER: {
             asm_stream << "push %ax\n";
-            visit(node->right_node, symbol_table);
+            std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
+            if (temp2->is_func()) {
+               error(file, node->right_node->line, "cannot perform binary operations on a function");
+            }
+            if (temp2->to_str() == "float") {
+               error(file, node->right_node->line, "cannot perform binary operations on a mix of float and non-float types");
+            }
+            right_type = std::static_pointer_cast<NonFuncType>(temp2);
+            asm_stream << "pop %cx\n";
+            asm_stream << "and %cx,%ax\n";
+            break;
+         }
+         case TokenType::PIPE: {
+            visit(node->left_node, symbol_table);
+            asm_stream << "push %ax\n";
+            std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
+            if (temp2->is_func()) {
+               error(file, node->right_node->line, "cannot perform binary operations on a function");
+            }
+            if (temp2->to_str() == "float") {
+               error(file, node->right_node->line, "cannot perform binary operations on a mix of float and non-float types");
+            }
+            right_type = std::static_pointer_cast<NonFuncType>(temp2);
+
+            asm_stream << "pop %cx\n";
+            asm_stream << "or %cx,%ax\n";
+            break;
+         }
+         case TokenType::CARET: {
+            visit(node->left_node, symbol_table);
+            asm_stream << "push %ax\n";
+            std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
+            if (temp2->is_func()) {
+               error(file, node->right_node->line, "cannot perform binary operations on a function");
+            }
+            if (temp2->to_str() == "float") {
+               error(file, node->right_node->line, "cannot perform binary operations on a mix of float and non-float types");
+            }
+            right_type = std::static_pointer_cast<NonFuncType>(temp2);
+            asm_stream << "pop %cx\n";
+            asm_stream << "xor %cx,%ax\n";
+            break;
+         }
+         case TokenType::LSHIFT: {
+            visit(node->left_node, symbol_table);
+            asm_stream << "push %ax\n";
+            std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
+            if (temp2->is_func()) {
+               error(file, node->right_node->line, "cannot perform binary operations on a function");
+            }
+            if (temp2->to_str() == "float") {
+               error(file, node->right_node->line, "cannot perform binary operations on a mix of float and non-float types");
+            }
+            right_type = std::static_pointer_cast<NonFuncType>(temp2);
+            asm_stream << "pop %cx\n";
+            asm_stream << "xchg %cx,%ax\n";
+            asm_stream << "shl %cx,%ax\n";
+            break;
+         }
+         case TokenType::RSHIFT: {
+            visit(node->left_node, symbol_table);
+            asm_stream << "push %ax\n";
+            std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
+            if (temp2->is_func()) {
+               error(file, node->right_node->line, "cannot perform binary operations on a function");
+            }
+            if (temp2->to_str() == "float") {
+               error(file, node->right_node->line, "cannot perform binary operations on a mix of float and non-float types");
+            }
+            right_type = std::static_pointer_cast<NonFuncType>(temp2);
+            asm_stream << "pop %cx\n";
+            asm_stream << "xchg %cx,%ax\n";
+            asm_stream << "shr %cx,%ax\n";
+            break;
+         }
+         case TokenType::LOGAND: {
+            visit(node->left_node, symbol_table);
+            asm_stream << "push %ax\n";
+            std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
+            if (temp2->is_func()) {
+               error(file, node->right_node->line, "cannot perform binary operations on a function");
+            }
+            if (temp2->to_str() == "float") {
+               error(file, node->right_node->line, "cannot perform binary operations on a mix of float and non-float types");
+            }
+            right_type = std::static_pointer_cast<NonFuncType>(temp2);
+            asm_stream << "pop %cx\n";
+            asm_stream << "and %cx,%ax\n";
+            break;
+         }
+         case TokenType::PLUS: {
+            visit(node->left_node, symbol_table);
+            asm_stream << "push %ax\n";
+            std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
+            if (temp2->is_func()) {
+               error(file, node->right_node->line, "cannot perform binary operations on a function");
+            }
+            if (temp2->to_str() == "float") {
+               error(file, node->right_node->line, "cannot perform binary operations on a mix of float and non-float types");
+            }
+            right_type = std::static_pointer_cast<NonFuncType>(temp2);
             asm_stream << "pop %cx\n";
             asm_stream << "add %cx,%ax\n";
+            if ((left_type->pointer_levels > 0 /* && left_type->to_str() != "char*" */ )
+               || (right_type->pointer_levels > 0  /* && right_type->to_str() != "char*") */ )) {
+               asm_stream << "add %cx,%ax\n";
+            }
+            break;
          }
-         break;
-      }
-      case TokenType::MINUS: {
-         visit(node->left_node, symbol_table);
-         asm_stream << "push %ax\n";
-         std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
-         if (temp2->is_func()) {
-            error(file, node->right_node->line, "cannot perform binary operations on a function");
-         }
-         right_type = std::static_pointer_cast<NonFuncType>(temp2);
-         asm_stream << "pop %cx\n";
-         asm_stream << "xchg %cx,%ax\n";
-         asm_stream << "sub %cx,%ax\n";
-         if ((left_type->pointer_levels > 0 && left_type->to_str() != "char*")
-            || (right_type->pointer_levels > 0 && right_type->to_str() != "char*")) {
+         case TokenType::MINUS: {
+            visit(node->left_node, symbol_table);
             asm_stream << "push %ax\n";
-            visit(node->right_node, symbol_table);
+            std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
+            if (temp2->is_func()) {
+               error(file, node->right_node->line, "cannot perform binary operations on a function");
+            }
+            if (temp2->to_str() == "float") {
+               error(file, node->right_node->line, "cannot perform binary operations on a mix of float and non-float types");
+            }
+            right_type = std::static_pointer_cast<NonFuncType>(temp2);
             asm_stream << "pop %cx\n";
             asm_stream << "xchg %cx,%ax\n";
             asm_stream << "sub %cx,%ax\n";
+            if ((left_type->pointer_levels > 0 /* && left_type->to_str() != "char*" */ )
+               || (right_type->pointer_levels > 0 /* && right_type->to_str() != "char*") */) {
+               asm_stream << "xchg %cx,%ax\n";
+               asm_stream << "sub %cx,%ax\n";
+            }
+            break;
          }
-         break;
-      }
-      case TokenType::STAR: {
-         visit(node->left_node, symbol_table);
-         asm_stream << "push %ax\n";
-         std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
-         if (temp2->is_func()) {
-            error(file, node->right_node->line, "cannot perform binary operations on a function");
+         case TokenType::STAR: {
+            visit(node->left_node, symbol_table);
+            asm_stream << "push %ax\n";
+            std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
+            if (temp2->is_func()) {
+               error(file, node->right_node->line, "cannot perform binary operations on a function");
+            }
+            if (temp2->to_str() == "float") {
+               error(file, node->right_node->line, "cannot perform binary operations on a mix of float and non-float types");
+            }
+            right_type = std::static_pointer_cast<NonFuncType>(temp2);
+            asm_stream << "pop %cx\n";
+            asm_stream << "mul %cx\n";
+            break;
          }
-         right_type = std::static_pointer_cast<NonFuncType>(temp2);
-         asm_stream << "pop %cx\n";
-         asm_stream << "mul %cx\n";
-         break;
-      }
-      case TokenType::SLASH: {
-         visit(node->left_node, symbol_table);
-         asm_stream << "push %ax\n";
-         std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
-         if (temp2->is_func()) {
-            error(file, node->right_node->line, "cannot perform binary operations on a function");
+         case TokenType::SLASH: {
+            visit(node->left_node, symbol_table);
+            asm_stream << "push %ax\n";
+            std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
+            if (temp2->is_func()) {
+               error(file, node->right_node->line, "cannot perform binary operations on a function");
+            }
+            if (temp2->to_str() == "float") {
+               error(file, node->right_node->line, "cannot perform binary operations on a mix of float and non-float types");
+            }
+            right_type = std::static_pointer_cast<NonFuncType>(temp2);
+            asm_stream << "pop %cx\n";
+            asm_stream << "xchg %cx,%ax\n";
+            asm_stream << "div %cx\n";
+            break;
          }
-         right_type = std::static_pointer_cast<NonFuncType>(temp2);
-         asm_stream << "pop %cx\n";
-         asm_stream << "xchg %cx,%ax\n";
-         asm_stream << "div %cx\n";
-         break;
-      }
-      case TokenType::MOD: {
-         visit(node->left_node, symbol_table);
-         asm_stream << "push %ax\n";
-         std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
-         if (temp2->is_func()) {
-            error(file, node->right_node->line, "cannot perform binary operations on a function");
+         case TokenType::MOD: {
+            visit(node->left_node, symbol_table);
+            asm_stream << "push %ax\n";
+            std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
+            if (temp2->is_func()) {
+               error(file, node->right_node->line, "cannot perform binary operations on a function");
+            }
+            if (temp2->to_str() == "float") {
+               error(file, node->right_node->line, "cannot perform binary operations on a mix of float and non-float types");
+            }
+            right_type = std::static_pointer_cast<NonFuncType>(temp2);
+            asm_stream << "pop %cx\n";
+            asm_stream << "xchg %cx,%ax\n";
+            asm_stream << "div %cx\n";
+            asm_stream << "mov %dx,%ax\n";
+            break;
          }
-         right_type = std::static_pointer_cast<NonFuncType>(temp2);
-         asm_stream << "pop %cx\n";
-         asm_stream << "xchg %cx,%ax\n";
-         asm_stream << "div %cx\n";
-         asm_stream << "mov %dx,%ax\n";
-         break;
-      }
-      case TokenType::EQUAL: {
-         visit(node->left_node, symbol_table);
-         asm_stream << "push %ax\n";
-         std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
-         if (temp2->is_func()) {
-            error(file, node->right_node->line, "cannot perform binary operations on a function");
+         case TokenType::EQUAL: {
+            // visit(node->left_node, symbol_table);
+            asm_stream << "push %ax\n";
+            std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
+            if (temp2->is_func()) {
+               error(file, node->right_node->line, "cannot perform binary operations on a function");
+            }
+            if (temp2->to_str() == "float") {
+               error(file, node->right_node->line, "cannot perform binary operations on a mix of float and non-float types");
+            }
+            right_type = std::static_pointer_cast<NonFuncType>(temp2);
+            asm_stream << "pop %cx\n";
+            asm_stream << "cmp %ax,%cx\n";
+            asm_stream << "mov $1,%ax\n";
+            int label = alloc_label();
+            asm_stream << "je _L" + std::to_string(label) + "\n";
+            asm_stream << "mov $-1,%ax\n";
+            asm_stream << "_L" + std::to_string(label) + ":\n";
+            break;
          }
-         right_type = std::static_pointer_cast<NonFuncType>(temp2);
-         asm_stream << "pop %cx\n";
-         asm_stream << "cmp %ax,%cx\n";
-         asm_stream << "mov $1,%ax\n";
-         int label = alloc_label();
-         asm_stream << "je _L" + std::to_string(label) + "\n";
-         asm_stream << "mov $-1,%ax\n";
-         asm_stream << "_L" + std::to_string(label) + ":\n";
-         break;
-      }
-      case TokenType::NOTEQ: {
-         visit(node->left_node, symbol_table);
-         asm_stream << "push %ax\n";
-         std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
-         if (temp2->is_func()) {
-            error(file, node->right_node->line, "cannot perform binary operations on a function");
+         case TokenType::NOTEQ: {
+            // visit(node->left_node, symbol_table);
+            asm_stream << "push %ax\n";
+            std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
+            if (temp2->is_func()) {
+               error(file, node->right_node->line, "cannot perform binary operations on a function");
+            }
+            if (temp2->to_str() == "float") {
+               error(file, node->right_node->line, "cannot perform binary operations on a mix of float and non-float types");
+            }
+            right_type = std::static_pointer_cast<NonFuncType>(temp2);
+            asm_stream << "pop %cx\n";
+            asm_stream << "cmp %ax,%cx\n";
+            asm_stream << "mov $1,%ax\n";
+            int label = alloc_label();
+            asm_stream << "jne _L" + std::to_string(label) + "\n";
+            asm_stream << "mov $-1,%ax\n";
+            asm_stream << "_L" + std::to_string(label) + ":\n";
+            break;
          }
-         right_type = std::static_pointer_cast<NonFuncType>(temp2);
-         asm_stream << "pop %cx\n";
-         asm_stream << "cmp %ax,%cx\n";
-         asm_stream << "mov $1,%ax\n";
-         int label = alloc_label();
-         asm_stream << "jne _L" + std::to_string(label) + "\n";
-         asm_stream << "mov $-1,%ax\n";
-         asm_stream << "_L" + std::to_string(label) + ":\n";
-         break;
-      }
-      case TokenType::LESS: {
-         visit(node->left_node, symbol_table);
-         asm_stream << "push %ax\n";
-         std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
-         if (temp2->is_func()) {
-            error(file, node->right_node->line, "cannot perform binary operations on a function");
+         case TokenType::LESS: {
+            // visit(node->left_node, symbol_table);
+            asm_stream << "push %ax\n";
+            std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
+            if (temp2->is_func()) {
+               error(file, node->right_node->line, "cannot perform binary operations on a function");
+            }
+            if (temp2->to_str() == "float") {
+               error(file, node->right_node->line, "cannot perform binary operations on a mix of float and non-float types");
+            }
+            right_type = std::static_pointer_cast<NonFuncType>(temp2);
+            asm_stream << "pop %cx\n";
+            asm_stream << "cmp %ax,%cx\n";
+            asm_stream << "mov $1,%ax\n";
+            int label = alloc_label();
+            asm_stream << "jl _L" + std::to_string(label) + "\n";
+            asm_stream << "mov $-1,%ax\n";
+            asm_stream << "_L" + std::to_string(label) + ":\n";
+            break;
          }
-         right_type = std::static_pointer_cast<NonFuncType>(temp2);
-         asm_stream << "pop %cx\n";
-         asm_stream << "cmp %ax,%cx\n";
-         asm_stream << "mov $1,%ax\n";
-         int label = alloc_label();
-         asm_stream << "jl _L" + std::to_string(label) + "\n";
-         asm_stream << "mov $-1,%ax\n";
-         asm_stream << "_L" + std::to_string(label) + ":\n";
-         break;
-      }
-      case TokenType::LTEQ: {
-         visit(node->left_node, symbol_table);
-         asm_stream << "push %ax\n";
-         std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
-         if (temp2->is_func()) {
-            error(file, node->right_node->line, "cannot perform binary operations on a function");
+         case TokenType::LTEQ: {
+            // visit(node->left_node, symbol_table);
+            asm_stream << "push %ax\n";
+            std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
+            if (temp2->is_func()) {
+               error(file, node->right_node->line, "cannot perform binary operations on a function");
+            }
+            if (temp2->to_str() == "float") {
+               error(file, node->right_node->line, "cannot perform binary operations on a mix of float and non-float types");
+            }
+            right_type = std::static_pointer_cast<NonFuncType>(temp2);
+            asm_stream << "pop %cx\n";
+            asm_stream << "cmp %ax,%cx\n";
+            asm_stream << "mov $1,%ax\n";
+            int label = alloc_label();
+            asm_stream << "jle _L" + std::to_string(label) + "\n";
+            asm_stream << "mov $-1,%ax\n";
+            asm_stream << "_L" + std::to_string(label) + ":\n";
+            break;
          }
-         right_type = std::static_pointer_cast<NonFuncType>(temp2);
-         asm_stream << "pop %cx\n";
-         asm_stream << "cmp %ax,%cx\n";
-         asm_stream << "mov $1,%ax\n";
-         int label = alloc_label();
-         asm_stream << "jle _L" + std::to_string(label) + "\n";
-         asm_stream << "mov $-1,%ax\n";
-         asm_stream << "_L" + std::to_string(label) + ":\n";
-         break;
-      }
-      case TokenType::GREATER: {
-         visit(node->left_node, symbol_table);
-         asm_stream << "push %ax\n";
-         std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
-         if (temp2->is_func()) {
-            error(file, node->right_node->line, "cannot perform binary operations on a function");
+         case TokenType::GREATER: {
+            // visit(node->left_node, symbol_table);
+            asm_stream << "push %ax\n";
+            std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
+            if (temp2->is_func()) {
+               error(file, node->right_node->line, "cannot perform binary operations on a function");
+            }
+            if (temp2->to_str() == "float") {
+               error(file, node->right_node->line, "cannot perform binary operations on a mix of float and non-float types");
+            }
+            right_type = std::static_pointer_cast<NonFuncType>(temp2);
+            asm_stream << "pop %cx\n";
+            asm_stream << "cmp %ax,%cx\n";
+            asm_stream << "mov $1,%ax\n";
+            int label = alloc_label();
+            asm_stream << "jg _L" + std::to_string(label) + "\n";
+            asm_stream << "mov $-1,%ax\n";
+            asm_stream << "_L" + std::to_string(label) + ":\n";
+            break;
          }
-         right_type = std::static_pointer_cast<NonFuncType>(temp2);
-         asm_stream << "pop %cx\n";
-         asm_stream << "cmp %ax,%cx\n";
-         asm_stream << "mov $1,%ax\n";
-         int label = alloc_label();
-         asm_stream << "jg _L" + std::to_string(label) + "\n";
-         asm_stream << "mov $-1,%ax\n";
-         asm_stream << "_L" + std::to_string(label) + ":\n";
-         break;
-      }
-      case TokenType::GTEQ: {
-         visit(node->left_node, symbol_table);
-         asm_stream << "push %ax\n";
-         std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
-         if (temp2->is_func()) {
-            error(file, node->right_node->line, "cannot perform binary operations on a function");
+         case TokenType::GTEQ: {
+            // visit(node->left_node, symbol_table);
+            asm_stream << "push %ax\n";
+            std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
+            if (temp2->is_func()) {
+               error(file, node->right_node->line, "cannot perform binary operations on a function");
+            }
+            if (temp2->to_str() == "float") {
+               error(file, node->right_node->line, "cannot perform binary operations on a mix of float and non-float types");
+            }
+            right_type = std::static_pointer_cast<NonFuncType>(temp2);
+            asm_stream << "pop %cx\n";
+            asm_stream << "cmp %ax,%cx\n";
+            asm_stream << "mov $1,%ax\n";
+            int label = alloc_label();
+            asm_stream << "jge _L" + std::to_string(label) + "\n";
+            asm_stream << "mov $-1,%ax\n";
+            asm_stream << "_L" + std::to_string(label) + ":\n";
+            break;
          }
-         right_type = std::static_pointer_cast<NonFuncType>(temp2);
-         asm_stream << "pop %cx\n";
-         asm_stream << "cmp %ax,%cx\n";
-         asm_stream << "mov $1,%ax\n";
-         int label = alloc_label();
-         asm_stream << "jge _L" + std::to_string(label) + "\n";
-         asm_stream << "mov $-1,%ax\n";
-         asm_stream << "_L" + std::to_string(label) + ":\n";
-         break;
-      }
+         }
       }
 
       if ((left_type->pointer_levels > 0 || right_type->pointer_levels > 0) && !(node->op_tok.type == TokenType::PLUS || node->op_tok.type == TokenType::MINUS)) {
@@ -704,6 +894,11 @@ namespace anthill {
 
       if (right_type->to_str() == "void") {
          error(file, node->right_node->line, "cannot perform binary operations on a value of type void");
+      }
+
+
+      if (left_type->to_str() == "float" || right_type->to_str() == "float") {
+         return right_type;
       }
 
       if (left_type->to_str() == "char" && right_type->to_str() == "char") {
@@ -1029,7 +1224,7 @@ namespace anthill {
       gen.visit(parser.parse(), gen.global_scope);
       asm_stream << gen.asm_stream.str();
       label_id = gen.label_id + 1;
-      addr_counter = gen.addr_counter + 1;
+      addr_counter = gen.addr_counter + 4;
 
       return std::make_shared<NonFuncType>(NonFuncType(BasicType::VOID));
    }

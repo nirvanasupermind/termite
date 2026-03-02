@@ -62,7 +62,7 @@ namespace anthill {
         }
         else if (tok.type == TokenType::LPAREN) {
             advance();
-            if (current.type == TokenType::INT || current.type == TokenType::CHAR || current.type == TokenType::VOID) {
+            if (current.type == TokenType::INT || current.type == TokenType::FLOAT || current.type == TokenType::CHAR || current.type == TokenType::VOID) {
                 std::shared_ptr<Node> type_ = type(terminator);
                 eat(TokenType::RPAREN);
                 std::shared_ptr<Node> val = expr(terminator);
@@ -299,7 +299,7 @@ namespace anthill {
                 advance();
             }
             else {
-                while (current.type == TokenType::INT || current.type == TokenType::CHAR || current.type == TokenType::VOID) {
+                while (current.type == TokenType::INT || current.type == TokenType::FLOAT || current.type == TokenType::CHAR || current.type == TokenType::VOID) {
                     arg_types.push_back(type());
                     arg_names.push_back(eat(TokenType::IDENT));
 
@@ -421,7 +421,7 @@ namespace anthill {
     }
 
     std::shared_ptr<Node> Parser::stmt(const TokenType& terminator) {
-        if (current.type == TokenType::INT || current.type == TokenType::CHAR || current.type == TokenType::VOID) {
+        if (current.type == TokenType::INT  || current.type == TokenType::FLOAT || current.type == TokenType::CHAR || current.type == TokenType::VOID) {
             return var_or_func_def_stmt(terminator);
         }
         else if (current.type == TokenType::LBRACE) {

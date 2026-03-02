@@ -38,55 +38,59 @@ namespace termite {
         static constexpr int32_t REG_DX = 7;
         static constexpr int32_t REG_IP = 8;
         // opcodes
-        static constexpr int32_t INS_MOV = -40;
-        static constexpr int32_t INS_PUSH = -39;
-        static constexpr int32_t INS_POP = -38;
-        static constexpr int32_t INS_PUSHF = -37;
-        static constexpr int32_t INS_POPF = -36;
-        static constexpr int32_t INS_AND = -35;
-        static constexpr int32_t INS_OR = -34;
-        static constexpr int32_t INS_XOR = -33;
-        static constexpr int32_t INS_SHL = -32;
-        static constexpr int32_t INS_SHR = -31;
-        static constexpr int32_t INS_ADD = -30;
-        static constexpr int32_t INS_ADC = -29;
-        static constexpr int32_t INS_SUB = -28;
-        static constexpr int32_t INS_SBB = -27;
-        static constexpr int32_t INS_MUL = -26;
-        static constexpr int32_t INS_DIV = -25;
-        static constexpr int32_t INS_NEG = -24;
-        static constexpr int32_t INS_CMP = -23;
-        static constexpr int32_t INS_CALL = -22;
-        static constexpr int32_t INS_RET = -21;
-        static constexpr int32_t INS_JMP = -20;
-        static constexpr int32_t INS_JL = -19;
-        static constexpr int32_t INS_JLE = -18;
-        static constexpr int32_t INS_JG = -17;
-        static constexpr int32_t INS_JGE = -16;
-        static constexpr int32_t INS_JE = -15;
-        static constexpr int32_t INS_JNE = -14;
-        static constexpr int32_t INS_JC = -13;
-        static constexpr int32_t INS_JNC = -12;
-        static constexpr int32_t INS_INT = -11;
-        static constexpr int32_t INS_XCHG = -10;
-        static constexpr int32_t INS_FLD = -9;
-        static constexpr int32_t INS_FST = -8;
-        static constexpr int32_t INS_FSTP = -7;
-        static constexpr int32_t INS_FADD = -6;
-        static constexpr int32_t INS_FSUB = -5;
-        static constexpr int32_t INS_FMUL = -4;
-        static constexpr int32_t INS_FDIV = -3;
-        static constexpr int32_t INS_FSQRT = -2;
-        static constexpr int32_t INS_FSIN = -1;
-        static constexpr int32_t INS_FCOS = 0;
-        static constexpr int32_t INS_FTAN = 1;
-        static constexpr int32_t INS_FATAN = 2;
-        static constexpr int32_t INS_FEXP = 3;
-        static constexpr int32_t INS_FLOG = 4;
-        static constexpr int32_t INS_FABS = 5;
-        static constexpr int32_t INS_FFLOOR = 6;
+        static constexpr int32_t INS_MOV = -40; // DD
+        static constexpr int32_t INS_PUSH = -39; // DC
+        static constexpr int32_t INS_POP = -38; // DB
+        static constexpr int32_t INS_PUSHF = -37; // DA
+        static constexpr int32_t INS_POPF = -36; // D0
+        static constexpr int32_t INS_AND = -35; // D1
+        static constexpr int32_t INS_OR = -34; // D2
+        static constexpr int32_t INS_XOR = -33; // D3
+        static constexpr int32_t INS_SHL = -32; // D4
+        static constexpr int32_t INS_SHR = -31; // CD
+        static constexpr int32_t INS_ADD = -30; // CC
+        static constexpr int32_t INS_ADC = -29; // CB
+        static constexpr int32_t INS_SUB = -28; // CA
+        static constexpr int32_t INS_SBB = -27; // C0
+        static constexpr int32_t INS_MUL = -26; // C1
+        static constexpr int32_t INS_DIV = -25; // C2
+        static constexpr int32_t INS_NEG = -24; // C3
+        static constexpr int32_t INS_CMP = -23; // C4
+        static constexpr int32_t INS_CALL = -22; // BD
+        static constexpr int32_t INS_RET = -21; // BC
+        static constexpr int32_t INS_JMP = -20; // BB
+        static constexpr int32_t INS_JL = -19; // BA
+        static constexpr int32_t INS_JLE = -18; // B0
+        static constexpr int32_t INS_JG = -17; // B1
+        static constexpr int32_t INS_JGE = -16; // B2
+        static constexpr int32_t INS_JE = -15; // B3
+        static constexpr int32_t INS_JNE = -14; // B4
+        static constexpr int32_t INS_JC = -13; // AD
+        static constexpr int32_t INS_JNC = -12; // AC
+        static constexpr int32_t INS_INT = -11; // AB
+        static constexpr int32_t INS_XCHG = -10; // AA
+        static constexpr int32_t INS_FLD = -9; // A0
+        static constexpr int32_t INS_FST = -8; // A1
+        static constexpr int32_t INS_FSTP = -7; // A2
+        static constexpr int32_t INS_FADD = -6; // A3
+        static constexpr int32_t INS_FSUB = -5; // A4
+        static constexpr int32_t INS_FMUL = -4; // 0D
+        static constexpr int32_t INS_FDIV = -3; // 0C
+        static constexpr int32_t INS_FSQRT = -2; // 0B
+        static constexpr int32_t INS_FSIN = -1; // 0A
+        static constexpr int32_t INS_FCOS = 0; // 00
+        static constexpr int32_t INS_FTAN = 1; // 01
+        static constexpr int32_t INS_FATAN = 2; // 02
+        static constexpr int32_t INS_FEXP = 3; // 03
+        static constexpr int32_t INS_FLOG = 4; // 04
+        static constexpr int32_t INS_FABS = 5; // 1D
+        static constexpr int32_t INS_FFLOOR = 6; // 1C
+        static constexpr int32_t INS_FCMP = 7; // 1B
+
         void reset(Mem& memory);
         void set_sign_flag(Word& cycles, Mem& memory, const Word& result);
+        void set_sign_flag_float(Word& cycles, Mem& memory, const TerFloat& result);
+
         Tryte fetch_tryte(Word& cycles, Mem& memory);
         Word fetch_word(Word& cycles, Mem& memory);
         Word get_addr_mode(Word& cycles, Mem& memory, const Word& mode, const Word& reg, const Word& imm);

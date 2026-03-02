@@ -39,7 +39,24 @@ namespace termite {
         {"jc", 1},
         {"jnc", 1},
         {"int", 1},
-        {"xchg", 2}
+        {"xchg", 2},
+        {"fld", 1},
+        {"fst", 1},
+        {"fstp", 1},
+        {"fadd", 0},
+        {"fsub", 0},
+        {"fmul", 0},
+        {"fdiv", 0},
+        {"fsqrt", 0},
+        {"fsin", 0},
+        {"fcos", 0},
+        {"ftan", 0},
+        {"fatan", 0},
+        {"fexp", 0},
+        {"flog", 0},
+        {"fabs", 0},
+        {"ffloor", 0},
+        {"fcmp", 0}
     };
     
     class Assembler {

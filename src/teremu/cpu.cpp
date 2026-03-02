@@ -97,6 +97,19 @@ namespace termite {
         }
     }
 
+        void CPU::set_sign_flag_float(Word& cycles, Mem& memory, const TerFloat& result) {
+        if (result < TerFloat::ZERO) {
+            flags.set_bct_trit(1, 0);
+        }
+        else if (result == TerFloat::ZERO) {
+            flags.set_bct_trit(1, 1);
+        }
+        else {
+            flags.set_bct_trit(1, 2);
+        }
+    }
+
+
     void CPU::print_state() {
         std::cout << "*** ip = " << regs[REG_IP].to_int32() << '\n';
         std::cout << "ax = " << regs[REG_AX].to_int32() << '\n';
@@ -564,55 +577,50 @@ namespace termite {
                     int code = regs[REG_AX].to_int32();
                     // std::cerr << "INT $0 with code (ax): " << code << "\n";
                     // std::cerr << "Value in DX: " << regs[REG_DX].to_int32() << "\n";
-                    if (code == -40) {
+                    if (code == -40) { // DD
                         std::exit(regs[REG_DX].to_int32());
                     }
-                    else if (code == -39) {
+                    else if (code == -39) { // DC
                         // std::cout << "dbg571 THE CODE -39 PATH HAS HIT" << '\n';
                         std::cout << regs[REG_DX].to_int32();
                     }
-                    else if (code == -38) {
+                    else if (code == -38) { // DB
                         std::cout << regs[REG_DX].to_ternary_str();
                     }
-                    else if (code == -37) {
+                    else if (code == -37) { // DA
                         std::cout << regs[REG_DX].to_nonary_str();
                     }
-                    else if (code == -36) {
+                    else if (code == -36) { // D0
                         std::cout << (char)(regs[REG_DX].get_lo_tryte().to_int16());
                     }
-                    else if (code == -35) {
+                    else if (code == -35) { // D1
                         std::cout << (char)(regs[REG_DX].get_hi_tryte().to_int16());
                     }
-                    else if (code == -34) {
+                    else if (code == -34) { // D2
                         print_state();
                     }
-                    else if (code == -33) {
+                    else if (code == -33) { // D3
                         std::string in;
                         std::cin >> in;
                         regs[REG_DX] = Word::from_int32(std::stoi(in));
                     }
-                    else if (code == -32) {
+                    else if (code == -32) { // D4
                         std::string in;
                         std::cin >> in;
                         regs[REG_DX] = Word::from_ternary_str(in);
                     }
-                    else if (code == -31) {
+                    else if (code == -31) { // CD
                         std::string in;
                         std::cin >> in;
                         regs[REG_DX] = Word::from_nonary_str(in);
                     }
-                    else if (code == -30) {
+                    else if (code == -30) { // CC
                         char in;
                         std::cin >> in;
                         regs[REG_DX] = Word::from_int32(in);
                         // regs[REG_DX] = Word::from_int32(Tryte::from_int16(in).get_bct() + ((regs[REG_DX].get_hi_tryte().get_bct()) << 16));
                     }
-                    // else if (code == -29) {
-                    //     char in;
-                    //     std::cin >> in;
-                    //     regs[REG_DX] = Word::from_int32(regs[REG_DX].get_lo_tryte().get_bct() + ((Tryte::from_int16(in).get_bct()) << 16));
-                    // }
-                    else if (code == -29) {
+                    else if (code == -29) { // CB
                         auto now = std::chrono::system_clock::now();
                         auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch());
                         long long shifted_count = ms.count() + 21523360;
@@ -621,6 +629,8 @@ namespace termite {
                         lo -= 21523360;
                         regs[REG_AX] = Word::from_int32(lo);
                         regs[REG_DX] = Word::from_int32(hi);
+                    } else if (code == -28) { // CA
+                        std::cout << st.top().to_str();
                     }
                 }
                 break;
@@ -644,9 +654,9 @@ namespace termite {
                 Word src_mode = ins.get_trit_range(10, 11);
                 Word src_reg = ins.get_trit_range(8, 9);
                 Word addr = get_addr_mode(cycles, memory, src_mode, src_reg, imm2);
-                std::cout << addr.to_nonary_str();
-                std::cout << "dbg647 " << memory.get_word(addr).to_nonary_str();
-                std::cout << "dbg648 " << memory.get_word(addr + Word::TWO).to_nonary_str();
+                // std::cout << addr.to_nonary_str();
+                // std::cout << "dbg647 " << memory.get_word(addr).to_nonary_str();
+                // std::cout << "dbg648 " << memory.get_word(addr + Word::TWO).to_nonary_str();
 
                 st.push(TerFloat(memory.get_word(addr), memory.get_word(addr + Word::TWO)));
                 break;
@@ -679,39 +689,43 @@ namespace termite {
                 break;
             }
             case INS_FADD: {
-                TerFloat a = st.top();
-                st.pop();
                 TerFloat b = st.top();
+                st.pop();
+                TerFloat a = st.top();
                 st.pop();
                 TerFloat result = a + b;
                 st.push(result);
+                set_sign_flag_float(cycles, memory, result);
                 break;
             }
             case INS_FSUB: {
-                TerFloat a = st.top();
-                st.pop();
                 TerFloat b = st.top();
+                st.pop();
+                TerFloat a = st.top();
                 st.pop();
                 TerFloat result = a - b;
                 st.push(result);
+                set_sign_flag_float(cycles, memory, result);
                 break;
             }
             case INS_FMUL: {
-                TerFloat a = st.top();
-                st.pop();
                 TerFloat b = st.top();
+                st.pop();
+                TerFloat a = st.top();
                 st.pop();
                 TerFloat result = a * b;
                 st.push(result);
+                set_sign_flag_float(cycles, memory, result);
                 break;
             }
             case INS_FDIV: {
-                TerFloat a = st.top();
-                st.pop();
                 TerFloat b = st.top();
+                st.pop();
+                TerFloat a = st.top();
                 st.pop();
                 TerFloat result = a / b;
                 st.push(result);
+                set_sign_flag_float(cycles, memory, result);
                 break;
             }
             case INS_FSQRT: {
@@ -719,6 +733,7 @@ namespace termite {
                 st.pop();
                 TerFloat result = a.sqrt();
                 st.push(result);
+                set_sign_flag_float(cycles, memory, result);
                 break;
             }
             case INS_FSIN: {
@@ -726,6 +741,7 @@ namespace termite {
                 st.pop();
                 TerFloat result = a.sin();
                 st.push(result);
+                set_sign_flag_float(cycles, memory, result);
                 break;
             }
             case INS_FCOS: {
@@ -733,6 +749,7 @@ namespace termite {
                 st.pop();
                 TerFloat result = a.cos();
                 st.push(result);
+                set_sign_flag_float(cycles, memory, result);
                 break;
             }
             case INS_FTAN: {
@@ -740,15 +757,17 @@ namespace termite {
                 st.pop();
                 TerFloat result = a.tan();
                 st.push(result);
+                set_sign_flag_float(cycles, memory, result);
                 break;
             }
             case INS_FATAN: {
-                TerFloat a = st.top();
-                st.pop();
                 TerFloat b = st.top();
+                st.pop();
+                TerFloat a = st.top();
                 st.pop();
                 TerFloat result = b.atan() / a.atan();
                 st.push(result);
+                set_sign_flag_float(cycles, memory, result);
                 break;
             }
             case INS_FEXP: {
@@ -756,6 +775,7 @@ namespace termite {
                 st.pop();
                 TerFloat result = a.exp();
                 st.push(result);
+                set_sign_flag_float(cycles, memory, result);
                 break;
             }
             case INS_FLOG: {
@@ -763,6 +783,7 @@ namespace termite {
                 st.pop();
                 TerFloat result = a.log();
                 st.push(result);
+                set_sign_flag_float(cycles, memory, result);
                 break;
             }
             case INS_FABS: {
@@ -770,6 +791,7 @@ namespace termite {
                 st.pop();
                 TerFloat result = a.abs();
                 st.push(result);
+                set_sign_flag_float(cycles, memory, result);
                 break;
             }
             case INS_FFLOOR: {
@@ -777,6 +799,17 @@ namespace termite {
                 st.pop();
                 TerFloat result = a.floor();
                 st.push(result);
+                set_sign_flag_float(cycles, memory, result);
+                break;
+            }
+            case INS_FCMP: {
+                TerFloat b = st.top();
+                st.pop();
+                TerFloat a = st.top();
+                st.pop();
+                TerFloat result = a - b;
+                // like fsub but doesn't actually push the result, just sets the flag
+                set_sign_flag_float(cycles, memory, result);
                 break;
             }
             }

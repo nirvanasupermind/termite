@@ -360,6 +360,9 @@ namespace anthill {
         else if (identifier_str == "int") {
             type = TokenType::INT;
         }
+                else if (identifier_str == "float") {
+            type = TokenType::FLOAT;
+        }
         else if (identifier_str == "char") {
             type = TokenType::CHAR;
         }
