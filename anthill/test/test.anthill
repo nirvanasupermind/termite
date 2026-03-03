@@ -3,6 +3,6 @@
 
 
 int main() {
-    puts(strcat("Hello ", "world"));
+    puts(strcat("Hello", "world"));
     return 0;
 }

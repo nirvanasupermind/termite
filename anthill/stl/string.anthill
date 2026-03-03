@@ -7,17 +7,15 @@ int strlen(char* s) {
 }
 
 char* strcat(char* a, char* b) {
-    char* result = "Hg";
     int i = 0;
     int j = 0;
+    char* result = "";
     while (*(a + i) != 0) {
+        puti(i);
+        putc(*(a + i));
         *(result + i) = *(a + i);
+        putc(*(result + i));
         i++;
-    }
-    while (*(b + j) != 0) {
-        *(result + i) = *(b + i);
-        i++;
-        j++;
     }
     *(result + i) = 0;
     return result;
