@@ -11,13 +11,20 @@ char* strcat(char* a, char* b) {
     int j = 0;
     char* result = "";
     while (*(a + i) != 0) {
-        puti(i);
-        putc(*(a + i));
         *(result + i) = *(a + i);
-        putc(*(result + i));
-        i++;
+        i += 2;
     }
     *(result + i) = 0;
     return result;
 }
+
+
+char* strchr(char* a, char b) {
+    int i = 0;
+    while (*(a + i) != b) {
+        i++;
+    }
+    return a + i;
+}
+
 

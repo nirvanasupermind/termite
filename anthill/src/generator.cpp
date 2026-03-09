@@ -378,9 +378,9 @@ namespace anthill {
       }
       case TokenType::STAR: {
          asm_stream << "mov 0(%ax),%ax\n";
-         if (node_type->to_str() == "char*") {
-            trunc_to_8_trits();
-         }
+         // if (node_type->to_str() == "char*") {
+         //    trunc_to_8_trits();
+         // }
          std::shared_ptr<NonFuncType> non_func_type = std::static_pointer_cast<NonFuncType>(node_type);
          std::cout << "dbg260 " << non_func_type->to_str() << '\n';
          if (non_func_type->pointer_levels == 0) {
@@ -677,10 +677,10 @@ namespace anthill {
             right_type = std::static_pointer_cast<NonFuncType>(temp2);
             asm_stream << "pop %cx\n";
             asm_stream << "add %cx,%ax\n";
-            if ((left_type->pointer_levels > 0 /* && left_type->to_str() != "char*" */ )
-               || (right_type->pointer_levels > 0  /* && right_type->to_str() != "char*") */ )) {
-               asm_stream << "add %cx,%ax\n";
-            }
+            // if ((left_type->pointer_levels > 0 /* && left_type->to_str() != "char*" */ )
+            //    || (right_type->pointer_levels > 0  /* && right_type->to_str() != "char*") */ )) {
+            //    asm_stream << "add %cx,%ax\n";
+            // }
             break;
          }
          case TokenType::MINUS: {
@@ -697,11 +697,11 @@ namespace anthill {
             asm_stream << "pop %cx\n";
             asm_stream << "xchg %cx,%ax\n";
             asm_stream << "sub %cx,%ax\n";
-            if ((left_type->pointer_levels > 0 /* && left_type->to_str() != "char*" */ )
-               || (right_type->pointer_levels > 0 /* && right_type->to_str() != "char*") */) {
-               asm_stream << "xchg %cx,%ax\n";
-               asm_stream << "sub %cx,%ax\n";
-            }
+            // if ((left_type->pointer_levels > 0 /* && left_type->to_str() != "char*" */ )
+            //    || (right_type->pointer_levels > 0 /* && right_type->to_str() != "char*") */) {
+            //    asm_stream << "xchg %cx,%ax\n";
+            //    asm_stream << "sub %cx,%ax\n";
+            // }
             break;
          }
          case TokenType::STAR: {
@@ -875,12 +875,12 @@ namespace anthill {
          }
       }
 
-      if ((left_type->pointer_levels > 0 || right_type->pointer_levels > 0) && !(node->op_tok.type == TokenType::PLUS || node->op_tok.type == TokenType::MINUS)) {
+      if ((left_type->pointer_levels > 0 || right_type->pointer_levels > 0) && !(node->op_tok.type == TokenType::PLUS || node->op_tok.type == TokenType::MINUS || node->op_tok.type == TokenType::EQ || node->op_tok.type == TokenType::NE)) {
          if (left_type->pointer_levels) {
-            error(file, node->left_node->line, "cannot perform binary operations other than addition or subtraction on a pointer");
+            error(file, node->left_node->line, "cannot perform binary operations other than +, -, ==, != on a pointer");
          }
          else {
-            error(file, node->right_node->line, "cannot perform binary operations other than addition or subtraction on a pointer");
+            error(file, node->right_node->line, "cannot perform binary operations other than +, -, ==, != on a pointer");
          }
       }
 
