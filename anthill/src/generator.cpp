@@ -773,7 +773,7 @@ namespace anthill {
             break;
          }
          case TokenType::NOTEQ: {
-            // visit(node->left_node, symbol_table);
+                        // visit(node->left_node, symbol_table);
             asm_stream << "push %ax\n";
             std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
             if (temp2->is_func()) {

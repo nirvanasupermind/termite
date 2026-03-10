@@ -16,9 +16,10 @@ void putf(float f) {
 
 void puts(char* s) {
     int i = 0;
+    puti(*(s + i) != '\0');
 
     while (*(s + i) != '\0') {
-        putc(*(s + i));
+        puti(*(s + i));
         i += 2;
     }
 }
