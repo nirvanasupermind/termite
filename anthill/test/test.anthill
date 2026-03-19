@@ -3,7 +3,7 @@
 
 
 int main() {
-    puti(*("Hello world!") != '\0');
-
+    int x = 5;
+    puts("Hello world!");
     return 0;
 }

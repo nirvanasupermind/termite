@@ -296,6 +296,9 @@ namespace termite {
 
 
     Word Word::operator/(const Word& other) const {
+        if(other == Word::ZERO) {
+            throw std::string("Division by zero ternary math error");
+        }
         if(operator<(Word::ZERO)) {
             if(other < Word::ZERO) {
             return operator-().operator/(-other);

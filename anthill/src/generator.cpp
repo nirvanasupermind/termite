@@ -41,6 +41,11 @@ namespace anthill {
    }
 
    std::string Generator::alloc_addr(const std::shared_ptr<NonFuncType>& type, const std::shared_ptr<SymbolTable>& symbol_table, bool always_global) {
+         //  std::cout << "dbg51 " << addr_counter << '\n';
+         // std::string result = std::to_string(addr_counter);
+         // addr_counter += type->size();
+         // std::cout << "dbg54 " << addr_counter << '\n';
+         // return result;
       if (symbol_table->is_func && !always_global) {
          func_addr_counter += type->size();
          std::string result = "-" + std::to_string(func_addr_counter) + "(%bp)";
@@ -293,6 +298,7 @@ namespace anthill {
       }
 
       std::string func_name = std::static_pointer_cast<IdentNode>(node->callee)->tok.val;
+      std::cout << "dbg301" << func_name << '\n';
       if (func_name == "__asm__") {
          if (node->args.size() > 1) {
             error(file, node->callee->line, "cannot use __asm__ with multiple arguments");
@@ -875,7 +881,7 @@ namespace anthill {
          }
       }
 
-      if ((left_type->pointer_levels > 0 || right_type->pointer_levels > 0) && !(node->op_tok.type == TokenType::PLUS || node->op_tok.type == TokenType::MINUS || node->op_tok.type == TokenType::EQ || node->op_tok.type == TokenType::NE)) {
+      if ((left_type->pointer_levels > 0 || right_type->pointer_levels > 0) && !(node->op_tok.type == TokenType::PLUS || node->op_tok.type == TokenType::MINUS || node->op_tok.type == TokenType::EQUAL || node->op_tok.type == TokenType::NOTEQ)) {
          if (left_type->pointer_levels) {
             error(file, node->left_node->line, "cannot perform binary operations other than +, -, ==, != on a pointer");
          }

@@ -13,7 +13,7 @@ namespace anthill {
     class Generator {
     public:
         int label_id = 1;
-        int addr_counter = 0;
+        int addr_counter = 10000;
         int func_addr_counter = 0;
         std::string current_func_name = "";
         std::string file;
