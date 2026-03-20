@@ -89,6 +89,53 @@ je _L1
 mov %bp,%sp
 pop %bp
 ret
+fact:
+push %bp
+mov %sp,%bp
+sub $729,%sp
+mov %di,%ax
+mov %ax,-2(%bp)
+mov $1,%ax
+sub $2,%sp
+mov %ax,-4(%bp)
+mov $1,%ax
+sub $2,%sp
+mov %ax,-6(%bp)
+jmp _L5
+_L4:
+mov -6(%bp),%ax
+mov -6(%bp),%ax
+push %ax
+mov -4(%bp),%ax
+pop %cx
+mul %cx
+mov %ax,-6(%bp)
+mov -4(%bp),%ax
+mov -4(%bp),%ax
+push %ax
+mov $1,%ax
+pop %cx
+add %cx,%ax
+mov %ax,-4(%bp)
+_L5:
+mov -4(%bp),%ax
+push %ax
+mov -2(%bp),%ax
+pop %cx
+cmp %ax,%cx
+mov $1,%ax
+jle _L6
+mov $-1,%ax
+_L6:
+cmp $1, %ax
+je _L4
+mov -6(%bp),%ax
+mov %bp,%sp
+pop %bp
+ret
+mov %bp,%sp
+pop %bp
+ret
 getc:
 push %bp
 mov %sp,%bp
@@ -302,38 +349,46 @@ main:
 push %bp
 mov %sp,%bp
 sub $729,%sp
-mov $5,%ax
+mov $7,%ax
 sub $2,%sp
 mov %ax,-2(%bp)
-mov $72,%ax
-mov %ax,10006
-mov $101,%ax
-mov %ax,10008
-mov $108,%ax
-mov %ax,10010
-mov $108,%ax
-mov %ax,10012
-mov $111,%ax
-mov %ax,10014
-mov $32,%ax
-mov %ax,10016
-mov $119,%ax
-mov %ax,10018
-mov $111,%ax
-mov %ax,10020
-mov $114,%ax
-mov %ax,10022
-mov $108,%ax
-mov %ax,10024
-mov $100,%ax
-mov %ax,10026
-mov $33,%ax
-mov %ax,10028
-mov $0,%ax
-mov %ax,10030
-mov $10006,%ax
+mov $1,%ax
+sub $2,%sp
+mov %ax,-4(%bp)
+mov $1,%ax
+sub $2,%sp
+mov %ax,-6(%bp)
+jmp _L12
+_L11:
+mov -6(%bp),%ax
+mov -6(%bp),%ax
+push %ax
+mov -4(%bp),%ax
+pop %cx
+mul %cx
+mov %ax,-6(%bp)
+mov -4(%bp),%ax
+mov -4(%bp),%ax
+push %ax
+mov $1,%ax
+pop %cx
+add %cx,%ax
+mov %ax,-4(%bp)
+_L12:
+mov -4(%bp),%ax
+push %ax
+mov -2(%bp),%ax
+pop %cx
+cmp %ax,%cx
+mov $1,%ax
+jle _L13
+mov $-1,%ax
+_L13:
+cmp $1, %ax
+je _L11
+mov -6(%bp),%ax
 mov %ax,%di
-call puts
+call puti
 mov $0,%ax
 mov %ax,%dx
 mov $0nDD,%ax

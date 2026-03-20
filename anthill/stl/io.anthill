@@ -22,6 +22,17 @@ void puts(char* s) {
     }
 }
 
+
+int fact(int x) {
+    int i = 1;
+    int result = 1;
+    while (i <= x) {
+        result = result * i;
+        i++;
+    }
+    return result;
+}
+
 char getc() {
     __asm__("mov $0,%dx\nmov $0nCC,%ax\nint $0\nmov %dx,%ax\nmov %bp,%sp\n");
 }

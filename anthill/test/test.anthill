@@ -3,7 +3,12 @@
 
 
 int main() {
-    int x = 5;
-    puts("Hello world!");
+    int x = 7;  int i = 1;
+    int result = 1;
+    while (i <= x) {
+        result = result * i;
+        i++;
+    }
+    puti(result);
     return 0;
 }
