@@ -41,24 +41,24 @@ namespace anthill {
    }
 
    std::string Generator::alloc_addr(const std::shared_ptr<NonFuncType>& type, const std::shared_ptr<SymbolTable>& symbol_table, bool always_global) {
-         //  std::cout << "dbg51 " << addr_counter << '\n';
-         // std::string result = std::to_string(addr_counter);
-         // addr_counter += type->size();
-         // std::cout << "dbg54 " << addr_counter << '\n';
-         // return result;
-      if (symbol_table->is_func && !always_global) {
-         func_addr_counter += type->size();
-         std::string result = "-" + std::to_string(func_addr_counter) + "(%bp)";
-         // std::cout << "dbg51 " << func_addr_counter << '\n';
-         return result;
-      }
-      else {
-         std::cout << "dbg51 " << addr_counter << '\n';
-         std::string result = std::to_string(addr_counter);
-         addr_counter += type->size();
-         std::cout << "dbg54 " << addr_counter << '\n';
-         return result;
-      }
+      std::cout << "dbg51 " << addr_counter << '\n';
+      std::string result = std::to_string(addr_counter);
+      addr_counter += type->size();
+      std::cout << "dbg54 " << addr_counter << '\n';
+      return result;
+      // if (symbol_table->is_func && !always_global) {
+      //    func_addr_counter += type->size();
+      //    std::string result = "-" + std::to_string(func_addr_counter) + "(%bp)";
+      //    // std::cout << "dbg51 " << func_addr_counter << '\n';
+      //    return result;
+      // }
+      // else {
+      //    std::cout << "dbg51 " << addr_counter << '\n';
+      //    std::string result = std::to_string(addr_counter);
+      //    addr_counter += type->size();
+      //    std::cout << "dbg54 " << addr_counter << '\n';
+      //    return result;
+      // }
    }
 
    void Generator::trunc_to_8_trits() {
@@ -779,7 +779,7 @@ namespace anthill {
             break;
          }
          case TokenType::NOTEQ: {
-                        // visit(node->left_node, symbol_table);
+            // visit(node->left_node, symbol_table);
             asm_stream << "push %ax\n";
             std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
             if (temp2->is_func()) {
@@ -1227,10 +1227,23 @@ namespace anthill {
       anthill::Parser parser(file_path, tokens);
       anthill::Generator gen(file_path, std::make_shared<anthill::SymbolTable>(anthill::SymbolTable()));
       gen.global_scope = global_scope;
+
+      // inherit current counters so labels/addresses stay globally unique
+      gen.label_id = label_id;
+      gen.addr_counter = addr_counter;
+
       gen.visit(parser.parse(), gen.global_scope);
       asm_stream << gen.asm_stream.str();
-      label_id = gen.label_id + 1;
-      addr_counter = gen.addr_counter + 4;
+
+      // propagate updated counters back
+      label_id = gen.label_id;
+      addr_counter = gen.addr_counter;
+      // anthill::Generator gen(file_path, std::make_shared<anthill::SymbolTable>(anthill::SymbolTable()));
+      // gen.global_scope = global_scope;
+      // gen.visit(parser.parse(), gen.global_scope);
+      // asm_stream << gen.asm_stream.str();
+      // label_id = gen.label_id + 1;
+      // addr_counter = gen.addr_counter + 4;
 
       return std::make_shared<NonFuncType>(NonFuncType(BasicType::VOID));
    }
