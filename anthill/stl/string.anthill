@@ -1,21 +1,23 @@
 int strlen(char* s) {
     int i = 0;
-    while(*(s + i) != 0) {
+    while(*(s + i + i) != 0) {
         i++;
     }
     return i;
 }
 
-char* strcat(char* a, char* b) {
+void* strcat(char* dst, char* a, char* b) {
     int i = 0;
     int j = 0;
-    char* result = "";
-    while (*(a + i) != 0) {
-        *(result + i) = *(a + i);
+    while (*(a + i) != '\0') {
+        *(dst + i) = *(a + i);
         i += 2;
     }
-    *(result + i) = 0;
-    return result;
+    while (*(b + j) != '\0') {
+        *(dst + i + j) = *(b + j);
+        j += 2;
+    }
+    *(dst + i + j) = 0;
 }
 
 

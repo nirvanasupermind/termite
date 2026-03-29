@@ -3,6 +3,8 @@
 
 
 int main() {
-    puts("Hello world!\n");
+    char* dst = "\0\0\0";
+    strcat(dst,"a","bc");
+    puts(dst);
     return 0;
 }
