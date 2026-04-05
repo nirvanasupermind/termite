@@ -29,4 +29,10 @@ char* strchr(char* a, char b) {
     return a + i;
 }
 
-
+void memcpy(char*a, char* b, int n) {
+    int i = 0;
+    while (i < n) {
+        *(b + i) = *(a + i);
+        i++;        
+    }
+}

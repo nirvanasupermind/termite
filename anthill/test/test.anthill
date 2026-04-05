@@ -3,8 +3,6 @@
 
 
 int main() {
-    char* dst = "\0\0\0";
-    strcat(dst,"a","bc");
-    puts(dst);
+    __asm__("mov $0nCB,%ax\int $0");
     return 0;
 }
