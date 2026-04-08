@@ -1,0 +1,6 @@
+int time_hi() {
+    __asm__("mov $0nCB,%ax\nint $0\nmov %dx,%ax\nmov %bp,%sp\n");
+}
+int time_lo() {
+    __asm__("mov $0nCB,%ax\nint $0\nmov %bp,%sp\n");
+}

@@ -1,8 +1,8 @@
 #include "anthill/stl/io.anthill"
-#include "anthill/stl/string.anthill"
+#include "anthill/stl/time.anthill"
 
 
 int main() {
-    __asm__("mov $0nCB,%ax\int $0");
+    putf(3.0/4.0);
     return 0;
 }
