@@ -6,10 +6,10 @@
 #include "static_type.h"
 #include "symbol_table.h"
 
-
 namespace anthill {
     SymbolTable::SymbolTable()
         : parent(std::shared_ptr<SymbolTable>()), types(std::map<std::string, std::shared_ptr<StaticType> >({})), addrs(std::map<std::string, std::string>({})), is_func(false) {
+std::isalpha(3);
 
     }
 

@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <cstdarg>
 #include "token.h"
 
 namespace anthill {

@@ -35,6 +35,10 @@ float log(float a) {
     __asm__("fld %ax\nflog\nfstp %ax\n");
 }
 
+float pow(float a, float b) {
+    return exp(b * log(a));
+}
+
 float abs(float a) {
     a;
     __asm__("fld %ax\nfabs\nfstp %ax\n");

@@ -593,7 +593,7 @@ namespace anthill {
             break;
          }
          case TokenType::PIPE: {
-            visit(node->left_node, symbol_table);
+            ;
             asm_stream << "push %ax\n";
             std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
             if (temp2->is_func()) {
@@ -609,7 +609,7 @@ namespace anthill {
             break;
          }
          case TokenType::CARET: {
-            visit(node->left_node, symbol_table);
+            ;
             asm_stream << "push %ax\n";
             std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
             if (temp2->is_func()) {
@@ -624,7 +624,7 @@ namespace anthill {
             break;
          }
          case TokenType::LSHIFT: {
-            visit(node->left_node, symbol_table);
+            ;
             asm_stream << "push %ax\n";
             std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
             if (temp2->is_func()) {
@@ -640,7 +640,7 @@ namespace anthill {
             break;
          }
          case TokenType::RSHIFT: {
-            visit(node->left_node, symbol_table);
+            ;
             asm_stream << "push %ax\n";
             std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
             if (temp2->is_func()) {
@@ -656,7 +656,7 @@ namespace anthill {
             break;
          }
          case TokenType::LOGAND: {
-            visit(node->left_node, symbol_table);
+            ;
             asm_stream << "push %ax\n";
             std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
             if (temp2->is_func()) {
@@ -671,7 +671,7 @@ namespace anthill {
             break;
          }
          case TokenType::PLUS: {
-            visit(node->left_node, symbol_table);
+            ;
             asm_stream << "push %ax\n";
             std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
             if (temp2->is_func()) {
@@ -690,7 +690,7 @@ namespace anthill {
             break;
          }
          case TokenType::MINUS: {
-            visit(node->left_node, symbol_table);
+            ;
             asm_stream << "push %ax\n";
             std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
             if (temp2->is_func()) {
@@ -711,7 +711,7 @@ namespace anthill {
             break;
          }
          case TokenType::STAR: {
-            visit(node->left_node, symbol_table);
+            ;
             asm_stream << "push %ax\n";
             std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
             if (temp2->is_func()) {
@@ -726,7 +726,7 @@ namespace anthill {
             break;
          }
          case TokenType::SLASH: {
-            visit(node->left_node, symbol_table);
+            ;
             asm_stream << "push %ax\n";
             std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
             if (temp2->is_func()) {
@@ -742,7 +742,7 @@ namespace anthill {
             break;
          }
          case TokenType::MOD: {
-            visit(node->left_node, symbol_table);
+            ;
             asm_stream << "push %ax\n";
             std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
             if (temp2->is_func()) {
@@ -759,7 +759,7 @@ namespace anthill {
             break;
          }
          case TokenType::EQUAL: {
-            // visit(node->left_node, symbol_table);
+            // ;
             asm_stream << "push %ax\n";
             std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
             if (temp2->is_func()) {
@@ -779,7 +779,7 @@ namespace anthill {
             break;
          }
          case TokenType::NOTEQ: {
-            // visit(node->left_node, symbol_table);
+            // ;
             asm_stream << "push %ax\n";
             std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
             if (temp2->is_func()) {
@@ -799,7 +799,7 @@ namespace anthill {
             break;
          }
          case TokenType::LESS: {
-            // visit(node->left_node, symbol_table);
+            // ;
             asm_stream << "push %ax\n";
             std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
             if (temp2->is_func()) {
@@ -819,7 +819,7 @@ namespace anthill {
             break;
          }
          case TokenType::LTEQ: {
-            // visit(node->left_node, symbol_table);
+            // ;
             asm_stream << "push %ax\n";
             std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
             if (temp2->is_func()) {
@@ -839,7 +839,7 @@ namespace anthill {
             break;
          }
          case TokenType::GREATER: {
-            // visit(node->left_node, symbol_table);
+            // ;
             asm_stream << "push %ax\n";
             std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
             if (temp2->is_func()) {
@@ -859,7 +859,7 @@ namespace anthill {
             break;
          }
          case TokenType::GTEQ: {
-            // visit(node->left_node, symbol_table);
+            // ;
             asm_stream << "push %ax\n";
             std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
             if (temp2->is_func()) {

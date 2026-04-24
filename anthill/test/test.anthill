@@ -1,8 +1,8 @@
+#include "anthill/stl/type.anthill"
 #include "anthill/stl/io.anthill"
-#include "anthill/stl/time.anthill"
 
 
 int main() {
-    putf(3.0/4.0);
+    puti(isdigit('z'));
     return 0;
 }

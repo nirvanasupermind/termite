@@ -135,98 +135,97 @@ namespace termite {
 
 
     TerFloat TerFloat::rec() const {
-        TerFloat result(-(significand - Word::MIN_FLOAT_SIG) + Word::MAX_FLOAT_SIG, Word::from_int32(-1) - exponent);
-        // std::cout << "dbg " << Word::MAX_FLOAT_SIG.to_int32() << '\n';
-        // std::cout << "dbg " << (Word::MAX_FLOAT_SIG / (significand.shr_int8(2))).to_int32() << '\n';
-        // TerFloat result((Word::MAX_FLOAT_SIG / (significand.shr_int8(7))).shl_int8(7), Word::from_int32(-1) - exponent);
-        for (int i = 0; i < 8; i++) {
-            result = result * (TerFloat::from_double(2.0) - operator*(result));
-        }
+        TerFloat xMinusA = operator-(TerFloat::from_double(2.0));
+        TerFloat t0 = TerFloat::from_double(0.5);
+        TerFloat t1 = xMinusA * TerFloat::from_double(-0.25);
+        TerFloat t2 = xMinusA * xMinusA*  TerFloat::from_double(-0.25);
+        TerFloat t3 = xMinusA * xMinusA * xMinusA *  TerFloat::from_double(0.375);
+        TerFloat t4 = xMinusA * xMinusA * xMinusA * xMinusA *  TerFloat::from_double(-0.75);
+        TerFloat t5 = xMinusA * xMinusA * xMinusA * xMinusA * xMinusA *  TerFloat::from_double(1.875);
+        TerFloat t6 = xMinusA * xMinusA * xMinusA * xMinusA * xMinusA * xMinusA *  TerFloat::from_double(-5.625);
 
-        // result = result + result * (TerFloat::from_double(1.0) - operator*(result));
-        // result = result + result * (TerFloat::from_double(1.0) - operator*(result));
-
+        
         // for (int i = 0; i < 5; i++) {
         //     result = result * (TerFloat::THREE_HALVES - operator*(TerFloat::HALF) *result * result);
         // }
-        return result;
+        return t0 + t1 + t2 + t3 + t4 + t5 + t6;
     }
-TerFloat TerFloat::operator/(const TerFloat& other) const {
-    if (is_nan() || other.is_nan()) return TerFloat::NAN_;
-    if (other == TerFloat::ZERO) {
-        return significand < Word::ZERO ? TerFloat::NEGATIVE_INFINITY
-                                        : TerFloat::POSITIVE_INFINITY;
+// TerFloat TerFloat::operator/(const TerFloat& other) const {
+//     if (is_nan() || other.is_nan()) return TerFloat::NAN_;
+//     if (other == TerFloat::ZERO) {
+//         return significand < Word::ZERO ? TerFloat::NEGATIVE_INFINITY
+//                                         : TerFloat::POSITIVE_INFINITY;
+//     }
+//     if (*this == TerFloat::ZERO) return TerFloat::ZERO;
+
+//     if (is_inf() && other.is_inf()) return TerFloat::NAN_;
+//     if (is_inf()) {
+//         return (significand < Word::ZERO) ^ (other.significand < Word::ZERO)
+//             ? TerFloat::NEGATIVE_INFINITY
+//             : TerFloat::POSITIVE_INFINITY;
+//     }
+//     if (other.is_inf()) return TerFloat::ZERO;
+
+//     int64_t sa = significand.to_int32();
+//     int64_t sb = other.significand.to_int32();
+
+//     bool neg = (sa < 0) ^ (sb < 0);
+//     sa = std::llabs(sa);
+//     sb = std::llabs(sb);
+
+//     // scale into significand range
+//     static constexpr int64_t P14 = 4782969;   // 3^14
+//     static constexpr int64_t P15 = 14348907;  // 3^15
+
+//     int32_t out_exp = exponent.to_int32() - other.exponent.to_int32();
+
+//     // start with 3^14 scaling
+//     int64_t num = sa * P14;
+//     int64_t q = num / sb;
+//     int64_t r = num % sb;
+
+//     // round to nearest
+//     if (2 * r > sb || (2 * r == sb && (q % 2 != 0))) {
+//         q++;
+//     }
+
+//     // renormalize if needed
+//     while (q < P14) {
+//         q *= 3;
+//         out_exp -= 1;
+//     }
+//     while (q >= P15) {
+//         q /= 3;
+//         out_exp += 1;
+//     }
+
+//     if (neg) q = -q;
+
+//     return TerFloat(Word::from_int32((int32_t)q), Word::from_int32(out_exp));
+// }
+
+    TerFloat TerFloat::operator/(const TerFloat& other) const {
+        if (is_nan() || other.is_nan()) {
+            return TerFloat::NAN_;
+        }
+        else if (is_inf()) {
+            if (other.is_inf()) {
+                return TerFloat::NAN_;
+            }
+            else {
+                return TerFloat::ZERO;
+            }
+        }
+        else if (operator==(TerFloat::ZERO)) {
+            if (other.significand < Word::ZERO) {
+                return TerFloat::NEGATIVE_INFINITY;
+            }
+            else {
+                return TerFloat::POSITIVE_INFINITY;
+            }
+        }
+        return operator*(other.rec());
     }
-    if (*this == TerFloat::ZERO) return TerFloat::ZERO;
-
-    if (is_inf() && other.is_inf()) return TerFloat::NAN_;
-    if (is_inf()) {
-        return (significand < Word::ZERO) ^ (other.significand < Word::ZERO)
-            ? TerFloat::NEGATIVE_INFINITY
-            : TerFloat::POSITIVE_INFINITY;
-    }
-    if (other.is_inf()) return TerFloat::ZERO;
-
-    int64_t sa = significand.to_int32();
-    int64_t sb = other.significand.to_int32();
-
-    bool neg = (sa < 0) ^ (sb < 0);
-    sa = std::llabs(sa);
-    sb = std::llabs(sb);
-
-    // scale into significand range
-    static constexpr int64_t P14 = 4782969;   // 3^14
-    static constexpr int64_t P15 = 14348907;  // 3^15
-
-    int32_t out_exp = exponent.to_int32() - other.exponent.to_int32();
-
-    // start with 3^14 scaling
-    int64_t num = sa * P14;
-    int64_t q = num / sb;
-    int64_t r = num % sb;
-
-    // round to nearest
-    if (2 * r > sb || (2 * r == sb && (q % 2 != 0))) {
-        q++;
-    }
-
-    // renormalize if needed
-    while (q < P14) {
-        q *= 3;
-        out_exp -= 1;
-    }
-    while (q >= P15) {
-        q /= 3;
-        out_exp += 1;
-    }
-
-    if (neg) q = -q;
-
-    return TerFloat(Word::from_int32((int32_t)q), Word::from_int32(out_exp));
-}
-
-    // TerFloat TerFloat::operator/(const TerFloat& other) const {
-    //     if (is_nan() || other.is_nan()) {
-    //         return TerFloat::NAN_;
-    //     }
-    //     else if (is_inf()) {
-    //         if (other.is_inf()) {
-    //             return TerFloat::NAN_;
-    //         }
-    //         else {
-    //             return TerFloat::ZERO;
-    //         }
-    //     }
-    //     else if (operator==(TerFloat::ZERO)) {
-    //         if (other.significand < Word::ZERO) {
-    //             return TerFloat::NEGATIVE_INFINITY;
-    //         }
-    //         else {
-    //             return TerFloat::POSITIVE_INFINITY;
-    //         }
-    //     }
-    //     return operator*(other.rec());
-    // }
 
 
     TerFloat TerFloat::operator%(const TerFloat& other) const {
@@ -260,7 +259,7 @@ TerFloat TerFloat::operator/(const TerFloat& other) const {
         if (is_inf_or_nan()) {
             return TerFloat::NAN_;
         }
-        // Taylor serise iteration
+        // Taylor series iteration
         TerFloat x = operator%(TerFloat::from_double(6.283185307179586)); // reduce to 2π
         TerFloat x2 = x * x;
 
@@ -467,7 +466,7 @@ TerFloat TerFloat::operator/(const TerFloat& other) const {
         if (significand == Word::ZERO) {
             return "0.000000";
         }
-        if (!std::isinf(to_double()) && to_double() != 0) {
+        if (!std::isinf(to_double()) && to_double() != 0 && to_double() < 1e+21 && to_double() > -1e+21) {
             return std::to_string(to_double());
         }
         else {
