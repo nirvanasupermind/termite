@@ -61,6 +61,12 @@ namespace anthill {
                     tokens.push_back(Token(old_line, TokenType::ASDIV, "/="));
                     advance();
                 }
+                else if(current == '/') {
+                    while(current != '\n') {
+                        advance();
+                    }
+                    advance();
+                }
                 else {
                     tokens.push_back(Token(old_line, TokenType::SLASH, "/"));
                 }
