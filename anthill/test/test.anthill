@@ -1,8 +1,8 @@
-#include "anthill/stl/type.anthill"
+#include "anthill/stl/math.anthill"
 #include "anthill/stl/io.anthill"
 
 
 int main() {
-    puti(isdigit('z'));
+    puti(hypot(1.0, 1.0));
     return 0;
 }
