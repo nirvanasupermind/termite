@@ -383,9 +383,9 @@ namespace anthill {
 
     Token Lexer::generate_number() {
         std::string number_str(1, current);
+        bool temp_flag = false;
         if (current == '0') {
             advance();
-
             if (current == 't') {
                 number_str += current;
                 advance();
@@ -394,6 +394,7 @@ namespace anthill {
                     number_str += current;
                     advance();
                 }
+                return Token(line, TokenType::NUMLIT, number_str);
             }
             else if (current == 'n') {
                 number_str += current;
@@ -404,22 +405,23 @@ namespace anthill {
                     number_str += current;
                     advance();
                 }
+                return Token(line, TokenType::NUMLIT, number_str);
             }
         }
-        else {
-            advance();
-            int decimal_point_count = 0;
-            while (current && (std::isdigit(current) || current == '.')) {
-                if(current == '.') {
-                    decimal_point_count++;
-                    if(decimal_point_count > 1) {
-                        error(file, line, std::string("multiple decimal points in a numeric literal"));
-                    }
+
+        advance();
+        int decimal_point_count = 0;
+        while (current && (std::isdigit(current) || current == '.')) {
+            if(current == '.') {
+                decimal_point_count++;
+                if(decimal_point_count > 1) {
+                    error(file, line, std::string("multiple decimal points in a numeric literal"));
                 }
-                number_str += current;
-                advance();
             }
+            number_str += current;
+            advance();
         }
+
         return Token(line, TokenType::NUMLIT, number_str);
     }
 

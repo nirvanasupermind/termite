@@ -89,7 +89,7 @@ namespace anthill {
             }
             else {
                 while (current.type != TokenType::RPAREN) {
-                    args.push_back(expr());
+                    args.push_back(expr(TokenType::RPAREN));
                     if (current.type == TokenType::RPAREN) {
                         advance();
                         break;
@@ -460,7 +460,7 @@ namespace anthill {
         int line = current.line;
         std::vector<std::shared_ptr<Node> > stmts;
         while (current.type != terminator) {
-            stmts.push_back(stmt());
+            stmts.push_back(stmt(terminator));
         }
         return std::make_shared<StmtListNode>(line, stmts);
     }

@@ -35,21 +35,46 @@ float log(float a) {
     __asm__("fld %ax\nflog\nfstp %ax\n");
 }
 
+float log3(float a) {
+    return a / log(3);
+}
+
 float pow(float a, float b) {
     return exp(b * log(a));
 }
 
-float abs(float a) {
-    a;
-    __asm__("fld %ax\nfabs\nfstp %ax\n");
-}
+
 
 float floor(float a) {
     a;
     __asm__("fld %ax\nffloor\nfstp %ax\n");
 }
 
+float round(float a) {
+    return floor(a+1.0);
+}
 
-float hypot(float x, float y) {
-    return sqrt(x * x + y * y);
+float hypot(float a, float b) {
+    return sqrt(a * a + b *b);
+}
+
+float fabs(float a) {
+    a;
+    __asm__("fld %ax\nfabs\nfstp %ax\n");
+}
+
+float fmin(float a, float b) {
+    if(a < b) {
+        return a;
+    } else {
+        return b;
+    }
+}
+
+float fmax(float a, float b) {
+    if(a > b) {
+        return a;
+    } else {
+        return b;
+    }
 }

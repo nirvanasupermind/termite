@@ -91,17 +91,37 @@ fstp %ax
 mov %bp,%sp
 pop %bp
 ret
-pow:
+log3:
 push %bp
 mov %sp,%bp
 sub $729,%sp
 mov %di,%ax
 mov %ax,10032
-mov %si,%ax
-mov %ax,10036
-mov 10036,%ax
-fld %ax
 mov 10032,%ax
+fld %ax
+mov $3,%ax
+mov %ax,%di
+call log
+fld %ax
+fdiv
+fstp %ax
+mov %bp,%sp
+pop %bp
+ret
+mov %bp,%sp
+pop %bp
+ret
+pow:
+push %bp
+mov %sp,%bp
+sub $729,%sp
+mov %di,%ax
+mov %ax,10036
+mov %si,%ax
+mov %ax,10040
+mov 10040,%ax
+fld %ax
+mov 10036,%ax
 mov %ax,%di
 call log
 fld %ax
@@ -112,19 +132,6 @@ call exp
 mov %bp,%sp
 pop %bp
 ret
-mov %bp,%sp
-pop %bp
-ret
-abs:
-push %bp
-mov %sp,%bp
-sub $729,%sp
-mov %di,%ax
-mov %ax,10040
-mov 10040,%ax
-fld %ax
-fabs
-fstp %ax
 mov %bp,%sp
 pop %bp
 ret
@@ -141,24 +148,46 @@ fstp %ax
 mov %bp,%sp
 pop %bp
 ret
-hypot:
+round:
 push %bp
 mov %sp,%bp
 sub $729,%sp
 mov %di,%ax
 mov %ax,10048
-mov %si,%ax
-mov %ax,10052
 mov 10048,%ax
 fld %ax
-mov 10048,%ax
+mov $10052,%ax
+mov $4782969,0(%ax)
+mov $0,2(%ax)
+fld %ax
+fadd
+fstp %ax
+mov %ax,%di
+call floor
+mov %bp,%sp
+pop %bp
+ret
+mov %bp,%sp
+pop %bp
+ret
+hypot:
+push %bp
+mov %sp,%bp
+sub $729,%sp
+mov %di,%ax
+mov %ax,10056
+mov %si,%ax
+mov %ax,10060
+mov 10056,%ax
+fld %ax
+mov 10056,%ax
 fld %ax
 fmul
 fstp %ax
 fld %ax
-mov 10052,%ax
+mov 10060,%ax
 fld %ax
-mov 10052,%ax
+mov 10060,%ax
 fld %ax
 fmul
 fstp %ax
@@ -173,13 +202,92 @@ ret
 mov %bp,%sp
 pop %bp
 ret
+fabs:
+push %bp
+mov %sp,%bp
+sub $729,%sp
+mov %di,%ax
+mov %ax,10064
+mov 10064,%ax
+fld %ax
+fabs
+fstp %ax
+mov %bp,%sp
+pop %bp
+ret
+fmin:
+push %bp
+mov %sp,%bp
+sub $729,%sp
+mov %di,%ax
+mov %ax,10068
+mov %si,%ax
+mov %ax,10072
+mov 10068,%ax
+fld %ax
+mov 10072,%ax
+fld %ax
+fcmp
+mov $1,%ax
+jl _L3
+mov $-1,%ax
+_L3:
+cmp $1, %ax
+jne _L1
+mov 10068,%ax
+mov %bp,%sp
+pop %bp
+ret
+jmp _L2
+_L1:
+mov 10072,%ax
+mov %bp,%sp
+pop %bp
+ret
+_L2:
+mov %bp,%sp
+pop %bp
+ret
+fmax:
+push %bp
+mov %sp,%bp
+sub $729,%sp
+mov %di,%ax
+mov %ax,10076
+mov %si,%ax
+mov %ax,10080
+mov 10076,%ax
+fld %ax
+mov 10080,%ax
+fld %ax
+fcmp
+mov $1,%ax
+jg _L6
+mov $-1,%ax
+_L6:
+cmp $1, %ax
+jne _L4
+mov 10076,%ax
+mov %bp,%sp
+pop %bp
+ret
+jmp _L5
+_L4:
+mov 10080,%ax
+mov %bp,%sp
+pop %bp
+ret
+_L5:
+mov %bp,%sp
+pop %bp
+ret
 putc:
 push %bp
 mov %sp,%bp
 sub $729,%sp
 mov %di,%ax
-mov %ax,10056
-mov 10056,%ax
+mov %ax,10084
+mov 10084,%ax
 mov %ax,%dx
 mov $0nD0,%ax
 int $0
@@ -192,8 +300,8 @@ push %bp
 mov %sp,%bp
 sub $729,%sp
 mov %di,%ax
-mov %ax,10058
-mov 10058,%ax
+mov %ax,10086
+mov 10086,%ax
 mov %ax,%dx
 mov $0nDC,%ax
 int $0
@@ -206,8 +314,8 @@ push %bp
 mov %sp,%bp
 sub $729,%sp
 mov %di,%ax
-mov %ax,10060
-mov 10060,%ax
+mov %ax,10088
+mov 10088,%ax
 fld %ax
 mov $0nCA,%ax
 int $0
@@ -220,30 +328,30 @@ push %bp
 mov %sp,%bp
 sub $729,%sp
 mov %di,%ax
-mov %ax,10064
+mov %ax,10092
 mov $0,%ax
 sub $2,%sp
-mov %ax,10066
-jmp _L2
-_L1:
-mov 10064,%ax
+mov %ax,10094
+jmp _L8
+_L7:
+mov 10092,%ax
 push %ax
-mov 10066,%ax
+mov 10094,%ax
 pop %cx
 add %cx,%ax
 mov 0(%ax),%ax
 mov %ax,%di
 call putc
-mov 10066,%ax
+mov 10094,%ax
 push %ax
 mov $2,%ax
 pop %cx
 add %cx,%ax
-mov %ax,10066
-_L2:
-mov 10064,%ax
+mov %ax,10094
+_L8:
+mov 10092,%ax
 push %ax
-mov 10066,%ax
+mov 10094,%ax
 pop %cx
 add %cx,%ax
 mov 0(%ax),%ax
@@ -252,11 +360,11 @@ mov $0,%ax
 pop %cx
 cmp %ax,%cx
 mov $1,%ax
-jne _L3
+jne _L9
 mov $-1,%ax
-_L3:
+_L9:
 cmp $1, %ax
-je _L1
+je _L7
 mov %bp,%sp
 pop %bp
 ret
@@ -265,40 +373,40 @@ push %bp
 mov %sp,%bp
 sub $729,%sp
 mov %di,%ax
-mov %ax,10068
+mov %ax,10096
 mov $1,%ax
 sub $2,%sp
-mov %ax,10070
+mov %ax,10098
 mov $1,%ax
 sub $2,%sp
-mov %ax,10072
-jmp _L5
-_L4:
-mov 10072,%ax
+mov %ax,10100
+jmp _L11
+_L10:
+mov 10100,%ax
 push %ax
-mov 10070,%ax
+mov 10098,%ax
 pop %cx
 mul %cx
-mov %ax,10072
-mov 10070,%ax
+mov %ax,10100
+mov 10098,%ax
 push %ax
 mov $1,%ax
 pop %cx
 add %cx,%ax
-mov %ax,10070
-_L5:
-mov 10070,%ax
+mov %ax,10098
+_L11:
+mov 10098,%ax
 push %ax
-mov 10068,%ax
+mov 10096,%ax
 pop %cx
 cmp %ax,%cx
 mov $1,%ax
-jle _L6
+jle _L12
 mov $-1,%ax
-_L6:
+_L12:
 cmp $1, %ax
-je _L4
-mov 10072,%ax
+je _L10
+mov 10100,%ax
 mov %bp,%sp
 pop %bp
 ret
@@ -332,15 +440,11 @@ main:
 push %bp
 mov %sp,%bp
 sub $729,%sp
-mov $10074,%ax
-mov $4782969,0(%ax)
-mov $0,2(%ax)
+mov $10102,%ax
+mov $7971615,0(%ax)
+mov $1,2(%ax)
 mov %ax,%di
-mov $10078,%ax
-mov $4782969,0(%ax)
-mov $0,2(%ax)
-mov %ax,%si
-call hypot
+call log
 mov %ax,%di
 call puti
 mov $0,%ax
