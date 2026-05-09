@@ -31,6 +31,7 @@ namespace anthill {
             syntax_error();
         }
         advance();
+        std::cerr << "eat expected " << (int)type << " got " << current.to_str() << "\n";
         return result;
     }
 
@@ -149,43 +150,43 @@ namespace anthill {
     }
 
     std::shared_ptr<Node> Parser::term(const TokenType& terminator) {
-        return bin_op_expr([this](const TokenType& terminator) { return prefix_expr(terminator); }, { TokenType::STAR, TokenType::SLASH, TokenType::MOD });
+        return bin_op_expr([this](const TokenType& terminator) { return prefix_expr(terminator); }, { TokenType::STAR, TokenType::SLASH, TokenType::MOD }, terminator);
     }
 
     std::shared_ptr<Node> Parser::factor(const TokenType& terminator) {
-        return bin_op_expr([this](const TokenType& terminator) { return term(terminator); }, { TokenType::PLUS, TokenType::MINUS });
+        return bin_op_expr([this](const TokenType& terminator) { return term(terminator); }, { TokenType::PLUS, TokenType::MINUS }, terminator);
     }
 
     std::shared_ptr<Node> Parser::shift_expr(const TokenType& terminator) {
-        return bin_op_expr([this](const TokenType& terminator) { return factor(terminator); }, { TokenType::LSHIFT, TokenType::RSHIFT });
+        return bin_op_expr([this](const TokenType& terminator) { return factor(terminator); }, { TokenType::LSHIFT, TokenType::RSHIFT }, terminator);
     }
 
     std::shared_ptr<Node> Parser::cmp_expr(const TokenType& terminator) {
-        return bin_op_expr([this](const TokenType& terminator) { return shift_expr(terminator); }, { TokenType::LESS, TokenType::LTEQ, TokenType::GREATER, TokenType::GTEQ });
+        return bin_op_expr([this](const TokenType& terminator) { return shift_expr(terminator); }, { TokenType::LESS, TokenType::LTEQ, TokenType::GREATER, TokenType::GTEQ }, terminator);
     }
 
     std::shared_ptr<Node> Parser::eq_expr(const TokenType& terminator) {
-        return bin_op_expr([this](const TokenType& terminator) { return cmp_expr(terminator); }, { TokenType::EQUAL, TokenType::NOTEQ });
+        return bin_op_expr([this](const TokenType& terminator) { return cmp_expr(terminator); }, { TokenType::EQUAL, TokenType::NOTEQ }, terminator);
     }
 
     std::shared_ptr<Node> Parser::and_expr(const TokenType& terminator) {
-        return bin_op_expr([this](const TokenType& terminator) { return eq_expr(terminator); }, { TokenType::AMPER });
+        return bin_op_expr([this](const TokenType& terminator) { return eq_expr(terminator); }, { TokenType::AMPER }, terminator);
     }
 
     std::shared_ptr<Node> Parser::xor_expr(const TokenType& terminator) {
-        return bin_op_expr([this](const TokenType& terminator) { return and_expr(terminator); }, { TokenType::CARET });
+        return bin_op_expr([this](const TokenType& terminator) { return and_expr(terminator); }, { TokenType::CARET }, terminator);
     }
 
     std::shared_ptr<Node> Parser::or_expr(const TokenType& terminator) {
-        return bin_op_expr([this](const TokenType& terminator) { return xor_expr(terminator); }, { TokenType::PIPE });
+        return bin_op_expr([this](const TokenType& terminator) { return xor_expr(terminator); }, { TokenType::PIPE }, terminator);
     }
 
     std::shared_ptr<Node> Parser::logand_expr(const TokenType& terminator) {
-        return bin_op_expr([this](const TokenType& terminator) { return or_expr(terminator); }, { TokenType::LOGAND });
+        return bin_op_expr([this](const TokenType& terminator) { return or_expr(terminator); }, { TokenType::LOGAND }, terminator);
     }
 
     std::shared_ptr<Node> Parser::logor_expr(const TokenType& terminator) {
-        return bin_op_expr([this](const TokenType& terminator) { return logand_expr(terminator); }, { TokenType::LOGOR });
+        return bin_op_expr([this](const TokenType& terminator) { return logand_expr(terminator); }, { TokenType::LOGOR }, terminator);
     }
 
     std::shared_ptr<Node> Parser::assign_expr(const TokenType& terminator) {

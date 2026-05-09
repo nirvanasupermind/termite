@@ -26,6 +26,8 @@ namespace anthill {
         std::vector<Token> tokens;
 
         while (current) {
+        std::cout << "dbg27 " << current << '\n';
+
             if (std::isspace(current)) {
                 advance();
             }
