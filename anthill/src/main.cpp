@@ -13,6 +13,7 @@
 
 
 int main(int argc, char** argv) {
+    std::cerr << "NEW ANTHILLC BUILD RUNNING\n";
     try {
         std::string file_path = argv[1];
         std::ifstream file(file_path);
@@ -34,9 +35,13 @@ int main(int argc, char** argv) {
         std::ofstream myfile;
         myfile.open(file_path.substr(0, file_path.size() - 7) + "asm");
         myfile << "call main\n";
+        myfile << "mov $0,%dx\n";
+        myfile << "mov $0nDD,%ax\n";
+        myfile << "int $0\n";
         myfile << gen.asm_stream.str();
-} catch(const std::string&e) {
-    std::cerr << e << '\n';
-    return 1;
-}
+    }
+    catch (const std::string& e) {
+        std::cerr << e << '\n';
+        return 1;
+    }
 }

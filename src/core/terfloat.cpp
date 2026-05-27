@@ -18,6 +18,8 @@ namespace termite {
     const TerFloat TerFloat::NEGATIVE_INFINITY = TerFloat(Word::NEG_MIN_FLOAT_SIG, Word::from_int32(21523360));
     const TerFloat TerFloat::POSITIVE_INFINITY = TerFloat(Word::MIN_FLOAT_SIG, Word::from_int32(21523360));
     const TerFloat TerFloat::NAN_ = TerFloat(Word::MAX_FLOAT_SIG, Word::from_int32(21523360));
+    // sqrt(1), sqrt(82/81), sqrt(83/81),..., sqrt(241/81), sqrt(242/81) (ends right before sqrt(3))
+    const Word TerFloat::SQRT_LOOKUP_TABLE[162] = {Word::from_int32(4782969),Word::from_int32(4812403),Word::from_int32(4841658),Word::from_int32(4870737),Word::from_int32(4899644),Word::from_int32(4928381),Word::from_int32(4956952),Word::from_int32(4985358),Word::from_int32(5013604),Word::from_int32(5041692),Word::from_int32(5069624),Word::from_int32(5097403),Word::from_int32(5125031),Word::from_int32(5152512),Word::from_int32(5179846),Word::from_int32(5207037),Word::from_int32(5234087),Word::from_int32(5260997),Word::from_int32(5287771),Word::from_int32(5314410),Word::from_int32(5340916),Word::from_int32(5367291),Word::from_int32(5393537),Word::from_int32(5419656),Word::from_int32(5445650),Word::from_int32(5471520),Word::from_int32(5497268),Word::from_int32(5522897),Word::from_int32(5548407),Word::from_int32(5573800),Word::from_int32(5599078),Word::from_int32(5624243),Word::from_int32(5649295),Word::from_int32(5674237),Word::from_int32(5699070),Word::from_int32(5723795),Word::from_int32(5748413),Word::from_int32(5772927),Word::from_int32(5797337),Word::from_int32(5821644),Word::from_int32(5845851),Word::from_int32(5869958),Word::from_int32(5893966),Word::from_int32(5917877),Word::from_int32(5941691),Word::from_int32(5965410),Word::from_int32(5989036),Word::from_int32(6012569),Word::from_int32(6036009),Word::from_int32(6059360),Word::from_int32(6082620),Word::from_int32(6105792),Word::from_int32(6128877),Word::from_int32(6151874),Word::from_int32(6174786),Word::from_int32(6197614),Word::from_int32(6220357),Word::from_int32(6243018),Word::from_int32(6265597),Word::from_int32(6288095),Word::from_int32(6310512),Word::from_int32(6332850),Word::from_int32(6355110),Word::from_int32(6377292),Word::from_int32(6399397),Word::from_int32(6421426),Word::from_int32(6443380),Word::from_int32(6465259),Word::from_int32(6487064),Word::from_int32(6508796),Word::from_int32(6530456),Word::from_int32(6552045),Word::from_int32(6573562),Word::from_int32(6595009),Word::from_int32(6616387),Word::from_int32(6637696),Word::from_int32(6658937),Word::from_int32(6680110),Word::from_int32(6701216),Word::from_int32(6722256),Word::from_int32(6743230),Word::from_int32(6764140),Word::from_int32(6784984),Word::from_int32(6805765),Word::from_int32(6826483),Word::from_int32(6847138),Word::from_int32(6867731),Word::from_int32(6888263),Word::from_int32(6908733),Word::from_int32(6929143),Word::from_int32(6949493),Word::from_int32(6969783),Word::from_int32(6990015),Word::from_int32(7010188),Word::from_int32(7030304),Word::from_int32(7050362),Word::from_int32(7070363),Word::from_int32(7090307),Word::from_int32(7110196),Word::from_int32(7130029),Word::from_int32(7149807),Word::from_int32(7169531),Word::from_int32(7189201),Word::from_int32(7208816),Word::from_int32(7228379),Word::from_int32(7247889),Word::from_int32(7267346),Word::from_int32(7286752),Word::from_int32(7306106),Word::from_int32(7325409),Word::from_int32(7344661),Word::from_int32(7363863),Word::from_int32(7383014),Word::from_int32(7402117),Word::from_int32(7421170),Word::from_int32(7440174),Word::from_int32(7459130),Word::from_int32(7478038),Word::from_int32(7496898),Word::from_int32(7515711),Word::from_int32(7534477),Word::from_int32(7553196),Word::from_int32(7571869),Word::from_int32(7590496),Word::from_int32(7609077),Word::from_int32(7627613),Word::from_int32(7646105),Word::from_int32(7664551),Word::from_int32(7682953),Word::from_int32(7701312),Word::from_int32(7719626),Word::from_int32(7737898),Word::from_int32(7756126),Word::from_int32(7774312),Word::from_int32(7792455),Word::from_int32(7810556),Word::from_int32(7828615),Word::from_int32(7846632),Word::from_int32(7864609),Word::from_int32(7882544),Word::from_int32(7900438),Word::from_int32(7918293),Word::from_int32(7936107),Word::from_int32(7953881),Word::from_int32(7971615),Word::from_int32(7989310),Word::from_int32(8006966),Word::from_int32(8024583),Word::from_int32(8042162),Word::from_int32(8059702),Word::from_int32(8077204),Word::from_int32(8094668),Word::from_int32(8112095),Word::from_int32(8129484),Word::from_int32(8146836),Word::from_int32(8164152),Word::from_int32(8181430),Word::from_int32(8198672),Word::from_int32(8215878),Word::from_int32(8233049),Word::from_int32(8250183),Word::from_int32(8267282)};
     TerFloat::TerFloat()
         : significand(Word::ZERO), exponent(Word::ZERO) {
     }
@@ -81,30 +83,63 @@ namespace termite {
         return operator+(-other);
     }
 
-
     TerFloat TerFloat::operator*(const TerFloat& other) const {
-        if (is_nan() || other.is_nan()) {
-            return TerFloat::NAN_;
-        }
-        else if (operator==(TerFloat::POSITIVE_INFINITY)) {
-            if (other.significand < Word::ZERO) {
-                return TerFloat::NEGATIVE_INFINITY;
-            }
-            else {
-                return TerFloat::POSITIVE_INFINITY;
-            }
-        }
-        else if (operator==(TerFloat::NEGATIVE_INFINITY)) {
-            if (other.significand < Word::ZERO) {
-                return TerFloat::POSITIVE_INFINITY;
-            }
-            else {
-                return TerFloat::NEGATIVE_INFINITY;
-            }
-        }
-        Word result_sig = significand.mul32(other.significand).second;
-        return TerFloat(result_sig, exponent + other.exponent + Word::TWO);
+    if (is_nan() || other.is_nan()) return TerFloat::NAN_;
+
+    if (*this == TerFloat::ZERO || other == TerFloat::ZERO) {
+        return TerFloat::ZERO;
     }
+
+    if (is_inf() || other.is_inf()) {
+        bool neg = (significand < Word::ZERO) ^ (other.significand < Word::ZERO);
+        return neg ? TerFloat::NEGATIVE_INFINITY : TerFloat::POSITIVE_INFINITY;
+    }
+
+    static constexpr int64_t WORD_SCALE = 4782969; // 3^14
+
+    int64_t a = significand.to_int32();
+    int64_t b = other.significand.to_int32();
+    int64_t prod = a * b;
+
+    int64_t q = prod / WORD_SCALE;
+    int64_t r = prod % WORD_SCALE;
+
+    int64_t abs_r = r < 0 ? -r : r;
+
+    // round to nearest
+    if (2 * abs_r >= WORD_SCALE) {
+        q += prod >= 0 ? 1 : -1;
+    }
+
+    return TerFloat(
+        Word::from_int32((int32_t)q),
+        exponent + other.exponent + Word::TWO
+    );
+}
+
+    // TerFloat TerFloat::operator*(const TerFloat& other) const {
+    //     if (is_nan() || other.is_nan()) {
+    //         return TerFloat::NAN_;
+    //     }
+    //     else if (operator==(TerFloat::POSITIVE_INFINITY)) {
+    //         if (other.significand < Word::ZERO) {
+    //             return TerFloat::NEGATIVE_INFINITY;
+    //         }
+    //         else {
+    //             return TerFloat::POSITIVE_INFINITY;
+    //         }
+    //     }
+    //     else if (operator==(TerFloat::NEGATIVE_INFINITY)) {
+    //         if (other.significand < Word::ZERO) {
+    //             return TerFloat::POSITIVE_INFINITY;
+    //         }
+    //         else {
+    //             return TerFloat::NEGATIVE_INFINITY;
+    //         }
+    //     }
+    //     Word result_sig = significand.mul32(other.significand).second;
+    //     return TerFloat(result_sig, exponent + other.exponent + Word::TWO);
+    // }
 
 
     void TerFloat::normalize() {
@@ -112,118 +147,133 @@ namespace termite {
             exponent = Word::ZERO;
         }
         else if (significand > Word::ZERO) {
-            while (significand < Word::MIN_FLOAT_SIG) {
-                significand = significand.shl_int8(1);
-                exponent = exponent - Word::ONE;
+            if (significand < Word::MIN_FLOAT_SIG) {
+                while (significand < Word::MIN_FLOAT_SIG) {
+                    significand = significand.shl_int8(1);
+                    exponent = exponent - Word::ONE;
+                }
             }
-            while (significand >= Word::MAX_FLOAT_SIG) {
-                significand = significand.shr_int8(1);
-                exponent = exponent + Word::ONE;
+            else if (significand <= Word::MAX_FLOAT_SIG) {
+                while (significand >= Word::MAX_FLOAT_SIG) {
+                    significand = significand.shr_int8(1);
+                    exponent = exponent + Word::ONE;
+                }
             }
         }
         else if (significand < Word::ZERO) {
-            while (significand > Word::NEG_MIN_FLOAT_SIG) {
-                significand = significand.shl_int8(1);
-                exponent = exponent - Word::ONE;
+            if (significand > Word::NEG_MIN_FLOAT_SIG) {
+                while (significand > Word::NEG_MIN_FLOAT_SIG) {
+                    significand = significand.shl_int8(1);
+                    exponent = exponent - Word::ONE;
+                }
             }
-            while (significand <= Word::NEG_MAX_FLOAT_SIG) {
-                significand = significand.shr_int8(1);
-                exponent = exponent + Word::ONE;
+            else if (significand <= Word::NEG_MAX_FLOAT_SIG) {
+                while (significand <= Word::NEG_MAX_FLOAT_SIG) {
+                    significand = significand.shr_int8(1);
+                    exponent = exponent + Word::ONE;
+                }
             }
         }
     }
 
 
     TerFloat TerFloat::rec() const {
-        TerFloat xMinusA = operator-(TerFloat::from_double(2.0));
-        TerFloat t0 = TerFloat::from_double(0.5);
-        TerFloat t1 = xMinusA * TerFloat::from_double(-0.25);
-        TerFloat t2 = xMinusA * xMinusA*  TerFloat::from_double(-0.25);
-        TerFloat t3 = xMinusA * xMinusA * xMinusA *  TerFloat::from_double(0.375);
-        TerFloat t4 = xMinusA * xMinusA * xMinusA * xMinusA *  TerFloat::from_double(-0.75);
-        TerFloat t5 = xMinusA * xMinusA * xMinusA * xMinusA * xMinusA *  TerFloat::from_double(1.875);
-        TerFloat t6 = xMinusA * xMinusA * xMinusA * xMinusA * xMinusA * xMinusA *  TerFloat::from_double(-5.625);
+        if (exponent != Word::ZERO) {
+            TerFloat unscaled_result = TerFloat(significand, Word::ZERO).rec();
+            return TerFloat(unscaled_result.significand, -(exponent + Word::ONE));
+        }
 
-        
+        // Trying to compute 1/x
+        // Exponent = 0 so this is a number between 1 and 3
+        // Using taylor series of 1/x centered at a=2
+        // 1/x = 1/2 - 1/4(x-2) + 1/8(x-2)^2 - 1/16(x-2)^3 + 1/32(x-2)^4...
+
+        TerFloat x_minus_a = operator-(TerFloat::from_double(2.0));
+        TerFloat minus_half = TerFloat::from_double(-0.5);
+        TerFloat minus_half_x_minus_a = x_minus_a * minus_half;
+        TerFloat t0 = TerFloat::from_double(0.5);
+        TerFloat t1 = t0 * minus_half_x_minus_a;
+        TerFloat t2 = t1 * minus_half_x_minus_a;
+        TerFloat t3 = t2 * minus_half_x_minus_a;
+        TerFloat t4 = t3 * minus_half_x_minus_a;
+        TerFloat t5 = t4 * minus_half_x_minus_a;
+        TerFloat t6 = t5 * minus_half_x_minus_a;
+        TerFloat t7 = t6 * minus_half_x_minus_a;
+        // TerFloat t8 = t7 * minus_half_x_minus_a;
+
+
+        TerFloat result = t0 + t1 + t2 + t3 + t4 + t5 + t6 + t7;
         // for (int i = 0; i < 5; i++) {
         //     result = result * (TerFloat::THREE_HALVES - operator*(TerFloat::HALF) *result * result);
         // }
-        return t0 + t1 + t2 + t3 + t4 + t5 + t6;
+        return result;
     }
-// TerFloat TerFloat::operator/(const TerFloat& other) const {
-//     if (is_nan() || other.is_nan()) return TerFloat::NAN_;
-//     if (other == TerFloat::ZERO) {
-//         return significand < Word::ZERO ? TerFloat::NEGATIVE_INFINITY
-//                                         : TerFloat::POSITIVE_INFINITY;
-//     }
-//     if (*this == TerFloat::ZERO) return TerFloat::ZERO;
+    // TerFloat TerFloat::operator/(const TerFloat& other) const {
+    //     if (is_nan() || other.is_nan()) return TerFloat::NAN_;
+    //     if (other == TerFloat::ZERO) {
+    //         return significand < Word::ZERO ? TerFloat::NEGATIVE_INFINITY
+    //                                         : TerFloat::POSITIVE_INFINITY;
+    //     }
+    //     if (*this == TerFloat::ZERO) return TerFloat::ZERO;
 
-//     if (is_inf() && other.is_inf()) return TerFloat::NAN_;
-//     if (is_inf()) {
-//         return (significand < Word::ZERO) ^ (other.significand < Word::ZERO)
-//             ? TerFloat::NEGATIVE_INFINITY
-//             : TerFloat::POSITIVE_INFINITY;
-//     }
-//     if (other.is_inf()) return TerFloat::ZERO;
+    //     if (is_inf() && other.is_inf()) return TerFloat::NAN_;
+    //     if (is_inf()) {
+    //         return (significand < Word::ZERO) ^ (other.significand < Word::ZERO)
+    //             ? TerFloat::NEGATIVE_INFINITY
+    //             : TerFloat::POSITIVE_INFINITY;
+    //     }
+    //     if (other.is_inf()) return TerFloat::ZERO;
 
-//     int64_t sa = significand.to_int32();
-//     int64_t sb = other.significand.to_int32();
+    //     int64_t sa = significand.to_int32();
+    //     int64_t sb = other.significand.to_int32();
 
-//     bool neg = (sa < 0) ^ (sb < 0);
-//     sa = std::llabs(sa);
-//     sb = std::llabs(sb);
+    //     bool neg = (sa < 0) ^ (sb < 0);
+    //     sa = std::llabs(sa);
+    //     sb = std::llabs(sb);
 
-//     // scale into significand range
-//     static constexpr int64_t P14 = 4782969;   // 3^14
-//     static constexpr int64_t P15 = 14348907;  // 3^15
+    //     // scale into significand range
+    //     static constexpr int64_t P14 = 4782969;   // 3^14
+    //     static constexpr int64_t P15 = 14348907;  // 3^15
 
-//     int32_t out_exp = exponent.to_int32() - other.exponent.to_int32();
+    //     int32_t out_exp = exponent.to_int32() - other.exponent.to_int32();
 
-//     // start with 3^14 scaling
-//     int64_t num = sa * P14;
-//     int64_t q = num / sb;
-//     int64_t r = num % sb;
+    //     // start with 3^14 scaling
+    //     int64_t num = sa * P14;
+    //     int64_t q = num / sb;
+    //     int64_t r = num % sb;
 
-//     // round to nearest
-//     if (2 * r > sb || (2 * r == sb && (q % 2 != 0))) {
-//         q++;
-//     }
+    //     // round to nearest
+    //     if (2 * r > sb || (2 * r == sb && (q % 2 != 0))) {
+    //         q++;
+    //     }
 
-//     // renormalize if needed
-//     while (q < P14) {
-//         q *= 3;
-//         out_exp -= 1;
-//     }
-//     while (q >= P15) {
-//         q /= 3;
-//         out_exp += 1;
-//     }
+    //     // renormalize if needed
+    //     while (q < P14) {
+    //         q *= 3;
+    //         out_exp -= 1;
+    //     }
+    //     while (q >= P15) {
+    //         q /= 3;
+    //         out_exp += 1;
+    //     }
 
-//     if (neg) q = -q;
+    //     if (neg) q = -q;
 
-//     return TerFloat(Word::from_int32((int32_t)q), Word::from_int32(out_exp));
-// }
+    //     return TerFloat(Word::from_int32((int32_t)q), Word::from_int32(out_exp));
+    // }
 
     TerFloat TerFloat::operator/(const TerFloat& other) const {
         if (is_nan() || other.is_nan()) {
             return TerFloat::NAN_;
         }
-        else if (is_inf()) {
-            if (other.is_inf()) {
-                return TerFloat::NAN_;
-            }
-            else {
-                return TerFloat::ZERO;
-            }
+
+        if (other == TerFloat::ZERO) {
+            return TerFloat::POSITIVE_INFINITY;
         }
-        else if (operator==(TerFloat::ZERO)) {
-            if (other.significand < Word::ZERO) {
-                return TerFloat::NEGATIVE_INFINITY;
-            }
-            else {
-                return TerFloat::POSITIVE_INFINITY;
-            }
+        if (*this == TerFloat::ZERO) {
+            return TerFloat::ZERO;
         }
+
         return operator*(other.rec());
     }
 
@@ -238,13 +288,16 @@ namespace termite {
             return TerFloat(Word::ZERO, Word::ZERO); // or throw
         }
 
-        TerFloat x(Word::MIN_FLOAT_SIG, exponent / Word::TWO); // ~1 * 3^(e/2)
-
-        for (int i = 0; i < 8; i++) {
-            x = (x + (*this / x)) / TerFloat::from_double(2.0);
+        std::pair<Word, Word> exponent_divmod = exponent.divmod(Word::TWO);
+        std::cout << "DBG" << significand.to_int32() << '\n';
+        TerFloat x(SQRT_LOOKUP_TABLE[(significand.shr_int8(10)).to_int32() - 81], exponent_divmod.first); // ~1 * 3^(e/2)
+        if(exponent_divmod.second != Word::ZERO) {
+            x = x * TerFloat::from_double(std::sqrt(3.0));
+        }
+        for (int i = 0; i < 3; i++) {
+            x = (x + (*this / x)) * TerFloat::from_double(0.5);
         }
         return x;
-
     }
 
     double TerFloat::to_double() const {
@@ -371,20 +424,37 @@ namespace termite {
         }
 
         if (to_double() >= 3.0) {
-            return TerFloat(significand, exponent - Word::ONE).log() + TerFloat::from_double(std::log(3));
+            return TerFloat(significand, exponent - Word::ONE).log() + TerFloat::from_double(std::log(3.0));
         }
-        TerFloat x(significand, Word::ZERO);
-        TerFloat x2 = x * x;
+        TerFloat xMinusA = operator-(TerFloat::from_double(2.0));
+        TerFloat t0 = TerFloat::from_double(0.6931471805599453);
+        TerFloat t1 = TerFloat::from_double(0.5) * xMinusA; // 1/2(x-2)
+        TerFloat t2 = TerFloat::from_double(-0.25) * xMinusA * t1; // -1/8(x-2)^2
+        TerFloat t3 = TerFloat::from_double(-0.3333333333333333) * xMinusA * t2; // 1/24(x-2)^3
+        TerFloat t4 = TerFloat::from_double(-0.375) * xMinusA * t3; // -1/64(x-2)^4
+        TerFloat t5 = TerFloat::from_double(-0.4) * xMinusA * t4; // 1/160(x-2)^5
+        TerFloat t6 = TerFloat::from_double(-0.41666666666666663) * xMinusA * t5; // 1/384(x-2)^6
+        TerFloat t7 = TerFloat::from_double(0.42857142857142855) * xMinusA * t6; // 1/384(x-2)^7
+
+
         // Coefficients computed by me using numpy polynomial regression because taylor series is too slow
-        TerFloat t0 = TerFloat::from_double(-2.15992321e+00);
-        TerFloat t1 = x * TerFloat::from_double(4.53754024e+00);
-        TerFloat t2 = x2 * TerFloat::from_double(-4.42298621e+00);
-        TerFloat t3 = x * x2 * TerFloat::from_double(3.22668318e+00);
-        TerFloat t4 = x2 * x2 * TerFloat::from_double(-1.62646402e+00);
-        TerFloat t5 = x * x2 * x2 * TerFloat::from_double(5.50260978e-01);
-        TerFloat t6 = x2 * x2 * x2 * TerFloat::from_double(-1.19227045e-01);
-        TerFloat t7 = x * x2 * x2 * x2 * TerFloat::from_double(1.49458088e-02);
-        TerFloat t8 = x2 * x2 * x2 * x2 * TerFloat::from_double(-8.24182119e-04);
+        // TerFloat t0 = TerFloat::from_double(-2.15992321e+00);
+        // TerFloat t1 = x * TerFloat::from_double(4.53754024e+00);
+        // TerFloat t2 = x2 * TerFloat::from_double(-4.42298621e+00);
+        // TerFloat t3 = x * x2 * TerFloat::from_double(3.22668318e+00);
+        // TerFloat t4 = x2 * x2 * TerFloat::from_double(-1.62646402e+00);
+        // TerFloat t5 = x * x2 * x2 * TerFloat::from_double(5.50260978e-01);
+        // TerFloat t6 = x2 * x2 * x2 * TerFloat::from_double(-1.19227045e-01);
+        // TerFloat t7 = x * x2 * x2 * x2 * TerFloat::from_double(1.49458088e-02);
+        // TerFloat t0 = TerFloat::from_double(-2.15992321e+00);
+        // TerFloat t1 = x * TerFloat::from_double(4.53754024e+00);
+        // TerFloat t2 = x2 * TerFloat::from_double(-4.42298621e+00);
+        // TerFloat t3 = x * x2 * TerFloat::from_double(3.22668318e+00);
+        // TerFloat t4 = x2 * x2 * TerFloat::from_double(-1.62646402e+00);
+        // TerFloat t5 = x * x2 * x2 * TerFloat::from_double(5.50260978e-01);
+        // TerFloat t6 = x2 * x2 * x2 * TerFloat::from_double(-1.19227045e-01);
+        // TerFloat t7 = x * x2 * x2 * x2 * TerFloat::from_double(1.49458088e-02);
+        // TerFloat t8 = x2 * x2 * x2 * x2 * TerFloat::from_double(-8.24182119e-04);
         // TerFloat t0 = TerFloat::from_double(-8.24182119e-04);
         // TerFloat t1 = x * TerFloat::from_double(1.49458088e-02);
         // TerFloat t2 = x2 * TerFloat::from_double(-1.19227045e-01);
@@ -394,7 +464,7 @@ namespace termite {
         // TerFloat t6 = x2 * x2 * x2 * TerFloat::from_double(-4.42298621e+00);
         // TerFloat t7 = x * x2 * x2 * x2 * TerFloat::from_double(4.53754024e+00);
         // TerFloat t8 = x2 * x2 * x2 * x2 * TerFloat::from_double(-2.15992321e+00);
-        return t0 + t1 + t2 + t3 + t4 + t5 + t6 + t7 + t8;
+        return t0 + t1 + t2 + t3 + t4 + t5 + t6 + t7;
     }
 
     TerFloat TerFloat::abs() const {

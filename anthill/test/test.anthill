@@ -3,6 +3,7 @@
 
 
 int main() {
-    puti(log(5.0));
+    putf(sqrt(2.0));
+
     return 0;
 }

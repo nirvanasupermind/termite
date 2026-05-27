@@ -259,7 +259,7 @@ namespace anthill {
                     macros[macro_name.val] = tokens2;
                 } else if(directive.type == TokenType::INCLUDE) {
                     tokens.push_back(directive);
-                    advance();
+                    // advance();
                 } else {
                     error(file, line, std::string("the only accepted preprocessor directives are define and include, got '") + current + "'");
                 }
@@ -384,48 +384,104 @@ namespace anthill {
     }
 
     Token Lexer::generate_number() {
-        std::string number_str(1, current);
-        bool temp_flag = false;
-        if (current == '0') {
-            advance();
-            if (current == 't') {
-                number_str += current;
-                advance();
+    std::string number_str(1, current);
 
-                while (current && (current == 'A' || current == 'a' || current == '0' | current == '1')) {
-                    number_str += current;
-                    advance();
-                }
-                return Token(line, TokenType::NUMLIT, number_str);
-            }
-            else if (current == 'n') {
-                number_str += current;
-                advance();
-                while (current && (current == 'A' || current == 'a' || current == 'B' || current == 'b'
-                    || current == 'C' || current == 'c' || current == 'D' || current == 'd'
-                    || current == '0' | current == '1' || current == '2' || current == '3' || current == '4')) {
-                    number_str += current;
-                    advance();
-                }
-                return Token(line, TokenType::NUMLIT, number_str);
-            }
-        }
-
+    if (current == '0') {
         advance();
-        int decimal_point_count = 0;
-        while (current && (std::isdigit(current) || current == '.')) {
-            if(current == '.') {
-                decimal_point_count++;
-                if(decimal_point_count > 1) {
-                    error(file, line, std::string("multiple decimal points in a numeric literal"));
-                }
-            }
+
+        if (current == 't') {
             number_str += current;
             advance();
+
+            while (current && (current == 'A' || current == 'a' || current == '0' || current == '1')) {
+                number_str += current;
+                advance();
+            }
+
+            return Token(line, TokenType::NUMLIT, number_str);
+        }
+        else if (current == 'n') {
+            number_str += current;
+            advance();
+
+            while (current && (
+                current == 'A' || current == 'a' ||
+                current == 'B' || current == 'b' ||
+                current == 'C' || current == 'c' ||
+                current == 'D' || current == 'd' ||
+                current == '0' || current == '1' ||
+                current == '2' || current == '3' ||
+                current == '4')) {
+                number_str += current;
+                advance();
+            }
+
+            return Token(line, TokenType::NUMLIT, number_str);
+        }
+    }
+    else {
+        advance();
+    }
+
+    int decimal_point_count = 0;
+    while (current && (std::isdigit(current) || current == '.')) {
+        if (current == '.') {
+            decimal_point_count++;
+            if (decimal_point_count > 1) {
+                error(file, line, "multiple decimal points in a numeric literal");
+            }
         }
 
-        return Token(line, TokenType::NUMLIT, number_str);
+        number_str += current;
+        advance();
     }
+
+    return Token(line, TokenType::NUMLIT, number_str);
+}
+
+    // Token Lexer::generate_number() {
+    //     std::string number_str(1, current);
+    //     bool temp_flag = false;
+    //     if (current == '0') {
+    //         advance();
+    //         if (current == 't') {
+    //             number_str += current;
+    //             advance();
+
+    //             while (current && (current == 'A' || current == 'a' || current == '0' | current == '1')) {
+    //                 number_str += current;
+    //                 advance();
+    //             }
+    //             return Token(line, TokenType::NUMLIT, number_str);
+    //         }
+    //         else if (current == 'n') {
+    //             number_str += current;
+    //             advance();
+    //             while (current && (current == 'A' || current == 'a' || current == 'B' || current == 'b'
+    //                 || current == 'C' || current == 'c' || current == 'D' || current == 'd'
+    //                 || current == '0' | current == '1' || current == '2' || current == '3' || current == '4')) {
+    //                 number_str += current;
+    //                 advance();
+    //             }
+    //             return Token(line, TokenType::NUMLIT, number_str);
+    //         }
+    //     }
+
+    //     advance();
+    //     int decimal_point_count = 0;
+    //     while (current && (std::isdigit(current) || current == '.')) {
+    //         if(current == '.') {
+    //             decimal_point_count++;
+    //             if(decimal_point_count > 1) {
+    //                 error(file, line, std::string("multiple decimal points in a numeric literal"));
+    //             }
+    //         }
+    //         number_str += current;
+    //         advance();
+    //     }
+
+    //     return Token(line, TokenType::NUMLIT, number_str);
+    // }
 
     char Lexer::generate_ch() {
         if ('\\' == current) {

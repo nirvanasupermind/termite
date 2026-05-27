@@ -37,7 +37,7 @@ float log(float a) {
 }
 
 float log3(float a) {
-    return log(a) / log(3.0);
+    return a / log(3);
 }
 
 float pow(float a, float b) {
@@ -59,7 +59,7 @@ float hypot(float a, float b) {
     return sqrt(a * a + b *b);
 }
 
-float f_abs(float a) {
+float fabs(float a) {
     a;
     __asm__("fld %ax\nfabs\nfstp %ax\n");
 }

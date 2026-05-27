@@ -10,19 +10,19 @@
 
 namespace termite {
     class TerFloat {
-    // protected:
+        // protected:
     public:
         Word significand;
         Word exponent;
-    // public:
+        // public:
         static const TerFloat ZERO;
-    static const TerFloat HALF;
+        static const TerFloat HALF;
         static const TerFloat ONE;
-
-    static const TerFloat THREE_HALVES;
+        static const Word SQRT_LOOKUP_TABLE[162];
+        static const TerFloat THREE_HALVES;
         static const TerFloat NEGATIVE_INFINITY;
         static const TerFloat POSITIVE_INFINITY;
-        static const TerFloat NAN_;        
+        static const TerFloat NAN_;
         TerFloat();
         TerFloat(Word significand, Word exponent); // Not const& because I copy and modify them
         static TerFloat from_double(double n);

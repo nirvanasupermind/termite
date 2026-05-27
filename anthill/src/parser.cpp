@@ -272,10 +272,16 @@ namespace anthill {
     }
 
     std::shared_ptr<Node> Parser::expr_stmt(const TokenType& terminator) {
-        std::shared_ptr<Node> result = expr(terminator);
+        std::shared_ptr<Node> result = expr(TokenType::SEMI);
         eat(TokenType::SEMI);
         return result;
     }
+
+    // std::shared_ptr<Node> Parser::expr_stmt(const TokenType& terminator) {
+    //     std::shared_ptr<Node> result = expr(terminator);
+    //     eat(TokenType::SEMI);
+    //     return result;
+    // }
 
     std::shared_ptr<Node> Parser::type(const TokenType& terminator) {
         int line = current.line;
@@ -332,12 +338,11 @@ namespace anthill {
         return std::make_shared<BlockNode>(BlockNode(line, my_stmt_list));
     }
 
-
     std::shared_ptr<Node> Parser::if_stmt(const TokenType& terminator) {
         int line = current.line;
         advance();
         eat(TokenType::LPAREN);
-        std::shared_ptr<Node> cond = expr(terminator);
+        std::shared_ptr<Node> cond = expr(TokenType::RPAREN);
         eat(TokenType::RPAREN);
         std::shared_ptr<Node> body = block_stmt(terminator);
         std::shared_ptr<Node> else_body;
@@ -348,13 +353,11 @@ namespace anthill {
         return std::make_shared<IfNode>(IfNode(line, cond, body, else_body));
     }
 
-
-
     std::shared_ptr<Node> Parser::while_stmt(const TokenType& terminator) {
         int line = current.line;
         advance();
         eat(TokenType::LPAREN);
-        std::shared_ptr<Node> cond = expr(terminator);
+        std::shared_ptr<Node> cond = expr(TokenType::RPAREN);
         eat(TokenType::RPAREN);
         std::shared_ptr<Node> body = block_stmt(terminator);
         return std::make_shared<WhileNode>(WhileNode(line, cond, body));
@@ -364,9 +367,10 @@ namespace anthill {
         int line = current.line;
         advance();
         eat(TokenType::LPAREN);
-        std::shared_ptr<Node> init = stmt(terminator);
-        std::shared_ptr<Node> cond = expr_stmt(terminator);
-        std::shared_ptr<Node> update = expr(terminator);
+        std::shared_ptr<Node> init = stmt(TokenType::SEMI);
+        std::shared_ptr<Node> cond = expr_stmt(TokenType::SEMI);
+        eat(TokenType::SEMI);
+        std::shared_ptr<Node> update = expr(TokenType::RPAREN);
         eat(TokenType::RPAREN);
         std::shared_ptr<Node> body = block_stmt(terminator);
         return std::make_shared<ForNode>(ForNode(line, init, cond, update, body));
@@ -389,10 +393,30 @@ namespace anthill {
 
     std::shared_ptr<Node> Parser::return_stmt(const TokenType& terminator) {
         int line = current.line;
-        advance();
-        std::shared_ptr<Node> body = expr_stmt(terminator);
+        advance(); // return
+
+        std::shared_ptr<Node> body = expr(TokenType::SEMI);
+        eat(TokenType::SEMI);
+
         return std::make_shared<ReturnNode>(ReturnNode(line, body));
     }
+
+    // std::shared_ptr<Node> Parser::return_stmt(const TokenType& terminator) {
+    //     int line = current.line;
+    //     advance(); // eat return
+
+    //     std::shared_ptr<Node> body = expr(TokenType::SEMI);
+    //     eat(TokenType::SEMI);
+
+    //     return std::make_shared<ReturnNode>(ReturnNode(line, body));
+    // }
+
+    // std::shared_ptr<Node> Parser::return_stmt(const TokenType& terminator) {
+    //     int line = current.line;
+    //     advance();
+    //     std::shared_ptr<Node> body = expr_stmt(terminator);
+    //     return std::make_shared<ReturnNode>(ReturnNode(line, body));
+    // }
 
     std::shared_ptr<Node> Parser::enum_stmt(const TokenType& terminator) {
         int line = current.line;
@@ -422,7 +446,7 @@ namespace anthill {
     }
 
     std::shared_ptr<Node> Parser::stmt(const TokenType& terminator) {
-        if (current.type == TokenType::INT  || current.type == TokenType::FLOAT || current.type == TokenType::CHAR || current.type == TokenType::VOID) {
+        if (current.type == TokenType::INT || current.type == TokenType::FLOAT || current.type == TokenType::CHAR || current.type == TokenType::VOID) {
             return var_or_func_def_stmt(terminator);
         }
         else if (current.type == TokenType::LBRACE) {
@@ -459,10 +483,24 @@ namespace anthill {
 
     std::shared_ptr<Node> Parser::stmt_list(const TokenType& terminator) {
         int line = current.line;
-        std::vector<std::shared_ptr<Node> > stmts;
-        while (current.type != terminator) {
+        std::vector<std::shared_ptr<Node>> stmts;
+
+        while (current.type != terminator && current.type != TokenType::XEOF) {
             stmts.push_back(stmt(terminator));
         }
+
+        std::cout << "dbg494 RUNNING NEW PARSER stmt_list terminator="
+            << (int)terminator << "\n";
+
         return std::make_shared<StmtListNode>(line, stmts);
     }
+
+    // std::shared_ptr<Node> Parser::stmt_list(const TokenType& terminator) {
+    //     int line = current.line;
+    //     std::vector<std::shared_ptr<Node> > stmts;
+    //     while (current.type != terminator) {
+    //         stmts.push_back(stmt(terminator));
+    //     }
+    //     return std::make_shared<StmtListNode>(line, stmts);
+    // }
 }
