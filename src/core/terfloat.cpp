@@ -95,26 +95,12 @@ namespace termite {
         return neg ? TerFloat::NEGATIVE_INFINITY : TerFloat::POSITIVE_INFINITY;
     }
 
-    static constexpr int64_t WORD_SCALE = 4782969; // 3^14
+    std::pair<Word, Word> mul32_res = significand.mul32(other.significand);
 
-    int64_t a = significand.to_int32();
-    int64_t b = other.significand.to_int32();
-    int64_t prod = a * b;
-
-    int64_t q = prod / WORD_SCALE;
-    int64_t r = prod % WORD_SCALE;
-
-    int64_t abs_r = r < 0 ? -r : r;
-
-    // round to nearest
-    if (2 * abs_r >= WORD_SCALE) {
-        q += prod >= 0 ? 1 : -1;
-    }
-
-    return TerFloat(
-        Word::from_int32((int32_t)q),
-        exponent + other.exponent + Word::TWO
-    );
+    std::cout << "DBG99" << (significand.to_int32()) << '\n';
+    std::cout << "DBG100 " << mul32_res.first.to_int32() << ' '  << mul32_res.second.to_int32() << '\n';
+    Word result_significand = mul32_res.second.shl_int8(2) + mul32_res.first.shr_int8(14);
+    return TerFloat(result_significand, exponent + other.exponent);
 }
 
     // TerFloat TerFloat::operator*(const TerFloat& other) const {
