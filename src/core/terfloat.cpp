@@ -97,8 +97,8 @@ namespace termite {
 
     std::pair<Word, Word> mul32_res = significand.mul32(other.significand);
 
-    std::cout << "DBG99" << (significand.to_int32()) << '\n';
-    std::cout << "DBG100 " << mul32_res.first.to_int32() << ' '  << mul32_res.second.to_int32() << '\n';
+    // std::cout << "DBG99" << (significand.to_int32()) << '\n';
+    // std::cout << "DBG100 " << mul32_res.first.to_int32() << ' '  << mul32_res.second.to_int32() << '\n';
     Word result_significand = mul32_res.second.shl_int8(2) + mul32_res.first.shr_int8(14);
     return TerFloat(result_significand, exponent + other.exponent);
 }
@@ -275,14 +275,14 @@ namespace termite {
         }
 
         std::pair<Word, Word> exponent_divmod = exponent.divmod(Word::TWO);
-        std::cout << "DBG" << significand.to_int32() << '\n';
+        // std::cout << "DBG" << significand.to_int32() << '\n';
         TerFloat x(SQRT_LOOKUP_TABLE[(significand.shr_int8(10)).to_int32() - 81], exponent_divmod.first); // ~1 * 3^(e/2)
         if(exponent_divmod.second != Word::ZERO) {
             x = x * TerFloat::from_double(std::sqrt(3.0));
         }
-        for (int i = 0; i < 3; i++) {
-            x = (x + (*this / x)) * TerFloat::from_double(0.5);
-        }
+        // for (int i = 0; i < 3; i++) {
+            // x = (x + (*this / x)) * TerFloat::from_double(0.5);
+        // }
         return x;
     }
 
