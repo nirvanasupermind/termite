@@ -225,19 +225,49 @@ namespace termite {
 // }
 
 
-    std::pair<Word, Word> Word::mul32(const Word& other) const {
-    Tryte a = get_lo_tryte();
-    Tryte b = get_hi_tryte();
-    Tryte c = other.get_lo_tryte();
-    Tryte d = other.get_hi_tryte();
-    Word t1 = Word(a, Tryte()) * Word(c, Tryte()); 
-    Word t2 = (Word(a, Tryte()) * Word(d, Tryte())).shl_int8(8);
-    Word t3 = (Word(b, Tryte()) * Word(c, Tryte())).shl_int8(8);
-    Word t4 = Word(b, Tryte()) * Word(d, Tryte());
-    // std::cout << "!, " << b.to_int16() << '\n';
-    // std::cout << "!, " << other.to_int32() << '\n';
-    return {t1 + t2 + t3, t4};
+std::pair<Word, Word> Word::mul32(const Word& other) const {
+    Word lo, hi;
+
+    auto add32 = [&](Word add_lo, Word add_hi) {
+        auto [new_lo, carry] = lo.add_with_carry(add_lo);
+        lo = new_lo;
+
+        int carry_val = int(carry) - 1; // 00=-1, 01=0, 10=1
+        hi = hi + add_hi + Word::from_int32(carry_val);
+    };
+
+    for (int i = 0; i < TRITS_PER_WORD; i++) {
+        uint8_t trit = other.get_bct_trit(i);
+
+        if (trit == 0b01) continue;
+
+        Word part_lo = this->shl_int8(i);
+        Word part_hi = (i == 0) ? Word::ZERO : this->shr_int8(16 - i);
+
+        if (trit == 0b00) {
+            part_lo = -part_lo;
+            part_hi = -part_hi;
+        }
+
+        add32(part_lo, part_hi);
     }
+
+    return {lo, hi};
+}
+
+    // std::pair<Word, Word> Word::mul32(const Word& other) const {
+    // Tryte a = get_lo_tryte();
+    // Tryte b = get_hi_tryte();
+    // Tryte c = other.get_lo_tryte();
+    // Tryte d = other.get_hi_tryte();
+    // Word t1 = Word(a, Tryte()) * Word(c, Tryte()); 
+    // Word t2 = (Word(a, Tryte()) * Word(d, Tryte())).shl_int8(8);
+    // Word t3 = (Word(b, Tryte()) * Word(c, Tryte())).shl_int8(8);
+    // Word t4 = Word(b, Tryte()) * Word(d, Tryte());
+    // // std::cout << "!, " << b.to_int16() << '\n';
+    // // std::cout << "!, " << other.to_int32() << '\n';
+    // return {t1 + t2 + t3, t4};
+    // }
 
 // std::pair<Word, Word> Word::mul32(const Word& other) const {
 //         // Extract 8-bit parts of each 16-bit operand
