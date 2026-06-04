@@ -5,18 +5,6 @@
 int main() {
     putf(1.0/2.828);
     putc('\n');
-    putf(sqrt(2.0));
-    putc('\n');
-    putf(sin(2.0));
-    putc('\n');
-    putf(cos(2.0));
-    putc('\n');
-    putf(tan(2.0));
-    putc('\n');
-   putf(log(2.0));
-    putc('\n');
-   putf(exp(2.0));
-    putc('\n');
 
     return 0;
 }

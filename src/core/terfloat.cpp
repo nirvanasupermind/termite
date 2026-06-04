@@ -165,38 +165,20 @@ namespace termite {
 
 
     TerFloat TerFloat::rec() const {
-        // if (exponent != Word::ZERO) {
-        //     TerFloat unscaled_result = TerFloat(significand, Word::ZERO).rec();
-        //     return TerFloat(
-        //         unscaled_result.significand,
-        //         unscaled_result.exponent - exponent
-        //     );
-        // }
-
-    
-                // Using newton's method
-                // Initial guess is from lookup table
-
-                // Scaled version of *this to have exponent of 0
                     TerFloat m(significand, Word::ZERO);
 
-                TerFloat x(REC_LOOKUP_TABLE[(significand.shr_int8(10)).to_int32() - 81], Word::ZERO);
-                // 3 iterations
+                TerFloat x(REC_LOOKUP_TABLE[(significand.shr_int8(10)).to_int32() - 81], Word::from_int32(-1));
+                // // 3 iterations
                 for(int i = 0; i < 3; i++) {
                     x = x*(TerFloat::from_double(2.0)-(m*x));
+                    std::cout << "iter " << i
+          << " x_double=" << x.to_double()
+          << " sig=" << x.significand.to_int32()
+          << " exp=" << x.exponent.to_int32()
+          << "\n";
                 }
                 // Need to rescale at the end because this has exponent 0
                 return  TerFloat(x.significand, x.exponent - exponent);
-        // TerFloat x_minus_a = operator-(TerFloat::from_double(2.0));
-        // TerFloat r = x_minus_a * TerFloat::from_double(-0.5);
-
-        // TerFloat term = TerFloat::from_double(0.5);
-        // TerFloat result = term;
-
-        // for (int i = 0; i < 12; i++) {
-        //     term = term * r;
-        //     result = result + term;
-        // }
 
     }
 
