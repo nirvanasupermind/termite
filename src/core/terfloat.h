@@ -18,7 +18,9 @@ namespace termite {
         static const TerFloat ZERO;
         static const TerFloat HALF;
         static const TerFloat ONE;
-        static const Word SQRT_LOOKUP_TABLE[162];
+        static const Word REC_LOOKUP_TABLE[162];
+                static const Word SQRT_LOOKUP_TABLE[162];
+
         static const TerFloat THREE_HALVES;
         static const TerFloat NEGATIVE_INFINITY;
         static const TerFloat POSITIVE_INFINITY;
