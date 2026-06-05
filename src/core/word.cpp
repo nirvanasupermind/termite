@@ -226,33 +226,39 @@ namespace termite {
 
 
 std::pair<Word, Word> Word::mul32(const Word& other) const {
-    Word lo, hi;
+    // TEMPORARY VERSION
+    // I WILL FIGURE OUT HOW TO ACTUALLY DO THIS WITHOUT CONVERTING TO BINARY INT LATER 
+    int64_t i64_result = (int64_t)(to_int32()) * (int64_t)(other.to_int32());
+    int64_t i64_hi = (i64_result + 21523360) / 43046721;
+    int64_t i64_lo = i64_result - i64_hi * 43046721;
+    return {Word::from_int32(i64_lo), Word::from_int32(i64_hi)};
+    // Word lo, hi;
 
-    auto add32 = [&](Word add_lo, Word add_hi) {
-        auto [new_lo, carry] = lo.add_with_carry(add_lo);
-        lo = new_lo;
+    // auto add32 = [&](Word add_lo, Word add_hi) {
+    //     auto [new_lo, carry] = lo.add_with_carry(add_lo);
+    //     lo = new_lo;
 
-        int carry_val = int(carry) - 1; // 00=-1, 01=0, 10=1
-        hi = hi + add_hi + Word::from_int32(carry_val);
-    };
+    //     int carry_val = int(carry) - 1; // 00=-1, 01=0, 10=1
+    //     hi = hi + add_hi + Word::from_int32(carry_val);
+    // };
 
-    for (int i = 0; i < TRITS_PER_WORD; i++) {
-        uint8_t trit = other.get_bct_trit(i);
+    // for (int i = 0; i < TRITS_PER_WORD; i++) {
+    //     uint8_t trit = other.get_bct_trit(i);
 
-        if (trit == 0b01) continue;
+    //     if (trit == 0b01) continue;
 
-        Word part_lo = this->shl_int8(i);
-        Word part_hi = (i == 0) ? Word::ZERO : this->shr_int8(16 - i);
+    //     Word part_lo = this->shl_int8(i);
+    //     Word part_hi = (i == 0) ? Word::ZERO : this->shr_int8(16 - i);
 
-        if (trit == 0b00) {
-            part_lo = -part_lo;
-            part_hi = -part_hi;
-        }
+    //     if (trit == 0b00) {
+    //         part_lo = -part_lo;
+    //         part_hi = -part_hi;
+    //     }
 
-        add32(part_lo, part_hi);
-    }
+    //     add32(part_lo, part_hi);
+    // }
 
-    return {lo, hi};
+    // return {lo, hi};
 }
 
     // std::pair<Word, Word> Word::mul32(const Word& other) const {

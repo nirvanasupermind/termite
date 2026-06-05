@@ -140,7 +140,7 @@ namespace termite {
                     exponent = exponent - Word::ONE;
                 }
             }
-            else if (significand <= Word::MAX_FLOAT_SIG) {
+            else if (significand >= Word::MAX_FLOAT_SIG) {
                 while (significand >= Word::MAX_FLOAT_SIG) {
                     significand = significand.shr_int8(1);
                     exponent = exponent + Word::ONE;
@@ -171,11 +171,7 @@ namespace termite {
                 // // 3 iterations
                 for(int i = 0; i < 3; i++) {
                     x = x*(TerFloat::from_double(2.0)-(m*x));
-                    std::cout << "iter " << i
-          << " x_double=" << x.to_double()
-          << " sig=" << x.significand.to_int32()
-          << " exp=" << x.exponent.to_int32()
-          << "\n";
+
                 }
                 // Need to rescale at the end because this has exponent 0
                 return  TerFloat(x.significand, x.exponent - exponent);

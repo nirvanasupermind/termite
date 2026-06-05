@@ -3,7 +3,9 @@
 
 
 int main() {
-    putf(1.0/2.828);
+    putf(0.7*0.999999);
+    putc('\n');
+    putf(0.7*2.999999);
     putc('\n');
 
     return 0;
