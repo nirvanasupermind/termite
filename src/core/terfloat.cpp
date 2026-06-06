@@ -83,26 +83,52 @@ namespace termite {
     TerFloat TerFloat::operator-(const TerFloat& other) const {
         return operator+(-other);
     }
-
     TerFloat TerFloat::operator*(const TerFloat& other) const {
-        if (is_nan() || other.is_nan()) return TerFloat::NAN_;
+        // TEMPORARY
+    int64_t p =
+        (int64_t)significand.to_int32() *
+        (int64_t)other.significand.to_int32();
 
-        if (*this == TerFloat::ZERO || other == TerFloat::ZERO) {
-            return TerFloat::ZERO;
-        }
+    int64_t q = p / 4782969LL; // 3^14
+    Word e = exponent + other.exponent;
 
-        if (is_inf() || other.is_inf()) {
-            bool neg = (significand < Word::ZERO) ^ (other.significand < Word::ZERO);
-            return neg ? TerFloat::NEGATIVE_INFINITY : TerFloat::POSITIVE_INFINITY;
-        }
-
-        std::pair<Word, Word> mul32_res = significand.mul32(other.significand);
-
-        // std::cout << "DBG99" << (significand.to_int32()) << '\n';
-        // std::cout << "DBG100 " << mul32_res.first.to_int32() << ' '  << mul32_res.second.to_int32() << '\n';
-        Word result_significand = mul32_res.second.shl_int8(2) + mul32_res.first.shr_int8(14);
-        return TerFloat(result_significand, exponent + other.exponent);
+    while (q >= 14348907LL || q <= -14348907LL) {
+        q /= 3;
+        e = e + Word::ONE;
     }
+
+    while (q > 0 && q < 4782969LL) {
+        q *= 3;
+        e = e - Word::ONE;
+    }
+
+    while (q < 0 && q > -4782969LL) {
+        q *= 3;
+        e = e - Word::ONE;
+    }
+
+    return TerFloat(Word::from_int32((int32_t)q), e);
+}
+
+    // TerFloat TerFloat::operator*(const TerFloat& other) const {
+    //     if (is_nan() || other.is_nan()) return TerFloat::NAN_;
+
+    //     if (*this == TerFloat::ZERO || other == TerFloat::ZERO) {
+    //         return TerFloat::ZERO;
+    //     }
+
+    //     if (is_inf() || other.is_inf()) {
+    //         bool neg = (significand < Word::ZERO) ^ (other.significand < Word::ZERO);
+    //         return neg ? TerFloat::NEGATIVE_INFINITY : TerFloat::POSITIVE_INFINITY;
+    //     }
+
+    //     std::pair<Word, Word> mul32_res = significand.mul32(other.significand);
+
+    //     // std::cout << "DBG99" << (significand.to_int32()) << '\n';
+    //     // std::cout << "DBG100 " << mul32_res.first.to_int32() << ' '  << mul32_res.second.to_int32() << '\n';
+    //     Word result_significand = mul32_res.second.shl_int8(2) + mul32_res.first.shr_int8(14);
+    //     return TerFloat(result_significand, exponent + other.exponent);
+    // }
 
     // TerFloat TerFloat::operator*(const TerFloat& other) const {
     //     if (is_nan() || other.is_nan()) {

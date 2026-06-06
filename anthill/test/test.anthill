@@ -3,10 +3,9 @@
 
 
 int main() {
-    putf(0.7*0.999999);
+    putf(sin(3.14159));
     putc('\n');
-    putf(0.7*2.999999);
-    putc('\n');
+
 
     return 0;
 }
