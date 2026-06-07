@@ -335,19 +335,26 @@ namespace termite {
         return TerFloat::from_double(std::floor(to_double()));
     }
 
+
     TerFloat TerFloat::sin() const {
         if (is_inf_or_nan()) {
             return TerFloat::NAN_;
         }
         // Taylor series iteration
         TerFloat x = operator%(TerFloat::from_double(6.283185307179586)); // reduce to 2π
+        // if(x.to_double() > 3.141592653589793) {
+        //     return -((x - TerFloat::from_double(141592653589793)).sin());
+        // }
         TerFloat x2 = x * x;
 
         TerFloat t1 = x;
         TerFloat t2 = x * x2 * TerFloat::from_double(1.0 / 6.0);      // x^3/6
         TerFloat t3 = x * x2 * x2 * TerFloat::from_double(1.0 / 120.0); // x^5/120
         TerFloat t4 = x * x2 * x2 * x2 * TerFloat::from_double(1.0 / 5040.0); // x^7/5040
-        return t1 - t2 + t3 - t4;
+        TerFloat t5 = x * x2 * x2 * x2 * x2 * TerFloat::from_double(1.0 / 362880.0); // x^9/362800
+        TerFloat t6 = x * x2 * x2 * x2 * x2 * x2 * TerFloat::from_double(1.0 / 39916800.0); // x^11/39916800
+
+        return t1 - t2 + t3 - t4 + t5 - t6;
     }
 
     TerFloat TerFloat::cos() const {
