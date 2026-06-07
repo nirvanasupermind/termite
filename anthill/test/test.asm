@@ -451,7 +451,7 @@ push %bp
 mov %sp,%bp
 sub $729,%sp
 mov $10106,%ax
-mov $5008713,0(%ax)
+mov $5008709,0(%ax)
 mov $1,2(%ax)
 mov %ax,%di
 call sin

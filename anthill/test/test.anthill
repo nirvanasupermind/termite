@@ -3,7 +3,7 @@
 
 
 int main() {
-    putf(sin(3.141592653));
+    putf(sin(3.14159));
     putc('\n');
 
 
