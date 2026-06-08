@@ -26,6 +26,10 @@ float atan2(float a, float b) {
     __asm__("fatan\nfstp %ax\n");
 }
 
+float atan(float a) {
+    return atan2(a,1.0);
+}
+
 float exp(float a) {
     a;
     __asm__("fld %ax\nfexp\nfstp %ax\n");
@@ -43,8 +47,6 @@ float log3(float a) {
 float pow(float a, float b) {
     return exp(b * log(a));
 }
-
-
 
 float floor(float a) {
     a;

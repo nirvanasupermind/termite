@@ -125,8 +125,13 @@ namespace anthill {
       if (node->tok.val.find('.') != std::string::npos) {
          // FLOATING POINT CODE
          double double_val = std::stod(node->tok.val);
-         double exponent = std::floor(std::log(double_val) / std::log(3.0));
+
+          double exponent = std::floor(std::log(double_val) / std::log(3.0));
          double significand = double_val / std::pow(3.0, exponent);
+         if(double_val == 0.0) {
+            exponent = 0.0;
+            significand = 0.0;
+         }
          std::string addr = "$" + alloc_addr(std::make_shared<NonFuncType>(BasicType::FLOAT), symbol_table, true);
 
          std::cout << "dbg125" << significand << '\n';

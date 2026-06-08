@@ -760,16 +760,39 @@ namespace termite {
                 set_sign_flag_float(cycles, memory, result);
                 break;
             }
-            case INS_FATAN: {
-                TerFloat b = st.top();
-                st.pop();
-                TerFloat a = st.top();
-                st.pop();
-                TerFloat result = b.atan() / a.atan();
-                st.push(result);
-                set_sign_flag_float(cycles, memory, result);
-                break;
+        case INS_FATAN: {
+            TerFloat x = st.top(); st.pop();
+            TerFloat y = st.top(); st.pop();
+
+            TerFloat result;
+
+            if (x == TerFloat::ZERO) {
+                if (y == TerFloat::ZERO) result = TerFloat::NAN_;
+                else if (y > TerFloat::ZERO) result = TerFloat::HALF_PI;
+                else result = -TerFloat::HALF_PI;
+            } else {
+                result = (y / x).atan();
+
+                if (x < TerFloat::ZERO) {
+                    if (y >= TerFloat::ZERO) result = result + TerFloat::PI;
+                    else result = result - TerFloat::PI;
+                }
             }
+
+            st.push(result);
+            set_sign_flag_float(cycles, memory, result);
+            break;
+        }
+            // case INS_FATAN: {
+            //     TerFloat b = st.top();
+            //     st.pop();
+            //     TerFloat a = st.top();
+            //     st.pop();
+            //     TerFloat result = (b/a).atan();
+            //     st.push(result);
+            //     set_sign_flag_float(cycles, memory, result);
+            //     break;
+            // }
             case INS_FEXP: {
                 TerFloat a = st.top();
                 st.pop();

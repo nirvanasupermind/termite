@@ -18,13 +18,19 @@ namespace termite {
         static const TerFloat ZERO;
         static const TerFloat HALF;
         static const TerFloat ONE;
-        static const Word REC_LOOKUP_TABLE[162];
-                static const Word SQRT_LOOKUP_TABLE[162];
-
         static const TerFloat THREE_HALVES;
+        static const TerFloat PI;
+        static const TerFloat TWO_PI;
+        static const TerFloat HALF_PI;
+        static const TerFloat QUARTER_PI;
+        static const TerFloat SQRT2_MINUS_1;
         static const TerFloat NEGATIVE_INFINITY;
         static const TerFloat POSITIVE_INFINITY;
         static const TerFloat NAN_;
+        static const Word REC_LOOKUP_TABLE[162];
+        static const Word SQRT_LOOKUP_TABLE[162];
+
+
         TerFloat();
         TerFloat(Word significand, Word exponent); // Not const& because I copy and modify them
         static TerFloat from_double(double n);
