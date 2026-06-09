@@ -28,7 +28,9 @@ namespace termite {
         static const TerFloat POSITIVE_INFINITY;
         static const TerFloat NAN_;
         static const Word REC_LOOKUP_TABLE[162];
-        static const Word SQRT_LOOKUP_TABLE[162];
+        static const Word RSQRT_LOOKUP_TABLE[162];
+
+        // static const Word SQRT_LOOKUP_TABLE[162];
 
 
         TerFloat();
@@ -42,6 +44,7 @@ namespace termite {
         TerFloat rec() const;
         TerFloat operator/(const TerFloat& other) const;
         TerFloat operator%(const TerFloat& other) const;
+        TerFloat rsqrt() const;
         TerFloat sqrt() const;
         double to_double() const;
         TerFloat floor() const;

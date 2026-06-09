@@ -3,8 +3,16 @@
 
 
 int main() {
-    putf(acos(0.3));
+    putf(sqrt(0.067));
     putc('\n');
+    putf(sqrt(0.2));
+    putc('\n');
+    putf(sqrt(0.35));
+    putc('\n');
+    putf(sqrt(0.6));
+
+    putc('\n');
+
 
 
     return 0;

@@ -332,36 +332,28 @@ std::pair<Word, Word> Word::mul32(const Word& other) const {
 
 
     Word Word::operator/(const Word& other) const {
-        if(other == Word::ZERO) {
-            throw std::string("Division by zero ternary math error");
-        }
-        if(operator<(Word::ZERO)) {
-            if(other < Word::ZERO) {
-            return operator-().operator/(-other);
-            } else {
-                return -(operator-() / other);
-            }
-        } else if(other < Word::ZERO) {
-            return -operator/(-other);
-        } 
-        Word rem(bct);
-        Word quo;
-        while(rem.to_int32() >= other.to_int32()) {
-            rem = rem - other;
-            quo = quo + Word::ONE;
-        }
-        return quo;
+        return divmod(other).first;
     }
 
     Word Word::operator%(const Word& other) const {
-        Word rem(bct);
-        while(rem.to_int32() >= other.to_int32()) {
-            rem = rem - other;
-        }
-        return rem;
+        return divmod(other).second;
     }
 
     std::pair<Word, Word> Word::divmod(const Word& other) const {
+        if(other == Word::ZERO) {
+            throw std::string("Ternary math error - Integer division by zero");
+        }
+
+        if(other < Word::ZERO) {
+            return divmod(-other);
+        }
+
+        if(*this < Word::ZERO) {
+            Word neg_this = -(*this);
+            std::pair<Word, Word> neg_this_dm_other = neg_this.divmod(other);
+            return std::make_pair(-(neg_this_dm_other.first + Word::ONE),other-neg_this_dm_other.second);
+        }
+
         std::pair<Word, Word> result;
         Word rem(bct);
         Word quo;
