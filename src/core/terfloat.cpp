@@ -428,6 +428,36 @@ namespace termite {
     }
 
 
+// TerFloat TerFloat::log() const {
+//     if (*this == TerFloat::ZERO) return TerFloat::NEGATIVE_INFINITY;
+//     if (significand < Word::ZERO || is_nan()) return TerFloat::NAN_;
+//     if (*this == TerFloat::POSITIVE_INFINITY) return TerFloat::POSITIVE_INFINITY;
+
+//     TerFloat m(significand, Word::ZERO);
+//     TerFloat e = TerFloat::from_double((double)exponent.to_int32());
+
+//     TerFloat u = (m - TerFloat::ONE) / (m + TerFloat::ONE);
+//     TerFloat u2 = u * u;
+
+//     TerFloat term = u;
+//     TerFloat sum = term;
+
+//     term = term * u2;
+//     sum = sum + term * TerFloat::from_double(1.0 / 3.0);
+
+//     term = term * u2;
+//     sum = sum + term * TerFloat::from_double(1.0 / 5.0);
+
+//     term = term * u2;
+//     sum = sum + term * TerFloat::from_double(1.0 / 7.0);
+
+//     term = term * u2;
+//     sum = sum + term * TerFloat::from_double(1.0 / 9.0);
+
+//     TerFloat logm = sum * TerFloat::from_double(2.0);
+
+//     return logm + e * TerFloat::from_double(1.0986122886681098);
+// }
 
     TerFloat TerFloat::log() const {
         if (*this == TerFloat::ZERO) {
