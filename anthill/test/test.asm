@@ -535,11 +535,7 @@ main:
 push %bp
 mov %sp,%bp
 sub $729,%sp
-mov $10146,%ax
-mov $4782969,0(%ax)
-mov $0,2(%ax)
-mov %ax,%di
-call exp
+mov 10004,%ax
 mov %ax,%di
 call putf
 mov $10,%ax

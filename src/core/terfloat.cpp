@@ -410,7 +410,7 @@ namespace termite {
         if (significand < Word::ZERO) {
             return operator-().exp().rec();
         }
-        if (operator>(TerFloat::ONE)) {
+        if (operator>(TerFloat::HALF)) {
             TerFloat temp = operator/(TerFloat::from_double(2.0)).exp();
             return temp * temp;
         }
