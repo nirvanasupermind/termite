@@ -1,7 +1,3 @@
-call main
-mov $0,%dx
-mov $0nDD,%ax
-int $0
 mov $10000,%ax
 mov $5008713,0(%ax)
 mov $1,2(%ax)
@@ -10,6 +6,11 @@ mov $10008,%ax
 mov $13001458,0(%ax)
 mov $0,2(%ax)
 mov %ax,10012
+call main
+mov $0,%dx
+mov $0nDD,%ax
+int $0
+
 sqrt:
 push %bp
 mov %sp,%bp
@@ -535,7 +536,11 @@ main:
 push %bp
 mov %sp,%bp
 sub $729,%sp
-mov 10004,%ax
+mov $10146,%ax
+mov $9168952,0(%ax)
+mov $-2,2(%ax)
+mov %ax,%di
+call log
 mov %ax,%di
 call putf
 mov $10,%ax

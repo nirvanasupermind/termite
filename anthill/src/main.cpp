@@ -13,7 +13,6 @@
 
 
 int main(int argc, char** argv) {
-    std::cerr << "NEW ANTHILLC BUILD RUNNING\n";
     try {
         std::string file_path = argv[1];
         std::ifstream file(file_path);
@@ -32,13 +31,26 @@ int main(int argc, char** argv) {
         anthill::Parser parser(file_path, tokens);
         anthill::Generator gen(file_path, std::make_shared<anthill::SymbolTable>(anthill::SymbolTable()));
         gen.visit(parser.parse(), gen.global_scope);
-        std::ofstream myfile;
+         std::string output_code = gen.asm_stream.str();
+
+    size_t colon_pos = output_code.find(':');
+
+    if (colon_pos != std::string::npos) {
+        size_t newline_pos = output_code.find_last_of("\n\r", colon_pos);
+
+        if (newline_pos != std::string::npos) {
+            std::string temp = output_code.substr(0,newline_pos+1) + "call main\n" + "mov $0,%dx\n" + "mov $0nDD,%ax\n" + "int $0\n"
+            + output_code.substr(newline_pos);
+            output_code = temp;
+        }
+    }
+    
+         std::ofstream myfile;
+
         myfile.open(file_path.substr(0, file_path.size() - 7) + "asm");
-        myfile << "call main\n";
-        myfile << "mov $0,%dx\n";
-        myfile << "mov $0nDD,%ax\n";
-        myfile << "int $0\n";
-        myfile << gen.asm_stream.str();
+       
+        myfile << output_code;
+        return 0;
     }
     catch (const std::string& e) {
         std::cerr << e << '\n';

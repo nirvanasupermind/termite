@@ -3,7 +3,7 @@
 
 
 int main() {
-    putf(M_PI);
+    putf(log(0.213));
 
     putc('\n');
 

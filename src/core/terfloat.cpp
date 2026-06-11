@@ -470,18 +470,25 @@ namespace termite {
         if (to_double() >= 3.0) {
             return TerFloat(significand, exponent - Word::ONE).log() + TerFloat::from_double(std::log(3.0));
         }
-
+                if (to_double() < 1.0) {
+            return TerFloat(significand, exponent + Word::ONE).log() - TerFloat::from_double(std::log(3.0));
+        }
+        
+        // *this is now in [1,3)
+        // Taylor series of ln(x) at x=2
+        
         TerFloat xMinusA = operator-(TerFloat::from_double(2.0));
         TerFloat t0 = TerFloat::from_double(0.6931471805599453);
-        TerFloat t1 = TerFloat::from_double(0.5) * xMinusA; // 1/2(x-2)
-        TerFloat t2 = TerFloat::from_double(-0.25) * xMinusA * t1; // -1/8(x-2)^2
-        TerFloat t3 = TerFloat::from_double(-0.3333333333333333) * xMinusA * t2; // 1/24(x-2)^3
-        TerFloat t4 = TerFloat::from_double(-0.375) * xMinusA * t3; // -1/64(x-2)^4
-        TerFloat t5 = TerFloat::from_double(-0.4) * xMinusA * t4; // 1/160(x-2)^5
-        TerFloat t6 = TerFloat::from_double(-0.41666666666666663) * xMinusA * t5; // 1/384(x-2)^6
-        TerFloat t7 = TerFloat::from_double(0.42857142857142855) * xMinusA * t6; // 1/384(x-2)^7
+        TerFloat t1 = TerFloat::from_double(1.0/2.0) * xMinusA; // 1/2(x-2)
+        TerFloat t2 = TerFloat::from_double(-1.0/4.0) * xMinusA * t1; // -1/8(x-2)^2
+        TerFloat t3 = TerFloat::from_double(-1.0/3.0) * xMinusA * t2; // 1/24(x-2)^3
+        TerFloat t4 = TerFloat::from_double(-3.0/8.0) * xMinusA * t3; // -1/64(x-2)^4
+        TerFloat t5 = TerFloat::from_double(-2.0/5.0) * xMinusA * t4; // 1/160(x-2)^5
+        TerFloat t6 = TerFloat::from_double(-5.0/12.0) * xMinusA * t5; // -1/384(x-2)^6
+        TerFloat t7 = TerFloat::from_double(-3.0/7.0) * xMinusA * t6; // 1/896(x-2)^7
+        TerFloat t8 = TerFloat::from_double(-7.0/16.0) * xMinusA * t7;// -1/2048(x-2)^8
 
-        return t0 + t1 + t2 + t3 + t4 + t5 + t6 + t7;
+        return t0 + t1 + t2 + t3 + t4 + t5 + t6 + t7 + t8;
     }
 
     TerFloat TerFloat::abs() const {
