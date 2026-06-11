@@ -1,5 +1,7 @@
 #include <string>
 #include <iostream>
+#include <sstream>
+#include <fstream>
 #include "token.h"
 #include "lexer.h"
 #include "error.h"
@@ -26,8 +28,6 @@ namespace anthill {
         std::vector<Token> tokens;
 
         while (current) {
-        std::cout << "dbg27 " << current << '\n';
-
             if (std::isspace(current)) {
                 advance();
             }
@@ -63,8 +63,8 @@ namespace anthill {
                     tokens.push_back(Token(old_line, TokenType::ASDIV, "/="));
                     advance();
                 }
-                else if(current == '/') {
-                    while(current != '\n') {
+                else if (current == '/') {
+                    while (current != '\n') {
                         advance();
                     }
                     advance();
@@ -246,48 +246,69 @@ namespace anthill {
             else if (current == '#') {
                 advance();
                 Token directive = generate_identifier();
-                if(directive.type == TokenType::DEFINE) {
+                if (directive.type == TokenType::DEFINE) {
                     advance();
                     Token macro_name = generate_identifier();
                     std::string macro_code = "";
-                    while(current != '\n') {
+                    while (current != '\n') {
                         macro_code += current;
                         advance();
                     }
                     Lexer lexer2("<macro '" + macro_name.val + "'>", macro_code);
                     std::vector<Token> tokens2 = lexer2.generate_tokens();
                     macros[macro_name.val] = tokens2;
-                } else if(directive.type == TokenType::INCLUDE) {
+                }
+                else if (directive.type == TokenType::INCLUDE) {
                     tokens.push_back(directive);
-                    // advance();
-                } else {
+                    advance();
+                    Token file_path_tok = generate_str();
+                    tokens.push_back(file_path_tok);
+                    advance();
+                    std::string file_path = file_path_tok.val;
+                    std::ifstream file(file_path);
+
+                    if (!file) {
+                        std::cerr << "Error: Unable to open file " << file_path << std::endl;
+                        std::exit(1);
+                    }
+
+                    std::stringstream buffer;
+                    buffer << file.rdbuf();
+                    std::string str = buffer.str();
+
+                    Lexer lexer2(file_path, str);
+                    macros.insert(lexer2.macros.begin(), lexer2.macros.end());
+                    std::cout << "DBG283 " << macros.size() << '\n';
+                }
+                else {
                     error(file, line, std::string("the only accepted preprocessor directives are define and include, got '") + current + "'");
                 }
             }
             else if (current == '_' || std::isalpha(current)) {
                 Token ident = generate_identifier();
-                if(macros.count(ident.val)) {
+                if (macros.count(ident.val)) {
                     std::vector<Token> tokens2 = macros[ident.val];
-                    for(int i = 0; i < tokens2.size() - 1; i++) {
+                    for (int i = 0; i < tokens2.size() - 1; i++) {
                         tokens.push_back(tokens2[i]);
                     }
-                } else {
-                tokens.push_back(ident);
+                }
+                else {
+                    tokens.push_back(ident);
                 }
             }
             else if (isdigit(current)) {
                 tokens.push_back(generate_number());
                 advance();
-            } 
+            }
             else if (current == '\'') {
                 advance();
                 char ch = generate_ch();
                 advance();
-                if(current != '\'') {
+                if (current != '\'') {
                     error(file, line, std::string("expected closing apostrophe in character literal, got '") + current + "'");
                 }
                 tokens.push_back(Token(line, TokenType::CHARLIT, std::string(1, ch)));
-                advance();        
+                advance();
             }
             else if (current == '\"') {
                 tokens.push_back(generate_str());
@@ -368,7 +389,7 @@ namespace anthill {
         else if (identifier_str == "int") {
             type = TokenType::INT;
         }
-                else if (identifier_str == "float") {
+        else if (identifier_str == "float") {
             type = TokenType::FLOAT;
         }
         else if (identifier_str == "char") {
@@ -384,60 +405,60 @@ namespace anthill {
     }
 
     Token Lexer::generate_number() {
-    std::string number_str(1, current);
+        std::string number_str(1, current);
 
-    if (current == '0') {
-        advance();
-
-        if (current == 't') {
-            number_str += current;
+        if (current == '0') {
             advance();
 
-            while (current && (current == 'A' || current == 'a' || current == '0' || current == '1')) {
+            if (current == 't') {
                 number_str += current;
                 advance();
+
+                while (current && (current == 'A' || current == 'a' || current == '0' || current == '1')) {
+                    number_str += current;
+                    advance();
+                }
+
+                return Token(line, TokenType::NUMLIT, number_str);
+            }
+            else if (current == 'n') {
+                number_str += current;
+                advance();
+
+                while (current && (
+                    current == 'A' || current == 'a' ||
+                    current == 'B' || current == 'b' ||
+                    current == 'C' || current == 'c' ||
+                    current == 'D' || current == 'd' ||
+                    current == '0' || current == '1' ||
+                    current == '2' || current == '3' ||
+                    current == '4')) {
+                    number_str += current;
+                    advance();
+                }
+
+                return Token(line, TokenType::NUMLIT, number_str);
+            }
+        }
+        else {
+            advance();
+        }
+
+        int decimal_point_count = 0;
+        while (current && (std::isdigit(current) || current == '.')) {
+            if (current == '.') {
+                decimal_point_count++;
+                if (decimal_point_count > 1) {
+                    error(file, line, "multiple decimal points in a numeric literal");
+                }
             }
 
-            return Token(line, TokenType::NUMLIT, number_str);
-        }
-        else if (current == 'n') {
             number_str += current;
             advance();
-
-            while (current && (
-                current == 'A' || current == 'a' ||
-                current == 'B' || current == 'b' ||
-                current == 'C' || current == 'c' ||
-                current == 'D' || current == 'd' ||
-                current == '0' || current == '1' ||
-                current == '2' || current == '3' ||
-                current == '4')) {
-                number_str += current;
-                advance();
-            }
-
-            return Token(line, TokenType::NUMLIT, number_str);
-        }
-    }
-    else {
-        advance();
-    }
-
-    int decimal_point_count = 0;
-    while (current && (std::isdigit(current) || current == '.')) {
-        if (current == '.') {
-            decimal_point_count++;
-            if (decimal_point_count > 1) {
-                error(file, line, "multiple decimal points in a numeric literal");
-            }
         }
 
-        number_str += current;
-        advance();
+        return Token(line, TokenType::NUMLIT, number_str);
     }
-
-    return Token(line, TokenType::NUMLIT, number_str);
-}
 
     // Token Lexer::generate_number() {
     //     std::string number_str(1, current);
@@ -486,21 +507,22 @@ namespace anthill {
     char Lexer::generate_ch() {
         if ('\\' == current) {
             advance();
-        switch (current) {
-        case '0': return '\0';
+            switch (current) {
+            case '0': return '\0';
             case 'a': return '\a';
-        case 'b': return '\b';
-        case 'f': return '\f';
-        case 'n': return '\n';
-        case 'r': return '\r';
-        case 't': return '\t';
-        case 'v': return '\v';
-        case '\\': return '\\';
-        case '"': return '"' | 256;
-        case '\'': return '\'';
+            case 'b': return '\b';
+            case 'f': return '\f';
+            case 'n': return '\n';
+            case 'r': return '\r';
+            case 't': return '\t';
+            case 'v': return '\v';
+            case '\\': return '\\';
+            case '"': return '"' | 256;
+            case '\'': return '\'';
+            }
         }
-    } else {
-        return current;
+        else {
+            return current;
         }
     }
 
@@ -508,7 +530,7 @@ namespace anthill {
         advance();
         std::string str;
         while (current != '"') {
-            char x = generate_ch();     
+            char x = generate_ch();
             str += x;
             advance();
         }

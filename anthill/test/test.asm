@@ -537,10 +537,8 @@ push %bp
 mov %sp,%bp
 sub $729,%sp
 mov $10146,%ax
-mov $9168952,0(%ax)
-mov $-2,2(%ax)
-mov %ax,%di
-call log
+mov $7174454,0(%ax)
+mov $-1,2(%ax)
 mov %ax,%di
 call putf
 mov $10,%ax

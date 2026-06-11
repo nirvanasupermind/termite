@@ -574,8 +574,6 @@ namespace termite {
                 return std::to_string(decimal_sig) + "e-" + std::to_string((int)(-decimal_exp));
             }
         }
-
-        // return std::to_string(((double)significand.to_int32()) / 4782969.0) + "*3^" + std::to_string(exponent.to_int32());
     }
 
 }
