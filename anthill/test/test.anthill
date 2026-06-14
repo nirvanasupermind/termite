@@ -6,8 +6,5 @@ int main() {
     putf(M_PI);
 
     putc('\n');
-
-
-
     return 0;
 }

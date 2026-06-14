@@ -277,6 +277,7 @@ namespace anthill {
                     std::string str = buffer.str();
 
                     Lexer lexer2(file_path, str);
+                    lexer2.generate_tokens();
                     macros.insert(lexer2.macros.begin(), lexer2.macros.end());
                     std::cout << "DBG283 " << macros.size() << '\n';
                 }
