@@ -46,7 +46,16 @@ int isndigit(char c) {
         | c == 'C' | c == 'D';
 }
 
-int tolower(char c) {
+int isgraph(char c) {
+    return c > ' ';
+}
+
+int isprint(char c) {
+    return c >= ' ';
+}
+
+
+char tolower(char c) {
    if(c == 'A') {
     return 'a';
    }
@@ -128,8 +137,7 @@ int tolower(char c) {
    return c;
 }
 
-
-int toupper(char c) {
+char toupper(char c) {
    if(c == 'a') {
     return 'A';
    }

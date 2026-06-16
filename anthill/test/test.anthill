@@ -1,9 +1,11 @@
-#include "anthill/stl/math.anthill"
-#include "anthill/stl/io.anthill"
+#include "anthill/stl/time.anthill"
+#include "anthill/stl/stdio.anthill"
 
 
 int main() {
-    putf(M_PI);
+    putf(time_hi());
+    putc('\n');
+    putf(time_lo());
 
     putc('\n');
     return 0;

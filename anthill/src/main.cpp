@@ -31,24 +31,46 @@ int main(int argc, char** argv) {
         anthill::Parser parser(file_path, tokens);
         anthill::Generator gen(file_path, std::make_shared<anthill::SymbolTable>(anthill::SymbolTable()));
         gen.visit(parser.parse(), gen.global_scope);
-         std::string output_code = gen.asm_stream.str();
+        std::string output_code = gen.asm_stream.str();
 
-    size_t colon_pos = output_code.find(':');
+        size_t colon_pos = output_code.find(':');
 
-    if (colon_pos != std::string::npos) {
-        size_t newline_pos = output_code.find_last_of("\n\r", colon_pos);
+        if (colon_pos != std::string::npos) {
+            size_t newline_pos = output_code.find_last_of("\n\r", colon_pos);
 
-        if (newline_pos != std::string::npos) {
-            std::string temp = output_code.substr(0,newline_pos+1) + "call main\n" + "mov $0,%dx\n" + "mov $0nDD,%ax\n" + "int $0\n"
-            + output_code.substr(newline_pos);
-            output_code = temp;
+            std::string startup =
+                "call main\n"
+                "mov $0,%dx\n"
+                "mov $0nDD,%ax\n"
+                "int $0\n";
+
+            if (newline_pos == std::string::npos) {
+                output_code = startup + output_code;
+            }
+            else {
+                output_code =
+                    output_code.substr(0, newline_pos + 1) +
+                    startup +
+                    output_code.substr(newline_pos + 1);
+            }
         }
-    }
-    
-         std::ofstream myfile;
+
+        // size_t colon_pos = output_code.find(':');
+
+        // if (colon_pos != std::string::npos) {
+        //     size_t newline_pos = output_code.find_last_of("\n\r", colon_pos);
+
+        //     if (newline_pos != std::string::npos) {
+        //         std::string temp = output_code.substr(0,newline_pos+1) + "call main\n" + "mov $0,%dx\n" + "mov $0nDD,%ax\n" + "int $0\n"
+        //         + output_code.substr(newline_pos);
+        //         output_code = temp;
+        //     }
+        // }
+
+        std::ofstream myfile;
 
         myfile.open(file_path.substr(0, file_path.size() - 7) + "asm");
-       
+
         myfile << output_code;
         return 0;
     }
