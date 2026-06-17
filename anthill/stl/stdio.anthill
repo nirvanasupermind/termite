@@ -14,7 +14,7 @@ void putf(float f) {
     __asm__("fld %ax\nmov $0nCA,%ax\nint $0\nfstp %ax\n");
 }
 
-void puts(char* s) {
+void fputs(char* s) {
     int i = 0;
     while (*(s + i) != '\0') {
         putc(*(s + i));
@@ -22,6 +22,10 @@ void puts(char* s) {
     }
 }
 
+void puts(char* s) {
+    fputs(s);
+    putc('\n');
+}
 
 int fact(int x) {
     int i = 1;

@@ -255,8 +255,8 @@ namespace anthill {
                         advance();
                     }
                                         size_t pos = 0;
-                    while ((pos = str.find('\n', pos)) != std::string::npos) {
-                        str.replace(pos, 1, "\\");
+                    while ((pos = macro_code.find('\\', pos)) != std::string::npos) {
+                        macro_code.replace(pos, 1, "\n");
                         pos += 1; 
                     }
                     Lexer lexer2("<macro '" + macro_name.val + "'>", macro_code);

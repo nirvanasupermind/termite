@@ -1,8 +1,9 @@
-#include "anthill/stl/time.anthill"
 #include "anthill/stl/stdio.anthill"
+#include "anthill/stl/string.anthill"
 
-#define z int main(){\puts("Hello world");\return 0;\}
 int main() {
-    putc('\n');
+    char* dst = "";
+    strcat(dst,"Hello", "goodbye");
+    puts(dst);
     return 0;
 }
