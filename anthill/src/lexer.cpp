@@ -254,6 +254,11 @@ namespace anthill {
                         macro_code += current;
                         advance();
                     }
+                                        size_t pos = 0;
+                    while ((pos = str.find('\n', pos)) != std::string::npos) {
+                        str.replace(pos, 1, "\\");
+                        pos += 1; 
+                    }
                     Lexer lexer2("<macro '" + macro_name.val + "'>", macro_code);
                     std::vector<Token> tokens2 = lexer2.generate_tokens();
                     macros[macro_name.val] = tokens2;
@@ -275,7 +280,6 @@ namespace anthill {
                     std::stringstream buffer;
                     buffer << file.rdbuf();
                     std::string str = buffer.str();
-
                     Lexer lexer2(file_path, str);
                     lexer2.generate_tokens();
                     macros.insert(lexer2.macros.begin(), lexer2.macros.end());

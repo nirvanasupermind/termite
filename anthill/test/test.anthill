@@ -1,12 +1,8 @@
 #include "anthill/stl/time.anthill"
 #include "anthill/stl/stdio.anthill"
 
-
+#define z int main(){\puts("Hello world");\return 0;\}
 int main() {
-    putf(time_hi());
-    putc('\n');
-    putf(time_lo());
-
     putc('\n');
     return 0;
 }
