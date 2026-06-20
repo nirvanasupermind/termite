@@ -2,8 +2,9 @@
 #include "anthill/stl/string.anthill"
 
 int main() {
-    char* dst = "";
-    strcat(dst,"Hello", "goodbye");
-    puts(dst);
+    char* a = "Hell";
+        char* b = "....";
+    memcpy(a,b,3);
+    puts(a);
     return 0;
 }
