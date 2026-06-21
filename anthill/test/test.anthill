@@ -2,9 +2,10 @@
 #include "anthill/stl/string.anthill"
 
 int main() {
-    char* a = "Hell";
-        char* b = "....";
-    memcpy(a,b,3);
-    puts(a);
+    char* dst = "old";
+    char* src = "new";
+    memcpy(dst,src,3);
+
+    puts(dst);
     return 0;
 }

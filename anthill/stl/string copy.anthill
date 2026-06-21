@@ -1,6 +1,6 @@
 int strlen(char* s) {
     int i = 0;
-    while(*(s + i) != 0) {
+    while(*(s + i + i) != 0) {
         i++;
     }
     return i;
@@ -11,11 +11,11 @@ void* strcat(char* dst, char* a, char* b) {
     int j = 0;
     while (*(a + i) != '\0') {
         *(dst + i) = *(a + i);
-        i++;
+        i += 2;
     }
     while (*(b + j) != '\0') {
         *(dst + i + j) = *(b + j);
-        j++;
+        j += 2;
     }
     *(dst + i + j) = 0;
 }
@@ -31,8 +31,8 @@ char* strchr(char* a, char b) {
 
 void memcpy(char* dst, char* src, int n) {
     int i = 0;
-    while (i < n) {
+    while (i < (n * 2)) {
         *(dst + i) = *(src + i);
-        i++;  
+        i += 2;     
     }
 }
