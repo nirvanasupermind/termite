@@ -53,7 +53,9 @@ namespace termite {
         "flog",
         "fabs",
         "ffloor",
-        "fcmp"
+        "fcmp",
+        "ldt",
+        "stt"
     };
 
     const std::vector<std::string> REG_NAMES = {

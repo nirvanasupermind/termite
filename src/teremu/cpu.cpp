@@ -835,6 +835,25 @@ namespace termite {
                 set_sign_flag_float(cycles, memory, result);
                 break;
             }
+                        case INS_LDT: {
+                Word src_mode = ins.get_trit_range(10, 11);
+                Word src_reg = ins.get_trit_range(8, 9);
+                Tryte loaded_tryte = memory.get_tryte(get_addr_mode(cycles, memory, src_mode, src_reg, imm));
+                Word new_ax = Word(loaded_tryte, Tryte::from_int16(0));
+                regs[REG_AX] = new_ax;
+                set_sign_flag(cycles, memory, new_ax);
+                break;
+            }
+                                    case INS_STT: {
+                Word dst_mode = ins.get_trit_range(10, 11);
+                Word dst_reg = ins.get_trit_range(8, 9);
+                Word ax_word = regs[REG_AX];
+                Tryte ax_lo_tryte = ax_word.get_lo_tryte();
+                memory.set_tryte(get_addr_mode(cycles,memory,dst_mode,dst_reg,imm),ax_lo_tryte);
+                set_sign_flag(cycles, memory, ax_word);
+                break;
+            }
+            
             }
         }
 

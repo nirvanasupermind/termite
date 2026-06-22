@@ -86,6 +86,9 @@ namespace termite {
         static constexpr int32_t INS_FABS = 5; // 1D
         static constexpr int32_t INS_FFLOOR = 6; // 1C
         static constexpr int32_t INS_FCMP = 7; // 1B
+        static constexpr int32_t INS_LDT = 8; // 1A
+        static constexpr int32_t INS_STT = 9; // 10
+
 
         void reset(Mem& memory);
         void set_sign_flag(Word& cycles, Mem& memory, const Word& result);
