@@ -562,15 +562,10 @@ push %bp
 mov %sp,%bp
 sub $729,%sp
 mov $10139,%ax
-mov $0,0(%ax)
+mov $9565938,0(%ax)
 mov $0,2(%ax)
-fld %ax
-mov $10143,%ax
-mov $0,0(%ax)
-mov $0,2(%ax)
-fld %ax
-fdiv
-fstp %ax
+mov %ax,%di
+call sqrt
 mov %ax,%di
 call putf
 mov $0,%ax
