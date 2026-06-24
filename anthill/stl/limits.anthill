@@ -1,0 +1,6 @@
+#define CHAR_TRIT 8
+#define CHAR_MIN -3280
+#define CHAR_MAX 3280
+#define INT_TRIT 16
+#define INT_MIN -21523360
+#define INT_MAX 21523360

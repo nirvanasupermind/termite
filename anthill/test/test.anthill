@@ -1,11 +1,7 @@
 #include "anthill/stl/stdio.anthill"
-#include "anthill/stl/string.anthill"
+#include "anthill/stl/math.anthill"
 
 int main() {
-    char* dst = "old";
-    char* src = "new";
-    memcpy(dst,src,3);
-
-    puts(dst);
+    putf(0.0/0.0);
     return 0;
 }

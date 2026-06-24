@@ -63,7 +63,20 @@ namespace anthill {
                     tokens.push_back(Token(old_line, TokenType::ASDIV, "/="));
                     advance();
                 }
+                else if (current == '*') {
+                    // C-like comment
+
+                    while (current != '*') {
+                        advance();
+                    }
+                    advance();
+                    if(current != '/') {
+                        error(file, line, std::string("expected '*/' to close comment, got '*") + current + "'");
+                    }
+                    advance();
+                }
                 else if (current == '/') {
+                    // C++-like comment
                     while (current != '\n') {
                         advance();
                     }
@@ -321,7 +334,6 @@ namespace anthill {
             }
             else {
                 error(file, line, std::string("illegal character '") + current + "'");
-                advance();
             }
         }
         tokens.push_back(Token(line, TokenType::XEOF, "<eof>"));

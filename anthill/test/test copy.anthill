@@ -1,8 +1,7 @@
 #include "anthill/stl/io.anthill"
-
-
-
+// Hi
 int main() {
+    /* other comment */
     int i = 0;
     while(i < 3) {
         puti(i);

@@ -117,7 +117,7 @@ namespace anthill {
    }
 
    std::shared_ptr<StaticType> Generator::visit_char_node(const std::shared_ptr<CharNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
-      asm_stream << "mov $" << (int)(node->tok.val.front()) << ",%ax\n";
+      asm_stream << "ldt " << (int)(node->tok.val.front()) << "\n";
       return std::make_shared<NonFuncType>(NonFuncType(BasicType::CHAR));
    }
 
@@ -388,7 +388,11 @@ namespace anthill {
          return std::make_shared<NonFuncType>(non_func_type->basic_type, non_func_type->pointer_levels + 1);
       }
       case TokenType::STAR: {
+         if (node_type->to_str() == "char*") {
+         asm_stream << "ldt 0(%ax)\n";
+         } else {
          asm_stream << "mov 0(%ax),%ax\n";
+         }
          // if (node_type->to_str() == "char*") {
          //    trunc_to_8_trits();
          // }
@@ -408,6 +412,11 @@ namespace anthill {
       }
       case TokenType::PLUS: {
          break;
+      }
+            case TokenType::SIZEOF: {
+         std::shared_ptr<NonFuncType> non_func_type = std::static_pointer_cast<NonFuncType>(node_type);
+         asm_stream << "ldt" << non_func_type->size() << "\n";
+         return std::make_shared<NonFuncType>(BasicType::CHAR);
       }
       }
 

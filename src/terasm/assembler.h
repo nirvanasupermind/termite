@@ -57,8 +57,8 @@ namespace termite {
         {"fabs", 0},
         {"ffloor", 0},
         {"fcmp", 0},
-        {'ldt', 1},
-        {'stt', 1}
+        {"ldt", 1},
+        {"stt", 1}
     };
     
     class Assembler {

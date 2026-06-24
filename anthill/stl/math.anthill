@@ -1,5 +1,7 @@
 #define M_PI 3.141592653589793
 #define M_E 2.718281828459045
+#define INFINITY 1.0/0.0
+#define NAN 0.0/0.0
 
 float sqrt(float a) {
     a;
@@ -64,8 +66,12 @@ float floor(float a) {
     __asm__("fld %ax\nffloor\nfstp %ax\n");
 }
 
+float ceil(float a) {
+    return -floor(-a);
+}
+
 float round(float a) {
-    return floor(a+1.0);
+    return floor(a+0.5);
 }
 
 float hypot(float a, float b) {

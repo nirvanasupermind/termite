@@ -129,7 +129,7 @@ namespace anthill {
 
     std::shared_ptr<Node> Parser::prefix_expr(const TokenType& terminator) {
         Token tok = current;
-        if (tok.type == TokenType::PLUS || tok.type == TokenType::MINUS || tok.type == TokenType::NOT || tok.type == TokenType::AMPER || tok.type == TokenType::STAR) {
+        if (tok.type == TokenType::PLUS || tok.type == TokenType::MINUS || tok.type == TokenType::NOT || tok.type == TokenType::AMPER || tok.type == TokenType::STAR || tok.type == TokenType::SIZEOF) {
             advance();
             return std::make_shared<PrefixNode>(PrefixNode(tok.line, tok, prefix_expr(terminator)));
         }

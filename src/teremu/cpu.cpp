@@ -835,22 +835,52 @@ namespace termite {
                 set_sign_flag_float(cycles, memory, result);
                 break;
             }
-                        case INS_LDT: {
-                Word src_mode = ins.get_trit_range(10, 11);
-                Word src_reg = ins.get_trit_range(8, 9);
-                Tryte loaded_tryte = memory.get_tryte(get_addr_mode(cycles, memory, src_mode, src_reg, imm));
-                Word new_ax = Word(loaded_tryte, Tryte::from_int16(0));
-                regs[REG_AX] = new_ax;
-                set_sign_flag(cycles, memory, new_ax);
-                break;
-            }
+case INS_LDT: {
+    Word src_mode = ins.get_trit_range(10, 11);
+    Word src_reg  = ins.get_trit_range(8, 9);
+
+    Tryte loaded_tryte;
+
+    if (src_mode.to_int32() == -3) {
+        loaded_tryte = regs[src_reg.to_int32() + 4].get_lo_tryte();
+    }
+    else if (src_mode.to_int32() == -2) {
+        loaded_tryte = memory.get_tryte(imm);
+    }
+    else {
+        Word addr = regs[src_reg.to_int32() + 4] + imm;
+        loaded_tryte = memory.get_tryte(addr);
+    }
+
+    regs[REG_AX] = Word(loaded_tryte, Tryte::from_int16(0));
+    break;
+}
+            //             case INS_LDT: {
+            //     Word src_mode = ins.get_trit_range(10, 11);
+            //     Word src_reg = ins.get_trit_range(8, 9);
+            //     Tryte loaded_tryte = get_addr_mode(cycles, memory, src_mode, src_reg, imm).get_lo_tryte();
+            //     Word new_ax = Word(loaded_tryte, Tryte::from_int16(0));
+            //     regs[REG_AX] = new_ax;
+            //     break;
+            // }
                                     case INS_STT: {
-                Word dst_mode = ins.get_trit_range(10, 11);
-                Word dst_reg = ins.get_trit_range(8, 9);
                 Word ax_word = regs[REG_AX];
                 Tryte ax_lo_tryte = ax_word.get_lo_tryte();
-                memory.set_tryte(get_addr_mode(cycles,memory,dst_mode,dst_reg,imm),ax_lo_tryte);
-                set_sign_flag(cycles, memory, ax_word);
+Word dest_mode = ins.get_trit_range(10, 11);
+                Word dest_reg = ins.get_trit_range(8, 9);
+
+                
+
+                if (dest_mode.to_int32() == -3) {
+                    regs[dest_reg.to_int32() + 4] = Word(ax_lo_tryte, Tryte::from_int16(0));
+                }
+                else if (dest_mode.to_int32() == -2) {
+                    memory.set_tryte(imm, ax_lo_tryte);
+                }
+                else {
+                    Word addr = regs[dest_reg.to_int32() + 4] + imm;
+                    memory.set_tryte(addr, ax_lo_tryte);
+                }
                 break;
             }
             
