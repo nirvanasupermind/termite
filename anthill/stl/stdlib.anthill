@@ -1,0 +1,22 @@
+int abs(int a) {
+    if(a < 0) {
+        return -a;
+    } else {
+        return a;
+    }
+}
+
+float atof(char* str) {
+    int i = 0;
+    while(*(str + i) != '\0') {
+        i++;
+    }
+    i = 0;
+    while(*(str + i) != '\0') {
+        char* current_char = *(str + i);
+        if(current_char == '0') {
+            current_char;
+        }
+    }
+}
+

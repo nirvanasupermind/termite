@@ -29,7 +29,7 @@ char* strchr(char* a, char b) {
     return a + i;
 }
 
-void memcpy(char* dst, char* src, int n) {
+void memcpy(void* dst, void* src, int n) {
     int i = 0;
     while (i < n) {
         *(dst + i) = *(src + i);

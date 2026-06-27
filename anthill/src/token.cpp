@@ -300,6 +300,10 @@ namespace anthill {
             str += "DEFINE";
             break;
         }
+                case TokenType::FLOAT: {
+            str += "FLOAT";
+            break;
+        }
         // case TokenType::P_INCLUDE: {
         //     str += "P_INCLUDE";
         //     break;

@@ -41,28 +41,20 @@ namespace anthill {
    }
 
    std::string Generator::alloc_addr(const std::shared_ptr<NonFuncType>& type, const std::shared_ptr<SymbolTable>& symbol_table, bool always_global) {
-      std::cout << "dbg51 " << addr_counter << '\n';
       std::string result = std::to_string(addr_counter);
       addr_counter += type->size();
-      std::cout << "dbg54 " << addr_counter << '\n';
       return result;
-      // if (symbol_table->is_func && !always_global) {
-      //    func_addr_counter += type->size();
-      //    std::string result = "-" + std::to_string(func_addr_counter) + "(%bp)";
-      //    // std::cout << "dbg51 " << func_addr_counter << '\n';
-      //    return result;
-      // }
-      // else {
-      //    std::cout << "dbg51 " << addr_counter << '\n';
-      //    std::string result = std::to_string(addr_counter);
-      //    addr_counter += type->size();
-      //    std::cout << "dbg54 " << addr_counter << '\n';
-      //    return result;
-      // }
    }
 
    void Generator::trunc_to_8_trits() {
-      // asm_stream << "xor $0nDDDD, %ax\n";
+      asm_stream << "xor $0nDDDD, %ax\n";
+   }
+
+
+   void Generator::check_type(const std::shared_ptr<NonFuncType>& expected_type, const std::shared_ptr<NonFuncType>& real_type, int line, const std::string& specific_error) {
+      if(expected_type->to_str() != real_type->to_str()) {
+         error(file, line, "expected " + expected_type->to_str() + " for " + specific_error + ", got " + real_type->to_str());
+      }
    }
 
    std::shared_ptr<StaticType> Generator::visit(const std::shared_ptr<Node>& node, const std::shared_ptr<SymbolTable>& symbol_table, bool no_gen) {
@@ -134,9 +126,6 @@ namespace anthill {
          }
          std::string addr = "$" + alloc_addr(std::make_shared<NonFuncType>(BasicType::FLOAT), symbol_table, true);
 
-         std::cout << "dbg125" << significand << '\n';
-         std::cout << "dbg126" << exponent << '\n';
-
          // int packed_float = exponent * 531441 + (int)significand;
 
          asm_stream << "mov " << addr << ",%ax\n";
@@ -158,7 +147,6 @@ namespace anthill {
       for (int i = 0; i <= s.size(); i++) {
          std::string ch_addr = alloc_addr(std::make_shared<NonFuncType>(NonFuncType(BasicType::CHAR)), symbol_table, true);
          if (i == 0) {
-            std::cout << "dbg130 " << ch_addr << '\n';
             addr = ch_addr;
          }
          if (i == s.size()) {
@@ -303,7 +291,6 @@ namespace anthill {
       }
 
       std::string func_name = std::static_pointer_cast<IdentNode>(node->callee)->tok.val;
-      std::cout << "dbg301" << func_name << '\n';
       if (func_name == "__asm__") {
          if (node->args.size() > 1) {
             error(file, node->callee->line, "cannot use __asm__ with multiple arguments");
@@ -321,11 +308,23 @@ namespace anthill {
             error(file, node->callee->line, "expected " + std::to_string(func_type->arg_types.size()) + " arguments to function '" + func_name + "', got " + std::to_string(node->args.size()));
          }
          for (int i = 0; i < node->args.size(); i++) {
-            std::shared_ptr<StaticType> arg_type = visit(node->args.at(i), symbol_table);
-            asm_stream << "mov %ax,%" << arg_regs[i] << '\n';
-            if (arg_type->to_str() != "char" && func_type->arg_types.at(i)->to_str() == "char") {
-               asm_stream << "and %" << arg_regs[i] << "," << func_type->arg_types.at(i) << '\n';
+            std::shared_ptr<Node> arg =  node->args.at(i);
+            std::shared_ptr<StaticType> arg_type_uncasted = visit(arg, symbol_table);
+            if(arg_type_uncasted->is_func()) {
+               error(file, arg->line, "cannot pass a function as an argument to another function (function pointers are not supported yet)");
             }
+            std::shared_ptr<NonFuncType> arg_type = std::static_pointer_cast<NonFuncType>(arg_type_uncasted);
+
+              check_type(func_type->arg_types.at(i),arg_type,arg->line,"function argument");
+
+            if(func_type->arg_types.at(i)->to_str() == "char") {
+            asm_stream << "ldt " << arg_regs[i] << '\n';
+            } else  {
+            asm_stream << "mov %ax,%" << arg_regs[i] << '\n';
+         }
+            // if (arg_type->to_str() != "char" && func_type->arg_types.at(i)->to_str() == "char") {
+            //    asm_stream << "and %" << arg_regs[i] << "," << func_type->arg_types.at(i) << '\n';
+            // }
          }
          asm_stream << "call " << func_name << '\n';
          return func_type->return_type;
@@ -397,7 +396,6 @@ namespace anthill {
          //    trunc_to_8_trits();
          // }
          std::shared_ptr<NonFuncType> non_func_type = std::static_pointer_cast<NonFuncType>(node_type);
-         std::cout << "dbg260 " << non_func_type->to_str() << '\n';
          if (non_func_type->pointer_levels == 0) {
             error(file, node->node->line, "cannot dereference a non-pointer");
          }
@@ -437,7 +435,11 @@ namespace anthill {
          error(file, node->right_node->line, "cannot perform binary operations on a value of type void");
       }
 
-      // if (left_type->to_str() == "void*") {
+      if (left_type->to_str() == "void*") {
+         error(file, node->right_node->line, "cannot perform binary operations on a void pointer");
+      }
+
+      //       if (left_type->pointer_levels > 0 && right_type->pointer_levels > 0 && ) {
       //    error(file, node->right_node->line, "cannot perform binary operations on a void pointer");
       // }
 
@@ -482,6 +484,7 @@ namespace anthill {
          case TokenType::SLASH: {
             asm_stream << "fld %ax\n";
             std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
+               std::cout << "!!!! DBG487 " << node->left_node->to_str() << ' ' << node->right_node->to_str() << ' ' << temp2->to_str() << '\n';
             if (temp2->to_str() != "float") {
                error(file, node->right_node->line, "cannot perform binary operations on a mix of float and non-float types");
             }
@@ -589,8 +592,11 @@ namespace anthill {
          }
 
          }
+    return left_type;
+
       }
       else {
+         std::cout << "DBG599" << '\n';
          switch (node->op_tok.type) {
          case TokenType::AMPER: {
             asm_stream << "push %ax\n";
@@ -697,10 +703,10 @@ namespace anthill {
             right_type = std::static_pointer_cast<NonFuncType>(temp2);
             asm_stream << "pop %cx\n";
             asm_stream << "add %cx,%ax\n";
-            // if ((left_type->pointer_levels > 0 /* && left_type->to_str() != "char*" */ )
-            //    || (right_type->pointer_levels > 0  /* && right_type->to_str() != "char*") */ )) {
-            //    asm_stream << "add %cx,%ax\n";
-            // }
+            if ((left_type->pointer_levels > 0 && left_type->to_str() != "char*")
+               || (right_type->pointer_levels > 0  && right_type->to_str() != "char*")) {
+               asm_stream << "add %cx,%ax\n";
+            }
             break;
          }
          case TokenType::MINUS: {
@@ -717,11 +723,11 @@ namespace anthill {
             asm_stream << "pop %cx\n";
             asm_stream << "xchg %cx,%ax\n";
             asm_stream << "sub %cx,%ax\n";
-            // if ((left_type->pointer_levels > 0 /* && left_type->to_str() != "char*" */ )
-            //    || (right_type->pointer_levels > 0 /* && right_type->to_str() != "char*") */) {
-            //    asm_stream << "xchg %cx,%ax\n";
-            //    asm_stream << "sub %cx,%ax\n";
-            // }
+            if ((left_type->pointer_levels > 0 && left_type->to_str() != "char*")
+               || (right_type->pointer_levels > 0  && right_type->to_str() != "char*")) {
+               asm_stream << "xchg %cx,%ax\n";
+               asm_stream << "sub %cx,%ax\n";
+            }
             break;
          }
          case TokenType::STAR: {
@@ -955,23 +961,24 @@ namespace anthill {
       const std::shared_ptr<VarDefNode>& node,
       const std::shared_ptr<SymbolTable>& symbol_table
    ) {
-      try {
-         std::shared_ptr<NonFuncType> var_type =
+               std::shared_ptr<NonFuncType> var_type =
             NonFuncType::parse_type(node->type->to_str());
          if (var_type->to_str() == "void") {
             error(file, node->name.line, "cannot define variable of type void");
          }
 
-         // Evaluate initializer: result in %ax
-         visit(node->val, symbol_table);
+         std::shared_ptr<StaticType> val_type_uncasted = visit(node->val, symbol_table);
+             if(val_type_uncasted->is_func()) {
+               error(file, node->type->line, "cannot define a variable where the type is a function type (function pionters are not supported yet)");
+            }
 
-         // If this is a *function* scope variable, allocate stack space for it
+                     std::shared_ptr<NonFuncType> val_type = std::static_pointer_cast<NonFuncType>(val_type_uncasted);
+            check_type(var_type, val_type, node->val->line, "variable definition");
+      try {
          if (symbol_table->is_func) {
-            // Reserve var_type->size() “words” on the stack
             asm_stream << "sub $" << var_type->size() << ",%sp\n";
          }
-
-         // Now assign it a negative offset using alloc_addr
+            
          std::string addr = alloc_addr(var_type, symbol_table);
          symbol_table->def_type(node->name.val, var_type);
          symbol_table->def_addr(node->name.val, addr);
@@ -1113,7 +1120,6 @@ namespace anthill {
    //         std::shared_ptr<StaticType> func_type =
    //             std::make_shared<FuncType>(FuncType(return_type, arg_static_types));
 
-   //         std::cout << node->name.to_str() << '\n';
    //         symbol_table->def_type(node->name.val, func_type);
    //         symbol_table->def_addr(node->name.val, node->name.val);
    //     }
@@ -1167,9 +1173,7 @@ namespace anthill {
          std::shared_ptr<NonFuncType> return_type = std::make_shared<NonFuncType>(str_to_basic_type(return_type_node->base_type.val), return_type_node->num_pointers);
          std::vector<std::shared_ptr<NonFuncType> > arg_static_types;
          func_addr_counter = 0;
-         // std::cout << "dbg414" << '\n';
          for (int i = 0; i < node->arg_names.size(); i++) {
-            // std::cout << "dbg416" << '\n';
             std::shared_ptr<TypeNode> type_node = std::static_pointer_cast<TypeNode>(node->arg_types[i]);
             std::shared_ptr<NonFuncType> type = std::make_shared<NonFuncType>(NonFuncType(str_to_basic_type(type_node->base_type.val), type_node->num_pointers));
             std::string addr = alloc_addr(type, func_symbol_table);
@@ -1179,17 +1183,14 @@ namespace anthill {
             asm_stream << "mov %" << arg_regs[i] << ",%ax\n";
             set_var(type, addr);
             // asm_stream << "mov %ax," << addr << "\n";
-            // std::cout << "dbg425" << '\n';
          }
          std::shared_ptr<StaticType> func_type = std::make_shared<FuncType>(FuncType(return_type, arg_static_types));
-         std::cout << node->name.to_str() << '\n';
          symbol_table->def_type(node->name.val, func_type);
          symbol_table->def_addr(node->name.val, node->name.val);
       }
       catch (const std::string& e) {
          error(file, node->line, e);
       }
-      // std::cout << "dbg430" << '\n';
       visit(node->body, func_symbol_table);
       asm_stream << "mov %bp,%sp\n";
       asm_stream << "pop %bp\n";
@@ -1263,9 +1264,7 @@ namespace anthill {
    }
 
    std::shared_ptr<StaticType> Generator::visit_stmt_list_node(const std::shared_ptr<StmtListNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
-      // std::cout << "dbg462 " << node->stmts.size() << '\n';
       for (int i = 0; i < node->stmts.size(); i++) {
-         // std::cout << "dbg464" << '\n';
          visit(node->stmts.at(i), symbol_table);
       }
       return std::make_shared<NonFuncType>(NonFuncType(BasicType::VOID));

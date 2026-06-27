@@ -296,7 +296,6 @@ namespace anthill {
                     Lexer lexer2(file_path, str);
                     lexer2.generate_tokens();
                     macros.insert(lexer2.macros.begin(), lexer2.macros.end());
-                    std::cout << "DBG283 " << macros.size() << '\n';
                 }
                 else {
                     error(file, line, std::string("the only accepted preprocessor directives are define and include, got '") + current + "'");

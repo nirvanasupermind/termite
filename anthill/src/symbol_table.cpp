@@ -66,7 +66,7 @@ std::isalpha(3);
     }
 
     void SymbolTable::def_addr(const std::string& name, const std::string& addr) {
-        std::cout << "dbg66" << '\n';
+        // std::cout << "dbg66" << '\n';
         // if (has(name)) {
         //     throw std::string("variable '" + name + "' already exists");
         // } else {

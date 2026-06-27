@@ -1,7 +1,9 @@
-#define M_PI 3.141592653589793
-#define M_E 2.718281828459045
-#define INFINITY 1.0/0.0
-#define NAN 0.0/0.0
+#define M_PI (3.141592653589793)
+#define M_E (2.718281828459045)
+#define M_PI_2 (1.5707963267948966)
+#define M_SQRT2 (1.4142135623730951)
+#define INFINITY (1.0/0.0)
+#define NAN (0.0/0.0)
 
 float sqrt(float a) {
     a;
@@ -40,7 +42,7 @@ float asin(float a) {
 }
 
 float acos(float a) {
-    return M_PI/2.0 - asin(a);
+    return M_PI_2 - asin(a);
 }
 
 float exp(float a) {
@@ -55,6 +57,10 @@ float log(float a) {
 
 float log3(float a) {
     return log(a) / log(3.0);
+}
+
+float log10(float a) {
+    return log(a) / log(10.0);
 }
 
 float pow(float a, float b) {
@@ -72,6 +78,14 @@ float ceil(float a) {
 
 float round(float a) {
     return floor(a+0.5);
+}
+
+float trunc(float a) {
+    if(a < 0.0) {
+        return -floor(-a);
+    } else {
+        return floor(a);
+    }
 }
 
 float hypot(float a, float b) {
@@ -97,4 +111,12 @@ float fmax(float a, float b) {
     } else {
         return b;
     }
+}
+
+float isfinite(int a) {
+    return a != INFINITY && a != (-INFINITY) && a != NAN;
+}
+
+float isinf(int a) {
+    return a == INFINITY || a == (-INFINITY);
 }

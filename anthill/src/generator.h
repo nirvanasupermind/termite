@@ -11,19 +11,21 @@
 namespace anthill {
     extern std::vector<std::string> arg_regs;
     class Generator {
-    public:
+    protected:
         int label_id = 1;
         int addr_counter = 10000;
         int func_addr_counter = 0;
         std::string current_func_name = "";
-        std::string file;
-        std::ostringstream asm_stream;
-        std::shared_ptr<SymbolTable> global_scope;
-        Generator(const std::string& file, const std::shared_ptr<SymbolTable>& global_scope);
         int alloc_label();
         void set_var(const std::shared_ptr<StaticType>& var_type, const std::string& addr);
         std::string alloc_addr(const std::shared_ptr<NonFuncType>& type, const std::shared_ptr<SymbolTable>& symbol_table, bool always_global = false);
         void trunc_to_8_trits();
+   void check_type(const std::shared_ptr<NonFuncType>& expected_type, const std::shared_ptr<NonFuncType>& real_type, int line, const std::string& specific_error);
+    public:
+        std::string file;
+        std::shared_ptr<SymbolTable> global_scope;
+        std::ostringstream asm_stream;
+        Generator(const std::string& file, const std::shared_ptr<SymbolTable>& global_scope);
         // The no_gen argument is just a cheap hack I needed for assignments and function definitions, it is ignored in everything except visit_ident_node
         std::shared_ptr<StaticType> visit(const std::shared_ptr<Node>& node, const std::shared_ptr<SymbolTable>& symbol_table, bool no_gen = false);
         std::shared_ptr<StaticType> visit_char_node(const std::shared_ptr<CharNode>& node, const std::shared_ptr<SymbolTable>& symbol_table);

@@ -19,9 +19,6 @@ namespace anthill {
     }
 
     void Parser::syntax_error() {
-        for (int i = 0; i < tokens.size(); i++) {
-            std::cout << "dbg23 " << tokens.at(i).to_str() << '\n';
-        }
         error(file, current.line, std::string("invalid syntax near '") + current.val + "'");
     }
 
@@ -31,7 +28,7 @@ namespace anthill {
             syntax_error();
         }
         advance();
-        std::cerr << "eat expected " << (int)type << " got " << current.to_str() << "\n";
+        // std::cerr << "eat expected " << (int)type << " got " << current.to_str() << "\n";
         return result;
     }
 
@@ -253,12 +250,9 @@ namespace anthill {
                 }
 
                 Token op = Token(left->line, bin_op_type, std::string(1, op_tok.val[0]));
-                std::cout << "dbg255 " << op_tok.val[0] << '\n';
-                std::cout << "dbg256 " << op.to_str() << '\n';
                 std::shared_ptr<Node> bin_op_node = std::make_shared<BinOpNode>(BinOpNode(left->line, left, op, right));
                 Token assign = Token(left->line, TokenType::ASSIGN, "=");
                 left = std::make_shared<AssignNode>(AssignNode(left->line, left, assign, bin_op_node));
-                std::cout << "dbg257 " << left->to_str() << '\n';
             }
             else {
                 left = std::make_shared<AssignNode>(AssignNode(left->line, left, op_tok, right));
@@ -489,8 +483,6 @@ namespace anthill {
             stmts.push_back(stmt(terminator));
         }
 
-        std::cout << "dbg494 RUNNING NEW PARSER stmt_list terminator="
-            << (int)terminator << "\n";
 
         return std::make_shared<StmtListNode>(line, stmts);
     }
