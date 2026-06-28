@@ -317,11 +317,8 @@ namespace anthill {
 
               check_type(func_type->arg_types.at(i),arg_type,arg->line,"function argument");
 
-            if(func_type->arg_types.at(i)->to_str() == "char") {
-            asm_stream << "ldt " << arg_regs[i] << '\n';
-            } else  {
+
             asm_stream << "mov %ax,%" << arg_regs[i] << '\n';
-         }
             // if (arg_type->to_str() != "char" && func_type->arg_types.at(i)->to_str() == "char") {
             //    asm_stream << "and %" << arg_regs[i] << "," << func_type->arg_types.at(i) << '\n';
             // }

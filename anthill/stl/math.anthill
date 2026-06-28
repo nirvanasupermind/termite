@@ -113,10 +113,10 @@ float fmax(float a, float b) {
     }
 }
 
-float isfinite(int a) {
+int isfinite(float a) {
     return a != INFINITY && a != (-INFINITY) && a != NAN;
 }
 
-float isinf(int a) {
+int isinf(float a) {
     return a == INFINITY || a == (-INFINITY);
 }
