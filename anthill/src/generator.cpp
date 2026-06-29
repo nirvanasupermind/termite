@@ -505,7 +505,7 @@ namespace anthill {
             asm_stream << "je _L" + std::to_string(label) + "\n";
             asm_stream << "mov $-1,%ax\n";
             asm_stream << "_L" + std::to_string(label) + ":\n";
-            break;
+           return std::make_shared<NonFuncType>(BasicType::INT);
          }
          case TokenType::NOTEQ: {
             asm_stream << "fld %ax\n";
@@ -521,7 +521,7 @@ namespace anthill {
             asm_stream << "jne _L" + std::to_string(label) + "\n";
             asm_stream << "mov $-1,%ax\n";
             asm_stream << "_L" + std::to_string(label) + ":\n";
-            break;
+            return std::make_shared<NonFuncType>(BasicType::INT);
          }
          case TokenType::LESS: {
             asm_stream << "fld %ax\n";
@@ -537,7 +537,7 @@ namespace anthill {
             asm_stream << "jl _L" + std::to_string(label) + "\n";
             asm_stream << "mov $-1,%ax\n";
             asm_stream << "_L" + std::to_string(label) + ":\n";
-            break;
+            return std::make_shared<NonFuncType>(BasicType::INT);
          }
          case TokenType::LTEQ: {
             asm_stream << "fld %ax\n";
@@ -553,7 +553,7 @@ namespace anthill {
             asm_stream << "jle _L" + std::to_string(label) + "\n";
             asm_stream << "mov $-1,%ax\n";
             asm_stream << "_L" + std::to_string(label) + ":\n";
-            break;
+            return std::make_shared<NonFuncType>(BasicType::INT);
          }
          case TokenType::GREATER: {
             asm_stream << "fld %ax\n";
@@ -569,7 +569,7 @@ namespace anthill {
             asm_stream << "jg _L" + std::to_string(label) + "\n";
             asm_stream << "mov $-1,%ax\n";
             asm_stream << "_L" + std::to_string(label) + ":\n";
-            break;
+            return std::make_shared<NonFuncType>(BasicType::INT);
          }
          case TokenType::GTEQ: {
             asm_stream << "fld %ax\n";
@@ -585,7 +585,7 @@ namespace anthill {
             asm_stream << "jge _L" + std::to_string(label) + "\n";
             asm_stream << "mov $-1,%ax\n";
             asm_stream << "_L" + std::to_string(label) + ":\n";
-            break;
+            return std::make_shared<NonFuncType>(BasicType::INT);
          }
 
          }
@@ -793,7 +793,7 @@ namespace anthill {
             asm_stream << "je _L" + std::to_string(label) + "\n";
             asm_stream << "mov $-1,%ax\n";
             asm_stream << "_L" + std::to_string(label) + ":\n";
-            break;
+            return std::make_shared<NonFuncType>(BasicType::INT);
          }
          case TokenType::NOTEQ: {
             // ;
@@ -813,7 +813,7 @@ namespace anthill {
             asm_stream << "jne _L" + std::to_string(label) + "\n";
             asm_stream << "mov $-1,%ax\n";
             asm_stream << "_L" + std::to_string(label) + ":\n";
-            break;
+            return std::make_shared<NonFuncType>(BasicType::INT);
          }
          case TokenType::LESS: {
             // ;
@@ -833,7 +833,7 @@ namespace anthill {
             asm_stream << "jl _L" + std::to_string(label) + "\n";
             asm_stream << "mov $-1,%ax\n";
             asm_stream << "_L" + std::to_string(label) + ":\n";
-            break;
+            return std::make_shared<NonFuncType>(BasicType::INT);
          }
          case TokenType::LTEQ: {
             // ;
@@ -853,7 +853,7 @@ namespace anthill {
             asm_stream << "jle _L" + std::to_string(label) + "\n";
             asm_stream << "mov $-1,%ax\n";
             asm_stream << "_L" + std::to_string(label) + ":\n";
-            break;
+            return std::make_shared<NonFuncType>(BasicType::INT);
          }
          case TokenType::GREATER: {
             // ;
@@ -873,7 +873,7 @@ namespace anthill {
             asm_stream << "jg _L" + std::to_string(label) + "\n";
             asm_stream << "mov $-1,%ax\n";
             asm_stream << "_L" + std::to_string(label) + ":\n";
-            break;
+            return std::make_shared<NonFuncType>(BasicType::INT);
          }
          case TokenType::GTEQ: {
             // ;
@@ -893,7 +893,7 @@ namespace anthill {
             asm_stream << "jge _L" + std::to_string(label) + "\n";
             asm_stream << "mov $-1,%ax\n";
             asm_stream << "_L" + std::to_string(label) + ":\n";
-            break;
+            return std::make_shared<NonFuncType>(BasicType::INT);
          }
          }
       }
@@ -986,7 +986,7 @@ namespace anthill {
       catch (const std::string& e) {
          error(file, node->line, e);
       }
-      return std::make_shared<NonFuncType>(NonFuncType(BasicType::VOID));
+      return std::make_shared<NonFuncType>(BasicType::VOID);
    }
 
    // std::shared_ptr<StaticType> Generator::visit_var_def_node(const std::shared_ptr<VarDefNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
