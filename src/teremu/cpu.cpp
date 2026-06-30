@@ -831,6 +831,20 @@ namespace termite {
                 TerFloat a = st.top();
                 st.pop();
                 TerFloat result = a - b;
+                if(a == TerFloat::NEGATIVE_INFINITY) {
+                    if(b == TerFloat::NEGATIVE_INFINITY) {
+                        result = TerFloat::from_double(0.0);
+                    } else {
+                        result = TerFloat::from_double(1.0);
+                    }
+                } else if(a == TerFloat::POSITIVE_INFINITY) {
+                    if(b == TerFloat::POSITIVE_INFINITY) {
+                        result = TerFloat::from_double(0.0);
+                    } else {
+                        result = TerFloat::from_double(-1.0);
+                    }
+                }
+
                 // like fsub but doesn't actually push the result, just sets the flag
                 set_sign_flag_float(cycles, memory, result);
                 break;

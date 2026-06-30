@@ -2,6 +2,6 @@
 #include "anthill/stl/math.anthill"
 
 int main() {
-    puti(1.0 == 1.0);
+    puti(INFINITY == INFINITY);
     return 0;
 }

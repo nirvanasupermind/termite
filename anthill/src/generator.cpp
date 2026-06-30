@@ -426,7 +426,8 @@ namespace anthill {
          error(file, node->left_node->line, "cannot perform binary operations on a function");
       }
       std::shared_ptr<NonFuncType> left_type = std::static_pointer_cast<NonFuncType>(temp);
-      std::shared_ptr<NonFuncType> right_type;
+std::shared_ptr<NonFuncType> right_type =
+    std::make_shared<NonFuncType>(BasicType::VOID);
 
       if (left_type->to_str() == "void") {
          error(file, node->right_node->line, "cannot perform binary operations on a value of type void");
@@ -452,7 +453,7 @@ namespace anthill {
             asm_stream << "fld %ax\n";
             asm_stream << "fadd\n";
             asm_stream << "fstp %ax\n";
-            break;
+            return std::make_shared<NonFuncType>(BasicType::FLOAT);
          }
          case TokenType::MINUS: {
             asm_stream << "fld %ax\n";
@@ -464,7 +465,7 @@ namespace anthill {
             asm_stream << "fld %ax\n";
             asm_stream << "fsub\n";
             asm_stream << "fstp %ax\n";
-            break;
+            return std::make_shared<NonFuncType>(BasicType::FLOAT);
          }
          case TokenType::STAR: {
             asm_stream << "fld %ax\n";
@@ -476,7 +477,7 @@ namespace anthill {
             asm_stream << "fld %ax\n";
             asm_stream << "fmul\n";
             asm_stream << "fstp %ax\n";
-            break;
+            return std::make_shared<NonFuncType>(BasicType::FLOAT);
          }
          case TokenType::SLASH: {
             asm_stream << "fld %ax\n";
@@ -489,7 +490,7 @@ namespace anthill {
             asm_stream << "fld %ax\n";
             asm_stream << "fdiv\n";
             asm_stream << "fstp %ax\n";
-            break;
+            return std::make_shared<NonFuncType>(BasicType::FLOAT);
          }
          case TokenType::EQUAL: {
             asm_stream << "fld %ax\n";
@@ -587,10 +588,10 @@ namespace anthill {
             asm_stream << "_L" + std::to_string(label) + ":\n";
             return std::make_shared<NonFuncType>(BasicType::INT);
          }
-
+    default:
+         error(file, node->line, "unsupported binary operator");
          }
     return left_type;
-
       }
       else {
          std::cout << "DBG599" << '\n';
@@ -687,6 +688,18 @@ namespace anthill {
             asm_stream << "and %cx,%ax\n";
             break;
          }
+         case TokenType::LOGOR: {
+    asm_stream << "push %ax\n";
+    std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
+    if (temp2->is_func()) {
+        error(file, node->right_node->line, "cannot perform binary operations on a function");
+    }
+
+    right_type = std::static_pointer_cast<NonFuncType>(temp2);
+    asm_stream << "pop %cx\n";
+    asm_stream << "or %cx,%ax\n";
+    return std::make_shared<NonFuncType>(BasicType::INT);
+}
          case TokenType::PLUS: {
             ;
             asm_stream << "push %ax\n";
@@ -895,6 +908,8 @@ namespace anthill {
             asm_stream << "_L" + std::to_string(label) + ":\n";
             return std::make_shared<NonFuncType>(BasicType::INT);
          }
+         default:
+    error(file, node->line, "unsupported binary operator");
          }
       }
 

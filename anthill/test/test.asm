@@ -84,7 +84,6 @@ mov $1,%ax
 jne _L3
 mov $-1,%ax
 _L3:
-xor $0nDDDD, %ax
 cmp $1, %ax
 je _L1
 mov %bp,%sp
@@ -638,6 +637,49 @@ mov $1,%ax
 jne _L16
 mov $-1,%ax
 _L16:
+push %ax
+mov 10151,%ax
+fld %ax
+mov $10163,%ax
+mov $4782969,0(%ax)
+mov $0,2(%ax)
+fld %ax
+mov $10167,%ax
+mov $0,0(%ax)
+mov $0,2(%ax)
+fld %ax
+fdiv
+fstp %ax
+neg %ax
+fld %ax
+fcmp
+mov $1,%ax
+jne _L17
+mov $-1,%ax
+_L17:
+pop %cx
+and %cx,%ax
+push %ax
+mov 10151,%ax
+fld %ax
+mov $10171,%ax
+mov $0,0(%ax)
+mov $0,2(%ax)
+fld %ax
+mov $10175,%ax
+mov $0,0(%ax)
+mov $0,2(%ax)
+fld %ax
+fdiv
+fstp %ax
+fld %ax
+fcmp
+mov $1,%ax
+jne _L18
+mov $-1,%ax
+_L18:
+pop %cx
+and %cx,%ax
 mov %bp,%sp
 pop %bp
 ret
@@ -649,14 +691,14 @@ push %bp
 mov %sp,%bp
 sub $729,%sp
 mov %di,%ax
-mov %ax,10163
-mov 10163,%ax
+mov %ax,10179
+mov 10179,%ax
 fld %ax
-mov $10167,%ax
+mov $10183,%ax
 mov $4782969,0(%ax)
 mov $0,2(%ax)
 fld %ax
-mov $10171,%ax
+mov $10187,%ax
 mov $0,0(%ax)
 mov $0,2(%ax)
 fld %ax
@@ -665,9 +707,31 @@ fstp %ax
 fld %ax
 fcmp
 mov $1,%ax
-je _L17
+je _L19
 mov $-1,%ax
-_L17:
+_L19:
+push %ax
+mov 10179,%ax
+fld %ax
+mov $10191,%ax
+mov $4782969,0(%ax)
+mov $0,2(%ax)
+fld %ax
+mov $10195,%ax
+mov $0,0(%ax)
+mov $0,2(%ax)
+fld %ax
+fdiv
+fstp %ax
+neg %ax
+fld %ax
+fcmp
+mov $1,%ax
+je _L20
+mov $-1,%ax
+_L20:
+pop %cx
+or %cx,%ax
 mov %bp,%sp
 pop %bp
 ret
@@ -678,18 +742,33 @@ main:
 push %bp
 mov %sp,%bp
 sub $729,%sp
-mov $10175,%ax
+mov $10199,%ax
 mov $4782969,0(%ax)
 mov $0,2(%ax)
 fld %ax
-mov $10179,%ax
+mov $10203,%ax
 mov $0,0(%ax)
 mov $0,2(%ax)
 fld %ax
 fdiv
 fstp %ax
-mov %ax,%di
-call isinf
+fld %ax
+mov $10207,%ax
+mov $4782969,0(%ax)
+mov $0,2(%ax)
+fld %ax
+mov $10211,%ax
+mov $0,0(%ax)
+mov $0,2(%ax)
+fld %ax
+fdiv
+fstp %ax
+fld %ax
+fcmp
+mov $1,%ax
+je _L21
+mov $-1,%ax
+_L21:
 mov %ax,%di
 call puti
 mov $0,%ax
