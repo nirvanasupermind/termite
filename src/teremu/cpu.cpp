@@ -839,6 +839,7 @@ namespace termite {
                     }
                 } else if(a == TerFloat::POSITIVE_INFINITY) {
                     if(b == TerFloat::POSITIVE_INFINITY) {
+                        // std::cout << "!!!!DBG842" << '\n';
                         result = TerFloat::from_double(0.0);
                     } else {
                         result = TerFloat::from_double(-1.0);
