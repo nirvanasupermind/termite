@@ -109,7 +109,7 @@ namespace anthill {
    }
 
    std::shared_ptr<StaticType> Generator::visit_char_node(const std::shared_ptr<CharNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
-      asm_stream << "ldt " << (int)(node->tok.val.front()) << "\n";
+      asm_stream << "ldt $ " << (int)(node->tok.val.front()) << "\n";
       return std::make_shared<NonFuncType>(NonFuncType(BasicType::CHAR));
    }
 
@@ -506,7 +506,7 @@ std::shared_ptr<NonFuncType> right_type =
             asm_stream << "je _L" + std::to_string(label) + "\n";
             asm_stream << "mov $-1,%ax\n";
             asm_stream << "_L" + std::to_string(label) + ":\n";
-           return std::make_shared<NonFuncType>(BasicType::INT);
+            return std::make_shared<NonFuncType>(BasicType::INT);
          }
          case TokenType::NOTEQ: {
             asm_stream << "fld %ax\n";

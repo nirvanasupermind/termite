@@ -1,7 +1,7 @@
 #include "anthill/stl/stdio.anthill"
-#include "anthill/stl/math.anthill"
+#include "anthill/stl/stdlib.anthill"
 
 int main() {
-    puti(INFINITY == INFINITY);
+    puti('3' == '2');
     return 0;
 }
