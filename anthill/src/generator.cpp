@@ -517,7 +517,6 @@ std::shared_ptr<NonFuncType> right_type =
             right_type = std::static_pointer_cast<NonFuncType>(temp2);
             asm_stream << "fld %ax\n";
             asm_stream << "fcmp\n";
-            asm_stream << "mov $1,%ax\n";
             int label = alloc_label();
             asm_stream << "jne _L" + std::to_string(label) + "\n";
             asm_stream << "mov $-1,%ax\n";
@@ -536,6 +535,8 @@ std::shared_ptr<NonFuncType> right_type =
             int true_label = alloc_label();
             int end_label = alloc_label();
             asm_stream << "jl _L" + std::to_string(true_label) + "\n";
+            asm_stream << "mov $1,%ax\n";
+            asm_stream << "_L" + std::to_string(true_label) + ":\n";
             asm_stream << "mov $-1,%ax\n";
             asm_stream << "_L" + std::to_string(end_label) + ":\n";
             return std::make_shared<NonFuncType>(BasicType::INT);
