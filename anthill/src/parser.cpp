@@ -13,7 +13,6 @@ namespace anthill {
         : file(file), tokens(tokens), pos(0) {
         advance();
     }
-
     void Parser::advance() {
         current = tokens.at(pos++);
     }
