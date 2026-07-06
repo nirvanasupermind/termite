@@ -491,7 +491,8 @@ namespace termite {
                     Word addr = regs[dest_reg.to_int32() + 4] + imm;
                     result = memory.get_word(addr).sub_with_borrow(get_addr_mode(cycles, memory, src_mode, src_reg, imm2));
                 }
-                std::cout << "DBG494 " << result.first.to_nonary_str();
+                std::cout << "DBG494" << get_addr_mode(cycles, memory, src_mode, src_reg, imm2).to_int32() << '\n';
+                std::cout << "DBG495" << result.first.to_int32() << '\n';
                 set_sign_flag(cycles, memory, result.first);
                 flags.set_bct_trit(0, result.second.get_bct());
                 break;
