@@ -482,7 +482,9 @@ namespace termite {
 
                 std::pair<Word, Word> result;
                 if (dest_mode.to_int32() == -3) {
+                // std::cout << "DBG485 " << regs[dest_reg.to_int32() + 4].to_int32() << '\n';
                     result = regs[dest_reg.to_int32() + 4].sub_with_borrow(get_addr_mode(cycles, memory, src_mode, src_reg, imm2));
+                // std::cout << "DBG487 " << get_addr_mode(cycles, memory, src_mode, src_reg, imm2).to_int32() << '\n';
                 }
                 else if (src_mode.to_int32() == -2) {
                     result = memory.get_word(imm).sub_with_borrow(get_addr_mode(cycles, memory, src_mode, src_reg, imm2));
@@ -491,8 +493,8 @@ namespace termite {
                     Word addr = regs[dest_reg.to_int32() + 4] + imm;
                     result = memory.get_word(addr).sub_with_borrow(get_addr_mode(cycles, memory, src_mode, src_reg, imm2));
                 }
-                std::cout << "DBG494" << get_addr_mode(cycles, memory, src_mode, src_reg, imm2).to_int32() << '\n';
-                std::cout << "DBG495" << result.first.to_int32() << '\n';
+
+                // std::cout << "DBG495 " << result.first.to_int32() << '\n';
                 set_sign_flag(cycles, memory, result.first);
                 flags.set_bct_trit(0, result.second.get_bct());
                 break;
@@ -858,7 +860,9 @@ case INS_LDT: {
 
     Tryte loaded_tryte;
 
-    if (src_mode.to_int32() == -3) {
+        if (src_mode.to_int32() == -4) {
+        loaded_tryte = imm.get_lo_tryte();
+    } else if (src_mode.to_int32() == -3) {
         loaded_tryte = regs[src_reg.to_int32() + 4].get_lo_tryte();
     }
     else if (src_mode.to_int32() == -2) {
@@ -870,6 +874,8 @@ case INS_LDT: {
     }
 
     regs[REG_AX] = Word(loaded_tryte, Tryte::from_int16(0));
+    // std::cout << "DBG875 " << loaded_tryte.to_int16() << '\n';
+    // std::cout << "DBG876 " << regs[REG_AX].to_int32() << '\n';
     break;
 }
             //             case INS_LDT: {

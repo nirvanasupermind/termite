@@ -213,7 +213,7 @@ namespace anthill {
             break;
         }
         case TokenType::NUMLIT: {
-            str += "INTLIT";
+            str += "NUMLIT";
             break;
         }
         case TokenType::LBRACE: {

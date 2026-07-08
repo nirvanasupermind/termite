@@ -1,7 +1,9 @@
 #include "anthill/stl/stdio.anthill"
+#include "anthill/stl/math.anthill"
 #include "anthill/stl/stdlib.anthill"
 
 int main() {
-    puti('3' == '2');
+    puti(isnan(NAN));
+    putc('\n');
     return 0;
 }
