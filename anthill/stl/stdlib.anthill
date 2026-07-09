@@ -11,8 +11,6 @@ int atoi(char* str) {
     int result = 0;
     while(*(str + i) != '\0') {
         char current_char = *(str + i);
-                puti(current_char == '3');
-
         if (current_char == '0') {
             result = 10 * result;
         }

@@ -124,6 +124,6 @@ int isinf(float a) {
 int isnan(float a) {
     int *ptr = (int*)a;
     int exponent = *(int*)(((int)ptr) +2);
-
-    return a != INFINITY && a != (-INFINITY) && exponent == 21523360;
+    
+    return (exponent == 21523360) && !(isinf(a));
 }

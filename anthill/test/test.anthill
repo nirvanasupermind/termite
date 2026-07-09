@@ -3,7 +3,7 @@
 #include "anthill/stl/stdlib.anthill"
 
 int main() {
-    puti(isnan(NAN));
-    putc('\n');
+    int x = atoi("3900");
+    puti(x+1);
     return 0;
 }

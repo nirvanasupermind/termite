@@ -405,6 +405,10 @@ namespace anthill {
          asm_stream << "neg %ax\n";
          break;
       }
+      case TokenType::NOT: {
+         asm_stream << "neg %ax\n";
+         break;
+      }
       case TokenType::PLUS: {
          break;
       }
