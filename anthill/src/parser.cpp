@@ -362,7 +362,6 @@ namespace anthill {
         eat(TokenType::LPAREN);
         std::shared_ptr<Node> init = stmt(TokenType::SEMI);
         std::shared_ptr<Node> cond = expr_stmt(TokenType::SEMI);
-        eat(TokenType::SEMI);
         std::shared_ptr<Node> update = expr(TokenType::RPAREN);
         eat(TokenType::RPAREN);
         std::shared_ptr<Node> body = block_stmt(terminator);

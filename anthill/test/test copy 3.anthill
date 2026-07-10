@@ -3,7 +3,11 @@
 #include "anthill/stl/stdlib.anthill"
 
 int main() {
-    int*y = (int*)(calloc(4,2));
-    puti(*y);
+    void*x = calloc(2,1);
+    char*y = (char*)x;
+    *y = 'h';
+    *(y + 1) = 'e';
+
+    puts(y);
     return 0;
 }
