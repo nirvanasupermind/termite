@@ -1,9 +1,10 @@
 #include "anthill/stl/stdio.anthill"
 #include "anthill/stl/math.anthill"
 #include "anthill/stl/stdlib.anthill"
+#include "anthill/stl/time.anthill"
 
 int main() {
-    int*y = (int*)(calloc(4,2));
-    puti(*y);
+    srand(time_lo());
+    puti(atof("-539.0"));
     return 0;
 }
