@@ -3,6 +3,7 @@
 #include <utility>
 #include <cstdint>
 #include <vector>
+#include <cmath>
 #include "../core/tryte.h"
 #include "../core/word.h"
 #include "cpu.h"
@@ -657,7 +658,7 @@ namespace termite {
             case INS_FLD: {
                 Word src_mode = ins.get_trit_range(10, 11);
                 Word src_reg = ins.get_trit_range(8, 9);
-                Word addr = get_addr_mode(cycles, memory, src_mode, src_reg, imm2);
+                Word addr = get_addr_mode(cycles, memory, src_mode, src_reg, imm);
                 // std::cout << addr.to_nonary_str();
                 // std::cout << "dbg647 " << memory.get_word(addr).to_nonary_str();
                 // std::cout << "dbg648 " << memory.get_word(addr + Word::TWO).to_nonary_str();
@@ -671,7 +672,7 @@ namespace termite {
 
                 Word dest_mode = ins.get_trit_range(10, 11);
                 Word dest_reg = ins.get_trit_range(8, 9);
-                Word addr = get_addr_mode(cycles, memory, dest_mode, dest_reg, imm2);
+                Word addr = get_addr_mode(cycles, memory, dest_mode, dest_reg, imm);
 
                 memory.set_word(addr, top.significand);
                 memory.set_word(addr + Word::TWO, top.exponent);
@@ -906,7 +907,42 @@ Word dest_mode = ins.get_trit_range(10, 11);
                 }
                 break;
             }
-            
+            case INS_FILD: {
+                Word src_mode = ins.get_trit_range(10, 11);
+                Word src_reg = ins.get_trit_range(8, 9);
+                Word addr = get_addr_mode(cycles, memory, src_mode, src_reg, imm);
+                st.push(TerFloat::from_double((double)((memory.get_word(addr)).to_int32())));
+                break;
+            }
+            case INS_FIST: {
+       
+                TerFloat top = st.top();
+
+                Word dest_mode = ins.get_trit_range(10, 11);
+                Word dest_reg = ins.get_trit_range(8, 9);
+                Word addr = get_addr_mode(cycles, memory, dest_mode, dest_reg, imm);
+
+                memory.set_word(addr, Word::from_int32((int32_t)(top.to_double())));
+                break;
+            }
+            case INS_FISTP: {
+                TerFloat top = st.top();
+                st.pop();
+                Word dest_mode = ins.get_trit_range(10, 11);
+                Word dest_reg = ins.get_trit_range(8, 9);
+                Word addr = get_addr_mode(cycles, memory, dest_mode, dest_reg, imm);
+
+                memory.set_word(addr, Word::from_int32((int32_t)(top.to_double())));
+                break;
+            }
+            case INS_FNEG: {
+                TerFloat a = st.top();
+                st.pop();
+                TerFloat result = -a;
+                st.push(result);
+                set_sign_flag_float(cycles, memory, result);
+                break;
+            }      
             }
         }
 

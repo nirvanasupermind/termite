@@ -58,7 +58,11 @@ namespace termite {
         {"ffloor", 0},
         {"fcmp", 0},
         {"ldt", 1},
-        {"stt", 1}
+        {"stt", 1},
+        {"fild", 1},
+        {"fist", 1},
+        {"fistp", 1},
+        {"fneg", 0}
     };
     
     class Assembler {

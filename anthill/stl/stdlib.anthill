@@ -1,3 +1,5 @@
+#include "anthill/stl/math.anthill"
+
 #define RAND_MAX 21523360
 #define RAND_A 1664524
 #define RAND_C 23829640
@@ -36,7 +38,7 @@ int atoi(char* str) {
     return result;
 }
 
-int atof(char* str) {
+float atof(char* str) {
     int i = 0;
      while(*(str + i) != '.') {
         i++;
@@ -45,7 +47,18 @@ int atof(char* str) {
     for(int j = 0; j < i; j++) {
         *(pre_dot_str + j) = *(str + j);
     }
-    return atoi(pre_dot_str);
+    char* post_dot_str = str + i;
+    int post_dot_str_length = 0;
+    while(*(post_dot_str + post_dot_str_length) != 0) {
+        post_dot_str_length += 1;
+    }
+
+    float int_part = (float)(atoi(pre_dot_str));
+    puts("Post dot str length: ");
+    putf(-((float)(post_dot_str_length)));
+    putc('\n');
+    // float frac_part = ((float)(atoi(post_dot_str))) * pow(10.0,-((float)(post_dot_str_length)));
+    return int_part;
 }
 
 

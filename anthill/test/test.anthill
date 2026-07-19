@@ -1,10 +1,6 @@
 #include "anthill/stl/stdio.anthill"
-#include "anthill/stl/math.anthill"
-#include "anthill/stl/stdlib.anthill"
-#include "anthill/stl/time.anthill"
 
 int main() {
-    srand(time_lo());
-    puti(atof("-539.0"));
+    putf(-30.0);
     return 0;
 }
