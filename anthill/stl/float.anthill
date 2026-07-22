@@ -1,0 +1,2 @@
+#define FLT_RADIX 3
+$define FLT_MANT_DIG 30

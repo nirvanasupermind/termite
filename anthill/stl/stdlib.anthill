@@ -25,10 +25,10 @@ int abs(int a) {
 }
 
 int atoi(char* str) {
-    int i = 0;
     if(*str == '-') {
         return -atoi(str + 1);
     }
+    int i = 0;
     int result = 0;
     while(*(str + i) != '\0') {
         char current_char = *(str + i);
@@ -38,29 +38,71 @@ int atoi(char* str) {
     return result;
 }
 
+// float atof(char* str) {
+//     if(*str == '-') {
+//         return -atof(str + 1);
+//     }
+//     int i = 0;
+//      while(*(str + i) != '.') {
+//         i++;
+//     }
+//     char* pre_dot_str = (char*)(calloc(i,1));
+//     for(int j = 0; j < i; j++) {
+//         *(pre_dot_str + j) = *(str + j);
+//     }
+//     char* post_dot_str = str + (i + 1);
+//     int post_dot_str_length = 0;
+//     while(*(post_dot_str + post_dot_str_length) != 0) {
+//         post_dot_str_length += 1;
+//     }
+
+//     float int_part = (float)(atoi(pre_dot_str));
+//     float frac_part = ((float)(atoi(post_dot_str))) * pow(10.0,-((float)(post_dot_str_length)));
+//     return int_part + frac_part;
+// }
+
 float atof(char* str) {
     int i = 0;
-     while(*(str + i) != '.') {
+    int negative = 0;
+
+    if (*(str + i) == '-') {
+        negative = 1;
         i++;
     }
-    char* pre_dot_str = (char*)(calloc(i,1));
-    for(int j = 0; j < i; j++) {
-        *(pre_dot_str + j) = *(str + j);
-    }
-    char* post_dot_str = str + i;
-    int post_dot_str_length = 0;
-    while(*(post_dot_str + post_dot_str_length) != 0) {
-        post_dot_str_length += 1;
+
+    int digits = 0;
+    int fractional_digits = 0;
+    int after_decimal = 0;
+
+    while (*(str + i) != '\0') {
+        if (*(str + i) == '.') {
+            after_decimal = 1;
+        }
+        else {
+            int digit = (int)(*(str + i) - '0');
+            digits = digits * 10 + digit;
+
+            if (after_decimal) {
+                fractional_digits++;
+            }
+        }
+
+        i++;
     }
 
-    float int_part = (float)(atoi(pre_dot_str));
-    puts("Post dot str length: ");
-    putf(-((float)(post_dot_str_length)));
-    putc('\n');
-    // float frac_part = ((float)(atoi(post_dot_str))) * pow(10.0,-((float)(post_dot_str_length)));
-    return int_part;
+    float result = (float)digits;
+
+    while (fractional_digits > 0) {
+        result = result / 10.0;
+        fractional_digits--;
+    }
+
+    if (negative) {
+        result = -result;
+    }
+
+    return result;
 }
-
 
 void exit(int status) {
     __asm__("mov %ax,%dx\nmov $0nDD,%ax\nint $0\n");

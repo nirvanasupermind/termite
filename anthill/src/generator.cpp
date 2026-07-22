@@ -432,7 +432,7 @@ namespace anthill {
          else {
             asm_stream << "neg %ax\n";
          }
-
+         break;
       }
       case TokenType::NOT: {
          asm_stream << "neg %ax\n";
@@ -708,7 +708,6 @@ namespace anthill {
             break;
          }
          case TokenType::LOGAND: {
-            ;
             asm_stream << "push %ax\n";
             std::shared_ptr<StaticType> temp2 = visit(node->right_node, symbol_table);
             if (temp2->is_func()) {
