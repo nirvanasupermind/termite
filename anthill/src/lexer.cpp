@@ -70,7 +70,7 @@ namespace anthill {
                         advance();
                     }
                     advance();
-                    if(current != '/') {
+                    if (current != '/') {
                         error(file, line, std::string("expected '*/' to close comment, got '*") + current + "'");
                     }
                     advance();
@@ -267,10 +267,10 @@ namespace anthill {
                         macro_code += current;
                         advance();
                     }
-                                        size_t pos = 0;
+                    size_t pos = 0;
                     while ((pos = macro_code.find('\\', pos)) != std::string::npos) {
                         macro_code.replace(pos, 1, "\n");
-                        pos += 1; 
+                        pos += 1;
                     }
                     Lexer lexer2("<macro '" + macro_name.val + "'>", macro_code);
                     std::vector<Token> tokens2 = lexer2.generate_tokens();
@@ -471,6 +471,24 @@ namespace anthill {
 
             number_str += current;
             advance();
+        }
+
+        std::cout << current << '\n';
+
+        // This part will handle scientific notation 
+        if (current == 'e') {
+            number_str += current;
+            advance();
+            // Sign after the e is optional
+            if (current == '+' || current == '-') {
+                number_str += current;
+                advance();
+            }
+            // exponent
+            while (current && std::isdigit(current)) {
+                number_str += current;
+                advance();
+            }
         }
 
         return Token(line, TokenType::NUMLIT, number_str);

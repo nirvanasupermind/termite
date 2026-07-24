@@ -6,3 +6,4 @@
 #define FLT_MIN_10_EXP -10269253
 #define FLT_MAX_EXP 21523359
 #define FLT_MAX_10_EXP 10269252
+#define FLT_MAX 

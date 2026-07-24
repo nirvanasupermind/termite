@@ -1,7 +1,7 @@
 #include "anthill/stl/stdio.anthill"
-#include "anthill/stl/stdlib.anthill"
+#include "anthill/stl/math.anthill"
 
 int main() {
-    putf(-90.19);
+    putf(1e+30);
     return 0;
 }
