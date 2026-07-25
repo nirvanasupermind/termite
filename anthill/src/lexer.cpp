@@ -476,7 +476,7 @@ namespace anthill {
         std::cout << current << '\n';
 
         // This part will handle scientific notation 
-        if (current == 'e') {
+        if (current == 'e' || current == 'E') {
             number_str += current;
             advance();
             // Sign after the e is optional
@@ -494,49 +494,6 @@ namespace anthill {
         return Token(line, TokenType::NUMLIT, number_str);
     }
 
-    // Token Lexer::generate_number() {
-    //     std::string number_str(1, current);
-    //     bool temp_flag = false;
-    //     if (current == '0') {
-    //         advance();
-    //         if (current == 't') {
-    //             number_str += current;
-    //             advance();
-
-    //             while (current && (current == 'A' || current == 'a' || current == '0' | current == '1')) {
-    //                 number_str += current;
-    //                 advance();
-    //             }
-    //             return Token(line, TokenType::NUMLIT, number_str);
-    //         }
-    //         else if (current == 'n') {
-    //             number_str += current;
-    //             advance();
-    //             while (current && (current == 'A' || current == 'a' || current == 'B' || current == 'b'
-    //                 || current == 'C' || current == 'c' || current == 'D' || current == 'd'
-    //                 || current == '0' | current == '1' || current == '2' || current == '3' || current == '4')) {
-    //                 number_str += current;
-    //                 advance();
-    //             }
-    //             return Token(line, TokenType::NUMLIT, number_str);
-    //         }
-    //     }
-
-    //     advance();
-    //     int decimal_point_count = 0;
-    //     while (current && (std::isdigit(current) || current == '.')) {
-    //         if(current == '.') {
-    //             decimal_point_count++;
-    //             if(decimal_point_count > 1) {
-    //                 error(file, line, std::string("multiple decimal points in a numeric literal"));
-    //             }
-    //         }
-    //         number_str += current;
-    //         advance();
-    //     }
-
-    //     return Token(line, TokenType::NUMLIT, number_str);
-    // }
 
     char Lexer::generate_ch() {
         if ('\\' == current) {

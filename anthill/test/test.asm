@@ -793,14 +793,8 @@ push %bp
 mov %sp,%bp
 sub $729,%sp
 mov $10207,%ax
-mov $5314410,0(%ax)
-mov $2,2(%ax)
-mov %ax,%di
-mov $10211,%ax
-mov $8317890,0(%ax)
-mov $10,2(%ax)
-mov %ax,%si
-call pow
+mov $12536600,0(%ax)
+mov $62,2(%ax)
 mov %ax,%di
 call putf
 mov $0,%ax

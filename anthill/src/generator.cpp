@@ -114,16 +114,40 @@ namespace anthill {
    }
 
    std::shared_ptr<StaticType> Generator::visit_num_node(const std::shared_ptr<NumNode>& node, const std::shared_ptr<SymbolTable>& symbol_table) {
-      if (node->tok.val.find('.') != std::string::npos) {
+    size_t e_pos = node->tok.val.find_first_of("eE");
+
+      if (node->tok.val.find('.') != std::string::npos || e_pos != std::string::npos) {
          // FLOATING POINT CODE
+         double exponent;
+         double significand;
+
+            if (e_pos != std::string::npos) {
+               // Scientific notation code
+
+               std::cout << "DBG127 " << e_pos << '\n';
+               std::cout << "DBG128 " << node->tok.val << '\n';
+
+               double decimal_significand = std::abs(std::atof(node->tok.val.substr(0, e_pos).c_str()));
+               int decimal_exponent = std::atoi(node->tok.val.substr(e_pos + 1).c_str());
+               double log10_val = decimal_exponent + std::log10(decimal_significand);
+               double log3_val = log10_val * (std::log(10.0) / std::log(3.0)));
+               exponent = std::floor(log3_val);
+               significand = std::pow(3.0, log3_val - exponent);
+               if(node->tok.val.at(0) == '-') {
+                  significand = -significand;
+               }
+      } else {
+         // Normal float literal (not scientific)
          double double_val = std::stod(node->tok.val);
 
-         double exponent = std::floor(std::log(double_val) / std::log(3.0));
-         double significand = double_val / std::pow(3.0, exponent);
+         exponent = std::floor(std::log(double_val) / std::log(3.0));
+         significand = double_val / std::pow(3.0, exponent);
+
          if (double_val == 0.0) {
             exponent = 0.0;
             significand = 0.0;
          }
+      }
          std::string addr = "$" + alloc_addr(std::make_shared<NonFuncType>(BasicType::FLOAT), symbol_table, true);
 
          // int packed_float = exponent * 531441 + (int)significand;
