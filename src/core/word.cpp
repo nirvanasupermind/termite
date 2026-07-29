@@ -204,132 +204,46 @@ namespace termite {
         return result;
     }
 
-    static inline std::pair<int32_t,int32_t> mul_wide_int32(int32_t a, int32_t b) {
-    int64_t p = (int64_t)a * (int64_t)b;
-    // Split in base 3^16 since one Word = 16 trits.
-    const int64_t BASE = 43046721LL; // 3^16
-    int64_t lo = p % BASE;
-    int64_t hi = (p - lo) / BASE;
-
-    // Make remainder symmetric like your balanced representation prefers:
-    // lo should be in roughly [-BASE/2, BASE/2] if you want, but simplest:
-    // just keep lo in [-BASE+1, BASE-1] and ensure consistent reconstruction.
-    return {(int32_t)lo, (int32_t)hi};
-}
-
-// std::pair<Word, Word> Word::mul32_ref(const Word& other) const {
-//     int32_t a = this->to_int32();
-//     int32_t b = other.to_int32();
-//     auto [lo, hi] = mul_wide_int32(a, b);
-//     return { Word::from_int32(lo), Word::from_int32(hi) };
-// }
-
+    std::pair<Word, uint8_t> Word::mul_with_carry(const Word& other) const {
+        // this noly is used for mul32
+        std::pair<Word, uint8_t> result;
+        for (int i = 0; i < TRITS_PER_WORD; i++) {
+            Word shifted = shl_int8(i);
+            switch (other.get_bct_trit(i)) {
+            case 0b00:
+                result = result.first.sub_with_borrow(shifted);
+                break;
+            case 0b01:
+                break;
+            case 0b10:
+                result = result.first.add_with_carry(shifted);
+                break;
+            default:
+                break;
+            }
+        }
+        return result;
+    }
 
 std::pair<Word, Word> Word::mul32(const Word& other) const {
-    // TEMPORARY VERSION
-    // I WILL FIGURE OUT HOW TO ACTUALLY DO THIS WITHOUT CONVERTING TO BINARY INT LATER 
-    int64_t i64_result = (int64_t)(to_int32()) * (int64_t)(other.to_int32());
-    int64_t i64_hi = (i64_result + 21523360) / 43046721;
-    int64_t i64_lo = i64_result - i64_hi * 43046721;
-    return {Word::from_int32(i64_lo), Word::from_int32(i64_hi)};
-    // Word lo, hi;
 
-    // auto add32 = [&](Word add_lo, Word add_hi) {
-    //     auto [new_lo, carry] = lo.add_with_carry(add_lo);
-    //     lo = new_lo;
+    Word a = Word(get_lo_tryte(), Tryte::from_int16(0));
+    Word b = Word(get_hi_tryte(),Tryte::from_int16(0));
+    Word c = Word(other.get_lo_tryte(), Tryte::from_int16(0));
+    Word d = Word(other.get_hi_tryte(), Tryte::from_int16(0));
+    
+    std::pair<Word, uint8_t> temp_pair = a.mul_with_carry(c);
+    Word result_lo = temp_pair.first;
+    Word result_hi = (b * d) + Word(temp_pair.second);
 
-    //     int carry_val = int(carry) - 1; // 00=-1, 01=0, 10=1
-    //     hi = hi + add_hi + Word::from_int32(carry_val);
-    // };
-
-    // for (int i = 0; i < TRITS_PER_WORD; i++) {
-    //     uint8_t trit = other.get_bct_trit(i);
-
-    //     if (trit == 0b01) continue;
-
-    //     Word part_lo = this->shl_int8(i);
-    //     Word part_hi = (i == 0) ? Word::ZERO : this->shr_int8(16 - i);
-
-    //     if (trit == 0b00) {
-    //         part_lo = -part_lo;
-    //         part_hi = -part_hi;
-    //     }
-
-    //     add32(part_lo, part_hi);
-    // }
-
-    // return {lo, hi};
+    return {result_lo, result_hi};
+    // // TEMPORARY VERSION
+    // // I WILL FIGURE OUT HOW TO ACTUALLY DO THIS WITHOUT CONVERTING TO BINARY INT LATER 
+    // int64_t i64_result = (int64_t)(to_int32()) * (int64_t)(other.to_int32());
+    // int64_t i64_hi = (i64_result + 21523360) / 43046721;
+    // int64_t i64_lo = i64_result - i64_hi * 43046721;
+    // return {Word::from_int32(i64_lo), Word::from_int32(i64_hi)};
 }
-
-    // std::pair<Word, Word> Word::mul32(const Word& other) const {
-    // Tryte a = get_lo_tryte();
-    // Tryte b = get_hi_tryte();
-    // Tryte c = other.get_lo_tryte();
-    // Tryte d = other.get_hi_tryte();
-    // Word t1 = Word(a, Tryte()) * Word(c, Tryte()); 
-    // Word t2 = (Word(a, Tryte()) * Word(d, Tryte())).shl_int8(8);
-    // Word t3 = (Word(b, Tryte()) * Word(c, Tryte())).shl_int8(8);
-    // Word t4 = Word(b, Tryte()) * Word(d, Tryte());
-    // // std::cout << "!, " << b.to_int16() << '\n';
-    // // std::cout << "!, " << other.to_int32() << '\n';
-    // return {t1 + t2 + t3, t4};
-    // }
-
-// std::pair<Word, Word> Word::mul32(const Word& other) const {
-//         // Extract 8-bit parts of each 16-bit operand
-//     Tryte a_lo = get_lo_tryte();
-//     Tryte a_hi = get_hi_tryte();
-//     Tryte b_lo = other.get_lo_tryte();
-//     Tryte b_hi = other.get_hi_tryte();
-
-//     // Perform 8-bit multiplications
-//     Word p0 = Word(a_lo, Tryte()) * Word(b_lo, Tryte()); // Low * Low
-//     Word p1 = Word(a_lo, Tryte()) * Word(b_hi, Tryte()); // Low * High
-//     Word p2 = Word(a_hi, Tryte()) * Word(b_lo, Tryte()); // High * Low
-//     Word p3 = Word(a_hi, Tryte()) * Word(b_hi, Tryte()); // High * High
-
-//     // Add mid products, shifting appropriately
-//     Word mid_sum = p2.shl_int8(8) + p3.shl_int8(8);
-//     Word carry = (mid_sum >> 16) & 0xFFFF; // Carry overflow from mid_sum
-
-//     low += (mid_sum & 0xFFFF); // Add lower part of mid_sum to low part
-//     if (low > 0xFFFF) { // Check for overflow
-//         low &= 0xFFFF;
-//         carry += 1; // Carry to high part
-//     }
-
-//     high += carry; // Add carry from mid sum
-//     return {high & 0xFFFF, low & 0xFFFF};
-// }
-
-
-    // std::pair<Word, Word> Word::mul32(const Word& other) const {
-    //     Word low, high;
-
-    //     for (int i = 0; i < TRITS_PER_WORD; i++) {
-    //         Word shifted = (*this) << Word::from_int32(i);
-
-    //         std::cout << i << ' ' << (int)other.get_bct_trit(i) << ' ' << low.to_int32() << ' ' << (int)low.add_with_carry(shifted).second << '\n';
-
-    //         // std::cout << shifted.to_int32() << '\n';
-    //         switch (other.get_bct_trit(i)) {
-    //         case 0b00: // -1 in balanced ternary
-    //             std::tie(low, high) = low.sub_with_carry(shifted);
-    //             break;
-    //         case 0b01: //  0 in balanced ternary (no effect)
-    //             break;
-    //         case 0b10: //  1 in balanced ternary
-    //             std::tie(low, high) = low.add_with_carry(shifted);
-    //             break;
-    //         default:
-    //             break;
-    //         }
-    //     }
-    //         // std::cout << low.to_int32() << ' ' << high.to_int32() << '\n';
-
-    //     return std::make_pair(low, high);
-    // }
-
 
     Word Word::operator/(const Word& other) const {
         return divmod(other).first;

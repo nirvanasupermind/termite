@@ -2,6 +2,6 @@
 #include "anthill/stl/math.anthill"
 
 int main() {
-    putf(1e+1000);
+    putf(3e+9*9e+1);
     return 0;
 }

@@ -130,7 +130,7 @@ namespace anthill {
                double decimal_significand = std::abs(std::atof(node->tok.val.substr(0, e_pos).c_str()));
                int decimal_exponent = std::atoi(node->tok.val.substr(e_pos + 1).c_str());
                double log10_val = decimal_exponent + std::log10(decimal_significand);
-               double log3_val = log10_val * (std::log(10.0) / std::log(3.0)));
+               double log3_val = log10_val * (std::log(10.0) / std::log(3.0));
                exponent = std::floor(log3_val);
                significand = std::pow(3.0, log3_val - exponent);
                if(node->tok.val.at(0) == '-') {

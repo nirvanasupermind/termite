@@ -473,7 +473,7 @@ namespace anthill {
             advance();
         }
 
-        std::cout << current << '\n';
+        std::cout << "DBG476" << '\n';
 
         // This part will handle scientific notation 
         if (current == 'e' || current == 'E') {
@@ -490,6 +490,7 @@ namespace anthill {
                 advance();
             }
         }
+        std::cout << "DBG493" << '\n';
 
         return Token(line, TokenType::NUMLIT, number_str);
     }
