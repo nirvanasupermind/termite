@@ -204,46 +204,88 @@ namespace termite {
         return result;
     }
 
-    std::pair<Word, uint8_t> Word::mul_with_carry(const Word& other) const {
-        // this noly is used for mul32
-        std::pair<Word, uint8_t> result;
-        for (int i = 0; i < TRITS_PER_WORD; i++) {
-            Word shifted = shl_int8(i);
-            switch (other.get_bct_trit(i)) {
-            case 0b00:
-                result = result.first.sub_with_borrow(shifted);
-                break;
-            case 0b01:
-                break;
-            case 0b10:
-                result = result.first.add_with_carry(shifted);
-                break;
-            default:
-                break;
-            }
+    std::pair<Word, Word> Word::mul32(const Word& other) const {
+    Word lo = Word::ZERO;
+    Word hi = Word::ZERO;
+
+    for (int i = 0; i < TRITS_PER_WORD; ++i) {
+        std::cout << "DBG212 " << i << '\n';
+        Word shifted_lo = shl_int8(i);
+
+        Word shifted_hi = Word::ZERO;
+        if (i > 0) {
+            shifted_hi = shr_int8(TRITS_PER_WORD - i);
         }
-        return result;
+
+        uint8_t trit = other.get_bct_trit(i);
+
+        if (trit == 0b10) {
+            // Add this * 3^i
+            auto [new_lo, carry_trit] =
+                lo.add_with_carry(shifted_lo);
+
+            lo = new_lo;
+
+            int carry_value =
+                static_cast<int>(carry_trit) - 1;
+
+            hi = hi
+               + shifted_hi
+               + Word::from_int32(carry_value);
+        }
+        else if (trit == 0b00) {
+            // Subtract this * 3^i
+            auto [new_lo, carry_trit] =
+                lo.sub_with_borrow(shifted_lo);
+
+            lo = new_lo;
+
+            int carry_value =
+                static_cast<int>(carry_trit) - 1;
+
+            hi = hi
+               - shifted_hi
+               + Word::from_int32(carry_value);
+        }
     }
 
-std::pair<Word, Word> Word::mul32(const Word& other) const {
+    return {lo, hi};
+}
+    // std::pair<Word, Word> Word::mul32(const Word& other) const {
+    //     Word result;
+    //     Word carry;
+    //     for (int i = 0; i < TRITS_PER_WORD; i++) {
+    //         Word shifted = shl_int8(i);
+    //         switch (other.get_bct_trit(i)) {
+    //         case 0b00: {
+    //             std::pair<Word, uint8_t> temp_pair = result.sub_with_borrow(shifted);
+    //             result = temp_pair.first;
+    //             int carry_value = static_cast<int>(temp_pair.second) - 1;
+    //             carry = carry + Word::from_int32(carry_value);
+    //             break;
+    //         }
+    //         case 0b01:
+    //             break;
+    //         case 0b10: {
+    //             std::pair<Word, uint8_t> temp_pair = result.add_with_carry(shifted);
+    //             result = temp_pair.first;
+    //             int carry_value = static_cast<int>(temp_pair.second) - 1;
+    //             carry = carry + Word::from_int32(carry_value);
+    //             break;
+    //         }
+    //         default:
+    //             break;
+    //         }
+    //     }
+    //     return std::pair<Word, Word>(result, carry);
+    // }
 
-    Word a = Word(get_lo_tryte(), Tryte::from_int16(0));
-    Word b = Word(get_hi_tryte(),Tryte::from_int16(0));
-    Word c = Word(other.get_lo_tryte(), Tryte::from_int16(0));
-    Word d = Word(other.get_hi_tryte(), Tryte::from_int16(0));
-    
-    std::pair<Word, uint8_t> temp_pair = a.mul_with_carry(c);
-    Word result_lo = temp_pair.first;
-    Word result_hi = (b * d) + Word(temp_pair.second);
-
-    return {result_lo, result_hi};
     // // TEMPORARY VERSION
     // // I WILL FIGURE OUT HOW TO ACTUALLY DO THIS WITHOUT CONVERTING TO BINARY INT LATER 
     // int64_t i64_result = (int64_t)(to_int32()) * (int64_t)(other.to_int32());
     // int64_t i64_hi = (i64_result + 21523360) / 43046721;
     // int64_t i64_lo = i64_result - i64_hi * 43046721;
     // return {Word::from_int32(i64_lo), Word::from_int32(i64_hi)};
-}
 
     Word Word::operator/(const Word& other) const {
         return divmod(other).first;

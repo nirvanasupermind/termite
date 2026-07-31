@@ -43,8 +43,6 @@ namespace termite {
         Word operator-(const Word& other) const;
         std::pair<Word, uint8_t> sub_with_borrow(const Word& other) const;
         Word operator*(const Word& other) const;
-        std::pair<Word, uint8_t> mul_with_carry(const Word& other) const;
-        // This returns a 32-trit result unlike operator*
         std::pair<Word, Word> mul32(const Word& other) const;
         Word operator/(const Word& other) const;
         Word operator%(const Word& other) const;
