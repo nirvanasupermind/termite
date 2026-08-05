@@ -204,81 +204,81 @@ namespace termite {
         return result;
     }
 
+//     std::pair<Word, Word> Word::mul32(const Word& other) const {
+//     Word lo = Word::ZERO;
+//     Word hi = Word::ZERO;
+
+//     for (int i = 0; i < TRITS_PER_WORD; ++i) {
+//         std::cout << "DBG212 " << i << '\n';
+//         Word shifted_lo = shl_int8(i);
+
+//         Word shifted_hi = Word::ZERO;
+//         if (i > 0) {
+//             shifted_hi = shr_int8(TRITS_PER_WORD - i);
+//         }
+
+//         uint8_t trit = other.get_bct_trit(i);
+
+//         if (trit == 0b10) {
+//             // Add this * 3^i
+//             auto [new_lo, carry_trit] =
+//                 lo.add_with_carry(shifted_lo);
+
+//             lo = new_lo;
+
+//             int carry_value =
+//                 static_cast<int>(carry_trit) - 1;
+
+//             hi = hi
+//                + shifted_hi
+//                + Word::from_int32(carry_value);
+//         }
+//         else if (trit == 0b00) {
+//             // Subtract this * 3^i
+//             auto [new_lo, carry_trit] =
+//                 lo.sub_with_borrow(shifted_lo);
+
+//             lo = new_lo;
+
+//             int carry_value =
+//                 static_cast<int>(carry_trit) - 1;
+
+//             hi = hi
+//                - shifted_hi
+//                + Word::from_int32(carry_value);
+//         }
+//     }
+
+//     return {lo, hi};
+// }
     std::pair<Word, Word> Word::mul32(const Word& other) const {
-    Word lo = Word::ZERO;
-    Word hi = Word::ZERO;
-
-    for (int i = 0; i < TRITS_PER_WORD; ++i) {
-        std::cout << "DBG212 " << i << '\n';
-        Word shifted_lo = shl_int8(i);
-
-        Word shifted_hi = Word::ZERO;
-        if (i > 0) {
-            shifted_hi = shr_int8(TRITS_PER_WORD - i);
+        Word result;
+        Word carry;
+        for (int i = 0; i < TRITS_PER_WORD; i++) {
+            Word shifted = shl_int8(i);
+            switch (other.get_bct_trit(i)) {
+            case 0b00: {
+                std::pair<Word, uint8_t> temp_pair = result.sub_with_borrow(shifted);
+                result = temp_pair.first;
+                int carry_value = static_cast<int>(temp_pair.second) - 1;
+                carry = carry + Word::from_int32(carry_value);
+                break;
+            }
+            case 0b01:
+                break;
+            case 0b10: {
+                std::pair<Word, uint8_t> temp_pair = result.add_with_carry(shifted);
+                result = temp_pair.first;
+                int carry_value = static_cast<int>(temp_pair.second) - 1;
+                carry = carry + Word::from_int32(carry_value);
+                break;
+            }
+            default:
+                break;
+            }
         }
-
-        uint8_t trit = other.get_bct_trit(i);
-
-        if (trit == 0b10) {
-            // Add this * 3^i
-            auto [new_lo, carry_trit] =
-                lo.add_with_carry(shifted_lo);
-
-            lo = new_lo;
-
-            int carry_value =
-                static_cast<int>(carry_trit) - 1;
-
-            hi = hi
-               + shifted_hi
-               + Word::from_int32(carry_value);
-        }
-        else if (trit == 0b00) {
-            // Subtract this * 3^i
-            auto [new_lo, carry_trit] =
-                lo.sub_with_borrow(shifted_lo);
-
-            lo = new_lo;
-
-            int carry_value =
-                static_cast<int>(carry_trit) - 1;
-
-            hi = hi
-               - shifted_hi
-               + Word::from_int32(carry_value);
-        }
+        return std::pair<Word, Word>(result, carry);
     }
-
-    return {lo, hi};
-}
-    // std::pair<Word, Word> Word::mul32(const Word& other) const {
-    //     Word result;
-    //     Word carry;
-    //     for (int i = 0; i < TRITS_PER_WORD; i++) {
-    //         Word shifted = shl_int8(i);
-    //         switch (other.get_bct_trit(i)) {
-    //         case 0b00: {
-    //             std::pair<Word, uint8_t> temp_pair = result.sub_with_borrow(shifted);
-    //             result = temp_pair.first;
-    //             int carry_value = static_cast<int>(temp_pair.second) - 1;
-    //             carry = carry + Word::from_int32(carry_value);
-    //             break;
-    //         }
-    //         case 0b01:
-    //             break;
-    //         case 0b10: {
-    //             std::pair<Word, uint8_t> temp_pair = result.add_with_carry(shifted);
-    //             result = temp_pair.first;
-    //             int carry_value = static_cast<int>(temp_pair.second) - 1;
-    //             carry = carry + Word::from_int32(carry_value);
-    //             break;
-    //         }
-    //         default:
-    //             break;
-    //         }
-    //     }
-    //     return std::pair<Word, Word>(result, carry);
-    // }
 
     // // TEMPORARY VERSION
     // // I WILL FIGURE OUT HOW TO ACTUALLY DO THIS WITHOUT CONVERTING TO BINARY INT LATER 

@@ -3,7 +3,6 @@
 
 #include "../src/core/tryte.h"
 #include "../src/core/word.h"
-#include "../src/core/terfloat.h"
 
 int main() {
     std::cerr << "entered main\n";
