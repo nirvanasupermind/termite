@@ -261,7 +261,7 @@ namespace termite {
                 std::pair<Word, uint8_t> temp_pair = result.sub_with_borrow(shifted);
                 result = temp_pair.first;
                 int carry_value = static_cast<int>(temp_pair.second) - 1;
-                carry = carry + Word::from_int32(carry_value);
+                carry = carry + Word::from_int32(carry_value).shl_int8(i);
                 break;
             }
             case 0b01:
@@ -270,7 +270,7 @@ namespace termite {
                 std::pair<Word, uint8_t> temp_pair = result.add_with_carry(shifted);
                 result = temp_pair.first;
                 int carry_value = static_cast<int>(temp_pair.second) - 1;
-                carry = carry + Word::from_int32(carry_value);
+                carry = carry + Word::from_int32(carry_value).shl_int8(i);
                 break;
             }
             default:
