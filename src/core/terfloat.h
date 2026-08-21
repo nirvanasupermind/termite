@@ -9,6 +9,15 @@
 #include "word.h"
 
 namespace termite {
+    // class TerFloat {
+    //     // protected:
+    // public:
+    //     Word significand;
+    //     Word exponent;
+    //     TerFloat();
+    //     TerFloat(Word significand, Word exponent); // Not const& because I copy and modify them
+    //     void normalize();
+    // };
     class TerFloat {
         // protected:
     public:

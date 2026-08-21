@@ -251,34 +251,95 @@ namespace termite {
 
 //     return {lo, hi};
 // }
-    std::pair<Word, Word> Word::mul32(const Word& other) const {
-        Word result;
-        Word carry;
-        for (int i = 0; i < TRITS_PER_WORD; i++) {
-            Word shifted = shl_int8(i);
-            switch (other.get_bct_trit(i)) {
-            case 0b00: {
-                std::pair<Word, uint8_t> temp_pair = result.sub_with_borrow(shifted);
-                result = temp_pair.first;
-                int carry_value = static_cast<int>(temp_pair.second) - 1;
-                carry = carry + Word::from_int32(carry_value).shl_int8(i);
-                break;
-            }
-            case 0b01:
-                break;
-            case 0b10: {
-                std::pair<Word, uint8_t> temp_pair = result.add_with_carry(shifted);
-                result = temp_pair.first;
-                int carry_value = static_cast<int>(temp_pair.second) - 1;
-                carry = carry + Word::from_int32(carry_value).shl_int8(i);
-                break;
-            }
-            default:
-                break;
-            }
+
+std::pair<Word, Word> Word::mul32(const Word& other) const {
+    Word result_lo = Word::ZERO;
+    Word result_hi = Word::ZERO;
+
+    for (int i = 0; i < TRITS_PER_WORD; i++) {
+        Word shifted_lo = shl_int8(i);
+
+        Word shifted_hi = Word::ZERO;
+        if (i > 0) {
+            shifted_hi = shr_int8(TRITS_PER_WORD - i);
         }
-        return std::pair<Word, Word>(result, carry);
+
+        switch (other.get_bct_trit(i)) {
+        case 0b00: { // -1
+            std::pair<Word, uint8_t> temp =
+                result_lo.sub_with_borrow(shifted_lo);
+
+            result_lo = temp.first;
+
+            int carry_value =
+                static_cast<int>(temp.second) - 1;
+
+            result_hi =
+                result_hi
+                - shifted_hi
+                + Word::from_int32(carry_value);
+
+            break;
+        }
+
+        case 0b01: // 0
+            break;
+
+        case 0b10: { // +1
+            std::pair<Word, uint8_t> temp =
+                result_lo.add_with_carry(shifted_lo);
+
+            result_lo = temp.first;
+
+            int carry_value =
+                static_cast<int>(temp.second) - 1;
+
+            result_hi =
+                result_hi
+                + shifted_hi
+                + Word::from_int32(carry_value);
+
+            break;
+        }
+        }
     }
+
+    return {result_lo, result_hi};
+}
+
+// std::pair<Word, Word> Word::mul32(const Word& other) const {
+    //     Word result = Word::ZERO;
+    //     Word carry = Word::ZERO;
+    //     for (int i = 0; i < TRITS_PER_WORD; i++) {
+    //         Word shifted = shl_int8(i);
+    //         switch (other.get_bct_trit(i)) {
+    //         case 0b00: {
+    //             std::pair<Word, uint8_t> temp_pair = result.sub_with_borrow(shifted);
+    //             result = temp_pair.first;
+    //             int carry_value = static_cast<int>(temp_pair.second) - 1;
+    //             carry = carry + Word::from_int32(carry_value);
+    //                             std::cout << carry_value << '\n';
+
+    //             std::cout << "NEW CARRY: " << carry.to_int32() << '\n';
+    //             break;
+    //         }
+    //         case 0b01:
+    //             break;
+    //         case 0b10: {
+    //             std::pair<Word, uint8_t> temp_pair = result.add_with_carry(shifted);
+    //             result = temp_pair.first;
+    //             int carry_value = static_cast<int>(temp_pair.second) - 1;
+    //             carry = carry + Word::from_int32(carry_value);
+    //                             std::cout << carry_value << '\n';
+    //             std::cout << "NEW CARRY: " << carry.to_int32() << '\n';
+    //             break;
+    //         }
+    //         default:
+    //             break;
+    //         }
+    //     }
+    //     return std::pair<Word, Word>(result, carry);
+    // }
 
     // // TEMPORARY VERSION
     // // I WILL FIGURE OUT HOW TO ACTUALLY DO THIS WITHOUT CONVERTING TO BINARY INT LATER 
