@@ -57,32 +57,72 @@ namespace termite {
 //         }
 // //     }
 
-    const TerFloat TerFloat::ZERO = TerFloat::from_double(0.0);
-    const TerFloat TerFloat::HALF = TerFloat::from_double(0.5);
-    const TerFloat TerFloat::ONE = TerFloat::from_double(1.0);
-    const TerFloat TerFloat::THREE_HALVES = TerFloat::from_double(1.5);
-    const TerFloat TerFloat::PI = TerFloat::from_double(3.14159265358979323846);
-    const TerFloat TerFloat::TWO_PI = TerFloat::from_double(6.28318530717958647692);
-    const TerFloat TerFloat::HALF_PI = TerFloat::from_double(1.57079632679489661923);
-    const TerFloat TerFloat::QUARTER_PI = TerFloat::from_double(0.7853981633974483);
-    const TerFloat TerFloat::SQRT2_MINUS_1 = TerFloat::from_double(0.4142135623730950);
+const TerFloat TerFloat::ZERO = TerFloat::from_double(0.0);
+const TerFloat TerFloat::HALF = TerFloat::from_double(0.5);
+const TerFloat TerFloat::ONE = TerFloat::from_double(1.0);
+const TerFloat TerFloat::THREE_HALVES = TerFloat::from_double(1.5);
+const TerFloat TerFloat::PI = TerFloat::from_double(3.14159265358979323846);
+const TerFloat TerFloat::TWO_PI = TerFloat::from_double(6.28318530717958647692);
+const TerFloat TerFloat::HALF_PI = TerFloat::from_double(1.57079632679489661923);
+const TerFloat TerFloat::QUARTER_PI = TerFloat::from_double(0.7853981633974483);
+const TerFloat TerFloat::SQRT2_MINUS_1 = TerFloat::from_double(0.4142135623730950);
+
+static int dbg1 = []() {
+    std::cerr << "AFTER NORMAL CONSTANTS\n";
+    return 0;
+}();
+
 const TerFloat TerFloat::NEGATIVE_INFINITY =
-    TerFloat(
-        Word(0x45555555),
-        Word::from_int32(21523360)
-    );
+    TerFloat(Word::NEG_MIN_FLOAT_SIG, Word::from_int32(21523360));
+
+static int dbg2 = []() {
+    std::cerr << "AFTER NEG INF\n";
+    return 0;
+}();
 
 const TerFloat TerFloat::POSITIVE_INFINITY =
-    TerFloat(
-        Word(0x65555555),
-        Word::from_int32(21523360)
-    );
+    TerFloat(Word::MIN_FLOAT_SIG, Word::from_int32(21523360));
+
+static int dbg3 = []() {
+    std::cerr << "AFTER POS INF\n";
+    return 0; 
+}();
 
 const TerFloat TerFloat::NAN_ =
-    TerFloat(
-        Word(0x95555555) - Word::ONE,
-        Word::from_int32(21523360)
-    );
+    TerFloat(Word::MAX_FLOAT_SIG - Word::ONE,
+             Word::from_int32(21523360));
+
+static int dbg4 = []() {
+    std::cerr << "AFTER NAN -- ABOUT TO INIT REC TABLE\n";
+    return 0;
+}();
+
+//     const TerFloat TerFloat::ZERO = TerFloat::from_double(0.0);
+//     const TerFloat TerFloat::HALF = TerFloat::from_double(0.5);
+//     const TerFloat TerFloat::ONE = TerFloat::from_double(1.0);
+//     const TerFloat TerFloat::THREE_HALVES = TerFloat::from_double(1.5);
+//     const TerFloat TerFloat::PI = TerFloat::from_double(3.14159265358979323846);
+//     const TerFloat TerFloat::TWO_PI = TerFloat::from_double(6.28318530717958647692);
+//     const TerFloat TerFloat::HALF_PI = TerFloat::from_double(1.57079632679489661923);
+//     const TerFloat TerFloat::QUARTER_PI = TerFloat::from_double(0.7853981633974483);
+//     const TerFloat TerFloat::SQRT2_MINUS_1 = TerFloat::from_double(0.4142135623730950);
+// const TerFloat TerFloat::NEGATIVE_INFINITY =
+//     TerFloat(
+//         Word(0x45555555),
+//         Word::from_int32(21523360)
+//     );
+
+// const TerFloat TerFloat::POSITIVE_INFINITY =
+//     TerFloat(
+//         Word(0x65555555),
+//         Word::from_int32(21523360)
+//     );
+
+// const TerFloat TerFloat::NAN_ =
+//     TerFloat(
+//         Word(0x95555555) - Word::ONE,
+//         Word::from_int32(21523360)
+//     );
     // const TerFloat TerFloat::NEGATIVE_INFINITY = TerFloat(Word::NEG_MIN_FLOAT_SIG, Word::from_int32(21523360));
     // const TerFloat TerFloat::POSITIVE_INFINITY = TerFloat(Word::MIN_FLOAT_SIG, Word::from_int32(21523360));
     // const TerFloat TerFloat::NAN_ = TerFloat(Word::MAX_FLOAT_SIG - Word::ONE, Word::from_int32(21523360));
@@ -99,17 +139,17 @@ const TerFloat TerFloat::NAN_ =
     }
 
     TerFloat TerFloat::from_double(double n) {
-        std::cout << "STARTED" << '\n';
-        return TerFloat();
-        // if (n < 0.0) {
-        //     return -TerFloat::from_double(-n);
-        // }
-        // if (n == 0.0) return TerFloat(Word::ZERO, Word::ZERO);
+        // std::cout << "STARTED" << '\n';
+        // return TerFloat();
+        if (n < 0.0) {
+            return -TerFloat::from_double(-n);
+        }
+        if (n == 0.0) return TerFloat(Word::ZERO, Word::ZERO);
 
-        // double log3n = std::log(n) / std::log(3);
-        // double exponent = std::floor(log3n);
-        // double significand = std::pow(3, (log3n - exponent) + 14);
-        // return TerFloat(Word::from_int32((int32_t)(std::round(significand))), Word::from_int32((int32_t)(exponent)));
+        double log3n = std::log(n) / std::log(3);
+        double exponent = std::floor(log3n);
+        double significand = std::pow(3, (log3n - exponent) + 14);
+        return TerFloat(Word::from_int32((int32_t)(std::round(significand))), Word::from_int32((int32_t)(exponent)));
     }
 
     TerFloat TerFloat::operator+(const TerFloat& other) const {

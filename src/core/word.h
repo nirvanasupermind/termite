@@ -13,6 +13,9 @@ namespace termite {
     protected:
         uint32_t bct;
     public:
+        Word();
+        constexpr Word(uint32_t bct);
+        Word(const Tryte& lo, const Tryte& hi);
         static const Word ZERO;
         static const Word ONE;
         static const Word TWO;
@@ -20,9 +23,6 @@ namespace termite {
         static const Word NEG_MIN_FLOAT_SIG;
         static const Word MAX_FLOAT_SIG;
         static const Word NEG_MAX_FLOAT_SIG;
-        Word();
-        Word(uint32_t bct);
-        Word(const Tryte& lo, const Tryte& hi);
         uint32_t get_bct() const;
         uint8_t get_bct_trit(int i) const;
         void set_bct_trit(int i, uint8_t val);

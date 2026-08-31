@@ -8,14 +8,11 @@
 int main() {
     std::cerr << "entered main\n";
 
-        // termite::TerFloat x = termite::TerFloat(termite::Word::ZERO,termite::Word::ZERO);
+        termite::TerFloat x = termite::TerFloat(termite::Word::MIN_FLOAT_SIG,termite::Word::from_int32(8.0));
+        termite::TerFloat y =  termite::TerFloat(termite::Word::MIN_FLOAT_SIG*-termite::Word::TWO,termite::Word::from_int32(30.0));
+        std::cout << (x * y).to_double() << '\n';
 
-    // termite::TerFloat x = termite::TerFloat::from_double(5.0);
-    // termite::TerFloat y = termite::TerFloat::from_double(6.0);
-
-    // auto result = x * y;
-
-    // std::cout << result.to_double() << '\n';
+    return 0;
 }
 
 // int main() {
