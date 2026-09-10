@@ -2,6 +2,13 @@
 #include "anthill/stl/math.anthill"
 
 int main() {
-    putf(3e+9*9e+1);
+    putf((-2.0)*(1e+5));
+    putc('\n');
+    putf((-2.0)*(1e+6));
+    putc('\n');
+    putf((-2.0)*(1e+7));
+    putc('\n');
+    putf((-2.0)*(1e+8));
+    putc('\n');
     return 0;
 }
