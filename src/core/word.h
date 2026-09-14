@@ -14,7 +14,7 @@ namespace termite {
         uint32_t bct;
     public:
         Word();
-        constexpr Word(uint32_t bct);
+        Word(uint32_t bct);
         Word(const Tryte& lo, const Tryte& hi);
         static const Word ZERO;
         static const Word ONE;

@@ -14,25 +14,25 @@ namespace termite {
         : bct(0x55555555) {
     }
 
-    constexpr Word::Word(uint32_t bct)
+    Word::Word(uint32_t bct)
         : bct(bct) {
 
     }
 
         // This is the binary-coded ternary representation of 0
-    constexpr Word Word::ZERO(0x55555555);
+    const Word Word::ZERO(0x55555555);
     // BCT of 1
-    constexpr Word Word::ONE(0x55555556);
+    const Word Word::ONE(0x55555556);
     // BCT of 2
-    constexpr Word Word::TWO(0x55555558);
+    const Word Word::TWO(0x55555558);
     // BCT of 4782969 (minimum significand for the 32-trit floating-point numbers in terfloat.h)
-    constexpr Word Word::MIN_FLOAT_SIG(0x65555555);
+    const Word Word::MIN_FLOAT_SIG(0x65555555);
     // BCT of -4782969
-    constexpr Word Word::NEG_MIN_FLOAT_SIG(0x45555555);
+    const Word Word::NEG_MIN_FLOAT_SIG(0x45555555);
     // BCT of 14348907 (maximum significand for the 32-trit floating-point numbers in terfloat.h)
-    constexpr Word Word::MAX_FLOAT_SIG(0x95555555);
+    const Word Word::MAX_FLOAT_SIG(0x95555555);
     // BCT of -14348907
-    constexpr Word Word::NEG_MAX_FLOAT_SIG(0x15555555);
+    const Word Word::NEG_MAX_FLOAT_SIG(0x15555555);
 
 
     Word::Word(const Tryte& lo, const Tryte& hi)
