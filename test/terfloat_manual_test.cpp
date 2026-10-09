@@ -8,8 +8,8 @@
 int main() {
     std::cerr << "entered main\n";
 
-        termite::TerFloat x = termite::TerFloat(termite::Word::MIN_FLOAT_SIG,termite::Word::from_int32(1));
-        termite::TerFloat y =  termite::TerFloat(termite::Word::MIN_FLOAT_SIG*-termite::Word::TWO,termite::Word::from_int32(1));
+        termite::TerFloat x = termite::TerFloat::from_double(30.0);
+        termite::TerFloat y =  termite::TerFloat(-termite::Word::MIN_FLOAT_SIG, termite::Word::from_int32(50));
         std::cout << (x * y).to_double() << '\n';
 
     return 0;

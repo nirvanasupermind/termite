@@ -254,10 +254,11 @@ namespace termite {
 // }
 
 std::pair<Word, Word> Word::mul32(const Word& other) const {
-    Word result_lo = Word::ZERO;
-    Word result_hi = Word::ZERO;
+    Word lo = Word::ZERO;
+    Word hi = Word::ZERO;
 
     for (int i = 0; i < TRITS_PER_WORD; i++) {
+
         Word shifted_lo = shl_int8(i);
 
         Word shifted_hi = Word::ZERO;
@@ -266,46 +267,43 @@ std::pair<Word, Word> Word::mul32(const Word& other) const {
         }
 
         switch (other.get_bct_trit(i)) {
-        case 0b00: { // -1
+
+        case 0b00: {
             std::pair<Word, uint8_t> temp =
-                result_lo.sub_with_borrow(shifted_lo);
+                lo.sub_with_borrow(shifted_lo);
 
-            result_lo = temp.first;
+            lo = temp.first;
 
-            int carry_value =
-                static_cast<int>(temp.second) - 1;
+            int carry = static_cast<int>(temp.second) - 1;
 
-            result_hi =
-                result_hi
-                - shifted_hi
-                + Word::from_int32(carry_value);
+            hi = hi
+               - shifted_hi
+               + Word::from_int32(carry);
 
             break;
         }
 
-        case 0b01: // 0
+        case 0b01:
             break;
 
-        case 0b10: { // +1
+        case 0b10: {
             std::pair<Word, uint8_t> temp =
-                result_lo.add_with_carry(shifted_lo);
+                lo.add_with_carry(shifted_lo);
 
-            result_lo = temp.first;
+            lo = temp.first;
 
-            int carry_value =
-                static_cast<int>(temp.second) - 1;
+            int carry = static_cast<int>(temp.second) - 1;
 
-            result_hi =
-                result_hi
-                + shifted_hi
-                + Word::from_int32(carry_value);
+            hi = hi
+               + shifted_hi
+               + Word::from_int32(carry);
 
             break;
         }
         }
     }
 
-    return {result_lo, result_hi};
+    return std::make_pair(lo, hi);
 }
 
 // std::pair<Word, Word> Word::mul32(const Word& other) const {

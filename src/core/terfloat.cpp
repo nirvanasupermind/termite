@@ -230,12 +230,39 @@ static int dbg4 = []() {
             return neg ? TerFloat::NEGATIVE_INFINITY : TerFloat::POSITIVE_INFINITY;
         }
 
-        std::pair<Word, Word> mul32_res = significand.mul32(other.significand);
+        std::pair<Word, Word> p =
+    significand.mul32(other.significand);
+
+Word e = exponent + other.exponent;
+
+Word result_significand;
+
+// Can hi * 9 safely fit?
+if (p.second >= Word::from_int32(-2391484) &&
+    p.second <= Word::from_int32(2391484)) {
+
+    // P / 3^14
+    result_significand =
+        p.second.shl_int8(2)
+        + p.first.shr_int8(14);
+}
+else {
+
+    // P / 3^15 instead
+    result_significand =
+        p.second.shl_int8(1)
+        + p.first.shr_int8(15);
+
+    e = e + Word::ONE;
+}
+
+return TerFloat(result_significand, e);
+        // std::pair<Word, Word> mul32_res = significand.mul32(other.significand);
 
         // std::cout << "DBG99" << (significand.to_int32()) << '\n';
         // std::cout << "DBG100 " << mul32_res.first.to_int32() << ' '  << mul32_res.second.to_int32() << '\n';
-        Word result_significand = mul32_res.second.shl_int8(2) + mul32_res.first.shr_int8(14);
-        return TerFloat(result_significand, exponent + other.exponent);
+        // Word result_significand = mul32_res.second.shl_int8(2) + mul32_res.first.shr_int8(14);
+        // return TerFloat(result_significand, exponent + other.exponent);
     }
 
     // TerFloat TerFloat::operator*(const TerFloat& other) const {
