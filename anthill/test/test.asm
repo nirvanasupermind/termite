@@ -795,69 +795,18 @@ sub $729,%sp
 mov $10207,%ax
 mov $9565938,0(%ax)
 mov $0,2(%ax)
-fld %ax
-fneg
-fstp %ax
-fld %ax
-mov $10211,%ax
-mov $8100000,0(%ax)
-mov $10,2(%ax)
-fld %ax
-fmul
-fstp %ax
-mov %ax,%di
-call putf
-ldt $10
-mov %ax,%di
-call putc
+sub $4,%sp
+mov %ax,10211
 mov $10215,%ax
-mov $9565938,0(%ax)
-mov $0,2(%ax)
+mov $4782969,0(%ax)
+mov $1,2(%ax)
+sub $4,%sp
+mov %ax,10219
+mov 10211,%ax
 fld %ax
-fneg
-fstp %ax
+mov 10219,%ax
 fld %ax
-mov $10219,%ax
-mov $9000000,0(%ax)
-mov $12,2(%ax)
-fld %ax
-fmul
-fstp %ax
-mov %ax,%di
-call putf
-ldt $10
-mov %ax,%di
-call putc
-mov $10223,%ax
-mov $9565938,0(%ax)
-mov $0,2(%ax)
-fld %ax
-fneg
-fstp %ax
-fld %ax
-mov $10227,%ax
-mov $10000000,0(%ax)
-mov $14,2(%ax)
-fld %ax
-fmul
-fstp %ax
-mov %ax,%di
-call putf
-ldt $10
-mov %ax,%di
-call putc
-mov $10231,%ax
-mov $9565938,0(%ax)
-mov $0,2(%ax)
-fld %ax
-fneg
-fstp %ax
-fld %ax
-mov $10235,%ax
-mov $11111111,0(%ax)
-mov $16,2(%ax)
-fld %ax
-fmul
+fdiv
 fstp %ax
 mov %ax,%di
 call putf
