@@ -11,6 +11,8 @@
 #include "./cpu.h"
 
 int main(int argc, char** argv) {
+    std::cerr << "BEFORE EXECUTION\n";
+
     termite::Mem memory;
     termite::CPU cpu;
     cpu.reset(memory);
@@ -67,6 +69,7 @@ int main(int argc, char** argv) {
 
         termite::Word cycles = termite::Word::from_int32(bytes.size() << 1);
         cpu.execute(cycles, memory, verbose);
+            std::cerr << "AFTER EXECUTION\n";
     }
     catch (const std::string& e) {
         std::cerr << e << '\n';

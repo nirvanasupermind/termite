@@ -19,10 +19,6 @@ namespace termite {
         static const Word ZERO;
         static const Word ONE;
         static const Word TWO;
-        static const Word MIN_FLOAT_SIG;
-        static const Word NEG_MIN_FLOAT_SIG;
-        static const Word MAX_FLOAT_SIG;
-        static const Word NEG_MAX_FLOAT_SIG;
         uint32_t get_bct() const;
         uint8_t get_bct_trit(int i) const;
         void set_bct_trit(int i, uint8_t val);

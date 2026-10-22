@@ -38,7 +38,10 @@ namespace termite {
         static const TerFloat NAN_;
         static const Word REC_LOOKUP_TABLE[162];
         static const Word RSQRT_LOOKUP_TABLE[162];
-
+        static const Word MIN_FLOAT_SIG;
+        static const Word NEG_MIN_FLOAT_SIG;
+        static const Word MAX_FLOAT_SIG;
+        static const Word NEG_MAX_FLOAT_SIG;
         // static const Word SQRT_LOOKUP_TABLE[162];
 
 

@@ -10,6 +10,8 @@
 #include "../core/word.h"
 
 int main(int argc, char** argv) {
+    std::cerr << "BEFORE ASSEMBLY\n";
+
     try {
         std::string file_path = argv[1];
         std::ifstream file(file_path);
@@ -38,6 +40,8 @@ int main(int argc, char** argv) {
        myfile << (char)(hi >> 8);
     }
 
+    std::cerr << "AFTER ASSEMBLY\n";
+
     // myfile.open(file_path.substr(0, file_path.size() - 4) + ".txt");
     // assembler.label_pass();
     // assembler.assemble_program();
@@ -52,4 +56,5 @@ int main(int argc, char** argv) {
     std::cout << e << '\n';
     return 1;
 }
+
 }
