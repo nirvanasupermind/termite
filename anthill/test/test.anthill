@@ -1,5 +1,5 @@
 #include "anthill/stl/stdio.anthill"
-#include "anthill/stl/math.anthill"
+// #include "anthill/stl/math.anthill"
 
 int main() {
     float x = 2.0;
