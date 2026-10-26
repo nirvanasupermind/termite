@@ -1,10 +1,10 @@
 #include "anthill/stl/stdio.anthill"
-// #include "anthill/stl/math.anthill"
+#include "anthill/stl/math.anthill"
 
 int main() {
     float x = 2.0;
     float y = 3.0;
-    putf(x/y);
+    putf(1e+10269252);
     putc('\n');
     return 0;
 }

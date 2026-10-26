@@ -57,6 +57,15 @@ namespace termite {
 //         }
 // //     }
 
+    // BCT of 4782969 (minimum significand for the 32-trit floating-point numbers in terfloat.h)
+    const Word TerFloat::MIN_FLOAT_SIG(0x65555555);
+    // BCT of -4782969
+    const Word TerFloat::NEG_MIN_FLOAT_SIG(0x45555555);
+    // BCT of 14348907 (maximum significand for the 32-trit floating-point numbers in terfloat.h)
+    const Word TerFloat::MAX_FLOAT_SIG(0x95555555);
+    // BCT of -14348907
+    const Word TerFloat::NEG_MAX_FLOAT_SIG(0x15555555);
+
 const TerFloat TerFloat::ZERO = TerFloat::from_double(0.0);
 const TerFloat TerFloat::HALF = TerFloat::from_double(0.5);
 const TerFloat TerFloat::ONE = TerFloat::from_double(1.0);
@@ -66,14 +75,6 @@ const TerFloat TerFloat::TWO_PI = TerFloat::from_double(6.28318530717958647692);
 const TerFloat TerFloat::HALF_PI = TerFloat::from_double(1.57079632679489661923);
 const TerFloat TerFloat::QUARTER_PI = TerFloat::from_double(0.7853981633974483);
 const TerFloat TerFloat::SQRT2_MINUS_1 = TerFloat::from_double(0.4142135623730950);
-    // BCT of 4782969 (minimum significand for the 32-trit floating-point numbers in terfloat.h)
-    const Word TerFloat::MIN_FLOAT_SIG(0x65555555);
-    // BCT of -4782969
-    const Word TerFloat::NEG_MIN_FLOAT_SIG(0x45555555);
-    // BCT of 14348907 (maximum significand for the 32-trit floating-point numbers in terfloat.h)
-    const Word TerFloat::MAX_FLOAT_SIG(0x95555555);
-    // BCT of -14348907
-    const Word TerFloat::NEG_MAX_FLOAT_SIG(0x15555555);
 
 static int dbg1 = []() {
     std::cerr << "AFTER NORMAL CONSTANTS\n";
