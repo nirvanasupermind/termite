@@ -2,9 +2,7 @@
 #include "anthill/stl/math.anthill"
 
 int main() {
-    float x = 2.0;
-    float y = 3.0;
-    putf(1e+10269252);
+    putf(2.0);
     putc('\n');
     return 0;
 }

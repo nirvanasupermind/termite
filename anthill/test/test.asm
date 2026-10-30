@@ -795,16 +795,6 @@ sub $729,%sp
 mov $10207,%ax
 mov $9565938,0(%ax)
 mov $0,2(%ax)
-sub $4,%sp
-mov %ax,10211
-mov $10215,%ax
-mov $4782969,0(%ax)
-mov $1,2(%ax)
-sub $4,%sp
-mov %ax,10219
-mov $10223,%ax
-mov $12733772,0(%ax)
-mov $21523358,2(%ax)
 mov %ax,%di
 call putf
 ldt $10
